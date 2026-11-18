@@ -10,7 +10,7 @@ Developer guide covering architecture, **i18n (`ES`/`EN`)**, self-hosting (Docke
 
 ## Architecture & Stack
 
-- **Frontend:** Zero-build modular Vanilla HTML/CSS/JS (`index.html`, `css/styles.css`, `js/i18n.js`, `js/state.js`, `js/app.js`, `js/subapp-*.js`), installable as a **PWA** with a *Network-First* Service Worker (`sw.js`).
+- **Frontend:** Zero-build modular Vanilla HTML/CSS/JS (`index.html`, `css/styles.css`, `js/i18n.js`, `js/state.js`, `js/app.js`, `js/subapp-*.js`), installable as a **PWA** with a Service Worker (`sw.js`: atomic precache, *network-first* for HTML, *cache-first* for versioned assets, and *stale-while-revalidate* for unversioned static assets).
 - **Internationalization (`js/i18n.js`):** Bilingual `ES` / `EN` engine (`window.i18n` / `window.t`) with automatic browser locale detection, `localStorage` persistence (`act_lang_pref`), bidirectional domain catalog synchronization (preserving internal `id` keys so stored logs and filters never break when switching languages), reversible DOM/SVG/attribute + Canvas text localization, and safe seed/demo translation without overwriting user edits.
 - **Local-First Persistence:**
   - `localStorage` + automatic mirror in **`IndexedDB`** (`ethos_act_idb`) plus persistent storage request (`navigator.storage.persist()`).
@@ -128,3 +128,4 @@ npx serve .
 - `public/js/app.js`: navigation controller, lock screen, `ACT Crisis` triage, PWA install gate, Settings modal (`openSettingsModal`), and `KHORA_CREDITS`.
 - `public/js/subapp-*.js`: feature modules (`perfil`, `paz-falsa`, `espacio-act`, `radar-patrones`, `brujula-valores`, `pildoras-anclajes`, `insight`).
 - `server/server.js`, `Dockerfile`, `docker-compose.yml`: static HTTP server and optional `node:sqlite` API.
+- `scripts/sync-version.mjs`: syncs `package.json` `version` into `public/sw.js` and `public/index.html` (`npm run sync:version` / `npm run check`).

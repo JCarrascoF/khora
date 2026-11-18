@@ -10,7 +10,7 @@ Guía técnica para desarrolladores, auto-alojamiento (Docker / Node / servidor 
 
 ## Arquitectura y Stack
 
-- **Frontend:** Vanilla HTML/CSS/JS modular sin bundler ni dependencias npm en tiempo de compilación (`index.html`, `css/styles.css`, `js/i18n.js`, `js/state.js`, `js/app.js`, `js/subapp-*.js`), instalado como **PWA** con Service Worker *Network-First* (`sw.js`).
+- **Frontend:** Vanilla HTML/CSS/JS modular sin bundler ni dependencias npm en tiempo de compilación (`index.html`, `css/styles.css`, `js/i18n.js`, `js/state.js`, `js/app.js`, `js/subapp-*.js`), instalado como **PWA** con Service Worker (`sw.js`: precache atómico, *network-first* para HTML, *cache-first* para assets versionados y *stale-while-revalidate* para estáticos).
 - **Internacionalización (`js/i18n.js`):** motor bilingüe `ES` / `EN` (`window.i18n` / `window.t`) con detección inicial de navegador, persistencia en `localStorage` (`act_lang_pref`), sincronización de catálogos de dominio, localización reversible de nodos DOM/SVG/atributos + texto Canvas y actualización inteligente de semillas/ejemplos sin alterar los textos propios del usuario.
 - **Persistencia Local-First:**
   - `localStorage` + espejo automático en **`IndexedDB`** (`ethos_act_idb`) y solicitud de almacenamiento persistente (`navigator.storage.persist()`).
@@ -128,3 +128,4 @@ npx serve .
 - `public/js/app.js`: orquestador de navegación, pantalla de bloqueo, triaje `Crisis ACT`, detector de instalación PWA, modal de configuración (`openSettingsModal`) y créditos (`KHORA_CREDITS`).
 - `public/js/subapp-*.js`: módulos funcionales (`perfil`, `paz-falsa`, `espacio-act`, `radar-patrones`, `brujula-valores`, `pildoras-anclajes`, `insight`).
 - `server/server.js`, `Dockerfile`, `docker-compose.yml`: servidor HTTP estático y API SQLite opcional con `node:sqlite`.
+- `scripts/sync-version.mjs`: sincroniza `version` de `package.json` con `public/sw.js` y `public/index.html` (`npm run sync:version` / `npm run check`).
