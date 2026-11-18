@@ -15,11 +15,5 @@ services:
     volumes:
       # Descomenta la siguiente línea junto con ENABLE_SQLITE_DB=true para guardar en ./data/act.db:
       # - ./data:/app/data
-      - ./index.html:/app/index.html:ro
-      - ./sw.js:/app/sw.js:ro
-      - ./manifest.json:/app/manifest.json:ro
-      - ./css:/app/css:ro
-      - ./js:/app/js:ro
-      - ./icons:/app/icons:ro
     env_file:
       - .env
