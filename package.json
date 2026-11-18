@@ -12,7 +12,8 @@
   "scripts": {
     "start": "node --no-warnings server/server.js",
     "serve:static": "npx serve public",
-    "check": "node --check server/server.js && for f in public/js/*.js; do node --check \"$f\"; done"
+    "sync:version": "node scripts/sync-version.mjs",
+    "check": "node --check server/server.js && node --check public/sw.js && node --check scripts/sync-version.mjs && for f in public/js/*.js; do node --check \"$f\"; done && node scripts/sync-version.mjs --check"
   },
   "engines": {
     "node": ">=22.5.0"

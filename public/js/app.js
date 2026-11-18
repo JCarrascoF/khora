@@ -3112,7 +3112,7 @@ class AppController {
         window.location?.reload?.();
       });
 
-      navigator.serviceWorker.register('./sw.js?v=4.47', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
         .then((reg) => {
           console.log('[PWA] Service Worker registrado con éxito:', reg.scope);
           reg.update?.().catch(() => {});
