@@ -65,6 +65,12 @@ Consulta toda la documentación técnica (arquitectura, cifrado `AES-256-GCM`, d
 
 ---
 
+## 🗺️ Roadmap
+
+Si quieres contribuir, revisa las issues etiquetadas con [`good first issue`](https://github.com/JCarrascoF/khora/labels/good%20first%20issue). También puedes proponer nuevas ideas en las [Discussions](https://github.com/JCarrascoF/khora/discussions).
+
+---
+
 <p align="center">
   Creado con ❤️ por <a href="https://github.com/jcarrascof">@jcarrascof</a> ·
   <a href="https://ko-fi.com/jcarrascof">☕ Apoyar el proyecto en Ko-fi</a>
