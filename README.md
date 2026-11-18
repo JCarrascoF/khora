@@ -1,3 +1,7 @@
+![CI](https://github.com/JCarrascoF/khora/actions/workflows/ci.yml/badge.svg)
+![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-live-2c8ecc)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 🇪🇸 **Español** | 🇬🇧 [English](./README.en.md)
 
 # Khora — Tu espacio ACT
