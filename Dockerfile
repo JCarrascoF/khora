@@ -4,10 +4,9 @@ WORKDIR /app
 
 RUN mkdir -p /app/data
 
-COPY package.json server.js index.html manifest.json sw.js ./
-COPY css ./css
-COPY js ./js
-COPY icons ./icons
+COPY package.json ./
+COPY public/ ./public
+COPY server/ ./server
 
 ENV NODE_ENV=production
 ENV PORT=8080
@@ -18,4 +17,4 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
   CMD wget -qO- http://127.0.0.1:${PORT:-8080}/api/health || exit 1
 
-CMD ["node", "--no-warnings", "server.js"]
+CMD ["node", "--no-warnings", "server/server.js"]
