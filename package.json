@@ -2,10 +2,17 @@
   "name": "khora",
   "version": "3.1.0",
   "description": "Khora — Tu espacio ACT (PWA local-first con cifrado AES-256 y SQLite opcional)",
-  "main": "server.js",
   "license": "MIT",
+  "homepage": "https://jcarrascof.github.io/khora/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JCarrascoF/khora.git"
+  },
+  "keywords": ["pwa", "act", "mental-health", "journal", "local-first", "sqlite"],
   "scripts": {
-    "start": "node --no-warnings server.js"
+    "start": "node --no-warnings server/server.js",
+    "serve:static": "npx serve public",
+    "check": "node --check server/server.js && for f in public/js/*.js; do node --check \"$f\"; done"
   },
   "engines": {
     "node": ">=22.5.0"

@@ -4,7 +4,8 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { DatabaseSync } = require('node:sqlite');
 
-const ROOT_DIR = __dirname;
+const ROOT_DIR = path.join(__dirname, '..');
+const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
 const PORT = Number(process.env.PORT) || 8080;
 const HOST = process.env.HOST || '0.0.0.0';
 const SQLITE_ENABLED = process.env.ENABLE_SQLITE_DB === 'true';
@@ -48,18 +49,6 @@ const MIME_TYPES = {
   '.ico': 'image/x-icon',
   '.txt': 'text/plain; charset=utf-8'
 };
-
-const BLOCKED_FILES = new Set([
-  '/server.js',
-  '/package.json',
-  '/package-lock.json',
-  '/Dockerfile',
-  '/docker-compose.yml',
-  '/.dockerignore',
-  '/.gitignore',
-  '/.env',
-  '/.env.example'
-]);
 
 function initDatabase(dbFilePath) {
   fs.mkdirSync(path.dirname(dbFilePath), { recursive: true });
@@ -225,7 +214,6 @@ function serveStaticFile(res, pathname) {
   }
 
   if (
-    BLOCKED_FILES.has(reqPath) ||
     reqPath.startsWith('/data/') ||
     reqPath === '/data' ||
     reqPath.includes('/.') ||
@@ -240,8 +228,8 @@ function serveStaticFile(res, pathname) {
   }
 
   const relativePath = reqPath.replace(/^\/+/, '');
-  const fullPath = path.resolve(ROOT_DIR, relativePath);
-  if (fullPath !== ROOT_DIR && !fullPath.startsWith(ROOT_DIR + path.sep)) {
+  const fullPath = path.resolve(PUBLIC_DIR, relativePath);
+  if (fullPath !== PUBLIC_DIR && !fullPath.startsWith(PUBLIC_DIR + path.sep)) {
     res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('Forbidden');
     return;
