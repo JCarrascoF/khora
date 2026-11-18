@@ -60,6 +60,12 @@ Khora is a personal self-reflection and everyday practice tool inspired by Accep
 
 Read the full technical documentation (architecture, `i18n`, `AES-256-GCM` encryption, free GitHub Pages / Cloudflare Pages deployment, and Docker with optional SQLite) in **[README.dev.en.md](README.dev.en.md)**.
 
+### How to contribute
+
+* 📖 **[CONTRIBUTING.md](CONTRIBUTING.md)** — how to run Khora locally, code conventions, and the PR workflow.
+* 🤝 **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)** — community standards.
+* 🔒 **[SECURITY.md](SECURITY.md)** — how to report vulnerabilities privately.
+
 ---
 
 <p align="center">
