@@ -1,0 +1,25 @@
+services:
+  khora-act:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: khora-act
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8084}:${PORT:-8084}"
+    environment:
+      # Por defecto Khora funciona 100% en local en el móvil/navegador de cada usuario (sin BD compartida).
+      # Para activar persistencia en base de datos SQLite en este servidor (solo uso personal monousuario),
+      # cambia ENABLE_SQLITE_DB a "true" y descomenta el volumen ./data:/app/data más abajo.
+      ENABLE_SQLITE_DB: "${ENABLE_SQLITE_DB:-false}"
+    volumes:
+      # Descomenta la siguiente línea junto con ENABLE_SQLITE_DB=true para guardar en ./data/act.db:
+      # - ./data:/app/data
+      - ./index.html:/app/index.html:ro
+      - ./sw.js:/app/sw.js:ro
+      - ./manifest.json:/app/manifest.json:ro
+      - ./css:/app/css:ro
+      - ./js:/app/js:ro
+      - ./icons:/app/icons:ro
+    env_file:
+      - .env
