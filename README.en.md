@@ -71,6 +71,12 @@ Read the full technical documentation (architecture, `i18n`, `AES-256-GCM` encry
 
 ---
 
+## 🗺️ Roadmap
+
+If you want to contribute, check issues labeled [`good first issue`](https://github.com/JCarrascoF/khora/labels/good%20first%20issue). You can also propose new ideas in [Discussions](https://github.com/JCarrascoF/khora/discussions).
+
+---
+
 <p align="center">
   Created with ❤️ by <a href="https://github.com/jcarrascof">@jcarrascof</a> ·
   <a href="https://ko-fi.com/jcarrascof">☕ Support the project on Ko-fi</a>

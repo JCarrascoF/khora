@@ -1,0 +1,46 @@
+name: Feature request
+description: Suggest a new feature or improvement
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema que resuelve
+      description: "¿Qué necesitas y por qué? Cuéntalo con tus palabras."
+      placeholder: "No puedo..."
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solución propuesta
+      description: "¿Cómo te gustaría que funcionara?"
+    validations:
+      required: false
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Alcance
+      options:
+        - "PWA solo (funciona sin backend)"
+        - "Backend / SQLite"
+        - "Ambos"
+    validations:
+      required: false
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioridad para ti
+      options:
+        - "Nice to have"
+        - "Me lo plantearía bastante"
+        - "Necesito esto para usarla a diario"
+    validations:
+      required: false
+  - type: textarea
+    id: extra
+    attributes:
+      label: Notas adicionales
+    validations:
+      required: false
