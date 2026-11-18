@@ -1,0 +1,13 @@
+{
+  "name": "khora",
+  "version": "3.1.0",
+  "description": "Khora — Tu espacio ACT (PWA local-first con cifrado AES-256 y SQLite opcional)",
+  "main": "server.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node --no-warnings server.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  }
+}
