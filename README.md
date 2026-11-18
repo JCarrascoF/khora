@@ -58,7 +58,7 @@ Khora es una herramienta personal de autoconocimiento, registro y práctica coti
 
 ## ¿Eres desarrollador o quieres alojar tu propia instancia?
 
-Consulta toda la documentación técnica (arquitectura, cifrado `AES-256-GCM`, despliegue gratuito en GitHub Pages / Cloudflare Pages y Docker con SQLite opcional) en **[README.dev.md](README.dev.md)**.
+Consulta toda la documentación técnica (arquitectura, cifrado `AES-256-GCM`, despliegue gratuito en GitHub Pages / Cloudflare Pages y Docker con SQLite opcional) en **[docs/development.md](docs/development.md)**.
 
 ---
 

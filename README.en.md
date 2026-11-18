@@ -58,7 +58,7 @@ Khora is a personal self-reflection and everyday practice tool inspired by Accep
 
 ## Developer or self-hosting?
 
-Read the full technical documentation (architecture, `i18n`, `AES-256-GCM` encryption, free GitHub Pages / Cloudflare Pages deployment, and Docker with optional SQLite) in **[README.dev.en.md](README.dev.en.md)**.
+Read the full technical documentation (architecture, `i18n`, `AES-256-GCM` encryption, free GitHub Pages / Cloudflare Pages deployment, and Docker with optional SQLite) in **[docs/development.en.md](docs/development.en.md)**.
 
 ### How to contribute
 
