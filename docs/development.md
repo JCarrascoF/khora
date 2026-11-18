@@ -17,13 +17,13 @@ Guía técnica para desarrolladores, auto-alojamiento (Docker / Node / servidor 
 - **Cifrado y Privacidad (Client-Side):**
   - `Web Crypto API`: derivación de clave con **`PBKDF2`** (SHA-256, 100.000 iteraciones) y cifrado autenticado **`AES-256-GCM`** por colección/singleton antes de escribir en `localStorage`, `IndexedDB` o enviar a SQLite.
   - Desbloqueo biométrico opcional por dispositivo mediante **`WebAuthn`** (*Platform Authenticator*: FaceID / TouchID / Huella).
-- **Backend opcional (`server.js`):** Node.js >= 22.5.0 puro (sin dependencias externas), que utiliza `node:http`, `node:crypto` y `node:sqlite`.
+- **Backend opcional (`server/server.js`):** Node.js >= 22.5.0 puro (sin dependencias externas), que utiliza `node:http`, `node:crypto` y `node:sqlite`.
 
 ---
 
 ## Personalizar Créditos y Ko-fi
 
-En la parte superior de [`js/app.js`](js/app.js) encontrarás el objeto `KHORA_CREDITS`:
+En la parte superior de [`public/js/app.js`](../public/js/app.js) encontrarás el objeto `KHORA_CREDITS`:
 
 ```javascript
 const KHORA_CREDITS = {
@@ -44,7 +44,7 @@ const KHORA_CREDITS = {
 
 ### Opción A: GitHub Pages (automático)
 
-Este repositorio incluye [`.github/workflows/pages.yml`](.github/workflows/pages.yml), que empaqueta y publica **únicamente** los archivos estáticos del cliente (`index.html`, `manifest.json`, `sw.js`, `css/`, `js/`, `icons/`).
+Este repositorio incluye [`.github/workflows/pages.yml`](../.github/workflows/pages.yml), que empaqueta y publica **únicamente** los archivos estáticos del cliente en `public/` (`index.html`, `manifest.json`, `sw.js`, `css/`, `js/`, `icons/`).
 
 1. Sube el proyecto a un repositorio en GitHub llamado `khora` (el `.gitignore` ya excluye `data/`, `*.db`, `*.sqlite*` y `.env`).
 2. Entra en **Settings → Pages**.
@@ -54,7 +54,7 @@ Este repositorio incluye [`.github/workflows/pages.yml`](.github/workflows/pages
 ### Opción B: Cloudflare Pages
 
 1. Entra en **Cloudflare Dashboard → Workers & Pages → Create → Pages**.
-2. Conecta tu repositorio de GitHub (`Build command`: vacío, `Build output directory`: `/`) **o** usa **Upload assets** subiendo únicamente la carpeta con `index.html`, `manifest.json`, `sw.js`, `css/`, `js/` e `icons/`.
+2. Conecta tu repositorio de GitHub (`Build command`: vacío, `Build output directory`: `/public/`) **o** usa **Upload assets** subiendo únicamente la carpeta `public/`.
 
 > **Comportamiento sin backend:** Al no existir `/api/health`, Khora activa automáticamente el **Modo Navegador Local**, oculta los ajustes de SQLite en `⚙️ Configuración` y activa el **detector de instalación PWA + warning de persistencia** en navegadores móviles que aún no hayan añadido la app a la Pantalla de Inicio.
 
@@ -94,7 +94,7 @@ Si quieres guardar tus datos en `./data/act.db` dentro de tu propio servidor:
    docker compose up -d --build
    ```
 
-Con `AUTH_PASSWORD` definida, `server.js` protege `/api/state`, `/api/state/*` y `/api/backup/db` con `401 Unauthorized` y cookie `HttpOnly` (`khora_act_session`, firma HMAC-SHA256). Si además activas el cifrado **AES-256-GCM** dentro de Khora, incluso `act.db` almacenará sobres cifrados (`__ethos_enc: "v1"`).
+Con `AUTH_PASSWORD` definida, `server/server.js` protege `/api/state`, `/api/state/*` y `/api/backup/db` con `401 Unauthorized` y cookie `HttpOnly` (`khora_act_session`, firma HMAC-SHA256). Si además activas el cifrado **AES-256-GCM** dentro de Khora, incluso `act.db` almacenará sobres cifrados (`__ethos_enc: "v1"`).
 
 ### 2. Node.js directo (sin Docker)
 
@@ -121,10 +121,10 @@ npx serve .
 
 ## Estructura de archivos
 
-- `index.html`, `manifest.json`, `sw.js`: shell principal y manifiesto PWA.
-- `css/styles.css`: sistema visual (modo claro/oscuro, autobús ACT, modales y banners).
-- `js/i18n.js`: motor de internacionalización `ES` / `EN` (catálogos, glosario, datos de ejemplo y observador DOM/Canvas).
-- `js/state.js`: gestión de estado, espejo `IndexedDB`, cifrado `AES-256-GCM`, `WebAuthn`, datos semilla/demo, analizador de terapia bilingüe y sincronización SQLite opcional.
-- `js/app.js`: orquestador de navegación, pantalla de bloqueo, triaje `Crisis ACT`, detector de instalación PWA, modal de configuración (`openSettingsModal`) y créditos (`KHORA_CREDITS`).
-- `js/subapp-*.js`: módulos funcionales (`perfil`, `paz-falsa`, `espacio-act`, `radar-patrones`, `brujula-valores`, `pildoras-anclajes`, `insight`).
-- `server.js`, `Dockerfile`, `docker-compose.yml`: servidor HTTP estático y API SQLite opcional con `node:sqlite`.
+- `public/index.html`, `public/manifest.json`, `public/sw.js`: shell principal y manifiesto PWA.
+- `public/css/styles.css`: sistema visual (modo claro/oscuro, autobús ACT, modales y banners).
+- `public/js/i18n.js`: motor de internacionalización `ES` / `EN` (catálogos, glosario, datos de ejemplo y observador DOM/Canvas).
+- `public/js/state.js`: gestión de estado, espejo `IndexedDB`, cifrado `AES-256-GCM`, `WebAuthn`, datos semilla/demo, analizador de terapia bilingüe y sincronización SQLite opcional.
+- `public/js/app.js`: orquestador de navegación, pantalla de bloqueo, triaje `Crisis ACT`, detector de instalación PWA, modal de configuración (`openSettingsModal`) y créditos (`KHORA_CREDITS`).
+- `public/js/subapp-*.js`: módulos funcionales (`perfil`, `paz-falsa`, `espacio-act`, `radar-patrones`, `brujula-valores`, `pildoras-anclajes`, `insight`).
+- `server/server.js`, `Dockerfile`, `docker-compose.yml`: servidor HTTP estático y API SQLite opcional con `node:sqlite`.
