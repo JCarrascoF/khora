@@ -12,7 +12,7 @@ Khora is designed to work fully offline in the browser. The quickest way
 to try it is to serve the static files:
 
 ```sh
-npx serve .
+npx serve public
 # open http://localhost:3000
 ```
 
@@ -21,7 +21,7 @@ encrypted at rest with AES-256 when you enable the privacy lock.
 
 ### Run with the optional SQLite backend
 
-The Node server in `server.js` is **optional**. It exists for a single
+The Node server in `server/server.js` is **optional**. It exists for a single
 use case: persisting Khora data in a SQLite database on your own server
 (monousuario, self-hosted). It is disabled by default.
 
@@ -46,20 +46,22 @@ docker compose up --build
 
 ```
 .
-├── index.html            # PWA shell
-├── sw.js                 # Service worker (offline caching)
-├── manifest.json         # PWA manifest
-├── css/styles.css
-├── icons/                # PWA icons (192 + 512)
-├── js/
-│   ├── app.js            # App bootstrap & routing
-│   ├── state.js          # Data layer: IndexedDB + localStorage + server sync
-│   ├── i18n.js           # ES/EN translations
-│   └── subapp-*.js       # One file per feature (sub-app)
-├── server.js             # Optional Node server (static + SQLite API)
+├── public/
+│   ├── index.html            # PWA shell
+│   ├── sw.js                 # Service worker (offline caching)
+│   ├── manifest.json         # PWA manifest
+│   ├── css/styles.css
+│   ├── icons/                # PWA icons (192 + 512)
+│   └── js/
+│       ├── app.js            # App bootstrap & routing
+│       ├── state.js          # Data layer: IndexedDB + localStorage + server sync
+│       ├── i18n.js           # ES/EN translations
+│       └── subapp-*.js       # One file per feature (sub-app)
+├── server/server.js          # Optional Node server (static + SQLite API)
+├── docs/                     # Development & self-hosting docs
 ├── Dockerfile
 ├── docker-compose.yml
-└── .github/workflows/    # GitHub Pages deploy (static PWA)
+└── .github/workflows/        # GitHub Pages deploy (static PWA)
 ```
 
 ## Code conventions
@@ -96,11 +98,11 @@ docker compose up --build
 
 There is no automated test suite yet. Before submitting a PR:
 
-1. `node --check server.js` (and each `js/*.js` file you touched).
+1. `node --check server/server.js` (and each `public/js/*.js` file you touched).
 2. Manually exercise the PWA in at least one modern browser, in
    **offline mode** (DevTools → Network → "Offline") to confirm the
    service worker still works.
-3. If you touched `server.js`, also test with `ENABLE_SQLITE_DB=true`.
+3. If you touched `server/server.js`, also test with `ENABLE_SQLITE_DB=true`.
 
 ## Pull requests
 
