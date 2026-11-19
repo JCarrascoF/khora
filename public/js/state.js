@@ -370,6 +370,7 @@ class StateManager {
   }
 
   hasApiServer() {
+    // Non-browser env (Node tests): assume API is available
     if (typeof document === 'undefined') return true;
     return Boolean(document.querySelector('meta[name="khora-api"][content="1"]'));
   }
