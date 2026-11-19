@@ -139,6 +139,20 @@ function saveSingleton(key, value, now) {
   stmtUpsertSingleton.run(key, JSON.stringify(value), now);
 }
 
+function validateStateKeyValue(key, value) {
+  if (ARRAY_KEYS.includes(key)) {
+    return Array.isArray(value) ? null : `La colección "${key}" debe ser un array`;
+  }
+  if (key === 'pillFavorites') {
+    return Array.isArray(value) || (Boolean(value) && typeof value === 'object')
+      ? null
+      : 'La clave "pillFavorites" debe ser un array o un objeto JSON';
+  }
+  return value && typeof value === 'object' && !Array.isArray(value)
+    ? null
+    : `La clave "${key}" debe ser un objeto JSON`;
+}
+
 function withTransaction(fn) {
   db.exec('BEGIN IMMEDIATE');
   try {
@@ -476,18 +490,9 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
-      const validateCollectionValue = (key, value) => {
-        if (ARRAY_KEYS.includes(key)) {
-          return Array.isArray(value) ? null : `La colección "${key}" debe ser un array`;
-        }
-        return value && typeof value === 'object' && !Array.isArray(value)
-          ? null
-          : `La clave "${key}" debe ser un objeto JSON`;
-      };
-
       for (const col of ARRAY_KEYS) {
         if (Object.prototype.hasOwnProperty.call(payload, col)) {
-          const errMsg = validateCollectionValue(col, payload[col]);
+          const errMsg = validateStateKeyValue(col, payload[col]);
           if (errMsg) {
             sendJson(res, 400, { ok: false, error: errMsg });
             return;
@@ -496,7 +501,7 @@ const server = http.createServer(async (req, res) => {
       }
       for (const key of SINGLETON_KEYS) {
         if (Object.prototype.hasOwnProperty.call(payload, key) && payload[key] !== undefined) {
-          const errMsg = validateCollectionValue(key, payload[key]);
+          const errMsg = validateStateKeyValue(key, payload[key]);
           if (errMsg) {
             sendJson(res, 400, { ok: false, error: errMsg });
             return;
@@ -542,12 +547,9 @@ const server = http.createServer(async (req, res) => {
         ? payload.data
         : payload;
 
-      if (ARRAY_KEYS.includes(key) && !Array.isArray(value)) {
-        sendJson(res, 400, { ok: false, error: `La colección "${key}" debe ser un array` });
-        return;
-      }
-      if (!ARRAY_KEYS.includes(key) && (!value || typeof value !== 'object' || Array.isArray(value))) {
-        sendJson(res, 400, { ok: false, error: `La clave "${key}" debe ser un objeto JSON` });
+      const errMsg = validateStateKeyValue(key, value);
+      if (errMsg) {
+        sendJson(res, 400, { ok: false, error: errMsg });
         return;
       }
 
