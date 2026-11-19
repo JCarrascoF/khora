@@ -3,6 +3,8 @@
 
 🇪🇸 **Español** | 🇬🇧 [English](./README.en.md)
 
+> 💻 **Probarlo ahora:** [https://jcarrascof.github.io/khora/](https://jcarrascof.github.io/khora/)
+
 # Khora — Tu espacio ACT
 
 **Khora** es un espacio personal, privado y sin distracciones pensado para acompañarte en el día a día desde la **Terapia de Aceptación y Compromiso (ACT)**.
