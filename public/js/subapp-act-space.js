@@ -132,16 +132,26 @@ class EspacioActApp {
       choiceType: 'value'
     };
 
-    this.showThoughtExamples = false;
-    this.showStep4Examples = false;
-    this.showPassengerExamples = false;
+    this.defusionStyle = 'notice'; // 'notice' | 'story' | 'thanks'
+    this.showMoreValues = false;
+    this.postIntensityTouched = false;
 
-    this.breathingTimer = null;
-    this.breathingPhase = 'idle';
-    this.breathingSecondsLeft = 4;
+    this.breathingPhaseTimeout = null;
+    this.breathingActive = false;
+    this.breathingPhase = 'idle'; // 'idle' | 'inhale' | 'hold' | 'exhale' | 'rest'
     this.breathingCyclesDone = 0;
-    this.breathingPausedByUser = false;
-    this.anchorBannerIndex = 0;
+  }
+
+  escapeHtml(value) {
+    if (window.KhoraUtils?.escapeHtml) {
+      return window.KhoraUtils.escapeHtml(value);
+    }
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   init() {
@@ -152,9 +162,10 @@ class EspacioActApp {
   resetForm() {
     this.stopBreathing();
     this.currentStep = 1;
-    this.showThoughtExamples = false;
-    this.showStep4Examples = false;
-    this.showPassengerExamples = false;
+    this.defusionStyle = 'notice';
+    this.showMoreValues = false;
+    this.postIntensityTouched = false;
+    this.breathingCyclesDone = 0;
     this.emotionViewMode = 'wheel';
     this.activeEmotionFamily = 'Ira';
     this.emotionSearchQuery = '';
@@ -168,7 +179,7 @@ class EspacioActApp {
       physicalTemp: '',
       thought: '',
       reframedThought: '',
-      postIntensity: 5,
+      postIntensity: 8,
       autopilotUrge: '',
       valueChosen: '',
       committedAction: '',
@@ -177,9 +188,6 @@ class EspacioActApp {
       choiceType: 'value'
     };
 
-    this.showThoughtExamples = false;
-    this.showStep4Examples = false;
-    this.showPassengerExamples = false;
     this.render();
     this.bindEvents();
   }
@@ -188,6 +196,9 @@ class EspacioActApp {
     if (step < 1 || step > this.totalSteps) return;
     if (this.currentStep === 2 && step !== 2) {
       this.stopBreathing();
+    }
+    if (step === 4 && !this.postIntensityTouched) {
+      this.entryData.postIntensity = this.entryData.initialIntensity;
     }
     this.currentStep = step;
     this.render();
@@ -234,10 +245,10 @@ class EspacioActApp {
             <div class="step-bar-fill" style="width: ${progressPercent}%;"></div>
           </div>
           ${[
-            { n: 1, label: '1. Rueda Emocional' },
-            { n: 2, label: '2. Identificación Física' },
-            { n: 3, label: '3. Defusión Mental' },
-            { n: 4, label: '4. Valores y Autobús' }
+            { n: 1, label: '1. Nombrar Emoción' },
+            { n: 2, label: '2. Sentir en el Cuerpo' },
+            { n: 3, label: '3. Tomar Distancia' },
+            { n: 4, label: '4. Elegir Micro-Paso' }
           ].map(st => `
             <div class="step-item">
               <div class="step-node ${this.currentStep >= st.n ? (this.currentStep === st.n ? 'active' : 'completed') : ''}" title="${st.label}">${st.n}</div>
@@ -360,7 +371,7 @@ class EspacioActApp {
         <div class="flex-between" style="margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
           <div>
             <label class="form-label" style="margin-bottom: 0;">1. Nombra lo que sientes (toca 1 o varias emociones)</label>
-            <p class="form-hint" style="margin-top: 2px;">
+            <p class="form-hint" ${activeNuanceDesc ? 'data-keep-explanation="true"' : ''} style="margin-top: 2px;">
               ${activeNuanceDesc ? `<em>"${focusedEmotion}: ${activeNuanceDesc}"</em>` : 'Poner nombre exacto ayuda a tomar distancia de la ola.'}
               ${activeNuanceExample ?`<br/><span style="color: var(--sage-600); font-size: 0.78rem;">${activeNuanceExample}</span>` :''}
             </p>
@@ -399,7 +410,7 @@ class EspacioActApp {
 
       <div class="btn-group">
         <button type="button" class="btn-primary" id="btn-act-next-1">
-          Paso 2: Identificación Física en el Cuerpo
+          Paso 2: Sentir en el Cuerpo
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </div>
@@ -743,50 +754,21 @@ class EspacioActApp {
             </div>
           </div>
 
-<!-- Hacerle Hueco (Aceptación Somática y Postura del SÍ) -->
-          <div class="form-group mt-4 text-center" style="background: var(--bg-surface-elevated); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
-            <label class="form-label" style="font-size: 0.94rem; margin-bottom: 4px;">
-              Hacerle Hueco en el Cuerpo
+          <!-- Ayuda somática opcional (Modal de Respiración o Postura del SÍ) -->
+          <div class="form-group mt-4 act-somatic-help-box">
+            <label class="form-label" style="font-size: 0.92rem; margin-bottom: 4px;">
+              ¿Te cuesta notarlo o la sensación aprieta demasiado?
             </label>
-            <p class="form-hint" style="max-width: 480px; margin: 0 auto 12px; line-height: 1.4;">
-              Respira para hacer espacio a la sensación sin pelear contra ella.
+            <p class="form-hint" style="margin-bottom: 12px; line-height: 1.4;">
+              Si no lo tienes claro, puedes parar un momento a respirar o abrir la postura corporal.
             </p>
-
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 12px;">
-              <button type="button" class="btn-secondary" id="btn-open-somatic-posture" style="font-size: 0.82rem; border-color: var(--sage-400); background: var(--bg-surface); padding: 7px 14px;">
-                Practicar la Postura Somática del"SÍ" (Steven Hayes)
+            <div class="breathing-actions-row" style="justify-content: flex-start;">
+              <button type="button" class="btn-secondary" id="btn-open-breathing-modal" style="font-size: 0.84rem; border-color: var(--sage-400); padding: 8px 14px;">
+                No lo tengo claro · Hacerle hueco en el cuerpo
               </button>
-              ${(() => {
-                const st = window.stateManager.getSettings();
-                const vibOn = st.vibration !== false;
-                const sndOn = st.sound === true;
-                return `
-                  <button type="button" class="btn-secondary" id="btn-toggle-haptic" style="font-size: 0.78rem; padding: 6px 12px; border-color: ${vibOn ? 'var(--sage-500)' : 'var(--border-subtle)'};">
-                    Vibración guía: ${vibOn ?'Sí' :'No'}
-                  </button>
-                  <button type="button" class="btn-secondary" id="btn-toggle-sound" style="font-size: 0.78rem; padding: 6px 12px; border-color: ${sndOn ? 'var(--sage-500)' : 'var(--border-subtle)'};">
-                    Tonos ojos cerrados: ${sndOn ?'Sí' :'No'}
-                  </button>
-                `;
-              })()}
-            </div>
-
-            <div class="breathing-pacer-container mt-2">
-              <div class="breathing-circle-outer">
-                <div class="breathing-ring"></div>
-                <div class="breathing-orb ${this.breathingPhase}" id="breathing-orb">
-                  <span id="breathing-countdown">${this.breathingSecondsLeft || 4}</span>
-                </div>
-              </div>
-
-              <div class="breathing-phase-label" id="breathing-phase-text">Inhala profundamente</div>
-              <div class="breathing-instruction" id="breathing-instruction-text">Expande suavemente alrededor de la sensación...</div>
-
-              <div class="mt-3">
-                <button type="button" class="btn-secondary" id="btn-toggle-breathing" style="font-size: 0.82rem; padding: 5px 14px;">
-                  ${this.breathingPausedByUser ? 'Reanudar Respiración Guiada' : 'Pausar Respiración Guiada'}
-                </button>
-              </div>
+              <button type="button" class="btn-secondary" id="btn-open-somatic-posture" style="font-size: 0.82rem; padding: 8px 14px;">
+                Practicar la Postura Somática del "SÍ" (Steven Hayes)
+              </button>
             </div>
           </div>
         </div>
@@ -795,309 +777,323 @@ class EspacioActApp {
       <div class="btn-group">
         <button type="button" class="btn-secondary" id="btn-act-prev-2">← Volver a la Rueda</button>
         <button type="button" class="btn-primary" id="btn-act-next-2">
-          Paso 3: Desarmar la Mente (Defusión)
+          Paso 3: Tomar Distancia
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </div>
     `;
   }
 
-  renderPersonalAnchorBanner() {
-    const profile = window.stateManager.getProfile();
-    const anchors = window.stateManager.getAnchors();
-    const primaryValue = (profile.coreValues && profile.coreValues[0]) ? profile.coreValues[0] : null;
-    const anchor = anchors.length > 0 ? anchors[this.anchorBannerIndex % anchors.length] : null;
-    if (!primaryValue && !anchor) return '';
-
-    const esc = window.KhoraUtils.escapeHtml;
-
-    return `
-      <div class="personal-anchor-banner" style="background: rgba(87, 139, 116, 0.1); border: 1px solid var(--sage-400); border-left: 4px solid var(--sage-600); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 16px;">
-        <div class="flex-between" style="flex-wrap: wrap; gap: 6px; margin-bottom: 6px;">
-          <span style="font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--sage-700);">
-            Tu Faro Personal y Tarjeta de Anclaje ACT
-          </span>
-          ${anchors.length > 1 ? `
-            <button type="button" class="btn-secondary" id="btn-rotate-anchor-banner" style="font-size: 0.72rem; padding: 3px 10px;">
-              Otra tarjeta de anclaje
-            </button>
-          ` : ''}
-        </div>
-        ${primaryValue ? `
-          <div style="font-size: 0.82rem; color: var(--text-primary); margin-bottom: ${anchor ? '6px' : '0'};">
-            <strong>Valor elegido (${esc(primaryValue.domain)}):</strong> «${esc(primaryValue.statement)}»
-          </div>
-        ` : ''}
-        ${anchor ? `
-          <div id="espacio-anchor-quote" style="font-size: 0.83rem; font-style: italic; color: var(--text-secondary); line-height: 1.45;">
-            "${esc(anchor.text)}" <span style="font-style: normal; font-size: 0.74rem; color: var(--text-muted);">— ${esc(anchor.author)} (${esc(anchor.category)})</span>
-          </div>
-        ` : ''}
-      </div>
-    `;
+  buildReframedThought(style, rawThought, mindName) {
+    const clean = String(rawThought || '').trim().replace(/\.+$/, '');
+    if (!clean) return '';
+    const mind = (mindName || 'George').trim() || 'George';
+    if (style === 'story') {
+      return `${mind} me vuelve a contar la historia de que ${clean}.`;
+    }
+    if (style === 'thanks') {
+      return `Gracias, ${mind}, por intentar protegerme con la idea de que ${clean}.`;
+    }
+    return `Estoy teniendo el pensamiento de que ${clean}.`;
   }
 
   // -------------------------------------------------------------
-  // STEP 3: Defusión Cognitiva (Separarte del Pensamiento + Re-evaluar Intensidad)
+  // STEP 3: Defusión Cognitiva (Un Solo Gesto de Distancia)
   // -------------------------------------------------------------
   renderStep3() {
+    const esc = (s) => this.escapeHtml(s);
     const rawThought = this.entryData.thought || '';
-    const cleanThought = rawThought.trim() || '[tu pensamiento]';
-    const mindName = window.stateManager.getMindName();
-
-    const reframing1 = `Estoy teniendo el pensamiento de que ${cleanThought}.`;
-    const reframing2 = `Observo con curiosidad que ${mindName} (mi mente) me está contando la historia de que ${cleanThought}.`;
-    const reframing3 = `Agradezco a ${mindName} por intentar protegerme creyendo que ${cleanThought}.`;
+    const mindName = window.stateManager.getMindName() || 'George';
+    const reframed = this.buildReframedThought(this.defusionStyle, rawThought, mindName);
+    this.entryData.reframedThought = reframed;
 
     const quickThoughts = [
       'Se van a enfadar si digo que no',
       'Soy egoísta por priorizarme',
-      'Tengo que poder con todo sin fallar',
-      'No voy a ser capaz de sostener esto',
-      'Si no cedo, me van a rechazar'
+      'Tengo que poder con todo',
+      'No voy a poder sostener esto',
+      'Si no cedo, me rechazarán'
+    ];
+
+    const styleTabs = [
+      { id: 'notice', label: 'Notar el pensamiento' },
+      { id: 'story', label: `Historia de ${mindName}` },
+      { id: 'thanks', label: `Gracias, ${mindName}` }
     ];
 
     return `
-      ${this.renderPersonalAnchorBanner()}
       <div class="form-group">
-        <div class="flex-between" style="flex-wrap: wrap; gap: 6px;">
-          <label class="form-label" for="act-thought-input" style="margin-bottom: 0;">3. ¿Qué pensamiento te repite «${mindName}»?</label>
+        <div class="flex-between" style="flex-wrap: wrap; gap: 8px;">
+          <div class="title-with-help">
+            <label class="form-label" for="act-thought-input" style="margin-bottom: 0;">3. Tomar distancia del pensamiento</label>
+            <button type="button" class="help-info-trigger" data-help-topic="defusion-act" aria-label="Información de esta herramienta">ⓘ</button>
+          </div>
           <button type="button" class="btn-secondary" id="btn-edit-mind-name" style="font-size: 0.75rem; padding: 4px 10px;">
-            Apodo:<strong>«${mindName}»</strong>
+            Apodo de tu mente: «${esc(mindName)}»
           </button>
         </div>
-        <textarea id="act-thought-input" class="form-textarea mt-2" rows="2" style="min-height: 70px;" placeholder="Escribe el pensamiento que te atrapa ahora mismo...">${rawThought}</textarea>
-        <div style="margin-top: 8px;">
-          <button type="button" class="btn-inline-link" id="btn-act-toggle-thought-examples" style="font-size: 0.78rem;">
-            ${this.showThoughtExamples ?'▴ Ocultar ejemplos' :'¿Bloqueado? Ver ejemplos de pensamientos'}
+        <p class="form-hint" style="margin-top: 4px;">
+          Pon en una frase lo que te repite la mente para verlo como un pensamiento, no como una orden.
+        </p>
+
+        <textarea id="act-thought-input" class="form-textarea mt-2" rows="2" style="min-height: 60px;" placeholder="Ej: Se van a enfadar si digo que no…">${esc(rawThought)}</textarea>
+
+        <div class="quick-chips-row" style="margin-top: 8px;">
+          ${quickThoughts.map(qt => `
+            <button type="button" class="quick-fill-chip ${rawThought.trim() === qt ? 'active' : ''}" data-quick-thought="${esc(qt)}">
+              "${esc(qt)}"
+            </button>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="form-group mt-4">
+        <label class="form-label" style="margin-bottom: 8px;">Míralo con distancia</label>
+
+        <div class="defusion-style-tabs" role="tablist" aria-label="Míralo con distancia">
+          ${styleTabs.map(tab => {
+            const active = this.defusionStyle === tab.id;
+            return `
+              <button type="button"
+                      role="tab"
+                      aria-selected="${active}"
+                      class="defusion-style-pill ${active ? 'active' : ''}"
+                      data-defusion-style="${tab.id}">
+                ${esc(tab.label)}
+              </button>
+            `;
+          }).join('')}
+        </div>
+
+        <div class="defusion-reframing-card defusion-live-card" id="act-defusion-live-card">
+          ${reframed ? `
+            <div class="defusion-text" id="act-defusion-live-text">"${esc(reframed)}"</div>
+          ` : `
+            <div class="defusion-text is-placeholder" id="act-defusion-live-text">Escribe o toca una frase arriba para verla con distancia.</div>
+          `}
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button type="button" class="btn-secondary" id="btn-act-prev-3">← Atrás</button>
+        <button type="button" class="btn-primary" id="btn-act-next-3">
+          Paso 4: Elegir Micro-Paso
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    `;
+  }
+
+  getDerivedPassenger() {
+    const thought = (this.entryData.thought || '').trim();
+    if (thought) return thought;
+    const emotions = Array.isArray(this.entryData.emotions) ? this.entryData.emotions : [];
+    if (emotions.length > 0) {
+      const zone = Array.isArray(this.entryData.bodyZones) && this.entryData.bodyZones[0]
+        ? ` en ${this.entryData.bodyZones[0]}`
+        : '';
+      return `${this.getSelectedEmotionsLabel()}${zone}`;
+    }
+    return '';
+  }
+
+  // -------------------------------------------------------------
+  // STEP 4: Punto de Elección + Disposición Heredada + Cierre
+  // -------------------------------------------------------------
+  renderStep4() {
+    const esc = (s) => this.escapeHtml(s);
+    const profile = window.stateManager.getProfile();
+    const profileValues = (profile.coreValues || []).map(
+      v => `${v.domain}: ${v.statement.slice(0, 32)}${v.statement.length > 32 ? '…' : ''}`
+    );
+    const baseValues = ['Dignidad', 'Autocuidado', 'Honestidad', 'Límites Sanos', 'Calma', 'Compasión'];
+    const isValue = this.entryData.choiceType !== 'autopilot';
+    const derivedPassenger = this.getDerivedPassenger();
+    const passengerLabel = derivedPassenger || 'esta incomodidad';
+    const valueLabel = (this.entryData.valueChosen || '').trim() || 'lo que me importa';
+
+    const quickCommitted = [
+      'Respirar y responder en 15 min',
+      'Decir que no en 1 frase sin excusas',
+      'Priorizar mi descanso',
+      'Expresar mi postura con calma'
+    ];
+    const quickAutopilot = [
+      'Callarme y ceder',
+      'Justificarme de más',
+      'Contestar a la defensiva',
+      'Huir o posponer'
+    ];
+
+    return `
+      <div class="form-group">
+        <label class="form-label" style="margin-bottom: 2px;">4. Elegir tu siguiente paso</label>
+        <p class="form-hint" style="margin-bottom: 12px;">
+          Elige un gesto pequeño hacia lo que te importa, o registra sin reproche si esta vez ganó el piloto automático.
+        </p>
+
+        <div class="act-choice-switch" role="tablist" aria-label="Elegir tu siguiente paso">
+          <button type="button"
+                  role="tab"
+                  aria-selected="${isValue}"
+                  class="act-choice-switch-btn ${isValue ? 'active value' : ''}"
+                  id="btn-select-value">
+            Hacia mis valores
           </button>
-          ${this.showThoughtExamples ? `
-            <div class="quick-chips-row" style="margin-top: 8px;">
-              ${quickThoughts.map(qt => `
-                <button type="button" class="quick-fill-chip ${rawThought.trim() === qt ? 'active' : ''}" data-quick-thought="${qt.replace(/"/g, '&quot;')}">
-                  "${qt}"
-                </button>
-              `).join('')}
+          <button type="button"
+                  role="tab"
+                  aria-selected="${!isValue}"
+                  class="act-choice-switch-btn ${!isValue ? 'active autopilot' : ''}"
+                  id="btn-select-autopilot">
+            Caí en piloto automático
+          </button>
+        </div>
+
+        <div class="act-choice-panel">
+          ${isValue ? `
+            <div>
+              <label class="form-label" for="act-custom-value" style="font-size: 0.9rem; margin-bottom: 6px;">
+                ¿Qué valor quieres cuidar aquí?
+              </label>
+
+              ${profileValues.length > 0 ? `
+                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
+                  ${profileValues.map(val => `
+                    <button type="button" class="quick-fill-chip ${this.entryData.valueChosen === val ? 'active' : ''}" data-val-chip="${esc(val)}">
+                      ${esc(val)}
+                    </button>
+                  `).join('')}
+                </div>
+                <div style="margin-bottom: 8px;">
+                  <button type="button" class="btn-inline-link" id="btn-toggle-more-values" style="font-size: 0.78rem;">
+                    ${this.showMoreValues ? 'Ocultar otros valores' : 'Ver otros valores'}
+                  </button>
+                </div>
+              ` : ''}
+
+              ${(profileValues.length === 0 || this.showMoreValues) ? `
+                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
+                  ${baseValues.map(val => `
+                    <button type="button" class="quick-fill-chip ${this.entryData.valueChosen === val ? 'active' : ''}" data-val-chip="${esc(val)}">
+                      ${esc(val)}
+                    </button>
+                  `).join('')}
+                </div>
+              ` : ''}
+
+              <input type="text" id="act-custom-value" class="form-input" style="font-size: 0.86rem; padding: 8px 11px;"
+                     value="${esc(this.entryData.valueChosen)}"
+                     placeholder="O escribe tu valor guía…">
+
+              <label class="form-label mt-3" for="act-committed-action" style="font-size: 0.9rem; margin-bottom: 4px;">
+                Tu micro-paso ahora (aunque sea pequeño)
+              </label>
+              <textarea id="act-committed-action" class="form-textarea" rows="2" style="min-height: 54px;" placeholder="Ej: Pedir 15 minutos antes de responder…">${esc(this.entryData.committedAction)}</textarea>
+
+              <div class="quick-chips-row" style="margin-top: 8px; margin-bottom: 0;">
+                ${quickCommitted.map(ca => `
+                  <button type="button" class="quick-fill-chip ${this.entryData.committedAction === ca ? 'active' : ''}" data-quick-committed="${esc(ca)}">
+                    + ${esc(ca)}
+                  </button>
+                `).join('')}
+              </div>
             </div>
+          ` : `
+            <div>
+              <label class="form-label" for="act-autopilot-urge" style="font-size: 0.9rem; margin-bottom: 4px;">
+                ¿Qué reflejo automático tomó el volante?
+              </label>
+              <p class="form-hint" style="margin-bottom: 8px;">
+                Nombrarlo sin culpa te ayuda a detectarlo antes la próxima vez.
+              </p>
+              <textarea id="act-autopilot-urge" class="form-textarea" rows="2" style="min-height: 56px;" placeholder="Ej: Callarme y ceder para evitar tensión…">${esc(this.entryData.autopilotUrge)}</textarea>
+
+              <div class="quick-chips-row" style="margin-top: 8px; margin-bottom: 0;">
+                ${quickAutopilot.map(ap => `
+                  <button type="button" class="quick-fill-chip ${this.entryData.autopilotUrge === ap ? 'active' : ''}" data-quick-autopilot="${esc(ap)}">
+                    ${esc(ap)}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          `}
+        </div>
+
+        <div class="act-willingness-strip" id="act-willingness-strip">
+          ${isValue ? `
+            <div>
+              <span>Con disposición ACT: avanzo hacia </span><strong id="act-willingness-value-text">«${esc(valueLabel)}»</strong><span> llevando a bordo </span><em id="act-willingness-passenger-text">«${esc(passengerLabel)}»</em><span>, sin esperar a que desaparezca.</span>
+            </div>
+          ` : `
+            <div>
+              <span>Observo con amabilidad que hoy me arrastró </span><em id="act-willingness-passenger-text">«${esc(passengerLabel)}»</em><span>. Registrarlo ya es entrenar presencia.</span>
+            </div>
+          `}
+          ${derivedPassenger ? `
+            <label style="display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 0.78rem; color: var(--text-secondary); cursor: pointer;">
+              <input type="checkbox" id="chk-save-passenger-to-bus" ${this.entryData.savePassengerToBus ? 'checked' : ''} style="width: 16px; height: 16px;">
+              <span>Fichar en «Mi Autobús» para trabajarlo en calma</span>
+            </label>
           ` : ''}
         </div>
       </div>
 
-      <!-- Real-time Defusion Cards -->
-      <div class="form-group mt-4">
-        <div class="title-with-help" style="margin-bottom: 8px;">
-          <label class="form-label" style="margin-bottom: 0;">Fórmulas de Distanciamiento ACT (Yo Observador vs. ${mindName})</label>
-          <button type="button" class="help-info-trigger" data-help-topic="defusion-act" aria-label="Información de esta herramienta">ⓘ</button>
-        </div>
-        
-        <div class="defusion-card-group">
-          <div class="defusion-reframing-card" style="cursor: pointer;" id="defusion-card-1">
-            <div class="defusion-badge">1. Nombrar el Proceso Mental</div>
-            <div class="defusion-text" id="def-text-1">"${reframing1}"</div>
-          </div>
-
-          <div class="defusion-reframing-card" style="cursor: pointer;" id="defusion-card-2">
-            <div class="defusion-badge">2. La Historia de ${mindName}</div>
-            <div class="defusion-text" id="def-text-2">"${reframing2}"</div>
-          </div>
-
-          <div class="defusion-reframing-card" style="cursor: pointer;" id="defusion-card-3">
-            <div class="defusion-badge">3. Gratitud y No-Lucha</div>
-            <div class="defusion-text" id="def-text-3">"${reframing3}"</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Interactive Leaves on a Stream Exercise -->
-      <div class="form-group mt-4">
-        <label class="form-label">Ejercicio Visual: Hojas en el Río</label>
-        
-        <div class="stream-container">
-          <div class="stream-water-lines"></div>
-          <div class="floating-leaf" id="floating-leaf-thought">
-<span></span>
-            <span id="floating-leaf-text">${cleanThought}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Post-Defusion Intensity Check -->
       <div class="slider-group mt-4" style="background: var(--bg-surface-elevated); padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
         <div class="slider-header">
-          <label class="form-label" style="margin-bottom: 0;">¿Cómo está la intensidad ahora? (antes: ${this.entryData.initialIntensity}/10)</label>
+          <label class="form-label" style="margin-bottom: 0;">¿Cuánto pesa la ola ahora? (antes: ${this.entryData.initialIntensity}/10)</label>
           <span class="slider-val-badge" id="val-act-post-intensity">${this.entryData.postIntensity}/10</span>
         </div>
         <input type="range" class="range-slider" id="slider-act-post-intensity" min="1" max="10" value="${this.entryData.postIntensity}">
       </div>
 
       <div class="btn-group">
-        <button type="button" class="btn-secondary" id="btn-act-prev-3">← Atrás</button>
-        <button type="button" class="btn-primary" id="btn-act-next-3">
-          Paso 4: Valores y Autobús ACT
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </button>
-      </div>
-    `;
-  }
-
-  // -------------------------------------------------------------
-  // STEP 4: Dirección de Valores vs. Piloto Automático
-  // -------------------------------------------------------------
-  renderStep4() {
-    const profile = window.stateManager.getProfile();
-    const profileValues = (profile.coreValues || []).map(v => `${v.domain}: ${v.statement.slice(0, 32)}${v.statement.length > 32 ? '…' : ''}`);
-    const baseValues = [
-      'Dignidad', 'Autocuidado', 'Honestidad', 'Límites Sanos', 
-      'Valentía', 'Respeto mutuo', 'Calma', 'Autenticidad', 'Compasión'
-    ];
-    const valuesList = [...new Set([...profileValues, ...baseValues])];
-
-    const savedPassengers = (profile.busPassengers || [])
-      .filter(p => p.status !== 'integrated')
-      .map(p => p.name);
-    const livePassengers = [
-      'El miedo a que se enfade o ponga mala cara',
-      `La voz de ${window.stateManager.getMindName()} diciendo que soy egoísta`,
-      `La sensación de ${this.entryData.physicalShape || 'tensión'} en ${this.entryData.bodyZones[0] || 'el cuerpo'}`
-    ];
-    const escAttr = (s) => String(s || '').replace(/"/g, '&quot;');
-
-    return `
-      ${this.renderPersonalAnchorBanner()}
-      <div class="form-group">
-        <label class="form-label">El Cruce de Caminos: Piloto Automático vs. Tus Valores</label>
-
-        <!-- Showdown Cards -->
-        <div class="choice-showdown-grid">
-          <!-- Autopilot Column -->
-          <div class="choice-box ${this.entryData.choiceType === 'autopilot' ? 'selected-autopilot' : ''}" id="choice-autopilot-box">
-            <div>
-<span class="choice-badge autopilot">Piloto Automático</span>
-              <textarea id="act-autopilot-urge" class="form-textarea mt-2" style="min-height: 62px;" placeholder="¿Qué te pide el reflejo rápido?">${this.entryData.autopilotUrge}</textarea>
-              ${this.showStep4Examples ? `
-                <div class="quick-chips-row" style="margin-top: 8px; margin-bottom: 4px;">
-                  ${['Callarme y ceder', 'Justificarme de más', 'Contestar a la defensiva', 'Huir o posponer'].map(ap => `
-                    <button type="button" class="quick-fill-chip ${this.entryData.autopilotUrge === ap ? 'active' : ''}" data-quick-autopilot="${escAttr(ap)}">
-                      ${ap}
-                    </button>
-                  `).join('')}
-                </div>
-              ` : ''}
-            </div>
-            <button type="button" class="btn-secondary mt-2" id="btn-select-autopilot" style="width: 100%; font-size: 0.85rem;">
-              ${this.entryData.choiceType === 'autopilot' ? '✓ Seleccionado' : 'Esta vez caí en piloto'}
-            </button>
-          </div>
-
-          <!-- Value Column -->
-          <div class="choice-box ${this.entryData.choiceType === 'value' ? 'selected-value' : ''}" id="choice-value-box">
-            <div>
-<span class="choice-badge value">Opción con Valores</span>
-
-              ${profileValues.length > 0 ? `
-                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; margin-bottom: 6px;">
-                  ${profileValues.map(val => `
-                    <span class="zone-tag" style="cursor: pointer; ${this.entryData.valueChosen === val ? 'background-color: var(--sage-500); color: #fff;' : ''}" data-val-chip="${escAttr(val)}">
-                      ${val}
-                    </span>
-                  `).join('')}
-                </div>
-              ` : ''}
-
-              <input type="text" id="act-custom-value" class="form-input mt-2" style="font-size: 0.84rem; padding: 7px 10px;"
-                     value="${escAttr(this.entryData.valueChosen)}"
-                     placeholder="Valor guía (ej: Honestidad, Presencia, Cuidado...)">
-
-              ${this.showStep4Examples ? `
-                <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; margin-bottom: 6px;">
-                  ${baseValues.map(val => `
-                    <span class="zone-tag" style="cursor: pointer; ${this.entryData.valueChosen === val ? 'background-color: var(--sage-500); color: #fff;' : ''}" data-val-chip="${escAttr(val)}">
-                      ${val}
-                    </span>
-                  `).join('')}
-                </div>
-                <div class="quick-chips-row" style="margin-top: 4px; margin-bottom: 6px;">
-                  ${['Respirar y responder en 15 min', 'Expresar mi postura con calma', 'Priorizar mi descanso', 'Hablar con cariño y firmeza'].map(ca => `
-                    <button type="button" class="quick-fill-chip ${this.entryData.committedAction === ca ? 'active' : ''}" data-quick-committed="${escAttr(ca)}">
-                      + ${ca}
-                    </button>
-                  `).join('')}
-                </div>
-              ` : ''}
-
-              <textarea id="act-committed-action" class="form-textarea mt-2" style="min-height: 62px;" placeholder="Micro-acción concreta que eliges dar...">${this.entryData.committedAction}</textarea>
-            </div>
-            <button type="button" class="btn-primary mt-2" id="btn-select-value" style="width: 100%; font-size: 0.85rem;">
-              ${this.entryData.choiceType === 'value' ? '✓ Elijo este Valor' : 'Comprometerme con mi Valor'}
-            </button>
-          </div>
-        </div>
-
-        <div style="margin-top: 8px;">
-          <button type="button" class="btn-inline-link" id="btn-act-toggle-step4-examples" style="font-size: 0.78rem;">
-            ${this.showStep4Examples ?'▴ Ocultar ejemplos' :'¿Bloqueado? Ver ejemplos de respuestas, valores y acciones'}
-          </button>
-        </div>
-      </div>
-
-      <!-- Exercise #2: Passengers on the Bus / Carrying Your Cards (Steven C. Hayes) -->
-      <div class="form-group mt-4" style="background: var(--bg-surface-elevated); padding: 15px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); border-left: 4px solid var(--sage-500);">
-        <label class="form-label" style="font-size: 0.92rem; margin-bottom: 8px;">
-          El Pasajero en el Autobús (Disposición ACT — Steven C. Hayes)
-        </label>
-
-        ${savedPassengers.length > 0 ? `
-          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
-            ${savedPassengers.map(p => `
-              <button type="button" class="badge passenger-chip-btn ${this.entryData.carriedPassenger === p ? 'active' : ''}"
-                      data-passenger-chip="${escAttr(p)}"
-                      style="cursor: pointer; padding: 5px 10px; font-size: 0.76rem; white-space: normal; text-align: left; border: 1px solid ${this.entryData.carriedPassenger === p ? 'var(--sage-500)' : 'var(--border-subtle)'}; background: ${this.entryData.carriedPassenger === p ? 'var(--sage-500)' : 'var(--bg-surface)'}; color: ${this.entryData.carriedPassenger === p ? '#fff' : 'var(--text-secondary)'};">
-                ${p}
-              </button>
-            `).join('')}
-          </div>
-        ` : ''}
-
-        <input type="text" id="act-passenger-input" class="form-input" style="font-size: 0.85rem; padding: 8px 12px;"
-               placeholder="¿Qué pensamiento o sensación incómoda llevas contigo mientras avanzas?"
-               value="${escAttr(this.entryData.carriedPassenger || '')}">
-
-        <div style="margin-top: 8px;">
-          <button type="button" class="btn-inline-link" id="btn-act-toggle-passenger-examples" style="font-size: 0.78rem;">
-            ${this.showPassengerExamples ?'▴ Ocultar ejemplos' :'Ver ejemplos de pasajeros'}
-          </button>
-          ${this.showPassengerExamples ? `
-            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
-              ${livePassengers.map(p => `
-                <button type="button" class="badge passenger-chip-btn ${this.entryData.carriedPassenger === p ? 'active' : ''}"
-                        data-passenger-chip="${escAttr(p)}"
-                        style="cursor: pointer; padding: 5px 10px; font-size: 0.76rem; white-space: normal; text-align: left; border: 1px solid ${this.entryData.carriedPassenger === p ? 'var(--sage-500)' : 'var(--border-subtle)'}; background: ${this.entryData.carriedPassenger === p ? 'var(--sage-500)' : 'var(--bg-surface)'}; color: ${this.entryData.carriedPassenger === p ? '#fff' : 'var(--text-secondary)'};">
-                  ${p}
-                </button>
-              `).join('')}
-            </div>
-          ` : ''}
-        </div>
-
-        <label style="display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 0.78rem; color: var(--text-secondary); cursor: pointer;">
-          <input type="checkbox" id="chk-save-passenger-to-bus" ${this.entryData.savePassengerToBus ? 'checked' : ''} style="width: 16px; height: 16px;">
-<span>Dejar este pasajero fichado en<strong>"Mi Autobús"</strong> (Valores y Rutina) para seguir trabajándolo a medio plazo</span>
-        </label>
-      </div>
-
-      <div class="btn-group">
-        <button type="button" class="btn-secondary" id="btn-act-prev-4">Atrás</button>
+        <button type="button" class="btn-secondary" id="btn-act-prev-4">← Atrás</button>
         <button type="button" class="btn-primary" id="btn-act-save">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          Completar Procesamiento ACT
+          Guardar y cerrar
         </button>
       </div>
     `;
   }
 
   // -------------------------------------------------------------
-  // Breathing Timer Logic
+  // Breathing Pacer Logic (Opt-In, Word-Guided)
   // -------------------------------------------------------------
+  getBreathingPhaseMeta(phase) {
+    switch (phase) {
+      case 'inhale':
+        return {
+          orbLabel: 'Inhala',
+          phaseText: 'Inhala suavemente',
+          instruction: 'Deja entrar el aire y abre espacio alrededor de la sensación.'
+        };
+      case 'hold':
+        return {
+          orbLabel: 'Mantén',
+          phaseText: 'Mantén con suavidad',
+          instruction: 'Observa la sensación sin empujarla ni pelear contra ella.'
+        };
+      case 'exhale':
+        return {
+          orbLabel: 'Suelta',
+          phaseText: 'Exhala soltando la lucha',
+          instruction: 'Deja salir el aire lento y hazle hueco a lo que notas.'
+        };
+      case 'rest':
+        return {
+          orbLabel: 'Pausa',
+          phaseText: 'Pausa serena',
+          instruction: 'Descansa un instante antes del siguiente aliento.'
+        };
+      default:
+        return {
+          orbLabel: 'Respirar',
+          phaseText: 'Respiración guiada (opcional)',
+          instruction: 'Un ritmo lento (4s inhalar · 4s mantener · 6s soltar) para hacer espacio alrededor de la sensación.'
+        };
+    }
+  }
+
   notifyBreathingPhase(phase) {
     if (phase === 'inhale') {
       window.app?.triggerHaptic([70]);
@@ -1108,71 +1104,99 @@ class EspacioActApp {
     } else if (phase === 'exhale') {
       window.app?.triggerHaptic([130]);
       window.app?.playGentleTone(396, 650);
-    } else {
+    } else if (phase === 'rest') {
       window.app?.triggerHaptic([30]);
     }
   }
 
   startBreathing() {
-    this.stopBreathing();
+    if (this.breathingPhaseTimeout) {
+      clearTimeout(this.breathingPhaseTimeout);
+      this.breathingPhaseTimeout = null;
+    }
+    this.breathingActive = true;
+    this.breathingCyclesDone = 0;
     this.breathingPhase = 'inhale';
-    this.breathingSecondsLeft = 4;
     this.updateBreathingUI();
     this.notifyBreathingPhase(this.breathingPhase);
+    this.scheduleNextBreathingPhase();
+  }
 
-    this.breathingTimer = setInterval(() => {
-      this.breathingSecondsLeft--;
-      if (this.breathingSecondsLeft <= 0) {
-        if (this.breathingPhase === 'inhale') {
-          this.breathingPhase = 'hold';
-          this.breathingSecondsLeft = 4;
-        } else if (this.breathingPhase === 'hold') {
-          this.breathingPhase = 'exhale';
-          this.breathingSecondsLeft = 6;
-        } else if (this.breathingPhase === 'exhale') {
-          this.breathingPhase = 'rest';
-          this.breathingSecondsLeft = 2;
-        } else {
-          this.breathingPhase = 'inhale';
-          this.breathingSecondsLeft = 4;
-          this.breathingCyclesDone++;
-        }
-        this.notifyBreathingPhase(this.breathingPhase);
+  scheduleNextBreathingPhase() {
+    if (!this.breathingActive) return;
+    const durations = {
+      inhale: 4000,
+      hold: 4000,
+      exhale: 6000,
+      rest: 2000
+    };
+    const nextMap = {
+      inhale: 'hold',
+      hold: 'exhale',
+      exhale: 'rest',
+      rest: 'inhale'
+    };
+    const delay = durations[this.breathingPhase] || 4000;
+    this.breathingPhaseTimeout = setTimeout(() => {
+      if (!this.breathingActive) return;
+      const nextPhase = nextMap[this.breathingPhase] || 'inhale';
+      if (this.breathingPhase === 'rest' && nextPhase === 'inhale') {
+        this.breathingCyclesDone++;
       }
+      this.breathingPhase = nextPhase;
       this.updateBreathingUI();
-    }, 1000);
+      this.notifyBreathingPhase(this.breathingPhase);
+      this.scheduleNextBreathingPhase();
+    }, delay);
   }
 
   stopBreathing() {
-    if (this.breathingTimer) {
-      clearInterval(this.breathingTimer);
-      this.breathingTimer = null;
+    if (this.breathingPhaseTimeout) {
+      clearTimeout(this.breathingPhaseTimeout);
+      this.breathingPhaseTimeout = null;
     }
+    this.breathingActive = false;
+    this.breathingPhase = 'idle';
+    this.updateBreathingUI();
   }
 
   updateBreathingUI() {
     const orb = document.getElementById('breathing-orb');
-    const countdown = document.getElementById('breathing-countdown');
+    const phaseWord = document.getElementById('breathing-phase-word');
     const phaseText = document.getElementById('breathing-phase-text');
     const instructionText = document.getElementById('breathing-instruction-text');
+    const cycleHint = document.getElementById('breathing-cycle-hint');
+    const toggleBtn = document.getElementById('btn-toggle-breathing');
+    const sensoryControls = document.getElementById('breathing-sensory-controls');
 
-    if (!orb || !countdown) return;
+    if (!orb) return;
 
-    countdown.textContent = this.breathingSecondsLeft;
+    const meta = this.getBreathingPhaseMeta(this.breathingPhase);
     orb.className = `breathing-orb ${this.breathingPhase}`;
+    orb.setAttribute('aria-pressed', String(this.breathingActive));
+    orb.setAttribute('aria-label', this.breathingActive ? 'Detener respiración' : 'Iniciar respiración guiada');
 
-    if (this.breathingPhase === 'inhale') {
-      phaseText.textContent = 'Inhala suavemente';
-      instructionText.textContent = 'Deja entrar el aire, siente el espacio en tu interior...';
-    } else if (this.breathingPhase === 'hold') {
-      phaseText.textContent = 'Mantén la calma';
-      instructionText.textContent = 'Observa sin juzgar lo que está presente en tu cuerpo...';
-    } else if (this.breathingPhase === 'exhale') {
-      phaseText.textContent = 'Exhala soltando la lucha';
-      instructionText.textContent = 'Hazle hueco a la incomodidad, no necesitas pelear contra la ola...';
-    } else {
-      phaseText.textContent = 'Pausa serena';
-      instructionText.textContent = 'Descansa en el presente antes del próximo aliento...';
+    if (phaseWord) phaseWord.textContent = meta.orbLabel;
+    if (phaseText) phaseText.textContent = meta.phaseText;
+    if (instructionText) instructionText.textContent = meta.instruction;
+
+    if (cycleHint) {
+      if (this.breathingActive && this.breathingCyclesDone > 0) {
+        cycleHint.textContent = `Ciclos completados: ${this.breathingCyclesDone}`;
+        cycleHint.hidden = false;
+      } else {
+        cycleHint.textContent = '';
+        cycleHint.hidden = true;
+      }
+    }
+
+    if (toggleBtn) {
+      toggleBtn.textContent = this.breathingActive ? 'Detener respiración' : 'Iniciar respiración guiada';
+      toggleBtn.className = this.breathingActive ? 'btn-secondary' : 'btn-primary';
+    }
+
+    if (sensoryControls) {
+      sensoryControls.hidden = !this.breathingActive;
     }
   }
 
@@ -1285,7 +1309,6 @@ class EspacioActApp {
         this.entryData.lastFocusedEmotion = 'Desbordamiento';
         this.entryData.emotion = 'Desbordamiento';
       }
-      this.breathingPausedByUser = false;
       this.setStep(2);
       window.app?.showToast('Pasando directo a hacer espacio en el cuerpo');
     });
@@ -1296,7 +1319,6 @@ class EspacioActApp {
         this.entryData.lastFocusedEmotion = 'Malestar / Activación en curso';
         this.entryData.emotion = 'Malestar / Activación en curso';
       }
-      this.breathingPausedByUser = false;
       this.setStep(2);
       window.app?.showToast('Avanzando al cuerpo sin forzar etiqueta');
     });
@@ -1316,117 +1338,73 @@ class EspacioActApp {
         this.entryData.emotion = 'Malestar / Activación en curso';
         window.app?.showToast('Continuando sin etiqueta específica; puedes hacerle hueco en el cuerpo');
       }
-      this.breathingPausedByUser = false;
       this.setStep(2);
     });
 
-    // Step 2 Events (Body Map, Physicalizing, Somatic Posture & Breathing)
+    // Step 2 Events (Body Map, Physicalizing, Optional Breathing Modal & Somatic Posture)
     if (this.currentStep === 2) {
-      if (!this.breathingTimer && !this.breathingPausedByUser) {
-        this.startBreathing();
-      } else {
-        this.updateBreathingUI();
-      }
+      document.getElementById('btn-open-breathing-modal')?.addEventListener('click', () => {
+        this.openBreathingModal();
+      });
 
       document.getElementById('btn-open-somatic-posture')?.addEventListener('click', () => {
         this.openSomaticPostureModal();
       });
-
-      document.getElementById('btn-toggle-haptic')?.addEventListener('click', (e) => {
-        const st = window.stateManager.getSettings();
-        const nextVal = st.vibration === false;
-        st.vibration = nextVal;
-        window.stateManager.saveSettings(st);
-        e.currentTarget.textContent =`Vibración guía: ${nextVal ?'Sí' :'No'}`;
-        e.currentTarget.style.borderColor = nextVal ? 'var(--sage-500)' : 'var(--border-subtle)';
-        if (nextVal) window.app?.triggerHaptic([60]);
-        window.app?.showToast(nextVal ? 'Vibración guía activada' : 'Vibración guía desactivada');
-      });
-
-      document.getElementById('btn-toggle-sound')?.addEventListener('click', (e) => {
-        const st = window.stateManager.getSettings();
-        const nextVal = st.sound !== true;
-        st.sound = nextVal;
-        window.stateManager.saveSettings(st);
-        e.currentTarget.textContent =`Tonos ojos cerrados: ${nextVal ?'Sí' :'No'}`;
-        e.currentTarget.style.borderColor = nextVal ? 'var(--sage-500)' : 'var(--border-subtle)';
-        if (nextVal) window.app?.playGentleTone(432, 350);
-        window.app?.showToast(nextVal ? 'Tonos suaves activados' : 'Tonos suaves desactivados');
-      });
-
-      const toggleBtn = document.getElementById('btn-toggle-breathing');
-      if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-          if (this.breathingTimer) {
-            this.breathingPausedByUser = true;
-            this.stopBreathing();
-            toggleBtn.textContent = 'Reanudar Respiración Guiada';
-          } else {
-            this.breathingPausedByUser = false;
-            this.startBreathing();
-            toggleBtn.textContent = 'Pausar Respiración Guiada';
-          }
-        });
-      }
     }
-
-    // Rotate Personal Anchor Banner in Steps 3 & 4
-    document.getElementById('btn-rotate-anchor-banner')?.addEventListener('click', () => {
-      const anchors = window.stateManager.getAnchors();
-      if (!anchors || anchors.length === 0) return;
-      this.anchorBannerIndex = (this.anchorBannerIndex + 1) % anchors.length;
-      const anchor = anchors[this.anchorBannerIndex];
-      const quoteEl = document.getElementById('espacio-anchor-quote');
-      if (quoteEl && anchor) {
-        quoteEl.innerHTML = '';
-        const txtNode = document.createTextNode(`"${anchor.text}" `);
-        const span = document.createElement('span');
-        span.style.cssText = 'font-style: normal; font-size: 0.74rem; color: var(--text-muted);';
-        span.textContent = `— ${anchor.author} (${anchor.category})`;
-        quoteEl.appendChild(txtNode);
-        quoteEl.appendChild(span);
-      }
-    });
 
     document.getElementById('btn-act-prev-2')?.addEventListener('click', () => this.setStep(1));
     document.getElementById('btn-act-next-2')?.addEventListener('click', () => this.setStep(3));
 
-    // Step 3 Events (Defusion + Post-Intensity Check)
-    const applyThoughtUpdate = (val) => {
-      this.entryData.thought = val;
-      const textVal = val.trim() || 'me siento totalmente desbordado y nadie me apoya';
-      const mindName = window.stateManager.getMindName();
-
-      const d1 = document.getElementById('def-text-1');
-      const d2 = document.getElementById('def-text-2');
-      const d3 = document.getElementById('def-text-3');
-      const leaf = document.getElementById('floating-leaf-text');
-      if (d1) d1.textContent = `"Estoy teniendo el pensamiento de que ${textVal}."`;
-      if (d2) d2.textContent = `"Observo con curiosidad que ${mindName} (mi mente) me está contando la historia de que ${textVal}."`;
-      if (d3) d3.textContent = `"Agradezco a ${mindName} por intentar protegerme creyendo que ${textVal}."`;
-      if (leaf) leaf.textContent = textVal;
+    // Step 3 Events (Single-Gesture Defusion)
+    const syncDefusionCard = () => {
+      const mindName = window.stateManager.getMindName() || 'George';
+      const reframed = this.buildReframedThought(this.defusionStyle, this.entryData.thought, mindName);
+      this.entryData.reframedThought = reframed;
+      const liveTextEl = document.getElementById('act-defusion-live-text');
+      if (liveTextEl) {
+        if (reframed) {
+          liveTextEl.textContent = `"${reframed}"`;
+          liveTextEl.classList.remove('is-placeholder');
+        } else {
+          liveTextEl.textContent = 'Escribe o toca una frase arriba para verla con distancia.';
+          liveTextEl.classList.add('is-placeholder');
+        }
+      }
     };
 
     const thoughtInput = document.getElementById('act-thought-input');
     if (thoughtInput) {
       thoughtInput.addEventListener('input', (e) => {
-        applyThoughtUpdate(e.target.value);
+        const val = e.target.value;
+        this.entryData.thought = val;
+        document.querySelectorAll('[data-quick-thought]').forEach(c => {
+          c.classList.toggle('active', c.dataset.quickThought === val.trim());
+        });
+        syncDefusionCard();
       });
     }
-
-    document.getElementById('btn-act-toggle-thought-examples')?.addEventListener('click', () => {
-      this.showThoughtExamples = !this.showThoughtExamples;
-      this.render();
-      this.bindEvents();
-    });
 
     document.querySelectorAll('[data-quick-thought]').forEach(chip => {
       chip.addEventListener('click', (e) => {
         const val = e.currentTarget.dataset.quickThought;
+        this.entryData.thought = val;
         if (thoughtInput) thoughtInput.value = val;
-        applyThoughtUpdate(val);
-        document.querySelectorAll('[data-quick-thought]').forEach(c => c.classList.remove('active'));
-        e.currentTarget.classList.add('active');
+        document.querySelectorAll('[data-quick-thought]').forEach(c => {
+          c.classList.toggle('active', c === e.currentTarget);
+        });
+        syncDefusionCard();
+      });
+    });
+
+    document.querySelectorAll('[data-defusion-style]').forEach(pill => {
+      pill.addEventListener('click', (e) => {
+        this.defusionStyle = e.currentTarget.dataset.defusionStyle || 'notice';
+        document.querySelectorAll('[data-defusion-style]').forEach(p => {
+          const isSel = p === e.currentTarget;
+          p.classList.toggle('active', isSel);
+          p.setAttribute('aria-selected', String(isSel));
+        });
+        syncDefusionCard();
       });
     });
 
@@ -1434,64 +1412,75 @@ class EspacioActApp {
       this.openMindNameModal();
     });
 
-    ['defusion-card-1', 'defusion-card-2', 'defusion-card-3'].forEach((cardId) => {
-      const card = document.getElementById(cardId);
-      if (card) {
-        card.addEventListener('click', () => {
-          const textEl = card.querySelector('.defusion-text');
-          this.entryData.reframedThought = textEl.textContent.replace(/^"|"$/g, '');
-          document.querySelectorAll('.defusion-reframing-card').forEach(c => c.style.borderColor = 'var(--sage-500)');
-          card.style.borderColor = 'var(--accent-warmth)';
-          window.app?.showToast(`Re-enmarque seleccionado`);
-        });
-      }
-    });
-
-    const postSlider = document.getElementById('slider-act-post-intensity');
-    const postBadge = document.getElementById('val-act-post-intensity');
-    if (postSlider && postBadge) {
-      postSlider.addEventListener('input', (e) => {
-        const val = parseInt(e.target.value, 10);
-        this.entryData.postIntensity = val;
-        postBadge.textContent = `${val}/10`;
-      });
-    }
-
     document.getElementById('btn-act-prev-3')?.addEventListener('click', () => {
-      this.breathingPausedByUser = false;
       this.setStep(2);
     });
     document.getElementById('btn-act-next-3')?.addEventListener('click', () => {
-      if (!this.entryData.reframedThought) {
-        const textVal = this.entryData.thought.trim() || 'este malestar es insoportable';
-        const mindName = window.stateManager.getMindName();
-        this.entryData.reframedThought = `Observo con curiosidad que ${mindName} me está contando la historia de que ${textVal}.`;
-      }
+      syncDefusionCard();
       this.setStep(4);
     });
 
-    // Step 4 Events
-    document.getElementById('btn-act-toggle-step4-examples')?.addEventListener('click', () => {
-      this.showStep4Examples = !this.showStep4Examples;
-      this.render();
-      this.bindEvents();
-    });
+    // Step 4 Events (Choice Point + Derived Willingness + Closing Intensity)
+    const syncWillingnessBanner = () => {
+      const valEl = document.getElementById('act-willingness-value-text');
+      if (valEl) {
+        const valLabel = (this.entryData.valueChosen || '').trim() || 'lo que me importa';
+        valEl.textContent = `«${valLabel}»`;
+      }
+    };
 
-    document.getElementById('btn-act-toggle-passenger-examples')?.addEventListener('click', () => {
-      this.showPassengerExamples = !this.showPassengerExamples;
-      this.render();
-      this.bindEvents();
-    });
-
-    document.getElementById('act-custom-value')?.addEventListener('input', (e) => {
-      this.entryData.valueChosen = e.target.value;
+    document.getElementById('btn-select-value')?.addEventListener('click', () => {
       this.entryData.choiceType = 'value';
+      this.render();
+      this.bindEvents();
+    });
+
+    document.getElementById('btn-select-autopilot')?.addEventListener('click', () => {
+      this.entryData.choiceType = 'autopilot';
+      this.render();
+      this.bindEvents();
+    });
+
+    document.getElementById('btn-toggle-more-values')?.addEventListener('click', () => {
+      this.showMoreValues = !this.showMoreValues;
+      this.render();
+      this.bindEvents();
+    });
+
+    const customValueInput = document.getElementById('act-custom-value');
+    if (customValueInput) {
+      customValueInput.addEventListener('input', (e) => {
+        const val = e.target.value;
+        this.entryData.valueChosen = val;
+        this.entryData.choiceType = 'value';
+        document.querySelectorAll('[data-val-chip]').forEach(c => {
+          c.classList.toggle('active', c.dataset.valChip === val);
+        });
+        syncWillingnessBanner();
+      });
+    }
+
+    document.querySelectorAll('[data-val-chip]').forEach(chip => {
+      chip.addEventListener('click', (e) => {
+        const val = e.currentTarget.dataset.valChip;
+        this.entryData.valueChosen = val;
+        this.entryData.choiceType = 'value';
+        if (customValueInput) customValueInput.value = val;
+        document.querySelectorAll('[data-val-chip]').forEach(c => {
+          c.classList.toggle('active', c.dataset.valChip === val);
+        });
+        syncWillingnessBanner();
+      });
     });
 
     const autopilotInput = document.getElementById('act-autopilot-urge');
     if (autopilotInput) {
       autopilotInput.addEventListener('input', (e) => {
-        this.entryData.autopilotUrge = e.target.value;
+        const val = e.target.value;
+        this.entryData.autopilotUrge = val;
+        document.querySelectorAll('[data-quick-autopilot]').forEach(c => {
+          c.classList.toggle('active', c.dataset.quickAutopilot === val);
+        });
       });
     }
 
@@ -1500,15 +1489,20 @@ class EspacioActApp {
         const val = e.currentTarget.dataset.quickAutopilot;
         this.entryData.autopilotUrge = val;
         if (autopilotInput) autopilotInput.value = val;
-        document.querySelectorAll('[data-quick-autopilot]').forEach(c => c.classList.remove('active'));
-        e.currentTarget.classList.add('active');
+        document.querySelectorAll('[data-quick-autopilot]').forEach(c => {
+          c.classList.toggle('active', c === e.currentTarget);
+        });
       });
     });
 
     const actionInput = document.getElementById('act-committed-action');
     if (actionInput) {
       actionInput.addEventListener('input', (e) => {
-        this.entryData.committedAction = e.target.value;
+        const val = e.target.value;
+        this.entryData.committedAction = val;
+        document.querySelectorAll('[data-quick-committed]').forEach(c => {
+          c.classList.toggle('active', c.dataset.quickCommitted === val);
+        });
       });
     }
 
@@ -1518,31 +1512,22 @@ class EspacioActApp {
         this.entryData.committedAction = val;
         this.entryData.choiceType = 'value';
         if (actionInput) actionInput.value = val;
-        document.querySelectorAll('[data-quick-committed]').forEach(c => c.classList.remove('active'));
-        e.currentTarget.classList.add('active');
+        document.querySelectorAll('[data-quick-committed]').forEach(c => {
+          c.classList.toggle('active', c === e.currentTarget);
+        });
       });
     });
 
-    document.querySelectorAll('[data-val-chip]').forEach(chip => {
-      chip.addEventListener('click', (e) => {
-        this.entryData.valueChosen = e.currentTarget.dataset.valChip;
-        this.entryData.choiceType = 'value';
-        this.render();
-        this.bindEvents();
+    const postSlider = document.getElementById('slider-act-post-intensity');
+    const postBadge = document.getElementById('val-act-post-intensity');
+    if (postSlider && postBadge) {
+      postSlider.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value, 10);
+        this.postIntensityTouched = true;
+        this.entryData.postIntensity = val;
+        postBadge.textContent = `${val}/10`;
       });
-    });
-
-    document.getElementById('btn-select-autopilot')?.addEventListener('click', () => {
-      this.entryData.choiceType = 'autopilot';
-      this.render();
-      this.bindEvents();
-    });
-
-    document.getElementById('btn-select-value')?.addEventListener('click', () => {
-      this.entryData.choiceType = 'value';
-      this.render();
-      this.bindEvents();
-    });
+    }
 
     // Physicalizing Emotions (Hayes)
     document.querySelectorAll('[data-phys-shape]').forEach(chip => {
@@ -1562,24 +1547,6 @@ class EspacioActApp {
         this.bindEvents();
       });
     });
-
-    // Passengers on the Bus (Hayes)
-    document.querySelectorAll('[data-passenger-chip]').forEach(chip => {
-      chip.addEventListener('click', (e) => {
-        this.entryData.carriedPassenger = e.currentTarget.dataset.passengerChip;
-        const inp = document.getElementById('act-passenger-input');
-        if (inp) inp.value = this.entryData.carriedPassenger;
-        this.render();
-        this.bindEvents();
-      });
-    });
-
-    const passengerInput = document.getElementById('act-passenger-input');
-    if (passengerInput) {
-      passengerInput.addEventListener('input', (e) => {
-        this.entryData.carriedPassenger = e.target.value;
-      });
-    }
 
     const savePasChk = document.getElementById('chk-save-passenger-to-bus');
     if (savePasChk) {
@@ -1712,8 +1679,12 @@ class EspacioActApp {
     if (!modal || !modalBody) return;
 
     const closeModal = () => {
-      modal.classList.remove('active');
-      modalBody.classList.remove('modal-wheel-maximized');
+      if (window.app?.closeModal) {
+        window.app.closeModal();
+      } else {
+        modal.classList.remove('active');
+        modalBody.classList.remove('modal-wheel-maximized');
+      }
     };
 
     const syncInlineView = () => {
@@ -1723,7 +1694,8 @@ class EspacioActApp {
       }
     };
 
-    const renderModalContent = () => {
+    const renderModalContent = ({ preserveScroll = false } = {}) => {
+      const prevScroll = preserveScroll ? modalBody.scrollTop : 0;
       modalBody.classList.add('modal-wheel-maximized');
       const isInEspacioAct = window.app?.currentView === 'espacio-act';
 
@@ -1758,7 +1730,7 @@ class EspacioActApp {
         isChipsView: false,
         onMutate: () => {
           syncInlineView();
-          renderModalContent();
+          renderModalContent({ preserveScroll: true });
         }
       });
 
@@ -1769,7 +1741,7 @@ class EspacioActApp {
         this.entryData.emotion = '';
         this.entryData.lastFocusedEmotion = '';
         syncInlineView();
-        renderModalContent();
+        renderModalContent({ preserveScroll: true });
       });
       document.getElementById('btn-modal-wheel-go-act')?.addEventListener('click', () => {
         closeModal();
@@ -1778,10 +1750,19 @@ class EspacioActApp {
         this.render();
         this.bindEvents();
       });
+
+      if (preserveScroll) {
+        modalBody.scrollTop = prevScroll;
+      }
     };
 
     renderModalContent();
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('wheel');
+    } else {
+      modalBody.classList.add('modal-wheel-maximized');
+      modal.classList.add('active');
+    }
   }
 
   // Modals for Hayes Tools
@@ -1789,7 +1770,6 @@ class EspacioActApp {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('default');
 
     const currentName = window.stateManager.getMindName();
 
@@ -1810,19 +1790,131 @@ class EspacioActApp {
       </div>
     `;
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('default');
+    } else {
+      modal.classList.add('active');
+    }
 
-    document.getElementById('btn-modal-cancel')?.addEventListener('click', () => {
-      modal.classList.remove('active');
-    });
+    const closeModal = () => {
+      if (window.app?.closeModal) window.app.closeModal();
+      else modal.classList.remove('active');
+    };
+
+    document.getElementById('btn-modal-cancel')?.addEventListener('click', closeModal);
 
     document.getElementById('btn-modal-save-mind-name')?.addEventListener('click', () => {
       const name = document.getElementById('input-mind-name')?.value?.trim();
       window.stateManager.setMindName(name || 'George');
-      modal.classList.remove('active');
+      closeModal();
       window.app?.showToast(`Mente nombrada: ${name || 'George'}`);
       this.render();
       this.bindEvents();
+    });
+  }
+
+  openBreathingModal() {
+    this.stopBreathing();
+    const modal = document.getElementById('app-modal');
+    const modalBody = document.getElementById('modal-body');
+    if (!modal || !modalBody) return;
+
+    const meta = this.getBreathingPhaseMeta(this.breathingPhase);
+    const st = window.stateManager.getSettings();
+    const vibOn = st.vibration !== false;
+    const sndOn = st.sound === true;
+
+    modalBody.innerHTML = `
+      <div class="flex-between" style="margin-bottom: 6px; gap: 10px;">
+        <h3 class="card-title" style="margin: 0;">Hacerle hueco en el cuerpo</h3>
+        <button type="button" class="btn-secondary" id="btn-modal-breathing-x" aria-label="Cerrar" style="font-size: 0.85rem; padding: 6px 11px;">✕</button>
+      </div>
+      <p class="card-subtitle" style="margin-bottom: 14px;">Respira alrededor de la sensación sin pelear contra ella.</p>
+
+      <div class="breathing-pacer-container">
+        <div class="breathing-circle-outer">
+          <div class="breathing-ring"></div>
+          <button type="button"
+                  class="breathing-orb ${this.breathingPhase}"
+                  id="breathing-orb"
+                  aria-pressed="${this.breathingActive}"
+                  aria-label="Iniciar respiración guiada">
+            <span id="breathing-phase-word">${meta.orbLabel}</span>
+          </button>
+        </div>
+
+        <div class="breathing-phase-label" id="breathing-phase-text">${meta.phaseText}</div>
+        <div class="breathing-instruction" id="breathing-instruction-text">${meta.instruction}</div>
+        <div class="breathing-cycle-hint" id="breathing-cycle-hint" hidden></div>
+
+        <div class="breathing-actions-row mt-3">
+          <button type="button" class="btn-primary" id="btn-toggle-breathing" style="font-size: 0.84rem; padding: 8px 18px;">
+            Iniciar respiración guiada
+          </button>
+        </div>
+
+        <div class="breathing-sensory-controls" id="breathing-sensory-controls" hidden>
+          <button type="button" class="btn-secondary" id="btn-toggle-haptic" style="font-size: 0.78rem; padding: 6px 12px; border-color: ${vibOn ? 'var(--sage-500)' : 'var(--border-subtle)'};">
+            Vibración guía: ${vibOn ? 'Sí' : 'No'}
+          </button>
+          <button type="button" class="btn-secondary" id="btn-toggle-sound" style="font-size: 0.78rem; padding: 6px 12px; border-color: ${sndOn ? 'var(--sage-500)' : 'var(--border-subtle)'};">
+            Tonos ojos cerrados: ${sndOn ? 'Sí' : 'No'}
+          </button>
+        </div>
+      </div>
+
+      <div class="btn-group" style="justify-content: center; margin-top: 18px;">
+        <button type="button" class="btn-secondary" id="btn-modal-breathing-done">
+          Listo / Volver al Paso 2
+        </button>
+      </div>
+    `;
+
+    if (window.app?.openModal) {
+      window.app.openModal('medium');
+    } else {
+      modal.classList.add('active');
+    }
+
+    const closeModal = () => {
+      this.stopBreathing();
+      if (window.app?.closeModal) window.app.closeModal();
+      else modal.classList.remove('active');
+    };
+
+    const handleBreathingToggle = () => {
+      if (this.breathingActive) {
+        this.stopBreathing();
+      } else {
+        this.startBreathing();
+      }
+    };
+
+    document.getElementById('btn-modal-breathing-x')?.addEventListener('click', closeModal);
+    document.getElementById('btn-modal-breathing-done')?.addEventListener('click', closeModal);
+    document.getElementById('btn-toggle-breathing')?.addEventListener('click', handleBreathingToggle);
+    document.getElementById('breathing-orb')?.addEventListener('click', handleBreathingToggle);
+
+    document.getElementById('btn-toggle-haptic')?.addEventListener('click', (e) => {
+      const currSt = window.stateManager.getSettings();
+      const nextVal = currSt.vibration === false;
+      currSt.vibration = nextVal;
+      window.stateManager.saveSettings(currSt);
+      e.currentTarget.textContent = `Vibración guía: ${nextVal ? 'Sí' : 'No'}`;
+      e.currentTarget.style.borderColor = nextVal ? 'var(--sage-500)' : 'var(--border-subtle)';
+      if (nextVal) window.app?.triggerHaptic([60]);
+      window.app?.showToast(nextVal ? 'Vibración guía activada' : 'Vibración guía desactivada');
+    });
+
+    document.getElementById('btn-toggle-sound')?.addEventListener('click', (e) => {
+      const currSt = window.stateManager.getSettings();
+      const nextVal = currSt.sound !== true;
+      currSt.sound = nextVal;
+      window.stateManager.saveSettings(currSt);
+      e.currentTarget.textContent = `Tonos ojos cerrados: ${nextVal ? 'Sí' : 'No'}`;
+      e.currentTarget.style.borderColor = nextVal ? 'var(--sage-500)' : 'var(--border-subtle)';
+      if (nextVal) window.app?.playGentleTone(432, 350);
+      window.app?.showToast(nextVal ? 'Tonos suaves activados' : 'Tonos suaves desactivados');
     });
   }
 
@@ -1830,7 +1922,6 @@ class EspacioActApp {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('medium');
 
     modalBody.innerHTML = `
       <h3 class="card-title">La Postura Somática del "SÍ"</h3>
@@ -1863,15 +1954,30 @@ class EspacioActApp {
       </div>
     `;
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('medium');
+    } else {
+      modal.classList.add('active');
+    }
 
     document.getElementById('btn-modal-close-somatic')?.addEventListener('click', () => {
-      modal.classList.remove('active');
+      if (window.app?.closeModal) window.app.closeModal();
+      else modal.classList.remove('active');
     });
   }
 
   saveEntry() {
     this.stopBreathing();
+    const esc = (s) => this.escapeHtml(s);
+    this.entryData.carriedPassenger = this.getDerivedPassenger();
+    if ((this.entryData.thought || '').trim() && !this.entryData.reframedThought) {
+      this.entryData.reframedThought = this.buildReframedThought(
+        this.defusionStyle,
+        this.entryData.thought,
+        window.stateManager.getMindName()
+      );
+    }
+
     const entry = window.stateManager.addActCrisisEntry(this.entryData);
 
     if (this.entryData.savePassengerToBus && (this.entryData.carriedPassenger || '').trim()) {
@@ -1893,6 +1999,10 @@ class EspacioActApp {
     if (!container) return;
 
     const delta = (entry.initialIntensity || 0) - (entry.postIntensity || 0);
+    const quoteText = (entry.reframedThought || entry.thought || '').trim();
+    const choiceLabel = entry.choiceType === 'value'
+      ? (entry.valueChosen || 'Dirección con valores')
+      : 'Piloto Automático';
 
     container.innerHTML = `
       <div class="card" style="text-align: center; padding: 36px 20px;">
@@ -1905,21 +2015,24 @@ class EspacioActApp {
         </p>
 
         <div class="card mt-4" style="background-color: var(--bg-surface-elevated); max-width: 480px; margin-left: auto; margin-right: auto; text-align: left;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span class="badge" style="background: rgba(87, 139, 116, 0.2); color: var(--sage-700);">Emoción: ${entry.emotion}</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+            <span class="badge" style="background: rgba(87, 139, 116, 0.2); color: var(--sage-700);">Emoción: ${esc(entry.emotion || 'Malestar')}</span>
             <span class="badge" style="background: ${delta >= 0 ? 'rgba(74, 122, 102, 0.2)' : 'rgba(184, 107, 89, 0.2)'}; color: ${delta >= 0 ? 'var(--sage-700)' : 'var(--accent-tension)'};">
               Intensidad: ${entry.initialIntensity} → ${entry.postIntensity} (${delta >= 0 ? '-' + delta : '+' + Math.abs(delta)})
             </span>
           </div>
 
-          <div style="font-size: 0.85rem; font-style: italic; color: var(--text-secondary); margin-bottom: 8px;">
-            "${entry.reframedThought || entry.thought}"
-          </div>
+          ${quoteText ? `
+            <div style="font-size: 0.85rem; font-style: italic; color: var(--text-secondary); margin-bottom: 8px;">
+              "${esc(quoteText)}"
+            </div>
+          ` : ''}
 
           <div style="font-size: 0.82rem; color: var(--text-muted); border-top: 1px solid var(--border-subtle); padding-top: 8px; margin-top: 8px;">
-            Elección:<strong>${entry.choiceType ==='value' ?'' + entry.valueChosen :'Piloto Automático'}</strong>
-            ${entry.committedAction ? `<br>Acción: "${entry.committedAction}"` : ''}
-            ${entry.carriedPassenger ?`<br>Pasajero a bordo:"${entry.carriedPassenger}"` :''}
+            <span>Elección: </span><strong>${esc(choiceLabel)}</strong>
+            ${entry.choiceType === 'value' && entry.committedAction ? `<br>Acción: "${esc(entry.committedAction)}"` : ''}
+            ${entry.choiceType === 'autopilot' && entry.autopilotUrge ? `<br>Reflejo: "${esc(entry.autopilotUrge)}"` : ''}
+            ${entry.carriedPassenger ? `<br>Pasajero a bordo: "${esc(entry.carriedPassenger)}"` : ''}
           </div>
         </div>
 
