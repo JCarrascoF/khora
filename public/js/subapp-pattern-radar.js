@@ -91,6 +91,14 @@ class RadarPatronesApp {
         </div>
 
         <!-- Patterns List or Empty State -->
+        ${patterns.some(p => window.stateManager?.isExampleItem?.(p)) ? `
+          <div class="example-notice-bar">
+            <span>Hay patrones de ejemplo en tu radar. Edítalos o quita todos los ejemplos cuando quieras.</span>
+            <button type="button" class="btn-secondary" data-clear-examples="true" style="font-size: 0.75rem; padding: 4px 10px;">
+              Quitar ejemplos
+            </button>
+          </div>
+        ` : ''}
         <div id="patterns-list">
           ${filteredPatterns.length === 0 ? this.renderEmptyState() : filteredPatterns.map(p => this.renderPatternCard(p)).join('')}
         </div>
@@ -246,6 +254,18 @@ class RadarPatronesApp {
         this.openCheckinModal(id);
       });
     });
+
+    // Clear all example items keeping user data intact
+    document.querySelectorAll('[data-clear-examples]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (confirm('¿Quitar todos los datos de ejemplo de la app? Tus registros propios se conservarán intactos.')) {
+          window.stateManager.clearExampleData();
+          this.render();
+          this.bindEvents();
+          window.app?.showToast('Ejemplos retirados — tus datos propios se mantienen');
+        }
+      });
+    });
   }
 
   // Modals
@@ -253,7 +273,6 @@ class RadarPatronesApp {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('wide');
 
     const patternTemplates = [
       {
@@ -357,7 +376,11 @@ class RadarPatronesApp {
       </div>
     `;
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('wide');
+    } else {
+      modal.classList.add('active');
+    }
     this.bindOppositesGenerator(modalBody, 'pat-exp');
 
     document.getElementById('btn-radar-toggle-templates')?.addEventListener('click', (e) => {
@@ -389,9 +412,12 @@ class RadarPatronesApp {
       });
     });
 
-    document.getElementById('btn-modal-cancel')?.addEventListener('click', () => {
-      modal.classList.remove('active');
-    });
+    const closeModal = () => {
+      if (window.app?.closeModal) window.app.closeModal();
+      else modal.classList.remove('active');
+    };
+
+    document.getElementById('btn-modal-cancel')?.addEventListener('click', closeModal);
 
     document.getElementById('btn-modal-save-pattern')?.addEventListener('click', () => {
       const title = document.getElementById('pat-title')?.value?.trim();
@@ -414,7 +440,7 @@ class RadarPatronesApp {
         weeklyExperiment: { text: expText || 'Observar el detonante cuando ocurra y respirar 3 veces antes de responder.' }
       });
 
-      modal.classList.remove('active');
+      closeModal();
       window.app?.showToast('Patrón recurrente registrado');
       this.render();
       this.bindEvents();
@@ -429,11 +455,10 @@ class RadarPatronesApp {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('medium');
 
     modalBody.innerHTML = `
       <h3 class="card-title">Definir Experimento Semanal</h3>
-      <p class="card-subtitle mt-2">Para el patrón: <strong>${pattern.title}</strong></p>
+      <p class="card-subtitle mt-2" data-keep-explanation="true">Para el patrón: <strong>${pattern.title}</strong></p>
 
       <div class="form-group mt-4">
         <label class="form-label" for="edit-exp-text">Experimento de conducta ACT</label>
@@ -449,12 +474,19 @@ class RadarPatronesApp {
       </div>
     `;
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('medium');
+    } else {
+      modal.classList.add('active');
+    }
     this.bindOppositesGenerator(modalBody, 'edit-exp-text');
 
-    document.getElementById('btn-modal-cancel')?.addEventListener('click', () => {
-      modal.classList.remove('active');
-    });
+    const closeModal = () => {
+      if (window.app?.closeModal) window.app.closeModal();
+      else modal.classList.remove('active');
+    };
+
+    document.getElementById('btn-modal-cancel')?.addEventListener('click', closeModal);
 
     document.getElementById('btn-modal-save-exp')?.addEventListener('click', () => {
       const text = document.getElementById('edit-exp-text')?.value?.trim();
@@ -471,7 +503,7 @@ class RadarPatronesApp {
         }
       });
 
-      modal.classList.remove('active');
+      closeModal();
       window.app?.showToast('Experimento semanal actualizado');
       this.render();
       this.bindEvents();
@@ -486,11 +518,10 @@ class RadarPatronesApp {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('default');
 
     modalBody.innerHTML = `
       <h3 class="card-title">Check-in Semanal del Experimento</h3>
-      <p class="card-subtitle mt-2">
+      <p class="card-subtitle mt-2" data-keep-explanation="true">
         Experimento: <em>"${pattern.weeklyExperiment?.text || 'Sin definir'}"</em>
       </p>
 
@@ -523,11 +554,18 @@ class RadarPatronesApp {
       </div>
     `;
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('default');
+    } else {
+      modal.classList.add('active');
+    }
 
-    document.getElementById('btn-modal-cancel')?.addEventListener('click', () => {
-      modal.classList.remove('active');
-    });
+    const closeModal = () => {
+      if (window.app?.closeModal) window.app.closeModal();
+      else modal.classList.remove('active');
+    };
+
+    document.getElementById('btn-modal-cancel')?.addEventListener('click', closeModal);
 
     document.getElementById('btn-modal-save-chk')?.addEventListener('click', () => {
       const selectedRadio = document.querySelector('input[name="chk-status"]:checked');
@@ -539,7 +577,7 @@ class RadarPatronesApp {
         learned
       });
 
-      modal.classList.remove('active');
+      closeModal();
       window.app?.showToast('Check-in semanal guardado');
       this.render();
       this.bindEvents();

@@ -144,8 +144,11 @@ class BrujulaValoresApp {
               const esc = window.KhoraUtils.escapeHtml;
               return `
               <div class="history-item" style="background-color: var(--bg-surface-elevated);">
-                <div class="history-header">
-                  <span class="history-tag espacio-act">Valor: ${esc(entry.selectedValue)}</span>
+                <div class="history-header" style="flex-wrap: wrap; gap: 6px;">
+                  <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                    <span class="history-tag espacio-act">Valor: ${esc(entry.selectedValue)}</span>
+                    ${window.stateManager?.isExampleItem?.(entry) ? '<span class="badge example-item-badge">Ejemplo guía</span>' : ''}
+                  </div>
                   <span class="history-date">${new Date(entry.timestamp).toLocaleDateString('es-ES')}</span>
                 </div>
                 <div class="history-title">"${esc(entry.situation || 'Situación de encrucijada')}"</div>
@@ -441,7 +444,7 @@ class BrujulaValoresApp {
         <div class="card" style="text-align: center; padding: 32px 20px;">
 <div style="font-size: 2.4rem; margin-bottom: 10px;"></div>
           <h3 class="card-title">Norte fijado con éxito</h3>
-          <p class="card-subtitle mt-2" style="max-width: 480px; margin: 0 auto;">
+          <p class="card-subtitle mt-2" data-keep-explanation="true" style="max-width: 480px; margin: 0 auto;">
             Elección consciente basada en <strong>${this.formData.selectedValue}</strong>.
           </p>
 

@@ -50,7 +50,7 @@ In Greek philosophy, *khōra* means *the space that holds without judging*: a pl
 * **Lock away prying eyes:** under **⚙️ Settings → Privacy Lock & Encryption (AES-256)** you can set a **PIN / password** and enable **FaceID / Fingerprint** so nobody can open the app or read local storage.
 * **📲 Use it like a native Mobile App (no app store needed):**
   * **iPhone / iPad (Safari):** open the URL in Safari → tap **Share** (⬆️) → **"Add to Home Screen"** → **always open Khōra from that new icon**. *(Important: on iPhone do this before saving real entries so data does not stay isolated in a temporary browser tab.)*
-  * **Android (Chrome):** open the URL → menu **⋮** → **"Install app"**.
+  * **Android (Chrome):** open the URL → menu **⋮** → **"Install app"**. *(Note: when opening the installed app, Chrome always shows the "Tap to copy the URL for this app" notification; this is normal for any PWA and you can hide it by long-pressing the notification and turning off just that channel.)*
 * **Move between devices:** in **⚙️ Settings → Backups & Data Management** you can export/import a `.json` backup anytime or save it in one tap to *Files / iCloud Drive / Google Drive*.
 
 *(Khōra starts with a few **guide examples** marked `🧪 Guide Example` so the app isn't blank on first launch; edit them anytime or clear them all at once with **`🧹 Remove Examples`**.)*

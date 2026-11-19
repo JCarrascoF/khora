@@ -8,7 +8,7 @@ class PildorasAnclajesApp {
     this.mode = 'trucos'; // 'trucos' (En Caliente) | 'estudio' (Medio Plazo)
     this.currentTab = 'trucos'; // 'trucos' | 'pildoras' | 'deconstruct' | 'pivot'
     this.activeFilter = 'all'; // For pills
-    this.activeTrickIntent = 'all'; // 'all' | 'panic' | 'no' | 'rumination' | 'cold' | 'guilt' | 'rescue'
+    this.activeTrickGroup = null; // null | 'calm' | 'mind' | 'limits' | 'all'
     this.currentMantraIndex = 0;
     this.expandedPillIds = new Set();
     this.showAnchorsList = false;
@@ -182,83 +182,115 @@ class PildorasAnclajesApp {
     this.tricksCatalog = [
       {
         id: 'trick_drop_anchor',
-        title:'Echar el Ancla: Protocolo ACE (Russ Harris)',
+        group: 'calm',
+        title: 'Echar el Ancla (ACE)',
         intent: 'panic',
-        intentLabel:'Agobio / Angustia / Miedo',
+        intentLabel: 'Agobio / Angustia / Miedo',
         badge: 'Estabilización ACT',
         duration: '1 min',
-        desc: 'Cuando hay tormenta emocional (angustia, miedo, bloqueo o agobio): sujeta el barco al fondo marino sin luchar contra la ola mediante los 3 pasos ACE.',
-        icon:''
-      },
-      {
-        id: 'trick_bus_driver',
-        title:'El Autobús ACT: Negar el Volante y Dar Asiento',
-        intent: 'rumination',
-        intentLabel:'Control del Volante',
-        badge: 'Metáfora de Hayes',
-        duration: '1 min',
-        desc: 'Cuando el ruido mental (miedos, agobios, culpa) quiere conducir por ti: dile "vas en contra de mis valores" sin echarlo del autobús.',
-        icon:''
-      },
-      {
-        id: 'trick_serene_silence',
-        title: 'La Regla de la Sencillez Serena (Decir NO sin justificarse)',
-        intent: 'no',
-        intentLabel:'Decir NO',
-        badge: 'Límites Limpios',
-        duration: '1 min',
-        desc: 'Genera un límite sin excusas elaboradas y entrena el desafío de sostener 15 segundos de silencio sin rellenarlo con disculpas.',
-        icon:''
-      },
-      {
-        id: 'trick_comic_voice',
-        title: 'La Voz de Dibujos Animados & Los 3 Prefijos',
-        intent: 'rumination',
-        intentLabel:'Desactivar Rumiación',
-        badge: 'Defusión Inmediata',
-        duration: '30 seg',
-        desc: 'Deforma el pensamiento catastrófico con ritmo caricaturesco y prefijos de distanciamiento para que pierda su poder tiránico.',
-        icon:''
-      },
-      {
-        id: 'trick_cold_breath',
-        title: 'Sostener la Frialdad Ajena (3 Alientos de Diferenciación)',
-        intent: 'cold',
-        intentLabel:'Mala cara ajena',
-        badge: 'Soberanía Somática',
-        duration: '1 min',
-        desc: 'Pacer guiado para resistir la urgencia de claudicar cuando la otra persona suspira, pone mala cara o se muestra distante.',
-        icon:''
-      },
-      {
-        id: 'trick_two_arrows',
-        title: 'Las Dos Flechas (Arrancar el Dolor Sucio de Culpa)',
-        intent: 'guilt',
-        intentLabel:'Disolver Culpa',
-        badge: 'Aceptación Limpia',
-        duration: '1 min',
-        desc: 'Separa el dolor limpio (la incomodidad natural del límite) de la segunda flecha de auto-castigo y deséchala en vivo.',
-        icon:''
-      },
-      {
-        id: 'trick_pause_rescue',
-        title: 'La Pausa de los 2 Minutos (Frenar el Impulso de Rescate)',
-        intent: 'rescue',
-        intentLabel:'Impulso de Rescate',
-        badge: 'Auto-contención',
-        duration: '2 min',
-        desc: 'Cuenta atrás zen con respiración para que baje el pico de ansiedad antes de ofrecerte a resolverle la vida al otro.',
-        icon:''
+        desc: 'Para picos de angustia, miedo o bloqueo: aterriza en el cuerpo y el presente en 3 pasos.',
+        icon: ''
       },
       {
         id: 'trick_somatic_yes',
-        title:'La Postura Somática del"SÍ" (Steven Hayes)',
+        group: 'calm',
+        title: 'La Postura del «SÍ»',
         intent: 'cold',
-        intentLabel:'Postura de Apertura',
+        intentLabel: 'Postura de Apertura',
         badge: 'Regulación Corporal',
         duration: '45 seg',
-        desc: 'Desactiva en vivo la coraza física de amenaza (hombros tensos, mandíbula cerrada) antes de mantener un límite o conversar.',
-        icon:''
+        desc: 'Suelta hombros, mandíbula y tensión física antes de hablar o sostener un límite.',
+        icon: ''
+      },
+      {
+        id: 'trick_comic_voice',
+        group: 'mind',
+        title: 'Voz de dibujos y 3 prefijos',
+        intent: 'rumination',
+        intentLabel: 'Desactivar Rumiación',
+        badge: 'Defusión Inmediata',
+        duration: '30 seg',
+        desc: 'Quita drama y autoridad a un pensamiento catastrófico o repetitivo.',
+        icon: ''
+      },
+      {
+        id: 'trick_bus_driver',
+        group: 'mind',
+        title: 'El Autobús ACT: negar el volante',
+        intent: 'rumination',
+        intentLabel: 'Control del Volante',
+        badge: 'Metáfora de Hayes',
+        duration: '1 min',
+        desc: 'Da asiento atrás al miedo o la culpa sin cederles la dirección.',
+        icon: ''
+      },
+      {
+        id: 'trick_two_arrows',
+        group: 'mind',
+        title: 'Las Dos Flechas',
+        intent: 'guilt',
+        intentLabel: 'Disolver Culpa',
+        badge: 'Aceptación Limpia',
+        duration: '1 min',
+        desc: 'Separa la incomodidad normal del auto-castigo y descarta la culpa extra.',
+        icon: ''
+      },
+      {
+        id: 'trick_serene_silence',
+        group: 'limits',
+        title: 'Decir «no» sin justificarte',
+        intent: 'no',
+        intentLabel: 'Decir NO',
+        badge: 'Límites Limpios',
+        duration: '1 min',
+        desc: 'Elige una respuesta limpia sin excusas y sostén 15 segundos de silencio.',
+        icon: ''
+      },
+      {
+        id: 'trick_pause_rescue',
+        group: 'limits',
+        title: 'La Pausa de los 2 Minutos',
+        intent: 'rescue',
+        intentLabel: 'Impulso de Rescate',
+        badge: 'Auto-contención',
+        duration: '2 min',
+        desc: 'Frena el impulso automático de resolverle la vida al otro antes de actuar.',
+        icon: ''
+      },
+      {
+        id: 'trick_cold_breath',
+        group: 'limits',
+        title: 'Sostener la frialdad ajena',
+        intent: 'cold',
+        intentLabel: 'Mala cara ajena',
+        badge: 'Soberanía Somática',
+        duration: '1 min',
+        desc: '3 alientos para no correr a complacer ante una mala cara o distancia.',
+        icon: ''
+      }
+    ];
+
+    this.trickGroups = [
+      {
+        id: 'calm',
+        tabLabel: 'Cuerpo y calma',
+        title: 'Agobio, miedo o tensión física',
+        subtitle: 'Bajar revoluciones, aterrizar en el cuerpo y estabilizarte en 1 minuto.',
+        trickIds: ['trick_drop_anchor', 'trick_somatic_yes']
+      },
+      {
+        id: 'mind',
+        tabLabel: 'Mente y culpa',
+        title: 'Cabeza a mil, miedos o culpa',
+        subtitle: 'Quitar fuerza a pensamientos en bucle, recuperar el volante o soltar el auto-castigo.',
+        trickIds: ['trick_comic_voice', 'trick_bus_driver', 'trick_two_arrows']
+      },
+      {
+        id: 'limits',
+        tabLabel: 'Límites y el otro',
+        title: 'Decir «no» o sostener mala cara',
+        subtitle: 'Poner un límite sin justificarte, pausar el impulso de rescate o tolerar la distancia ajena.',
+        trickIds: ['trick_serene_silence', 'trick_pause_rescue', 'trick_cold_breath']
       }
     ];
 
@@ -356,107 +388,119 @@ class PildorasAnclajesApp {
   // TAB: BOTIQUÍN DE TRUCOS EJECUTABLES (ACT Live Runner Hub)
   // -------------------------------------------------------------
   renderTricksHubView() {
-    let filteredTricks = this.tricksCatalog;
-    if (this.activeTrickIntent !== 'all') {
-      filteredTricks = this.tricksCatalog.filter(t => t.intent === this.activeTrickIntent);
-    }
+    const validGroupIds = this.trickGroups.map(g => g.id);
+    const activeGroup = (this.activeTrickGroup === 'all' || validGroupIds.includes(this.activeTrickGroup))
+      ? this.activeTrickGroup
+      : null;
+    const totalTricks = this.tricksCatalog.length;
 
-    return `
-      <div class="view-plain-shell">
-        <div class="card-header" style="margin-bottom: 12px;">
-          <div class="title-with-help">
-<h2 class="card-title" style="margin: 0;">Botiquín de 1 Minuto</h2>
-            <button type="button" class="help-info-trigger" data-help-topic="pildoras-trucos" aria-label="Información de esta herramienta">ⓘ</button>
+    const getGroupTricks = (group) => group.trickIds
+      .map(id => this.tricksCatalog.find(t => t.id === id))
+      .filter(Boolean);
+
+    const renderTrickRow = (trick) => `
+      <button type="button" class="toolkit-row" data-launch-trick-id="${trick.id}">
+        <div class="toolkit-row-body">
+          <div class="toolkit-row-head">
+            <span class="toolkit-row-title">${trick.title}</span>
+            <span class="toolkit-row-duration">${trick.duration}</span>
           </div>
+          <p class="triage-card-desc">${trick.desc}</p>
         </div>
+        <span class="toolkit-row-cta" aria-hidden="true">Empezar →</span>
+      </button>
+    `;
 
-        <!-- Situational Intent Selector Bar -->
-        <label class="form-label" style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 6px;">
-          ¿Qué necesitas desatascar ahora mismo?
-        </label>
-        <div class="trick-intent-bar">
-          <button type="button" class="trick-intent-chip ${this.activeTrickIntent === 'all' ? 'active' : ''}" data-trick-intent="all">
-            Todos los trucos
-          </button>
-          <button type="button" class="trick-intent-chip ${this.activeTrickIntent === 'panic' ? 'active' : ''}" data-trick-intent="panic">
-            Agobio / Angustia / Miedo
-          </button>
-          <button type="button" class="trick-intent-chip ${this.activeTrickIntent === 'no' ? 'active' : ''}" data-trick-intent="no">
-            Decir NO sin disculparme
-          </button>
-          <button type="button" class="trick-intent-chip ${this.activeTrickIntent === 'rumination' ? 'active' : ''}" data-trick-intent="rumination">
-            Mente catastrofista
-          </button>
-          <button type="button" class="trick-intent-chip ${this.activeTrickIntent === 'cold' ? 'active' : ''}" data-trick-intent="cold">
-            Mala cara / Distancia ajena
-          </button>
-          <button type="button" class="trick-intent-chip ${this.activeTrickIntent === 'guilt' ? 'active' : ''}" data-trick-intent="guilt">
-            Culpa y juicio interno
-          </button>
-          <button type="button" class="trick-intent-chip ${this.activeTrickIntent === 'rescue' ? 'active' : ''}" data-trick-intent="rescue">
-            Impulso de resolverle la vida
-          </button>
-        </div>
-
-        <!-- Tricks Grid (grouped by ACT pillar when viewing all) -->
-        ${(() => {
-          const renderTrickCard = (trick) => `
-            <div class="trick-card">
-              <div>
-                <div class="flex-between" style="margin-bottom: 6px;">
-                  <span class="trick-badge" style="background: var(--sage-100); color: var(--sage-800);">
-                    ${trick.badge} • ${trick.duration}
-                  </span>
-                  <span style="font-size: 1.4rem;">${trick.icon}</span>
-                </div>
-                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
-                  ${trick.title}
-                </h3>
-                <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">
-                  ${trick.desc}
-                </p>
-              </div>
-
-              <button type="button" class="btn-primary" data-launch-trick-id="${trick.id}" style="font-size: 0.88rem; width: 100%; justify-content: center;">
-                Ejecutar este truco paso a paso
-              </button>
+    if (activeGroup === null) {
+      return `
+        <div class="view-plain-shell">
+          <div class="cozy-home-header toolkit-header">
+            <div class="title-with-help">
+              <h2 class="card-title" style="margin: 0;">Botiquín de 1 Minuto</h2>
+              <button type="button" class="help-info-trigger" data-help-topic="pildoras-trucos" aria-label="Información de esta herramienta">ⓘ</button>
             </div>
-          `;
+            <p class="cozy-home-sub">Elige lo que más se parezca a este momento para ver 2 o 3 ejercicios de un minuto.</p>
+          </div>
 
-          if (this.activeTrickIntent !== 'all') {
-            return `
-              <div class="tricks-cards-grid" style="display: grid; grid-template-columns: 1fr; gap: 14px;">
-                ${filteredTricks.map(renderTrickCard).join('')}
-              </div>
-            `;
-          }
-
-          return `
-            <div style="display: flex; flex-direction: column; gap: 22px;">
-              ${this.studyAreas.map(area => {
-                const areaTricks = area.trickIds
-                  .map(id => this.tricksCatalog.find(t => t.id === id))
-                  .filter(Boolean);
-                if (areaTricks.length === 0) return '';
+          <div>
+            <div class="cozy-section-label">¿Qué necesitas ahora mismo?</div>
+            <div class="guided-triage-grid toolkit-doors-list">
+              ${this.trickGroups.map(group => {
+                const count = getGroupTricks(group).length;
                 return `
-                  <section>
-                    <div style="margin-bottom: 10px;">
-                      <h3 style="font-size: 0.98rem; font-weight: 800; color: var(--text-primary); margin: 0;">
-                        ${area.icon} ${area.title}
-                      </h3>
-                      <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 2px 0 0;">
-                        ${area.subtitle}
-                      </p>
+                  <button type="button" class="triage-card toolkit-door-card" data-trick-group="${group.id}">
+                    <div class="triage-card-body">
+                      <div class="triage-card-top">
+                        <span class="triage-card-title">${group.title}</span>
+                        <span class="toolkit-door-count">${count} ${count === 1 ? 'ejercicio' : 'ejercicios'}</span>
+                      </div>
+                      <p class="triage-card-desc">${group.subtitle}</p>
                     </div>
-                    <div class="tricks-cards-grid" style="display: grid; grid-template-columns: 1fr; gap: 12px;">
-                      ${areaTricks.map(renderTrickCard).join('')}
-                    </div>
-                  </section>
+                    <span class="triage-card-arrow" aria-hidden="true">→</span>
+                  </button>
                 `;
               }).join('')}
             </div>
-          `;
-        })()}
+          </div>
+
+          <div class="toolkit-all-footer">
+            <button type="button" class="btn-inline-link toolkit-show-all-btn" data-trick-group="all">
+              Ver los ${totalTricks} ejercicios en lista →
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    const currentGroup = this.trickGroups.find(g => g.id === activeGroup) || null;
+
+    return `
+      <div class="view-plain-shell">
+        <div class="toolkit-header toolkit-header-compact">
+          <div class="flex-between" style="flex-wrap: wrap; gap: 8px 16px;">
+            <div class="title-with-help">
+              <h2 class="card-title" style="margin: 0;">Botiquín de 1 Minuto</h2>
+              <button type="button" class="help-info-trigger" data-help-topic="pildoras-trucos" aria-label="Información de esta herramienta">ⓘ</button>
+            </div>
+            <button type="button" class="btn-inline-link toolkit-back-btn" data-trick-group="">
+              ← Elegir situación
+            </button>
+          </div>
+        </div>
+
+        <div class="internal-tabs-bar toolkit-tabs-bar" role="tablist" aria-label="Situaciones del botiquín">
+          ${this.trickGroups.map(group => `
+            <button type="button" role="tab" aria-selected="${activeGroup === group.id ? 'true' : 'false'}" class="internal-tab-btn ${activeGroup === group.id ? 'active' : ''}" data-trick-group="${group.id}">
+              ${group.tabLabel}
+            </button>
+          `).join('')}
+          <button type="button" role="tab" aria-selected="${activeGroup === 'all' ? 'true' : 'false'}" class="internal-tab-btn ${activeGroup === 'all' ? 'active' : ''}" data-trick-group="all">
+            Todos (${totalTricks})
+          </button>
+        </div>
+
+        ${activeGroup === 'all' ? `
+          <p class="toolkit-group-lead explanatory-subtext">Los ${totalTricks} ejercicios breves ordenados por situación.</p>
+          <div class="toolkit-all-groups">
+            ${this.trickGroups.map(group => {
+              const groupTricks = getGroupTricks(group);
+              if (groupTricks.length === 0) return '';
+              return `
+                <section class="toolkit-all-section">
+                  <div class="cozy-section-label">${group.tabLabel}</div>
+                  <div class="toolkit-list">
+                    ${groupTricks.map(renderTrickRow).join('')}
+                  </div>
+                </section>
+              `;
+            }).join('')}
+          </div>
+        ` : `
+          <p class="toolkit-group-lead explanatory-subtext">${currentGroup.subtitle}</p>
+          <div class="toolkit-list">
+            ${getGroupTricks(currentGroup).map(renderTrickRow).join('')}
+          </div>
+        `}
       </div>
     `;
   }
@@ -498,9 +542,12 @@ class PildorasAnclajesApp {
         ${featuredAnchor ? `
           <div style="background: linear-gradient(135deg, rgba(87, 139, 116, 0.16), rgba(66, 111, 92, 0.08)); border: 1px solid var(--sage-400); border-radius: var(--radius-md); padding: 14px 16px; position: relative; overflow: hidden;">
             <div class="flex-between" style="margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
-              <span style="font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--sage-700);">
-                Anclaje en Foco
-              </span>
+              <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <span style="font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--sage-700);">
+                  Anclaje en Foco
+                </span>
+                ${window.stateManager?.isExampleItem?.(featuredAnchor) ? '<span class="badge example-item-badge">Ejemplo guía</span>' : ''}
+              </div>
               <div style="display: flex; gap: 6px; align-items: center;">
                 <button type="button" class="btn-icon" data-toggle-fav="${featuredAnchor.id}" title="${isFeaturedFav ? 'Quitar de favoritos' : 'Guardar en favoritos'}" style="width: 30px; height: 30px; color: ${isFeaturedFav ? '#b86b59' : 'var(--text-muted)'};">
                   ${isFeaturedFav ?'' :''}
@@ -537,6 +584,7 @@ class PildorasAnclajesApp {
                     <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                       <span>— ${esc(anc.author)}</span>
                       <span class="badge" style="background-color: var(--sage-100); color: var(--sage-700); font-size: 0.7rem;">${esc(anc.category)}</span>
+                      ${window.stateManager?.isExampleItem?.(anc) ? '<span class="badge example-item-badge">Ejemplo guía</span>' : ''}
                     </div>
                   </div>
                   <div style="display: flex; gap: 6px; align-items: center;">
@@ -670,7 +718,10 @@ class PildorasAnclajesApp {
           </div>
         ` : savedItems.map(item => `
           <div class="history-item" style="border-left: 4px solid var(--sage-500);">
-            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">Etiqueta original:</div>
+            <div class="flex-between" style="gap: 8px; margin-bottom: 4px; flex-wrap: wrap;">
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Etiqueta original:</div>
+              ${window.stateManager?.isExampleItem?.(item) ? '<span class="badge example-item-badge">Ejemplo guía</span>' : ''}
+            </div>
             <div style="font-size: 0.95rem; font-weight: 700; text-decoration: line-through; color: var(--accent-tension); margin-bottom: 6px;">
               "${item.rigidLabel}"
             </div>
@@ -760,8 +811,11 @@ class PildorasAnclajesApp {
           </div>
         ` : savedPivots.map(piv => `
           <div class="history-item" style="border-left: 4px solid var(--accent-warmth);">
-            <div style="font-size: 0.75rem; color: var(--accent-tension); font-weight: 700; margin-bottom: 2px;">
-              Dolor / Temor: "${piv.pain}"
+            <div class="flex-between" style="gap: 8px; margin-bottom: 2px; flex-wrap: wrap;">
+              <div style="font-size: 0.75rem; color: var(--accent-tension); font-weight: 700;">
+                Dolor / Temor: "${piv.pain}"
+              </div>
+              ${window.stateManager?.isExampleItem?.(piv) ? '<span class="badge example-item-badge">Ejemplo guía</span>' : ''}
             </div>
             <div style="font-size: 0.85rem; color: var(--sage-700); font-weight: 600; margin-bottom: 4px;">
               Anhelo:"${piv.yearning}"
@@ -786,7 +840,7 @@ class PildorasAnclajesApp {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.(trickId === 'trick_bus_driver' ? 'medium' : 'wide');
+    const modalSize = trickId === 'trick_bus_driver' ? 'medium' : 'wide';
 
     if (trickId === 'trick_drop_anchor') {
       this.runTrickDropAnchor(modalBody);
@@ -806,13 +860,26 @@ class PildorasAnclajesApp {
       this.runTrickSomaticYes(modalBody);
     }
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal(modalSize);
+    } else {
+      modal.classList.add('active');
+    }
   }
 
   stopTrickTimer() {
     if (this.trickTimer) {
       clearInterval(this.trickTimer);
       this.trickTimer = null;
+    }
+  }
+
+  closeAppModal() {
+    this.stopTrickTimer();
+    if (window.app?.closeModal) {
+      window.app.closeModal();
+    } else {
+      document.getElementById('app-modal')?.classList.remove('active');
     }
   }
 
@@ -905,8 +972,7 @@ class PildorasAnclajesApp {
     `;
 
     document.getElementById('btn-close-runner')?.addEventListener('click', () => {
-      this.stopTrickTimer();
-      document.getElementById('app-modal')?.classList.remove('active');
+      this.closeAppModal();
     });
 
     const selectedAck = new Set();
@@ -957,10 +1023,9 @@ class PildorasAnclajesApp {
     });
 
     document.getElementById('btn-ace-complete')?.addEventListener('click', () => {
-      this.stopTrickTimer();
       window.app?.triggerHaptic([80, 50, 80]);
       window.app?.playGentleTone(432, 450);
-      document.getElementById('app-modal')?.classList.remove('active');
+      this.closeAppModal();
       window.app?.showToast('Ancla echada: estás presente y al mando de tu conducta');
     });
   }
@@ -1023,8 +1088,7 @@ class PildorasAnclajesApp {
     `;
 
     document.getElementById('btn-close-runner')?.addEventListener('click', () => {
-      this.stopTrickTimer();
-      document.getElementById('app-modal')?.classList.remove('active');
+      this.closeAppModal();
     });
 
     document.getElementById('btn-start-silence-timer')?.addEventListener('click', () => {
@@ -1104,7 +1168,7 @@ class PildorasAnclajesApp {
     `;
 
     document.getElementById('btn-close-runner')?.addEventListener('click', () => {
-      document.getElementById('app-modal')?.classList.remove('active');
+      this.closeAppModal();
     });
 
     const thoughtInput = document.getElementById('runner-thought');
@@ -1125,7 +1189,7 @@ class PildorasAnclajesApp {
 
     document.getElementById('btn-finish-comic')?.addEventListener('click', () => {
       window.app?.showToast('Pensamiento desarmado con éxito');
-      document.getElementById('app-modal')?.classList.remove('active');
+      this.closeAppModal();
     });
   }
 
@@ -1168,7 +1232,7 @@ class PildorasAnclajesApp {
     `;
 
     document.getElementById('btn-close-runner')?.addEventListener('click', () => {
-      document.getElementById('app-modal')?.classList.remove('active');
+      this.closeAppModal();
     });
 
     let breathStep = 1;
@@ -1192,7 +1256,7 @@ class PildorasAnclajesApp {
         nextBtn.textContent ='Sostenido con Dignidad / Terminar';
       } else {
         window.app?.showToast('Alientos completados. Has protegido tu centro.');
-        document.getElementById('app-modal')?.classList.remove('active');
+        this.closeAppModal();
       }
     });
   }
@@ -1242,7 +1306,7 @@ class PildorasAnclajesApp {
     `;
 
     document.getElementById('btn-close-runner')?.addEventListener('click', () => {
-      document.getElementById('app-modal')?.classList.remove('active');
+      this.closeAppModal();
     });
 
     document.getElementById('btn-discard-second-arrow')?.addEventListener('click', () => {
@@ -1289,8 +1353,7 @@ class PildorasAnclajesApp {
     `;
 
     document.getElementById('btn-close-runner')?.addEventListener('click', () => {
-      this.stopTrickTimer();
-      document.getElementById('app-modal')?.classList.remove('active');
+      this.closeAppModal();
     });
 
     document.getElementById('btn-start-pause-timer')?.addEventListener('click', () => {
@@ -1459,7 +1522,7 @@ class PildorasAnclajesApp {
     `;
 
     document.getElementById('btn-close-runner')?.addEventListener('click', () => {
-      document.getElementById('app-modal')?.classList.remove('active');
+      this.closeAppModal();
     });
 
     const nameEl = document.getElementById('bus-runner-name');
@@ -1539,7 +1602,7 @@ class PildorasAnclajesApp {
           });
         }
       }
-      document.getElementById('app-modal')?.classList.remove('active');
+      this.closeAppModal();
       if (window.perfilApp) {
         window.perfilApp.render();
         window.perfilApp.bindEvents();
@@ -1557,7 +1620,7 @@ class PildorasAnclajesApp {
           <button type="button" class="btn-icon" id="btn-close-runner" style="border: none; background: transparent;">✕</button>
         </div>
 
-<h3 class="card-title mt-2">La Postura Somática del"SÍ"</h3>
+<h3 class="card-title mt-2">La Postura Somática del "SÍ"</h3>
         <p class="card-subtitle">Cambia tu postura física en 45 segundos para desactivar la respuesta de amenaza antes de hablar.</p>
 
         <div class="trick-step-card mt-4" style="border-left-color: var(--accent-tension);">
@@ -1596,8 +1659,7 @@ class PildorasAnclajesApp {
     `;
 
     document.getElementById('btn-close-runner')?.addEventListener('click', () => {
-      this.stopTrickTimer();
-      document.getElementById('app-modal')?.classList.remove('active');
+      this.closeAppModal();
     });
 
     document.getElementById('btn-somatic-exhale')?.addEventListener('click', () => {
@@ -1621,8 +1683,7 @@ class PildorasAnclajesApp {
     });
 
     document.getElementById('btn-somatic-done')?.addEventListener('click', () => {
-      this.stopTrickTimer();
-      document.getElementById('app-modal')?.classList.remove('active');
+      this.closeAppModal();
       window.app?.showToast('Postura del SÍ integrada');
     });
   }
@@ -1640,10 +1701,11 @@ class PildorasAnclajesApp {
       });
     });
 
-    // Intent selector in Tricks Hub
-    document.querySelectorAll('[data-trick-intent]').forEach(chip => {
-      chip.addEventListener('click', (e) => {
-        this.activeTrickIntent = e.currentTarget.dataset.trickIntent;
+    // Situational group selector in Botiquín de 1 Minuto
+    document.querySelectorAll('[data-trick-group]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const nextGroup = e.currentTarget.dataset.trickGroup;
+        this.activeTrickGroup = nextGroup ? nextGroup : null;
         this.render();
         this.bindEvents();
       });
@@ -1908,14 +1970,14 @@ class PildorasAnclajesApp {
     });
   }
 
-  openAreaStudyModal(areaId) {
+  openAreaStudyModal(areaId, { preserveScroll = false } = {}) {
     const area = this.studyAreas.find(a => a.id === areaId);
     if (!area) return;
 
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('medium');
+    const prevScroll = preserveScroll ? modalBody.scrollTop : 0;
 
     const areaPills = this.pills.filter(p => p.category === area.id);
     const favorites = window.stateManager.getPillFavorites();
@@ -1993,10 +2055,17 @@ class PildorasAnclajesApp {
       </div>
     `;
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('medium', { resetScroll: !preserveScroll });
+    } else {
+      modal.classList.add('active');
+    }
+    if (preserveScroll) {
+      modalBody.scrollTop = prevScroll;
+    }
 
     document.getElementById('btn-close-study-area-modal')?.addEventListener('click', () => {
-      window.app?.closeModal?.();
+      this.closeAppModal();
     });
 
     modalBody.querySelectorAll('[data-modal-pill-toggle]').forEach(el => {
@@ -2005,7 +2074,7 @@ class PildorasAnclajesApp {
         const pid = el.dataset.modalPillToggle;
         if (this.expandedPillIds.has(pid)) this.expandedPillIds.delete(pid);
         else this.expandedPillIds.add(pid);
-        this.openAreaStudyModal(areaId);
+        this.openAreaStudyModal(areaId, { preserveScroll: true });
       });
     });
 
@@ -2014,12 +2083,12 @@ class PildorasAnclajesApp {
         e.stopPropagation();
         const isFav = window.stateManager.togglePillFavorite(btn.dataset.modalPillFav);
         window.app?.showToast(isFav ?'Añadido a favoritos' :'Eliminado de favoritos');
-        this.openAreaStudyModal(areaId);
+        this.openAreaStudyModal(areaId, { preserveScroll: true });
       });
     });
 
     document.getElementById('btn-modal-go-botiquin')?.addEventListener('click', () => {
-      window.app?.closeModal?.();
+      this.closeAppModal();
       window.app?.navigate?.('pildoras-trucos');
     });
 
@@ -2030,11 +2099,11 @@ class PildorasAnclajesApp {
     });
   }
 
-  openWorkshopModal(workshopId) {
+  openWorkshopModal(workshopId, { preserveScroll = false } = {}) {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('medium');
+    const prevScroll = preserveScroll ? modalBody.scrollTop : 0;
 
     const innerHtml = workshopId === 'deconstruct'
       ? this.renderDeconstructView()
@@ -2049,15 +2118,23 @@ class PildorasAnclajesApp {
       </div>
     `;
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('medium', { resetScroll: !preserveScroll });
+    } else {
+      modal.classList.add('active');
+    }
+    if (preserveScroll) {
+      modalBody.scrollTop = prevScroll;
+    }
+
     document.getElementById('btn-close-workshop-modal')?.addEventListener('click', () => {
-      window.app?.closeModal?.();
+      this.closeAppModal();
     });
 
     if (workshopId === 'deconstruct') {
-      this.bindDeconstructEvents(() => this.openWorkshopModal('deconstruct'));
+      this.bindDeconstructEvents(() => this.openWorkshopModal('deconstruct', { preserveScroll: true }));
     } else {
-      this.bindPivotEvents(() => this.openWorkshopModal('pivot'));
+      this.bindPivotEvents(() => this.openWorkshopModal('pivot', { preserveScroll: true }));
     }
   }
 
@@ -2065,7 +2142,6 @@ class PildorasAnclajesApp {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('default');
 
     const esc = window.KhoraUtils.escapeHtml;
 
@@ -2104,10 +2180,14 @@ class PildorasAnclajesApp {
       </div>
     `;
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('default');
+    } else {
+      modal.classList.add('active');
+    }
 
     document.getElementById('btn-modal-cancel')?.addEventListener('click', () => {
-      modal.classList.remove('active');
+      this.closeAppModal();
     });
 
     document.getElementById('btn-modal-save-custom-anchor')?.addEventListener('click', () => {
@@ -2124,7 +2204,7 @@ class PildorasAnclajesApp {
         window.stateManager.addAnchor(text, 'Personal', cat);
         window.app?.showToast('Anclaje ACT guardado en tu botiquín');
       }
-      modal.classList.remove('active');
+      this.closeAppModal();
       this.render();
       this.bindEvents();
     });
@@ -2137,7 +2217,6 @@ class PildorasAnclajesApp {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('medium');
 
     const favorites = window.stateManager.getPillFavorites();
     const isFav = favorites.includes(pill.id);
@@ -2172,10 +2251,14 @@ class PildorasAnclajesApp {
       </div>
     `;
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('medium');
+    } else {
+      modal.classList.add('active');
+    }
 
     document.getElementById('btn-modal-close-reader')?.addEventListener('click', () => {
-      modal.classList.remove('active');
+      this.closeAppModal();
     });
 
     document.getElementById('btn-modal-launch-trick')?.addEventListener('click', () => {

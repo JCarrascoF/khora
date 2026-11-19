@@ -190,6 +190,7 @@ class AppController {
     this.initPalette();
     this.initSurface();
     this.initButtons();
+    this.initExplanations();
     this.initPWA();
     window.i18n?.init?.();
     this.bindGlobalNavigation();
@@ -237,9 +238,9 @@ class AppController {
       this._hashChangeBound = true;
     }
 
-    // Modal background close
+    // Modal background close (require explicit confirmation for the first-visit storage/PWA modal)
     document.getElementById('app-modal')?.addEventListener('click', (e) => {
-      if (e.target.id === 'app-modal') {
+      if (e.target.id === 'app-modal' && !document.getElementById('install-gate-modal-root')) {
         this.closeModal();
       }
     });
@@ -290,6 +291,7 @@ class AppController {
           this.initPalette();
           this.initSurface();
     this.initButtons();
+    this.initExplanations();
           this.updatePersistenceWarningBanner();
           this.maybeShowInstallGateModal();
         } else if (event === 'vault_locked') {
@@ -318,6 +320,7 @@ class AppController {
         this.initPalette();
         this.initSurface();
     this.initButtons();
+    this.initExplanations();
       }
 
       if (this.currentView === 'guia-inicio') {
@@ -405,14 +408,36 @@ class AppController {
     modalBody.classList.remove('modal-wheel-maximized', 'modal-wide', 'modal-medium');
     if (size === 'wide') modalBody.classList.add('modal-wide');
     else if (size === 'medium') modalBody.classList.add('modal-medium');
+    else if (size === 'wheel') modalBody.classList.add('modal-wheel-maximized');
+  }
+
+  resetModalScroll() {
+    const modalBody = document.getElementById('modal-body');
+    if (modalBody) modalBody.scrollTop = 0;
+  }
+
+  openModal(size = 'default', { resetScroll = true } = {}) {
+    const modal = document.getElementById('app-modal');
+    const modalBody = document.getElementById('modal-body');
+    if (!modal || !modalBody) return false;
+    this.setModalSize(size);
+    modal.classList.add('active');
+    if (resetScroll) {
+      modalBody.scrollTop = 0;
+    }
+    return true;
   }
 
   closeModal() {
     const modal = document.getElementById('app-modal');
+    const modalBody = document.getElementById('modal-body');
     if (modal && modal.classList.contains('active')) {
+      if (modalBody) modalBody.scrollTop = 0;
       modal.classList.remove('active');
       this.setModalSize('default');
+      this.hideSettingsSaveIndicator?.();
       window.pildorasAnclajesApp?.stopTrickTimer?.();
+      window.espacioActApp?.stopBreathing?.();
       return true;
     }
     return false;
@@ -420,7 +445,9 @@ class AppController {
 
   // Navigation (Ahora mismo | Yo | Evolución [Reloj])
   navigate(targetView, options = {}) {
-    this.closeModal();
+    if (!options.keepModal) {
+      this.closeModal();
+    }
     let resolvedSubView = targetView;
     if (targetView === 'ahora-mismo' || targetView === 'perfil-foco') resolvedSubView = 'guia-inicio';
     else if (targetView === 'yo' || targetView === 'valores-rutina' || targetView === 'perfil') resolvedSubView = 'perfil-valores';
@@ -435,6 +462,9 @@ class AppController {
       if (window.pildorasAnclajesApp) {
         window.pildorasAnclajesApp.mode = 'trucos';
         window.pildorasAnclajesApp.currentTab = 'trucos';
+        if (this.currentView !== 'pildoras-trucos') {
+          window.pildorasAnclajesApp.activeTrickGroup = null;
+        }
       }
     } else if (resolvedSubView === 'pildoras-estudio') {
       sectionId = 'pildoras-anclajes';
@@ -493,8 +523,9 @@ class AppController {
 
     this.currentView = resolvedSubView;
     this.currentGroup = activeGroup;
-    if (sectionId !=='espacio-act') {
+    if (sectionId !== 'espacio-act') {
       this.setCrisisImmersive(false);
+      window.espacioActApp?.stopBreathing?.();
     }
     if (options.updateHash !== false && window.location.hash !== `#${resolvedSubView}`) {
       window.location.hash = resolvedSubView;
@@ -523,7 +554,9 @@ class AppController {
     this.renderContextSubnav(activeGroup, resolvedSubView);
 
     // Scroll to top gently
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!options.keepModal) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
     // Re-render target subapp if necessary
     if (sectionId === 'guia-inicio') {
@@ -575,30 +608,26 @@ class AppController {
       {
         view: 'espacio-act',
         primary: true,
-        title:'Siento una emoción intensa o bloqueo',
-        time:'3 min',
-        does:'Acompaña lo que notas en el cuerpo y toma distancia del pensamiento que lo alimenta.'
+        title: 'Tengo un nudo, agobio o bloqueo',
+        does: 'Ponle nombre a lo que sientes, bájalo al cuerpo y quítale ruido a la cabeza.'
       },
       {
         view: 'pildoras-trucos',
         primary: false,
-        title:'Botiquín de un minuto',
-        time:'1 min',
-        does:'Echar el ancla (ACE), pausa de 2 minutos o decir «no» con serenidad.'
+        title: 'Necesito frenar ya y bajar revoluciones',
+        does: 'Trucos rápidos para aterrizar, esperar 2 minutos antes de contestar o decir «no» sin dar mil explicaciones.'
       },
       {
         view: 'brujula-valores',
         primary: false,
-        title:'Dudo qué hacer o temo ceder',
-        time:'1 min',
-        does:'Aclara qué te está frenando y elige un micro-paso fiel a tus valores.'
+        title: 'Dudo qué hacer y me cuesta decir que no',
+        does: 'Aclara qué te está frenando y elige un pequeño paso fiel a ti.'
       },
       {
         view: 'paz-falsa',
         primary: false,
-        title:'Acabo de ceder (Paz Falsa)',
-        time:'2 min',
-        does:'Déjalo por escrito sin reproche para ver con claridad el desgaste real.'
+        title: 'Acabo de callarme o decir que sí sin querer',
+        does: 'Apúntalo sin machacarte para ver lo que de verdad te cuesta ceder.'
       }
     ];
 
@@ -606,43 +635,38 @@ class AppController {
 
     container.innerHTML = `
       <div class="view-plain-shell">
-<div class="cozy-home-header">
-<p class="cozy-greeting">${greeting}</p>
+        <div class="cozy-home-header">
+          <p class="cozy-greeting">${greeting}</p>
           <div class="title-with-help">
-<h2 class="cozy-home-heading">¿Dónde quieres poner atención ahora?</h2>
+            <h2 class="cozy-home-heading">¿Cómo estás ahora mismo?</h2>
             <button type="button" class="help-info-trigger" data-help-topic="guia-inicio" aria-label="Información de esta herramienta">ⓘ</button>
           </div>
-<p class="cozy-home-sub">No hace falta resolver nada de golpe. Elige el lugar desde el que quieres observarlo.</p>
+          <p class="cozy-home-sub">No hace falta arreglarlo todo hoy. Elige lo que más se parezca a este momento.</p>
         </div>
 
-<div>
-<div class="cozy-section-label">Ahora mismo</div>
+        <div>
+          <div class="cozy-section-label">Ahora mismo…</div>
           <div class="guided-triage-grid">
             ${hotFlows.map(flow => `
-<button type="button" class="triage-card ${flow.primary ?'triage-card-primary' :''}" data-go-view="${flow.view}">
-<div class="triage-card-body">
-<div class="triage-card-title">${flow.title}</div>
-<p class="triage-card-desc">${flow.does}</p>
+              <button type="button" class="triage-card ${flow.primary ? 'triage-card-primary' : ''}" data-go-view="${flow.view}">
+                <div class="triage-card-body">
+                  <div class="triage-card-title">${flow.title}</div>
+                  <p class="triage-card-desc">${flow.does}</p>
                 </div>
-<div class="triage-card-meta">
-<span class="triage-time-badge">${flow.time}</span>
-<span class="triage-card-arrow" aria-hidden="true">→</span>
-                </div>
+                <span class="triage-card-arrow" aria-hidden="true">→</span>
               </button>
             `).join('')}
           </div>
         </div>
 
-<div class="triage-calm-section">
-<div class="cozy-section-label">En calma</div>
-<button type="button" class="triage-calm-item" data-go-view="pildoras-estudio" style="width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+        <div class="triage-calm-section">
+          <div class="cozy-section-label">En calma</div>
+          <button type="button" class="triage-calm-item" data-go-view="pildoras-estudio" style="width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
             <div>
-<div class="triage-card-title" style="font-size: 1.04rem;">Lecturas y ejercicios ACT</div>
-<p class="triage-card-desc">
-                Píldoras de 1 minuto, frases ancla, Deconstructor «Yo Soy» y El Pivote.
-</p>
+              <div class="triage-card-title" style="font-size: 1.04rem;">Tengo un rato tranquilo para leer o practicar</div>
+              <p class="triage-card-desc">Ideas cortas, tus frases de apoyo y ejercicios para soltar etiquetas y aclarar lo que te importa.</p>
             </div>
-<span class="triage-card-arrow" aria-hidden="true">→</span>
+            <span class="triage-card-arrow" aria-hidden="true">→</span>
           </button>
         </div>
       </div>
@@ -712,11 +736,6 @@ class AppController {
     // Brand click returns to guided home
     document.querySelector('.brand-wrapper')?.addEventListener('click', () => {
       this.navigate('guia-inicio');
-    });
-
-    // Header local-storage warning pill -> opens local storage / install info modal
-    document.getElementById('header-storage-warning')?.addEventListener('click', () => {
-      this.openInstallGateModal(true);
     });
 
     // SOS Crisis quick button -> Opens Low-Load ACT Crisis Triage Modal
@@ -851,8 +870,6 @@ class AppController {
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
 
-    this.setModalSize('medium');
-
     const esc = window.KhoraUtils.escapeHtml;
 
     const profile = window.stateManager?.getProfile() || {};
@@ -931,11 +948,11 @@ class AppController {
         </div>
     `;
 
-    modal.classList.add('active');
+    this.openModal('medium');
     this.triggerHaptic([50]);
 
     document.getElementById('btn-sos-close')?.addEventListener('click', () => {
-      modal.classList.remove('active');
+      this.closeModal();
     });
 
     document.getElementById('btn-sos-drop-anchor')?.addEventListener('click', () => {
@@ -957,7 +974,7 @@ class AppController {
     });
 
     document.getElementById('btn-sos-full-act')?.addEventListener('click', () => {
-      modal.classList.remove('active');
+      this.closeModal();
       if (window.espacioActApp) {
         window.espacioActApp.resetForm();
       }
@@ -967,13 +984,12 @@ class AppController {
     });
 
     document.getElementById('btn-sos-body-act')?.addEventListener('click', () => {
-      modal.classList.remove('active');
+      this.closeModal();
       if (window.espacioActApp) {
         window.espacioActApp.resetForm();
         window.espacioActApp.entryData.emotions = ['Desbordamiento'];
         window.espacioActApp.entryData.lastFocusedEmotion = 'Desbordamiento';
         window.espacioActApp.entryData.emotion = 'Desbordamiento';
-        window.espacioActApp.breathingPausedByUser = false;
         window.espacioActApp.setStep(2);
       }
       this.navigate('espacio-act');
@@ -1284,7 +1300,6 @@ class AppController {
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody || !window.stateManager) return;
 
-    this.setModalSize('default');
     modalBody.innerHTML = `
       <div id="login-modal-root">
         <div class="flex-between" style="gap: 8px; align-items: flex-start;">
@@ -1321,7 +1336,7 @@ class AppController {
       </div>
     `;
 
-    modal.classList.add('active');
+    this.openModal('default');
 
     document.getElementById('btn-login-close')?.addEventListener('click', () => {
       this.closeModal();
@@ -1380,6 +1395,11 @@ class AppController {
     return /iPhone|iPad|iPod/i.test(ua) || (maxTouch > 1 && /Macintosh/i.test(ua));
   }
 
+  isAndroidDevice() {
+    const ua = typeof navigator !== 'undefined' ? (navigator.userAgent || '') : '';
+    return /Android/i.test(ua);
+  }
+
   isMobileOrTabletDevice() {
     const ua = typeof navigator !== 'undefined' ? (navigator.userAgent || '') : '';
     return this.isIosDevice() || /Android|Mobile|Tablet/i.test(ua);
@@ -1399,6 +1419,26 @@ class AppController {
     try {
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem('act_persistence_banner_dismissed', '1');
+      }
+    } catch {
+      // Ignore storage errors
+    }
+  }
+
+  isAndroidUrlNoticeDismissed() {
+    if (this.androidUrlNoticeDismissed) return true;
+    try {
+      return typeof localStorage !== 'undefined' && localStorage.getItem('act_android_url_notice_dismissed') === '1';
+    } catch {
+      return false;
+    }
+  }
+
+  markAndroidUrlNoticeDismissed() {
+    this.androidUrlNoticeDismissed = true;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('act_android_url_notice_dismissed', '1');
       }
     } catch {
       // Ignore storage errors
@@ -1436,7 +1476,6 @@ class AppController {
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
 
-    this.setModalSize('default');
     modalBody.innerHTML = `
       <div id="feedback-modal-root">
         <div class="flex-between" style="gap: 8px; align-items: flex-start;">
@@ -1484,7 +1523,7 @@ class AppController {
       </div>
     `;
 
-    modal.classList.add('active');
+    this.openModal('default');
 
     const buildFormatted = () => {
       const type = document.getElementById('feedback-type')?.value ||'Sugerencia o nueva idea';
@@ -1568,9 +1607,7 @@ class AppController {
 
   updatePersistenceWarningBanner() {
     const banner = document.getElementById('persistence-warning-banner');
-    const headerBtn = document.getElementById('header-storage-warning');
-    const headerLabel = document.getElementById('header-storage-warning-text');
-    if (!window.stateManager) return;
+    if (!banner || !window.stateManager) return;
 
     const status = window.stateManager.getDbStatus();
     const mode = status.mode || window.stateManager.getStorageMode();
@@ -1578,53 +1615,28 @@ class AppController {
     const serverChecked = Boolean(status.serverChecked);
     const standalone = this.isStandalonePWA();
     const isMobile = this.isMobileOrTabletDevice();
+    const isAndroid = this.isAndroidDevice();
+    const vaultLocked = Boolean(window.stateManager.isVaultLocked?.());
     const usingLocalOnly = serverChecked && (!serverAvailable || mode === 'local');
 
-    if (headerBtn) {
-      if (!usingLocalOnly) {
-        headerBtn.classList.add('hidden');
-      } else {
-        headerBtn.classList.remove('hidden');
-        const labelEs = (isMobile && !standalone) ? 'Pestaña temporal' : 'Solo navegador';
-        const titleEs = (isMobile && !standalone)
-          ?'Pestaña temporal sin instalar: pulsa para ver cómo fijar Khōra o exportar copia JSON'
-          : 'Sin servidor conectado: tus datos se guardan solo en este navegador. Pulsa para más detalles o exportar copia JSON';
-        if (headerLabel) headerLabel.textContent = labelEs;
-        if (window.i18n) {
-          headerBtn.setAttribute('data-i18n-orig-title', titleEs);
-          headerBtn.title = window.i18n.t(titleEs);
-        } else {
-          headerBtn.title = titleEs;
-        }
-        window.i18n?.localizeDOM?.(headerBtn);
-      }
-    }
-
-    if (!banner) return;
-
-    // Wait until initial server probe finishes, or hide if connected to SQLite server in DB mode or dismissed
-    if (!usingLocalOnly || this.isBannerDismissed()) {
-      banner.classList.add('hidden');
-      banner.innerHTML = '';
-      return;
-    }
-
-    if (isMobile && !standalone) {
-      banner.classList.remove('hidden');
+    // Only show the top warning banner on mobile when opened in a regular browser tab (not installed as PWA).
+    // On desktop or installed PWA, the first-visit confirmation modal handles local-storage awareness.
+    if (usingLocalOnly && !this.isBannerDismissed() && isMobile && !standalone) {
+      banner.classList.remove('hidden', 'persistence-warning-banner--info');
       banner.innerHTML = `
-        <span>
+      <span>
 <strong>Pestaña temporal en móvil:</strong> añade Khōra a tu Pantalla de Inicio antes de guardar datos reales (en iPhone los datos de pestaña suelta no pasan al icono y caducan a los 7 días).
-        </span>
-        <div class="persistence-warning-actions">
-          <button type="button" class="btn-primary" id="btn-banner-install-guide" style="font-size: 0.76rem; padding: 5px 10px;">
-            Cómo instalar
-          </button>
-          <button type="button" class="btn-secondary" id="btn-banner-quick-export" style="font-size: 0.76rem; padding: 5px 10px;">
-            Exportar JSON
-          </button>
-          <button type="button" class="btn-icon" id="btn-banner-dismiss" aria-label="Ocultar aviso" style="width: 28px; height: 28px; font-size: 0.75rem;">✕</button>
-        </div>
-      `;
+      </span>
+      <div class="persistence-warning-actions">
+        <button type="button" class="btn-primary" id="btn-banner-install-guide" style="font-size: 0.76rem; padding: 5px 10px;">
+          Cómo instalar
+        </button>
+        <button type="button" class="btn-secondary" id="btn-banner-quick-export" style="font-size: 0.76rem; padding: 5px 10px;">
+          Exportar JSON
+        </button>
+        <button type="button" class="btn-icon" id="btn-banner-dismiss" aria-label="Ocultar aviso" style="width: 28px; height: 28px; font-size: 0.75rem;">✕</button>
+      </div>
+    `;
       document.getElementById('btn-banner-install-guide')?.addEventListener('click', () => {
         this.openInstallGateModal(true);
       });
@@ -1634,31 +1646,40 @@ class AppController {
       document.getElementById('btn-banner-dismiss')?.addEventListener('click', () => {
         this.markBannerDismissed();
         banner.classList.add('hidden');
-        this.showToast('Aviso fijado junto al título — pulsa «Pestaña temporal» para ver detalles');
+        this.showToast('Aviso ocultado — puedes instalar Khōra en tu pantalla de inicio desde el menú del navegador');
       });
       return;
     }
 
-    banner.classList.remove('hidden');
-    banner.innerHTML = `
-      <span>
-<strong>Modo Navegador Local:</strong> tus datos se guardan solo en este ${isMobile ?'dispositivo' :'navegador'}. Exporta una copia JSON cuando quieras moverlos o hacer respaldo.
-      </span>
-      <div class="persistence-warning-actions">
-        <button type="button" class="btn-secondary" id="btn-banner-quick-export" style="font-size: 0.76rem; padding: 5px 10px;">
-          Exportar Copia JSON
-        </button>
-        <button type="button" class="btn-icon" id="btn-banner-dismiss" aria-label="Ocultar aviso" style="width: 28px; height: 28px; font-size: 0.75rem;">✕</button>
-      </div>
-    `;
-    document.getElementById('btn-banner-quick-export')?.addEventListener('click', () => {
-      this.triggerQuickBackupShareOrDownload();
-    });
-    document.getElementById('btn-banner-dismiss')?.addEventListener('click', () => {
-      this.markBannerDismissed();
-      banner.classList.add('hidden');
-      this.showToast('Aviso fijado junto al título — pulsa «Solo navegador» para ver detalles');
-    });
+    // One-time calm info notice for Android standalone PWA users about Chrome's URL notification
+    if (isAndroid && standalone && !vaultLocked && !this.isAndroidUrlNoticeDismissed()) {
+      banner.classList.remove('hidden');
+      banner.classList.add('persistence-warning-banner--info');
+      banner.innerHTML = `
+        <span>
+          <strong>Aviso normal de Chrome en Android:</strong> la notificación «Toca para copiar la URL de esta aplicación» aparece siempre al abrir cualquier app web (PWA). Puedes ocultarla manteniendo pulsada la notificación y desactivando solo ese canal.
+        </span>
+        <div class="persistence-warning-actions">
+          <button type="button" class="btn-secondary" id="btn-banner-android-url-ok" style="font-size: 0.76rem; padding: 5px 10px;">
+            Entendido
+          </button>
+          <button type="button" class="btn-icon" id="btn-banner-android-url-dismiss" aria-label="Ocultar aviso" style="width: 28px; height: 28px; font-size: 0.75rem;">✕</button>
+        </div>
+      `;
+      const dismissAndroidNotice = () => {
+        this.markAndroidUrlNoticeDismissed();
+        banner.classList.add('hidden');
+        banner.classList.remove('persistence-warning-banner--info');
+        banner.innerHTML = '';
+      };
+      document.getElementById('btn-banner-android-url-ok')?.addEventListener('click', dismissAndroidNotice);
+      document.getElementById('btn-banner-android-url-dismiss')?.addEventListener('click', dismissAndroidNotice);
+      return;
+    }
+
+    banner.classList.add('hidden');
+    banner.classList.remove('persistence-warning-banner--info');
+    banner.innerHTML = '';
   }
 
   maybeShowInstallGateModal() {
@@ -1680,7 +1701,7 @@ class AppController {
     const isMobile = this.isMobileOrTabletDevice();
     const standalone = this.isStandalonePWA();
     const isIos = this.isIosDevice();
-    this.setModalSize('default');
+    const isAndroid = this.isAndroidDevice();
 
     if (isMobile && !standalone) {
       const deviceStepsHtml = isIos
@@ -1706,6 +1727,9 @@ class AppController {
               <li>Elige <strong>«Instalar aplicación»</strong> / <em>«Añadir a pantalla de inicio»</em>.</li>
               <li>Ábrela siempre desde el icono instalado para asegurar persistencia offline y almacenamiento propio.</li>
             </ol>
+            <p style="font-size: 0.76rem; color: var(--text-secondary); line-height: 1.45; margin: 8px 0 0 0; padding-top: 8px; border-top: 1px solid rgba(87, 139, 116, 0.25);">
+              <strong>Aviso normal de Chrome en Android:</strong> la notificación «Toca para copiar la URL de esta aplicación» aparece siempre al abrir cualquier app web (PWA). Puedes ocultarla manteniendo pulsada la notificación y desactivando solo ese canal.
+            </p>
           </div>
         `;
 
@@ -1743,7 +1767,7 @@ class AppController {
         </div>
       `;
 
-      modal.classList.add('active');
+      this.openModal('default');
 
       document.getElementById('btn-gate-close-x')?.addEventListener('click', () => {
         this.markInstallGateDismissed();
@@ -1780,6 +1804,7 @@ class AppController {
     }
 
     // Desktop / Standalone Local Mode First-Visit & Status Modal
+    const showAndroidUrlNote = isAndroid && standalone;
     modalBody.innerHTML = `
       <div id="install-gate-modal-root">
         <div class="flex-between" style="gap: 8px; align-items: flex-start;">
@@ -1798,8 +1823,11 @@ class AppController {
 
         <div style="background: rgba(87, 139, 116, 0.09); border: 1px solid var(--sage-300); border-radius: var(--radius-md); padding: 11px 13px; margin-top: 10px;">
           <ul style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; padding-left: 18px; margin: 0;">
-<li>Exporta una copia JSON periódicamente desde el botón de respaldo o pulsando el aviso<strong>«Solo navegador»</strong> junto al título.</li>
+<li>Exporta una copia JSON periódicamente desde el botón inferior o desde <strong>Configuración</strong>.</li>
 <li>Puedes activar cifrado AES-256 con PIN/contraseña o conectar un servidor SQLite propio desde<strong>Configuración</strong>.</li>
+${showAndroidUrlNote ? `
+<li><strong>Aviso normal de Chrome en Android:</strong> la notificación «Toca para copiar la URL de esta aplicación» aparece siempre al abrir cualquier app web (PWA). Puedes ocultarla manteniendo pulsada la notificación y desactivando solo ese canal.</li>
+` : ''}
           </ul>
         </div>
 
@@ -1819,11 +1847,12 @@ class AppController {
       </div>
     `;
 
-    modal.classList.add('active');
+    this.openModal('default');
 
     document.getElementById('btn-gate-close-x')?.addEventListener('click', () => {
       this.markInstallGateDismissed();
       this.markBannerDismissed();
+      if (showAndroidUrlNote) this.markAndroidUrlNoticeDismissed();
       this.closeModal();
       this.updatePersistenceWarningBanner();
     });
@@ -1835,6 +1864,7 @@ class AppController {
     document.getElementById('btn-gate-open-settings')?.addEventListener('click', () => {
       this.markInstallGateDismissed();
       this.markBannerDismissed();
+      if (showAndroidUrlNote) this.markAndroidUrlNoticeDismissed();
       this.updatePersistenceWarningBanner();
       this.openSettingsModal();
     });
@@ -1842,6 +1872,7 @@ class AppController {
     document.getElementById('btn-gate-continue-anyway')?.addEventListener('click', () => {
       this.markInstallGateDismissed();
       this.markBannerDismissed();
+      if (showAndroidUrlNote) this.markAndroidUrlNoticeDismissed();
       this.closeModal();
       this.updatePersistenceWarningBanner();
     });

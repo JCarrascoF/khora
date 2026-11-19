@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light" data-palette="arcilla" data-surface="editorial" data-buttons="ultraligero">
+<html lang="es" data-theme="light" data-palette="arcilla" data-surface="editorial" data-buttons="ultraligero" data-explanations="show">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -29,10 +29,13 @@
         s = (s === 'lino') ? 'lino' : 'editorial';
         var b = localStorage.getItem('act_buttons_pref');
         b = (b === 'editorial') ? 'editorial' : 'ultraligero';
+        var ex = localStorage.getItem('act_explanations_pref');
+        ex = (ex === 'hide') ? 'hide' : 'show';
         document.documentElement.setAttribute('data-theme', t);
         document.documentElement.setAttribute('data-palette', p);
         document.documentElement.setAttribute('data-surface', s);
         document.documentElement.setAttribute('data-buttons', b);
+        document.documentElement.setAttribute('data-explanations', ex);
         var colors = {
           arcilla: { light: '#F3EDE4', dark: '#1B1613' },
           musgo: { light: '#F6F3EC', dark: '#171614' },
@@ -100,10 +103,6 @@
             <h1>Khōra</h1>
           </div>
         </div>
-        <button type="button" id="header-storage-warning" class="header-storage-warning hidden" title="Sin servidor de base de datos: tus datos se guardan solo en este navegador. Pulsa para ver detalles o exportar copia." aria-label="Aviso de almacenamiento local">
-          <span aria-hidden="true">⚠️</span>
-          <span id="header-storage-warning-text">Solo navegador</span>
-        </button>
       </div>
 
       <div class="header-actions">

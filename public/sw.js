@@ -1,25 +1,25 @@
-const CACHE_NAME = 'khora-v1.0.0';
+const CACHE_NAME = 'khora-v1.1.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './css/tokens.css?v=1.0.0',
-  './css/styles.css?v=1.0.0',
-  './css/surfaces.css?v=1.0.0',
-  './js/utils.js?v=1.0.0',
-  './js/i18n-dict.js?v=1.0.0',
-  './js/i18n.js?v=1.0.0',
-  './js/state-vault.js?v=1.0.0',
-  './js/state.js?v=1.0.0',
-  './js/subapp-profile.js?v=1.0.0',
-  './js/subapp-false-peace.js?v=1.0.0',
-  './js/subapp-act-space.js?v=1.0.0',
-  './js/subapp-pattern-radar.js?v=1.0.0',
-  './js/subapp-values-compass.js?v=1.0.0',
-  './js/subapp-pills-anchors.js?v=1.0.0',
-  './js/subapp-insight.js?v=1.0.0',
-  './js/app-settings.js?v=1.0.0',
-  './js/app-help.js?v=1.0.0',
-  './js/app.js?v=1.0.0',
+  './css/tokens.css?v=1.1.0',
+  './css/styles.css?v=1.1.0',
+  './css/surfaces.css?v=1.1.0',
+  './js/utils.js?v=1.1.0',
+  './js/i18n-dict.js?v=1.1.0',
+  './js/i18n.js?v=1.1.0',
+  './js/state-vault.js?v=1.1.0',
+  './js/state.js?v=1.1.0',
+  './js/subapp-profile.js?v=1.1.0',
+  './js/subapp-false-peace.js?v=1.1.0',
+  './js/subapp-act-space.js?v=1.1.0',
+  './js/subapp-pattern-radar.js?v=1.1.0',
+  './js/subapp-values-compass.js?v=1.1.0',
+  './js/subapp-pills-anchors.js?v=1.1.0',
+  './js/subapp-insight.js?v=1.1.0',
+  './js/app-settings.js?v=1.1.0',
+  './js/app-help.js?v=1.1.0',
+  './js/app.js?v=1.1.0',
   './manifest.json',
   './icons/icon-192.svg',
   './icons/icon-512.svg',
@@ -87,7 +87,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Versioned static assets (?v=1.0.0): cache-first (immutable per version)
+  // Versioned static assets (?v=1.1.0): cache-first (immutable per version)
   if (reqUrl.searchParams.has('v')) {
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
