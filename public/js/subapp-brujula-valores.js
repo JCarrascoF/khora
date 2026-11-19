@@ -7,15 +7,15 @@ class BrujulaValoresApp {
   constructor() {
     this.currentStep = 1; // 1: Situación y Bloqueo, 2: Valor Faro y Micro-Acción
     this.valuesCatalog = [
-      { id: 'Dignidad', icon: '🏛️', desc: 'Autorrespeto sin ceder por miedo' },
-      { id: 'Autocuidado', icon: '🌿', desc: 'Proteger mi energía y descanso' },
-      { id: 'Honestidad', icon: '💎', desc: 'Decir mi verdad con serenidad' },
-      { id: 'Paz Interior', icon: '🕊️', desc: 'Calma real sin sumisión interna' },
-      { id: 'Autonomía', icon: '🧭', desc: 'Elegir por mí, no por presión' },
-      { id: 'Valentía', icon: '🦁', desc: 'Sostener un límite incómodo' },
-      { id: 'Respeto Mutuo', icon: '🤝', desc: 'Acuerdos justos para ambos' },
-      { id: 'Presencia y Calma', icon: '⚓', desc: 'Aterrizar aquí ante la duda' },
-      { id: 'Compasión Propia', icon: '🤲', desc: 'Tratarme con amabilidad humana' }
+      { id:'Dignidad', icon:'', desc:'Autorrespeto sin ceder por miedo' },
+      { id:'Autocuidado', icon:'', desc:'Proteger mi energía y descanso' },
+      { id:'Honestidad', icon:'', desc:'Decir mi verdad con serenidad' },
+      { id:'Paz Interior', icon:'', desc:'Calma real sin sumisión interna' },
+      { id:'Autonomía', icon:'', desc:'Elegir por mí, no por presión' },
+      { id:'Valentía', icon:'', desc:'Sostener un límite incómodo' },
+      { id:'Respeto Mutuo', icon:'', desc:'Acuerdos justos para ambos' },
+      { id:'Presencia y Calma', icon:'', desc:'Aterrizar aquí ante la duda' },
+      { id:'Compasión Propia', icon:'', desc:'Tratarme con amabilidad humana' }
     ];
 
     this.situationChips = [
@@ -29,28 +29,28 @@ class BrujulaValoresApp {
     this.barrierOptions = [
       {
         id: 'miedo_enfado',
-        label: '😰 Miedo al enfado o mala cara ajena',
+        label:'Miedo al enfado o mala cara ajena',
         motive: 'Complacencia por miedo al conflicto o rechazo',
         shortVsLong: 'Alivio inmediato por fuera, pero agotamiento y falsa paz por dentro',
         fear: 'Que se enfaden o me retiren el afecto si pongo un límite'
       },
       {
         id: 'culpa',
-        label: '⚖️ Culpa o sentir que soy egoísta',
+        label:'Culpa o sentir que soy egoísta',
         motive: 'Fusión con la culpa al priorizar mis necesidades',
         shortVsLong: 'Evito sentirme egoísta ahora, pero acumulo desgaste y resentimiento',
         fear: 'Creer que soy mala persona por cuidar mi energía'
       },
       {
         id: 'agobio',
-        label: '🌪️ Agobio / Querer quitármelo de encima ya',
+        label:'Agobio / Querer quitármelo de encima ya',
         motive: 'Evitación experiencial: huir de la incomodidad física',
         shortVsLong: 'Alivio pasajero ahora, pero mi mundo y mi margen se encogen',
         fear: 'Que la angustia o la incertidumbre serán insoportables'
       },
       {
         id: 'piloto',
-        label: '🔒 Inercia de complacer en automático',
+        label:'Inercia de complacer en automático',
         motive: 'Piloto automático de decir «sí» sin consultar conmigo',
         shortVsLong: 'Respondo rápido para destensar, pero me traiciono otra vez',
         fear: 'No saber sostener un silencio o una respuesta firme'
@@ -118,7 +118,7 @@ class BrujulaValoresApp {
       <div class="view-plain-shell">
         <div class="card-header flex-between" style="margin-bottom: 12px;">
           <div class="title-with-help">
-            <h2 class="card-title" style="margin: 0;">🧭 La Brújula de Valores</h2>
+<h2 class="card-title" style="margin: 0;">La Brújula de Valores</h2>
             <button type="button" class="help-info-trigger" data-help-topic="brujula-valores" aria-label="Información de esta herramienta">ⓘ</button>
           </div>
           <span class="badge" style="background: var(--sage-100); color: var(--sage-700);">
@@ -140,18 +140,21 @@ class BrujulaValoresApp {
             </div>
           </div>
           <div>
-            ${historyEntries.slice(0, 3).map(entry => `
+            ${historyEntries.slice(0, 3).map(entry => {
+              const esc = window.KhoraUtils.escapeHtml;
+              return `
               <div class="history-item" style="background-color: var(--bg-surface-elevated);">
                 <div class="history-header">
-                  <span class="history-tag espacio-act">Valor: ${entry.selectedValue}</span>
+                  <span class="history-tag espacio-act">Valor: ${esc(entry.selectedValue)}</span>
                   <span class="history-date">${new Date(entry.timestamp).toLocaleDateString('es-ES')}</span>
                 </div>
-                <div class="history-title">"${entry.situation || 'Situación de encrucijada'}"</div>
+                <div class="history-title">"${esc(entry.situation || 'Situación de encrucijada')}"</div>
                 <div class="history-detail" style="color: var(--sage-700); font-weight: 600;">
-                  Acción elegida: "${entry.keyAction}"
+                  Acción elegida: "${esc(entry.keyAction)}"
                 </div>
               </div>
-            `).join('')}
+            `;
+            }).join('')}
           </div>
         </div>
       ` : ''}
@@ -159,14 +162,14 @@ class BrujulaValoresApp {
   }
 
   renderStep1() {
-    const esc = (str) => String(str || '').replace(/"/g, '&quot;');
+    const esc = window.KhoraUtils.escapeHtml;
     return `
       <div class="form-group">
         <label class="form-label" for="compass-situation">1. ¿En qué situación dudas o sientes presión?</label>
-        <textarea id="compass-situation" class="form-textarea" rows="2" style="min-height: 68px;" placeholder="Describe con tus palabras la situación en 1 línea...">${this.formData.situation}</textarea>
+        <textarea id="compass-situation" class="form-textarea" rows="2" style="min-height: 68px;" placeholder="Describe con tus palabras la situación en 1 línea...">${esc(this.formData.situation)}</textarea>
         <div style="margin-top: 8px;">
           <button type="button" class="btn-inline-link" id="btn-compass-toggle-sit" style="font-size: 0.78rem;">
-            ${this.showSitExamples ? '▴ Ocultar ejemplos' : '💡 ¿Bloqueado? Ver ejemplos de situaciones'}
+            ${this.showSitExamples ?'▴ Ocultar ejemplos' :'¿Bloqueado? Ver ejemplos de situaciones'}
           </button>
           ${this.showSitExamples ? `
             <div class="quick-chips-row" style="margin-top: 8px;">
@@ -189,7 +192,7 @@ class BrujulaValoresApp {
             </button>
           `).join('')}
           <button type="button" class="chip-btn ${this.selectedBarrierId === 'otro' ? 'selected' : ''}" data-compass-barrier="otro" style="padding: 12px 14px; text-align: left; align-items: flex-start;">
-            <span style="font-weight: 700; font-size: 0.86rem;">✏️ Otro bloqueo / Escribirlo yo</span>
+<span style="font-weight: 700; font-size: 0.86rem;">Otro bloqueo / Escribirlo yo</span>
           </button>
         </div>
         ${this.selectedBarrierId === 'otro' ? `
@@ -208,14 +211,10 @@ class BrujulaValoresApp {
 
   renderStep2() {
     const profileValues = window.stateManager.getProfile()?.coreValues || [];
-    const esc = (str) => String(str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+    const esc = window.KhoraUtils.escapeHtml;
     const valObj = this.valuesCatalog.find(v => v.id === this.formData.selectedValue) || {
       id: this.formData.selectedValue || 'este valor',
-      icon: '🧭'
+      icon:''
     };
 
     return `
@@ -225,7 +224,7 @@ class BrujulaValoresApp {
         ${profileValues.length > 0 ? `
           <div style="margin-top: 6px; margin-bottom: 10px;">
             <span style="font-size: 0.76rem; font-weight: 700; color: var(--sage-700); display: block; margin-bottom: 6px;">
-              💎 Tus Valores («Yo»):
+              Tus Valores («Yo»):
             </span>
             <div class="quick-chips-row" style="margin-top: 0;">
               ${profileValues.map(pv => {
@@ -233,7 +232,7 @@ class BrujulaValoresApp {
                 const isSel = this.formData.selectedValue === labelVal;
                 return `
                   <button type="button" class="quick-fill-chip ${isSel ? 'active' : ''}" data-compass-val="${esc(labelVal)}" data-compass-micro="${esc(pv.microAction || '')}">
-                    💎 <strong>${esc(pv.domain)}:</strong> ${esc(pv.statement.slice(0, 34))}${pv.statement.length > 34 ? '…' : ''}
+<strong>${esc(pv.domain)}:</strong> ${esc(pv.statement.slice(0, 34))}${pv.statement.length > 34 ?'…' :''}
                   </button>
                 `;
               }).join('')}
@@ -246,7 +245,7 @@ class BrujulaValoresApp {
 
         <div style="margin-top: 8px;">
           <button type="button" class="btn-inline-link" id="btn-compass-toggle-val-examples" style="font-size: 0.78rem;">
-            ${this.showValueExamples ? '▴ Ocultar ejemplos de valores' : '💡 ¿Bloqueado? Ver ejemplos de valores'}
+            ${this.showValueExamples ?'▴ Ocultar ejemplos de valores' :'¿Bloqueado? Ver ejemplos de valores'}
           </button>
           ${this.showValueExamples ? `
             <div class="chip-grid mt-2" style="grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));">
@@ -272,7 +271,7 @@ class BrujulaValoresApp {
 
           <div style="margin-top: 8px;">
             <button type="button" class="btn-inline-link" id="btn-compass-toggle-action-examples" style="font-size: 0.78rem;">
-              ${this.showActionExamples ? '▴ Ocultar ejemplos' : '💡 ¿Necesitas ideas? Ver ejemplos de micro-acciones'}
+              ${this.showActionExamples ?'▴ Ocultar ejemplos' :'¿Necesitas ideas? Ver ejemplos de micro-acciones'}
             </button>
             ${this.showActionExamples ? `
               <div class="quick-chips-row" style="margin-top: 8px;">
@@ -440,7 +439,7 @@ class BrujulaValoresApp {
 
       container.innerHTML = `
         <div class="card" style="text-align: center; padding: 32px 20px;">
-          <div style="font-size: 2.4rem; margin-bottom: 10px;">🧭</div>
+<div style="font-size: 2.4rem; margin-bottom: 10px;"></div>
           <h3 class="card-title">Norte fijado con éxito</h3>
           <p class="card-subtitle mt-2" style="max-width: 480px; margin: 0 auto;">
             Elección consciente basada en <strong>${this.formData.selectedValue}</strong>.

@@ -95,7 +95,7 @@ class PazFalsaApp {
       <div class="view-plain-shell">
         <div class="card-header flex-between" style="margin-bottom: 12px;">
           <div class="title-with-help">
-            <h2 class="card-title" style="margin: 0;">🏳️ El Espejo de la Paz Falsa</h2>
+<h2 class="card-title" style="margin: 0;">El Espejo de la Paz Falsa</h2>
             <button type="button" class="help-info-trigger" data-help-topic="paz-falsa" aria-label="Información de esta herramienta">ⓘ</button>
           </div>
           <span class="badge" style="background-color: var(--sage-100); color: var(--sage-700)">
@@ -124,11 +124,11 @@ class PazFalsaApp {
 
   renderStep1() {
     const contexts = [
-      { id: 'Pareja', label: 'Pareja', icon: '❤️', desc: 'Vínculo y convivencia' },
-      { id: 'Trabajo', label: 'Trabajo', icon: '💼', desc: 'Jefes, equipo o clientes' },
-      { id: 'Familia', label: 'Familia', icon: '🏡', desc: 'Padres o familiares' },
-      { id: 'Amigos', label: 'Amigos', icon: '👥', desc: 'Círculo social' },
-      { id: 'Otro', label: 'Otro', icon: '🌐', desc: 'Otras situaciones' }
+      { id:'Pareja', label:'Pareja', icon:'', desc:'Vínculo y convivencia' },
+      { id:'Trabajo', label:'Trabajo', icon:'', desc:'Jefes, equipo o clientes' },
+      { id:'Familia', label:'Familia', icon:'', desc:'Padres o familiares' },
+      { id:'Amigos', label:'Amigos', icon:'', desc:'Círculo social' },
+      { id:'Otro', label:'Otro', icon:'', desc:'Otras situaciones' }
     ];
 
     return `
@@ -161,7 +161,7 @@ class PazFalsaApp {
         <textarea id="pf-situation" class="form-textarea mt-1" rows="2" style="min-height: 76px;" placeholder="Describe brevemente con tus palabras qué ocurrió...">${this.entryData.situation}</textarea>
         <div style="margin-top: 8px;">
           <button type="button" class="btn-inline-link" id="btn-pf-toggle-sit-examples" style="font-size: 0.78rem;">
-            ${this.showSitExamples ? '▴ Ocultar ejemplos' : '💡 ¿Bloqueado? Ver ejemplos'}
+            ${this.showSitExamples ?'▴ Ocultar ejemplos' :'¿Bloqueado? Ver ejemplos'}
           </button>
           ${this.showSitExamples ? `
             <div class="quick-chips-row" style="margin-top: 8px;">
@@ -192,7 +192,7 @@ class PazFalsaApp {
         
         <div class="mt-2" style="background-color: var(--bg-surface-elevated); padding: 14px; border-radius: var(--radius-md); border-left: 4px solid var(--sage-500); margin-bottom: 12px;">
           <label class="form-label" for="pf-wanted" style="color: var(--sage-700);">
-            🌿 ¿Qué quería hacer o decir yo realmente?
+            ¿Qué quería hacer o decir yo realmente?
           </label>
           <textarea id="pf-wanted" class="form-textarea mt-1" style="min-height: 64px;" placeholder="Lo que necesitabas de verdad...">${this.entryData.internalConflict.wanted}</textarea>
           ${this.showConflictExamples ? `
@@ -208,7 +208,7 @@ class PazFalsaApp {
 
         <div style="background-color: var(--bg-surface-elevated); padding: 14px; border-radius: var(--radius-md); border-left: 4px solid var(--accent-tension);">
           <label class="form-label" for="pf-did" style="color: var(--accent-tension);">
-            ⚡ ¿Qué hice al final?
+            ¿Qué hice al final?
           </label>
           <textarea id="pf-did" class="form-textarea mt-1" style="min-height: 64px;" placeholder="Cómo actuaste por fuera...">${this.entryData.internalConflict.did}</textarea>
           ${this.showConflictExamples ? `
@@ -224,7 +224,7 @@ class PazFalsaApp {
 
         <div style="margin-top: 8px;">
           <button type="button" class="btn-inline-link" id="btn-pf-toggle-conflict-examples" style="font-size: 0.78rem;">
-            ${this.showConflictExamples ? '▴ Ocultar ejemplos' : '💡 ¿Bloqueado? Ver ejemplos'}
+            ${this.showConflictExamples ?'▴ Ocultar ejemplos' :'¿Bloqueado? Ver ejemplos'}
           </button>
         </div>
       </div>
@@ -251,7 +251,7 @@ class PazFalsaApp {
         <!-- Sliders -->
         <div class="slider-group mt-4">
           <div class="slider-header">
-            <span>🔥 Resentimiento hacia la otra persona o situación</span>
+<span>Resentimiento hacia la otra persona o situación</span>
             <span class="slider-val-badge" id="val-resentment">${toll.resentment}/10</span>
           </div>
           <input type="range" class="range-slider" id="slider-resentment" min="0" max="10" value="${toll.resentment}">
@@ -259,7 +259,7 @@ class PazFalsaApp {
 
         <div class="slider-group">
           <div class="slider-header">
-            <span>🔋 Agotamiento Físico o Pesadez Somática</span>
+<span>Agotamiento Físico o Pesadez Somática</span>
             <span class="slider-val-badge" id="val-exhaustion">${toll.physicalExhaustion}/10</span>
           </div>
           <input type="range" class="range-slider" id="slider-exhaustion" min="0" max="10" value="${toll.physicalExhaustion}">
@@ -267,7 +267,7 @@ class PazFalsaApp {
 
         <div class="slider-group">
           <div class="slider-header">
-            <span>🌪️ Ansiedad o Hipervigilancia</span>
+<span>Ansiedad o Hipervigilancia</span>
             <span class="slider-val-badge" id="val-anxiety">${toll.anxiety}/10</span>
           </div>
           <input type="range" class="range-slider" id="slider-anxiety" min="0" max="10" value="${toll.anxiety}">
@@ -275,7 +275,7 @@ class PazFalsaApp {
 
         <div class="slider-group">
           <div class="slider-header">
-            <span>🕳️ Sensación de Vacío o Desconexión de Uno Mismo</span>
+<span>Sensación de Vacío o Desconexión de Uno Mismo</span>
             <span class="slider-val-badge" id="val-emptiness">${toll.emptiness}/10</span>
           </div>
           <input type="range" class="range-slider" id="slider-emptiness" min="0" max="10" value="${toll.emptiness}">

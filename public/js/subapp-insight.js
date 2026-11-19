@@ -25,6 +25,12 @@ class InsightApp {
         this.drawCharts();
       }
     });
+    window.addEventListener('khora:themechange', () => {
+      const container = document.getElementById('insight-view');
+      if (this.activeInsightTab === 'graficos' && container && !container.classList.contains('hidden')) {
+        this.drawCharts();
+      }
+    });
   }
 
   render() {
@@ -89,7 +95,7 @@ class InsightApp {
               <button type="button" class="help-info-trigger" data-help-topic="hexaflex-perfil" aria-label="Información de esta herramienta">ⓘ</button>
             </div>
             <button type="button" class="btn-primary" id="btn-open-hexaflex-modal" style="font-size: 0.82rem; padding: 6px 14px;">
-              📝 Evaluar mi Hexaflex (1 min)
+              Evaluar mi Hexaflex (1 min)
             </button>
           </div>
 
@@ -131,15 +137,15 @@ class InsightApp {
 
             <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; font-size: 0.8rem; color: var(--text-muted);">
               <span style="display: flex; align-items: center; gap: 6px;">
-                <span style="width: 12px; height: 12px; border-radius: 50%; background-color: #578b74; display: inline-block;"></span>
+<span style="width: 10px; height: 10px; border-radius: 50%; background-color: var(--sage-500); display: inline-block;"></span>
                 Eficacia Defusión (Intensidad inicial)
               </span>
               <span style="display: flex; align-items: center; gap: 6px;">
-                <span style="width: 12px; height: 12px; border-radius: 50%; background-color: #c98a58; display: inline-block;"></span>
+<span style="width: 10px; height: 10px; border-radius: 50%; background-color: var(--accent-warmth); display: inline-block;"></span>
                 Peaje de Autoabandono
               </span>
               <span style="display: flex; align-items: center; gap: 6px;">
-                <span style="width: 12px; height: 12px; border-radius: 50%; background-color: #b86b59; display: inline-block;"></span>
+<span style="width: 10px; height: 10px; border-radius: 50%; background-color: var(--accent-tension); display: inline-block;"></span>
                 Resentimiento Acumulado
               </span>
             </div>
@@ -157,7 +163,7 @@ class InsightApp {
                 <button type="button" class="help-info-trigger" data-help-topic="mapa-calor-contextos" aria-label="Información de esta herramienta">ⓘ</button>
               </div>
               <button type="button" class="btn-secondary" id="btn-insight-go-anchors" style="font-size: 0.76rem; padding: 5px 11px;">
-                ⚓ Gestionar Tarjetas de Anclaje →
+                Gestionar Tarjetas de Anclaje →
               </button>
             </div>
             <div class="chart-wrapper" style="height: 200px;">
@@ -173,21 +179,21 @@ class InsightApp {
     const profile = window.stateManager.getProfile?.() || {};
     const log = (profile.progressLog || []).slice(0, 8);
     const typeIcons = {
-      challenge_added: '🎯',
-      challenge_status: '🔄',
-      concern_changed: '📌',
-      barrier_toggled: '🧱',
-      passenger_added: '🚌',
-      passenger_status: '💺',
-      manual_note: '📝',
-      values_updated: '🧭'
+      challenge_added:'',
+      challenge_status:'',
+      concern_changed:'',
+      barrier_toggled:'',
+      passenger_added:'',
+      passenger_status:'',
+      manual_note:'',
+      values_updated:''
     };
 
     return `
       <div class="card mt-4">
         <div class="card-header" style="margin-bottom: 12px;">
           <div class="title-with-help">
-            <h3 class="card-title" style="margin: 0;">🌱 Actividad Reciente y Micro-Victorias</h3>
+<h3 class="card-title" style="margin: 0;">Actividad Reciente y Micro-Victorias</h3>
             <button type="button" class="help-info-trigger" data-help-topic="resumen-progresion" aria-label="Información de esta herramienta">ⓘ</button>
           </div>
         </div>
@@ -215,7 +221,7 @@ class InsightApp {
 
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
           <input type="text" id="input-progress-note" class="form-input" style="flex: 1; min-width: 200px; font-size: 0.84rem; padding: 8px 12px;" placeholder="Añadir aprendizaje o micro-victoria...">
-          <button type="button" class="btn-secondary" id="btn-add-progress-note" style="font-size: 0.8rem; padding: 8px 14px; white-space: nowrap;">📝 Anotar</button>
+<button type="button" class="btn-secondary" id="btn-add-progress-note" style="font-size: 0.8rem; padding: 8px 14px; white-space: nowrap;">Anotar</button>
         </div>
       </div>
     `;
@@ -327,12 +333,12 @@ class InsightApp {
 
     const familyChips = [
       { id: 'all', label: 'Todas las emociones' },
-      { id: 'miedo', label: '⚡ Miedo / Ansiedad' },
-      { id: 'ira', label: '🔥 Ira / Resentimiento' },
-      { id: 'tristeza', label: '💧 Tristeza / Culpa' },
-      { id: 'agotamiento', label: '🔋 Agotamiento' },
-      { id: 'aversion', label: '⚖️ Aversión' },
-      { id: 'sorpresa', label: '🌪️ Bloqueo' }
+      { id:'miedo', label:'Miedo / Ansiedad' },
+      { id:'ira', label:'Ira / Resentimiento' },
+      { id:'tristeza', label:'Tristeza / Culpa' },
+      { id:'agotamiento', label:'Agotamiento' },
+      { id:'aversion', label:'Aversión' },
+      { id:'sorpresa', label:'Bloqueo' }
     ];
 
     const filteredItems = this.getFilteredHistoryItems(pfEntries, actEntries);
@@ -350,7 +356,7 @@ class InsightApp {
               Todos
             </button>
             <button type="button" class="badge filter-btn ${this.filterType === 'pending_integration' ? 'active' : ''}" data-filter="pending_integration" style="cursor: pointer; border: 1px solid var(--border-subtle); background: ${this.filterType === 'pending_integration' ? '#c98a58' : 'var(--bg-surface)'}; color: ${this.filterType === 'pending_integration' ? '#fff' : 'inherit'};">
-              ⏳ Pendientes de integrar
+              Pendientes de integrar
             </button>
             <button type="button" class="badge filter-btn ${this.filterType === 'paz_falsa' ? 'active' : ''}" data-filter="paz_falsa" style="cursor: pointer; border: 1px solid var(--border-subtle); background: ${this.filterType === 'paz_falsa' ? 'var(--accent-warmth)' : 'var(--bg-surface)'}; color: ${this.filterType === 'paz_falsa' ? '#fff' : 'inherit'};">
               Paz Falsa
@@ -364,7 +370,7 @@ class InsightApp {
         <!-- Retrospective Emotion, Context & Search Filter Bar -->
         <div class="history-retro-filter-box">
           <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">
-            🔍 Explorar por emoción sentida (para reflexionar a pasado):
+            Explorar por emoción sentida (para reflexionar a pasado):
           </div>
           <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
             ${familyChips.map(fc => `
@@ -381,7 +387,7 @@ class InsightApp {
 
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; align-items: center;">
             <input type="text" id="history-search-input" class="form-input" style="padding: 7px 12px; font-size: 0.82rem;"
-                   placeholder="🔍 Buscar por emoción, pensamiento o situación..." value="${this.escapeHtml(this.historySearchQuery)}">
+                   placeholder="Buscar por emoción, pensamiento o situación..." value="${this.escapeHtml(this.historySearchQuery)}">
             <select id="history-context-select" class="form-select" style="padding: 7px 12px; font-size: 0.82rem;">
               <option value="all" ${this.contextFilter === 'all' ? 'selected' : ''}>Todos los ámbitos</option>
               <option value="Pareja" ${this.contextFilter === 'Pareja' ? 'selected' : ''}>Pareja</option>
@@ -393,14 +399,14 @@ class InsightApp {
           </div>
 
           ${hasExtraFilters ? `
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-subtle);">
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-subtle);">
               <span style="font-size: 0.78rem; color: var(--sage-700); font-weight: 700;">
-                🎯 Mostrando ${filteredItems.length} registro(s) con este filtro
+                Mostrando ${filteredItems.length} registro(s) con este filtro
               </span>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                 ${filteredItems.length > 0 ? `
                   <button type="button" class="btn-primary" id="btn-history-to-therapy" style="font-size: 0.76rem; padding: 5px 11px;">
-                    🛋️ Reflexionar sobre este patrón en Cuaderno de Terapia
+                    Reflexionar sobre este patrón en Cuaderno de Terapia
                   </button>
                 ` : ''}
                 <button type="button" class="btn-secondary" id="btn-clear-history-filters" style="font-size: 0.76rem; padding: 5px 10px;">
@@ -414,9 +420,9 @@ class InsightApp {
         <div id="history-list-container">
           ${[...pfEntries, ...actEntries].some(x => window.stateManager?.isExampleItem?.(x)) ? `
             <div class="example-notice-bar">
-              <span>🧪 Este historial contiene registros de demostración/ejemplo para probar los gráficos y el re-análisis.</span>
+<span>Este historial contiene registros de demostración/ejemplo para probar los gráficos y el re-análisis.</span>
               <button type="button" class="btn-secondary" data-clear-examples="true" style="font-size: 0.75rem; padding: 4px 10px;">
-                🧹 Quitar ejemplos
+                Quitar ejemplos
               </button>
             </div>
           ` : ''}
@@ -427,12 +433,12 @@ class InsightApp {
       </div>
 
       <!-- Discreet Settings Link -->
-      <div style="margin-top: 14px; padding: 12px 16px; border-radius: var(--radius-md); border: 1px dashed var(--border-subtle); background: var(--bg-surface-elevated); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+<div style="margin-top: 14px; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); background: var(--bg-surface-elevated); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
         <span style="font-size: 0.82rem; color: var(--text-secondary);">
-          ⚙️ Los ajustes de base de datos SQLite, copias de seguridad (.db / JSON) y tema están en el icono de Configuración superior.
+          Los ajustes de base de datos SQLite, copias de seguridad (.db / JSON) y tema están en el icono de Configuración superior.
         </span>
         <button type="button" class="btn-secondary" id="btn-open-storage-modal" style="font-size: 0.8rem; padding: 7px 12px;">
-          ⚙️ Abrir Configuración y Copias
+          Abrir Configuración y Copias
         </button>
       </div>
     `;
@@ -447,7 +453,7 @@ class InsightApp {
       return `
         <div style="text-align: center; padding: 30px; color: var(--text-muted); font-size: 0.9rem; grid-column: 1 / -1;">
           ${this.filterType === 'pending_integration'
-            ? '🌟 ¡Todo al día! No tienes registros pendientes de valorar en frío.'
+            ?'¡Todo al día! No tienes registros pendientes de valorar en frío.'
             : (this.emotionFilter !== 'all' || this.contextFilter !== 'all' || (this.historySearchQuery || '').trim()
               ? 'No hay episodios guardados que coincidan con este filtro.'
               : 'No hay registros aún. Completa una sesión en "Paz Falsa" o en "Espacio ACT", o pulsa "Cargar Datos de Demostración" para probar.')}
@@ -462,8 +468,8 @@ class InsightApp {
 
       const isIntegrated = item.data.followUpNotes && item.data.followUpNotes.length > 0;
       const integrationBadge = isIntegrated
-        ? `<span class="badge" style="background: rgba(74, 122, 102, 0.2); color: var(--sage-700); font-size: 0.7rem;">✅ Valorado e integrado (${item.data.followUpNotes.length})</span>`
-        : `<span class="badge" style="background: rgba(201, 138, 88, 0.18); color: #c98a58; font-size: 0.7rem;">⏳ Pendiente de valorar en frío</span>`;
+        ?`<span class="badge" style="background: rgba(74, 122, 102, 0.2); color: var(--sage-700); font-size: 0.7rem;">Valorado e integrado (${item.data.followUpNotes.length})</span>`
+        :`<span class="badge" style="background: rgba(201, 138, 88, 0.18); color: #c98a58; font-size: 0.7rem;">Pendiente de valorar en frío</span>`;
 
       if (item.type === 'paz_falsa') {
         const e = item.data;
@@ -473,7 +479,7 @@ class InsightApp {
             <div class="history-header" style="flex-wrap: wrap; gap: 6px;">
               <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
                 <span class="history-tag paz-falsa">Paz Falsa • ${e.context}</span>
-                ${window.stateManager?.isExampleItem?.(e) ? '<span class="badge example-item-badge">🧪 Ejemplo guía</span>' : ''}
+                ${window.stateManager?.isExampleItem?.(e) ?'<span class="badge example-item-badge">Ejemplo guía</span>' :''}
                 ${integrationBadge}
               </div>
               <span class="history-date">${dateStr}</span>
@@ -500,7 +506,7 @@ class InsightApp {
             ` : ''}
 
             <button type="button" class="btn-add-followup" data-add-followup-id="${e.id}" data-type="paz_falsa">
-              🌱 Valorar e Integrar en frío (Con perspectiva)
+              Valorar e Integrar en frío (Con perspectiva)
             </button>
           </div>
         `;
@@ -512,7 +518,7 @@ class InsightApp {
             <div class="history-header" style="flex-wrap: wrap; gap: 6px;">
               <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
                 <span class="history-tag espacio-act">Espacio ACT • ${e.emotion}</span>
-                ${window.stateManager?.isExampleItem?.(e) ? '<span class="badge example-item-badge">🧪 Ejemplo guía</span>' : ''}
+                ${window.stateManager?.isExampleItem?.(e) ?'<span class="badge example-item-badge">Ejemplo guía</span>' :''}
                 ${integrationBadge}
               </div>
               <span class="history-date">${dateStr}</span>
@@ -520,9 +526,9 @@ class InsightApp {
             <div class="history-title">Pensamiento observado: "${e.thought || '—'}"</div>
             <div class="history-detail">
               <strong>Distanciamiento:</strong> "${e.reframedThought || e.thought || '—'}"<br>
-              <strong>Dirección elegida:</strong> ${e.choiceType === 'value' ? '🌿 ' + e.valueChosen : '⚡ Piloto Automático'}
+<strong>Dirección elegida:</strong> ${e.choiceType ==='value' ?'' + e.valueChosen :'Piloto Automático'}
               ${e.committedAction ? ` — Acción: "${e.committedAction}"` : ''}
-              ${e.carriedPassenger ? `<br><strong>🚌 Pasajero a bordo:</strong> ${e.carriedPassenger}` : ''}
+              ${e.carriedPassenger ?`<br><strong>Pasajero a bordo:</strong> ${e.carriedPassenger}` :''}
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
               <span class="badge" style="background: rgba(87, 139, 116, 0.2); color: var(--sage-700);">
@@ -546,7 +552,7 @@ class InsightApp {
             ` : ''}
 
             <button type="button" class="btn-add-followup" data-add-followup-id="${e.id}" data-type="act_crisis">
-              🌱 Valorar e Integrar en frío (Con perspectiva)
+              Valorar e Integrar en frío (Con perspectiva)
             </button>
           </div>
         `;
@@ -614,6 +620,12 @@ class InsightApp {
       return;
     }
 
+    const cs = getComputedStyle(document.documentElement);
+    const colAccent = cs.getPropertyValue('--sage-500').trim() || '#96553E';
+    const colTension = cs.getPropertyValue('--accent-tension').trim() || '#9A4B38';
+    const colWarmth = cs.getPropertyValue('--accent-warmth').trim() || '#96553E';
+    const colBg = cs.getPropertyValue('--bg-primary').trim() || (isDark ? '#1B1613' : '#F3EDE4');
+
     const stepX = timeline.length > 1 ? plotW / (timeline.length - 1) : plotW / 2;
 
     ctx.beginPath();
@@ -623,7 +635,7 @@ class InsightApp {
       if (idx === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     });
-    ctx.strokeStyle = '#578b74';
+    ctx.strokeStyle = colAccent;
     ctx.lineWidth = 2.5;
     ctx.stroke();
 
@@ -642,7 +654,7 @@ class InsightApp {
       }
     });
     if (hasResentment) {
-      ctx.strokeStyle = '#b86b59';
+      ctx.strokeStyle = colTension;
       ctx.setLineDash([4, 4]);
       ctx.lineWidth = 2;
       ctx.stroke();
@@ -655,9 +667,9 @@ class InsightApp {
 
       ctx.beginPath();
       ctx.arc(x, y, 5, 0, Math.PI * 2);
-      ctx.fillStyle = pt.type === 'act_crisis' ? '#578b74' : '#c98a58';
+      ctx.fillStyle = pt.type ==='act_crisis' ? colAccent : colWarmth;
       ctx.fill();
-      ctx.strokeStyle = isDark ? '#1a221e' : '#ffffff';
+      ctx.strokeStyle = colBg;
       ctx.lineWidth = 2;
       ctx.stroke();
 
@@ -831,9 +843,17 @@ class InsightApp {
     });
     ctx.closePath();
 
-    ctx.fillStyle = isDark ? 'rgba(87, 139, 116, 0.35)' : 'rgba(87, 139, 116, 0.25)';
+    const csHex = getComputedStyle(document.documentElement);
+    const hexAccent = csHex.getPropertyValue('--sage-500').trim() || '#96553E';
+    const hexAccentDeep = csHex.getPropertyValue('--sage-600').trim() || hexAccent;
+    const hexBg = csHex.getPropertyValue('--bg-primary').trim() || (isDark ? '#1B1613' : '#F3EDE4');
+
+    ctx.save();
+    ctx.globalAlpha = isDark ? 0.28 : 0.2;
+    ctx.fillStyle = hexAccent;
     ctx.fill();
-    ctx.strokeStyle = '#578b74';
+    ctx.restore();
+    ctx.strokeStyle = hexAccent;
     ctx.lineWidth = 2.5;
     ctx.stroke();
 
@@ -847,21 +867,16 @@ class InsightApp {
 
       ctx.beginPath();
       ctx.arc(x, y, 4.5, 0, Math.PI * 2);
-      ctx.fillStyle = '#426f5c';
+      ctx.fillStyle = hexAccentDeep;
       ctx.fill();
-      ctx.strokeStyle = '#ffffff';
+      ctx.strokeStyle = hexBg;
       ctx.lineWidth = 1.5;
       ctx.stroke();
     });
   }
 
   escapeHtml(str) {
-    return String(str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
+    return window.KhoraUtils.escapeHtml(str);
   }
 
   renderTherapyReflectionsSection(reflections) {
@@ -878,7 +893,7 @@ class InsightApp {
     const cardsHtml = filtered.length === 0
       ? `<div style="text-align: center; padding: 22px; color: var(--text-muted); font-size: 0.9rem;">
            ${this.therapyFilter === 'pending'
-             ? '✅ No tienes reflexiones pendientes por revisar en sesión.'
+             ?'No tienes reflexiones pendientes por revisar en sesión.'
              : 'Todavía no hay reflexiones en este filtro. Escribe una arriba cuando notes un patrón o idea.'}
          </div>`
       : filtered.map(r => {
@@ -888,8 +903,8 @@ class InsightApp {
           const ext = r.clinicalExtract || {};
           const isPending = r.status === 'pending';
           const statusBadge = isPending
-            ? `<span class="badge" style="background: rgba(201, 138, 88, 0.18); color: #c98a58; font-size: 0.72rem;">📌 Pendiente de sesión</span>`
-            : `<span class="badge" style="background: rgba(87, 139, 116, 0.2); color: var(--border-focus); font-size: 0.72rem;">✅ Tratada en sesión</span>`;
+            ?`<span class="badge" style="background: rgba(201, 138, 88, 0.18); color: #c98a58; font-size: 0.72rem;">Pendiente de sesión</span>`
+            :`<span class="badge" style="background: rgba(87, 139, 116, 0.2); color: var(--border-focus); font-size: 0.72rem;">Tratada en sesión</span>`;
 
           const emotionsTags = (ext.emotions || []).map(em =>
             `<span class="badge" style="background: rgba(184, 107, 89, 0.14); color: var(--accent-tension); font-size: 0.72rem;">${this.escapeHtml(em)}</span>`
@@ -899,9 +914,9 @@ class InsightApp {
             <div class="history-item" style="margin-bottom: 12px;">
               <div class="history-header" style="flex-wrap: wrap; gap: 6px;">
                 <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                  <span class="history-tag act-crisis">🛋️ ${this.escapeHtml(r.context)}</span>
+<span class="history-tag act-crisis">${this.escapeHtml(r.context)}</span>
                   <span class="badge" style="background: var(--bg-surface-elevated); font-size: 0.72rem;">${this.escapeHtml(r.category)}</span>
-                  ${window.stateManager?.isExampleItem?.(r) ? '<span class="badge example-item-badge">🧪 Ejemplo guía</span>' : ''}
+                  ${window.stateManager?.isExampleItem?.(r) ?'<span class="badge example-item-badge">Ejemplo guía</span>' :''}
                   ${statusBadge}
                 </div>
                 <span class="history-date">${dateStr}</span>
@@ -912,7 +927,7 @@ class InsightApp {
               </div>
 
               <div style="margin-top: 10px; padding: 10px 12px; border-radius: var(--radius-sm); background: rgba(87, 139, 116, 0.08); border-left: 3px solid var(--sage-600); font-size: 0.84rem; line-height: 1.45;">
-                <div style="font-weight: 700; color: var(--border-focus); margin-bottom: 6px;">🩺 Detalles Extraídos para el Psicólogo</div>
+<div style="font-weight: 700; color: var(--border-focus); margin-bottom: 6px;">Detalles Extraídos para el Psicólogo</div>
                 <div style="margin-bottom: 5px; display: flex; flex-wrap: wrap; align-items: center; gap: 5px;">
                   <strong>Emociones detectadas:</strong> ${emotionsTags}
                 </div>
@@ -929,10 +944,10 @@ class InsightApp {
 
               <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
                 <button type="button" class="btn-secondary" style="font-size: 0.8rem; padding: 6px 12px;" data-toggle-reflection-id="${r.id}">
-                  ${isPending ? '✓ Marcar como tratada en sesión' : '↩ Reabrir como pendiente'}
+                  ${isPending ?'✓ Marcar como tratada en sesión' :'Reabrir como pendiente'}
                 </button>
                 <button type="button" class="btn-secondary" data-delete-reflection-id="${r.id}" style="font-size: 0.8rem; padding: 6px 12px; color: var(--accent-tension); border-color: rgba(184, 107, 89, 0.35);">
-                  🗑️ Eliminar
+                  Eliminar
                 </button>
               </div>
             </div>
@@ -944,7 +959,7 @@ class InsightApp {
         <div class="card-header flex-between" style="flex-wrap: wrap; gap: 10px;">
           <p class="card-subtitle" style="margin: 0; flex: 1; min-width: 220px;">Anota ideas, bucles o dudas entre sesiones para llevar un resumen clínico a consulta.</p>
           <button type="button" class="btn-primary" id="btn-open-therapy-brief" style="font-size: 0.82rem; padding: 8px 14px;">
-            📋 Ver / Copiar Informe para mi Psicólogo
+            Ver / Copiar Informe para mi Psicólogo
           </button>
         </div>
 
@@ -955,7 +970,7 @@ class InsightApp {
               <textarea id="input-therapy-reflection" class="form-textarea mt-1" rows="3" placeholder="Escribe con tus palabras qué quieres llevar a sesión...">${this.escapeHtml(this.pendingTherapyDraft || '')}</textarea>
               <div style="margin-top: 8px;">
                 <button type="button" class="btn-inline-link" id="btn-therapy-toggle-examples" style="font-size: 0.78rem;">
-                  💡 ¿Bloqueado? Ver inicios de ejemplo
+                  ¿Bloqueado? Ver inicios de ejemplo
                 </button>
                 <div class="quick-chips-row hidden" id="therapy-examples-row" style="margin-top: 8px;">
                   ${[
@@ -965,7 +980,7 @@ class InsightApp {
                     'Quiero trabajar en sesión...'
                   ].map(st => `
                     <button type="button" class="quick-fill-chip" data-therapy-starter="${st.replace(/"/g, '&quot;')}">
-                      ⚡ ${st}
+                      ${st}
                     </button>
                   `).join('')}
                 </div>
@@ -994,7 +1009,7 @@ class InsightApp {
                   </select>
                 </div>
                 <button type="button" class="btn-primary" id="btn-save-therapy-reflection" style="width: 100%; justify-content: center;">
-                  ✨ Guardar y Analizar para Terapia
+                  Guardar y Analizar para Terapia
                 </button>
               </div>
             </div>
@@ -1006,19 +1021,19 @@ class InsightApp {
                 Todas (${allCount})
               </button>
               <button type="button" class="btn-secondary therapy-filter-btn ${this.therapyFilter === 'pending' ? 'active' : ''}" data-therapy-filter="pending" style="font-size: 0.8rem; padding: 6px 12px; ${this.therapyFilter === 'pending' ? 'background: var(--sage-600); color: #fff; border-color: var(--sage-600);' : ''}">
-                📌 Pendientes de sesión (${pendingCount})
+                Pendientes de sesión (${pendingCount})
               </button>
               <button type="button" class="btn-secondary therapy-filter-btn ${this.therapyFilter === 'discussed' ? 'active' : ''}" data-therapy-filter="discussed" style="font-size: 0.8rem; padding: 6px 12px; ${this.therapyFilter === 'discussed' ? 'background: var(--sage-600); color: #fff; border-color: var(--sage-600);' : ''}">
-                ✅ Tratadas (${discussedCount})
+                Tratadas (${discussedCount})
               </button>
             </div>
 
             <div>
               ${reflections.some(r => window.stateManager?.isExampleItem?.(r)) ? `
                 <div class="example-notice-bar">
-                  <span>🧪 Hay un apunte de ejemplo en tu Cuaderno para enseñarte cómo extrae los procesos para sesión.</span>
+<span>Hay un apunte de ejemplo en tu Cuaderno para enseñarte cómo extrae los procesos para sesión.</span>
                   <button type="button" class="btn-secondary" data-clear-examples="true" style="font-size: 0.75rem; padding: 4px 10px;">
-                    🧹 Quitar ejemplos
+                    Quitar ejemplos
                   </button>
                 </div>
               ` : ''}
@@ -1113,23 +1128,23 @@ class InsightApp {
     const briefText = lines.join('\n');
 
     modalBody.innerHTML = `
-      <h3 class="card-title">📋 Informe Breve para tu Psicólogo</h3>
+<h3 class="card-title">Informe Breve para tu Psicólogo</h3>
       <p class="card-subtitle mt-2">
         Consolida tus indicadores ACT, emociones dominantes, pasajeros activos, valores y tus <strong>${pendingRefs.length}</strong> reflexiones pendientes de sesión.
       </p>
 
       <div style="display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0;">
-        <span class="badge" style="background: rgba(87, 139, 116, 0.18); color: var(--border-focus);">📌 ${pendingRefs.length} ${pendingRefs.length === 1 ? 'tema pendiente' : 'temas pendientes'}</span>
+<span class="badge" style="background: rgba(87, 139, 116, 0.18); color: var(--border-focus);">${pendingRefs.length} ${pendingRefs.length === 1 ?'tema pendiente' :'temas pendientes'}</span>
         <span class="badge" style="background: rgba(184, 107, 89, 0.14); color: var(--accent-tension);">Autoabandono: ${analytics.avgTollScore}/100</span>
-        <span class="badge" style="background: var(--bg-surface-elevated);">🚌 ${activePassengers.length} pasajeros activos</span>
-        <span class="badge" style="background: var(--bg-surface-elevated);">🧭 ${coreValues.length} valores</span>
+<span class="badge" style="background: var(--bg-surface-elevated);">${activePassengers.length} pasajeros activos</span>
+<span class="badge" style="background: var(--bg-surface-elevated);">${coreValues.length} valores</span>
       </div>
 
       <textarea id="therapy-brief-textarea" class="form-textarea" rows="13" readonly style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.79rem; line-height: 1.45; white-space: pre-wrap;">${this.escapeHtml(briefText)}</textarea>
 
       <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 14px;">
         <button type="button" class="btn-secondary" id="btn-close-therapy-brief">Cerrar</button>
-        <button type="button" class="btn-primary" id="btn-copy-therapy-brief">📋 Copiar al Portapapeles</button>
+<button type="button" class="btn-primary" id="btn-copy-therapy-brief">Copiar al Portapapeles</button>
       </div>
     `;
 
@@ -1150,14 +1165,14 @@ class InsightApp {
           document.execCommand('copy');
         }
         window.app?.showToast('Informe clínico copiado al portapapeles');
-        if (copyBtn) copyBtn.textContent = '✅ ¡Informe Copiado!';
+        if (copyBtn) copyBtn.textContent ='¡Informe Copiado!';
       } catch (err) {
         if (textarea) {
           textarea.select();
           document.execCommand('copy');
         }
         window.app?.showToast('Informe preparado para copiar');
-        if (copyBtn) copyBtn.textContent = '✅ Copiado / Seleccionado';
+        if (copyBtn) copyBtn.textContent ='Copiado / Seleccionado';
       }
     });
   }
@@ -1178,7 +1193,7 @@ class InsightApp {
       const row = document.getElementById('therapy-examples-row');
       if (!row) return;
       const isHidden = row.classList.toggle('hidden');
-      e.currentTarget.textContent = isHidden ? '💡 ¿Bloqueado? Ver inicios de ejemplo' : '▴ Ocultar ejemplos';
+      e.currentTarget.textContent = isHidden ?'¿Bloqueado? Ver inicios de ejemplo' :'▴ Ocultar ejemplos';
     });
 
     document.querySelectorAll('[data-therapy-starter]').forEach(btn => {
@@ -1415,7 +1430,7 @@ class InsightApp {
       <div class="form-group mt-4 modal-grid-2col">
         <div class="slider-group">
           <div class="slider-header">
-            <span>🌿 1. Aceptación (Espacio a la incomodidad sin huir)</span>
+<span>1. Aceptación (Espacio a la incomodidad sin huir)</span>
             <span class="slider-val-badge" id="val-hex-acc">${curr.acceptance}/10</span>
           </div>
           <input type="range" class="range-slider" id="sl-hex-acc" min="0" max="10" value="${curr.acceptance}">
@@ -1423,7 +1438,7 @@ class InsightApp {
 
         <div class="slider-group">
           <div class="slider-header">
-            <span>🍃 2. Defusión (Tomar distancia de los pensamientos)</span>
+<span>2. Defusión (Tomar distancia de los pensamientos)</span>
             <span class="slider-val-badge" id="val-hex-def">${curr.defusion}/10</span>
           </div>
           <input type="range" class="range-slider" id="sl-hex-def" min="0" max="10" value="${curr.defusion}">
@@ -1431,7 +1446,7 @@ class InsightApp {
 
         <div class="slider-group">
           <div class="slider-header">
-            <span>⏱️ 3. Momento Presente (Anclado aquí y ahora vs. rumiación)</span>
+<span>3. Momento Presente (Anclado aquí y ahora vs. rumiación)</span>
             <span class="slider-val-badge" id="val-hex-pre">${curr.present}/10</span>
           </div>
           <input type="range" class="range-slider" id="sl-hex-pre" min="0" max="10" value="${curr.present}">
@@ -1439,7 +1454,7 @@ class InsightApp {
 
         <div class="slider-group">
           <div class="slider-header">
-            <span>🌌 4. Yo como Contexto (Sentirse como el cielo que contiene las nubes)</span>
+<span>4. Yo como Contexto (Sentirse como el cielo que contiene las nubes)</span>
             <span class="slider-val-badge" id="val-hex-con">${curr.context}/10</span>
           </div>
           <input type="range" class="range-slider" id="sl-hex-con" min="0" max="10" value="${curr.context}">
@@ -1447,7 +1462,7 @@ class InsightApp {
 
         <div class="slider-group">
           <div class="slider-header">
-            <span>🧭 5. Claridad de Valores (Saber qué es digno e importante)</span>
+<span>5. Claridad de Valores (Saber qué es digno e importante)</span>
             <span class="slider-val-badge" id="val-hex-val">${curr.values}/10</span>
           </div>
           <input type="range" class="range-slider" id="sl-hex-val" min="0" max="10" value="${curr.values}">
@@ -1455,7 +1470,7 @@ class InsightApp {
 
         <div class="slider-group">
           <div class="slider-header">
-            <span>👣 6. Acción Comprometida (Dar pasos alineados a pesar del miedo)</span>
+<span>6. Acción Comprometida (Dar pasos alineados a pesar del miedo)</span>
             <span class="slider-val-badge" id="val-hex-act">${curr.action}/10</span>
           </div>
           <input type="range" class="range-slider" id="sl-hex-act" min="0" max="10" value="${curr.action}">
@@ -1563,13 +1578,13 @@ class InsightApp {
     window.app?.setModalSize?.('medium');
 
     const retroOptions = [
-      '🚌 Mantuve el volante en mis valores aunque el pasajero hizo ruido',
-      '🏳️ Hice pacto de Paz Falsa: cedí el volante para que el miedo se callara',
-      '🛑 Paré el autobús discutiendo con el pasajero, pero hoy veo qué valor quiero cuidar'
+'Mantuve el volante en mis valores aunque el pasajero hizo ruido',
+'Hice pacto de Paz Falsa: cedí el volante para que el miedo se callara',
+'Paré el autobús discutiendo con el pasajero, pero hoy veo qué valor quiero cuidar'
     ];
 
     modalBody.innerHTML = `
-      <h3 class="card-title">🌱 Valorar e Integrar en Frío (Metáfora del Autobús)</h3>
+<h3 class="card-title">Valorar e Integrar en Frío (Metáfora del Autobús)</h3>
       <p class="card-subtitle mt-2">
         Mirar lo vivido cuando pasa el tiempo transforma un episodio puntual en aprendizaje integrado para tu ruta.
       </p>
@@ -1594,7 +1609,7 @@ class InsightApp {
 
       <div class="btn-group">
         <button type="button" class="btn-secondary" id="btn-modal-cancel">Cancelar</button>
-        <button type="button" class="btn-primary" id="btn-modal-save-followup">✅ Guardar e Integrar Aprendizaje</button>
+<button type="button" class="btn-primary" id="btn-modal-save-followup">Guardar e Integrar Aprendizaje</button>
       </div>
     `;
 

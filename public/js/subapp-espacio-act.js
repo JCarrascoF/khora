@@ -18,7 +18,7 @@ class EspacioActApp {
       {
         id: 'Ira',
         label: 'Ira / Enfado',
-        icon: '🔥',
+        icon:'',
         color: '#994131',
         desc: 'Límites transgredidos, agravio o frustración',
         nuances: [
@@ -34,7 +34,7 @@ class EspacioActApp {
       {
         id: 'Miedo',
         label: 'Miedo / Ansiedad',
-        icon: '⚡',
+        icon:'',
         color: '#965d2e',
         desc: 'Amenaza al vínculo, al rechazo o a la seguridad',
         nuances: [
@@ -50,7 +50,7 @@ class EspacioActApp {
       {
         id: 'Tristeza',
         label: 'Tristeza / Duelo',
-        icon: '💧',
+        icon:'',
         color: '#3f5a6c',
         desc: 'Pérdida, desconexión o herida interna',
         nuances: [
@@ -66,7 +66,7 @@ class EspacioActApp {
       {
         id: 'Aversión',
         label: 'Asco / Aversión',
-        icon: '⚖️',
+        icon:'',
         color: '#6b4b32',
         desc: 'Rechazo moral, desprecio o desencanto',
         nuances: [
@@ -82,7 +82,7 @@ class EspacioActApp {
       {
         id: 'Sorpresa',
         label: 'Sorpresa / Bloqueo',
-        icon: '🌪️',
+        icon:'',
         color: '#3b6372',
         desc: 'Sobresalto, parálisis y sobrecarga mental',
         nuances: [
@@ -98,7 +98,7 @@ class EspacioActApp {
       {
         id: 'Alegría / Paz',
         label: 'Alegría / Paz y Firmeza',
-        icon: '🌿',
+        icon:'',
         color: '#34614f',
         desc: 'Bienestar, apertura, dignidad y conexión',
         nuances: [
@@ -220,7 +220,7 @@ class EspacioActApp {
       <div class="view-plain-shell">
         <div class="card-header flex-between" style="margin-bottom: 12px;">
           <div class="title-with-help">
-            <h2 class="card-title" style="margin: 0;">🌪️ El Espacio ACT</h2>
+<h2 class="card-title" style="margin: 0;">El Espacio ACT</h2>
             <button type="button" class="help-info-trigger" data-help-topic="espacio-act" aria-label="Información de esta herramienta">ⓘ</button>
           </div>
           <span class="badge" style="background-color: rgba(87, 139, 116, 0.2); color: var(--sage-700)">
@@ -284,14 +284,14 @@ class EspacioActApp {
         <div class="selected-emotions-bar" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 10px;">
           <span style="font-style: italic;">Aún no has seleccionado ninguna emoción — puedes marcar una o varias abajo o usar un acceso rápido.</span>
           <button type="button" class="badge" id="btn-act-skip-unnamed" style="cursor: pointer; padding: 5px 10px; font-size: 0.74rem; border: 1px solid var(--sage-400); background: var(--bg-surface-elevated); color: var(--sage-700);">
-            🌊 No sé nombrarla aún (Avanzar)
+            No sé nombrarla aún (Avanzar)
           </button>
         </div>
       `;
     }
 
     const chips = selected.map(em => {
-      let famIcon = '🌿';
+      let famIcon ='';
       this.emotionFamilies.forEach(fam => {
         if (fam.id === em || fam.nuances.some(n => n.id === em)) {
           famIcon = fam.icon;
@@ -350,7 +350,7 @@ class EspacioActApp {
             }).join('')}
           </div>
           <button type="button" class="btn-secondary" id="btn-act-overload-skip" style="font-size: 0.76rem; padding: 6px 12px; border-radius: var(--radius-full); border-color: var(--sage-400);">
-            ⚡ Saltar directo al Cuerpo (si estás muy saturado/a)
+            Saltar directo al Cuerpo (si estás muy saturado/a)
           </button>
         </div>
       </div>
@@ -362,21 +362,21 @@ class EspacioActApp {
             <label class="form-label" style="margin-bottom: 0;">1. Nombra lo que sientes (toca 1 o varias emociones)</label>
             <p class="form-hint" style="margin-top: 2px;">
               ${activeNuanceDesc ? `<em>"${focusedEmotion}: ${activeNuanceDesc}"</em>` : 'Poner nombre exacto ayuda a tomar distancia de la ola.'}
-              ${activeNuanceExample ? `<br/><span style="color: var(--sage-600); font-size: 0.78rem;">💡 ${activeNuanceExample}</span>` : ''}
+              ${activeNuanceExample ?`<br/><span style="color: var(--sage-600); font-size: 0.78rem;">${activeNuanceExample}</span>` :''}
             </p>
           </div>
 
           <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
             <button type="button" class="btn-secondary" id="btn-maximize-wheel" style="font-size: 0.78rem; padding: 6px 13px; border-radius: var(--radius-full);">
-              🔍 Ampliar Rueda
+              Ampliar Rueda
             </button>
             ${this.emotionViewMode === 'wheel' ? `
               <button type="button" class="btn-secondary mode-toggle-btn" data-emotion-mode="chips" style="font-size: 0.78rem; padding: 6px 13px; border-radius: var(--radius-full);">
-                📋 Ver en Lista / Buscar
+                Ver en Lista / Buscar
               </button>
             ` : `
               <button type="button" class="btn-primary mode-toggle-btn" data-emotion-mode="wheel" style="font-size: 0.78rem; padding: 6px 14px; border-radius: var(--radius-full);">
-                🎡 Volver a Rueda
+                Volver a Rueda
               </button>
             `}
           </div>
@@ -540,7 +540,7 @@ class EspacioActApp {
     const selCount = selectedList.length;
     const focusedEm = this.entryData.lastFocusedEmotion || selectedList[selCount - 1] || '';
 
-    let activeFamilyIcon = selCount === 0 ? '🎯' : '🌿';
+    let activeFamilyIcon = selCount === 0 ?'' :'';
     if (focusedEm) {
       this.emotionFamilies.forEach(fam => {
         if (fam.id === focusedEm || fam.nuances.some(n => n.id === focusedEm)) {
@@ -618,7 +618,7 @@ class EspacioActApp {
   renderChipsEmotionWheel() {
     return `
       <div style="margin-bottom: 12px;">
-        <input type="text" id="input-search-emotion" class="form-input" style="padding: 8px 14px; font-size: 0.88rem;" placeholder="🔍 Filtrar o buscar emoción exacta (ej. culpa, resentimiento, desamparo, vacío)..." value="${this.emotionSearchQuery}">
+<input type="text" id="input-search-emotion" class="form-input" style="padding: 8px 14px; font-size: 0.88rem;" placeholder="Filtrar o buscar emoción exacta (ej. culpa, resentimiento, desamparo, vacío)..." value="${this.emotionSearchQuery}">
       </div>
 
       <!-- Family Petals -->
@@ -711,7 +711,7 @@ class EspacioActApp {
           <div class="form-group" style="background: var(--bg-surface-elevated); padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
             <div class="title-with-help" style="margin-bottom: 8px;">
               <label class="form-label" style="font-size: 0.92rem; margin-bottom: 0;">
-                🎨 Fisicalizar la Sensación (Técnica de Steven C. Hayes)
+                Fisicalizar la Sensación (Técnica de Steven C. Hayes)
               </label>
               <button type="button" class="help-info-trigger" data-help-topic="fisicalizar" aria-label="Información de esta herramienta">ⓘ</button>
             </div>
@@ -719,7 +719,7 @@ class EspacioActApp {
             <div style="margin-bottom: 8px;">
               <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 5px;">Forma / Textura:</span>
               <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                ${['🪨 Bloque pesado', '🪢 Nudo apretado', '🔥 Presión ardiente', '🕳️ Hueco / Vacío', '⚡ Corriente eléctrica'].map(shape => `
+                ${['Bloque pesado','Nudo apretado','Presión ardiente','Hueco / Vacío','Corriente eléctrica'].map(shape =>`
                   <button type="button" class="badge phys-chip-btn ${this.entryData.physicalShape === shape ? 'active' : ''}"
                           data-phys-shape="${shape}"
                           style="cursor: pointer; padding: 5px 11px; font-size: 0.78rem; border: 1px solid ${this.entryData.physicalShape === shape ? 'var(--sage-500)' : 'var(--border-subtle)'}; background: ${this.entryData.physicalShape === shape ? 'var(--sage-500)' : 'var(--bg-surface)'}; color: ${this.entryData.physicalShape === shape ? '#fff' : 'var(--text-secondary)'};">
@@ -732,7 +732,7 @@ class EspacioActApp {
             <div>
               <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 5px;">Temperatura / Dinamismo:</span>
               <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                ${['🌡️ Caliente / Hirviendo', '🧊 Fría / Helada', '🌀 Girando / Pulsante', '🔒 Rígida / Inmóvil'].map(temp => `
+                ${['Caliente / Hirviendo','Fría / Helada','Girando / Pulsante','Rígida / Inmóvil'].map(temp =>`
                   <button type="button" class="badge phys-chip-btn ${this.entryData.physicalTemp === temp ? 'active' : ''}"
                           data-phys-temp="${temp}"
                           style="cursor: pointer; padding: 5px 11px; font-size: 0.78rem; border: 1px solid ${this.entryData.physicalTemp === temp ? 'var(--sage-500)' : 'var(--border-subtle)'}; background: ${this.entryData.physicalTemp === temp ? 'var(--sage-500)' : 'var(--bg-surface)'}; color: ${this.entryData.physicalTemp === temp ? '#fff' : 'var(--text-secondary)'};">
@@ -743,10 +743,10 @@ class EspacioActApp {
             </div>
           </div>
 
-          <!-- 🌬️ Hacerle Hueco (Aceptación Somática y Postura del SÍ) -->
+<!-- Hacerle Hueco (Aceptación Somática y Postura del SÍ) -->
           <div class="form-group mt-4 text-center" style="background: var(--bg-surface-elevated); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
             <label class="form-label" style="font-size: 0.94rem; margin-bottom: 4px;">
-              🌬️ Hacerle Hueco en el Cuerpo
+              Hacerle Hueco en el Cuerpo
             </label>
             <p class="form-hint" style="max-width: 480px; margin: 0 auto 12px; line-height: 1.4;">
               Respira para hacer espacio a la sensación sin pelear contra ella.
@@ -754,7 +754,7 @@ class EspacioActApp {
 
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 12px;">
               <button type="button" class="btn-secondary" id="btn-open-somatic-posture" style="font-size: 0.82rem; border-color: var(--sage-400); background: var(--bg-surface); padding: 7px 14px;">
-                🧘‍♂️ Practicar la Postura Somática del "SÍ" (Steven Hayes)
+                Practicar la Postura Somática del"SÍ" (Steven Hayes)
               </button>
               ${(() => {
                 const st = window.stateManager.getSettings();
@@ -762,10 +762,10 @@ class EspacioActApp {
                 const sndOn = st.sound === true;
                 return `
                   <button type="button" class="btn-secondary" id="btn-toggle-haptic" style="font-size: 0.78rem; padding: 6px 12px; border-color: ${vibOn ? 'var(--sage-500)' : 'var(--border-subtle)'};">
-                    📳 Vibración guía: ${vibOn ? 'Sí' : 'No'}
+                    Vibración guía: ${vibOn ?'Sí' :'No'}
                   </button>
                   <button type="button" class="btn-secondary" id="btn-toggle-sound" style="font-size: 0.78rem; padding: 6px 12px; border-color: ${sndOn ? 'var(--sage-500)' : 'var(--border-subtle)'};">
-                    🔔 Tonos ojos cerrados: ${sndOn ? 'Sí' : 'No'}
+                    Tonos ojos cerrados: ${sndOn ?'Sí' :'No'}
                   </button>
                 `;
               })()}
@@ -809,20 +809,17 @@ class EspacioActApp {
     const anchor = anchors.length > 0 ? anchors[this.anchorBannerIndex % anchors.length] : null;
     if (!primaryValue && !anchor) return '';
 
-    const esc = (str) => String(str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+    const esc = window.KhoraUtils.escapeHtml;
 
     return `
       <div class="personal-anchor-banner" style="background: rgba(87, 139, 116, 0.1); border: 1px solid var(--sage-400); border-left: 4px solid var(--sage-600); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 16px;">
         <div class="flex-between" style="flex-wrap: wrap; gap: 6px; margin-bottom: 6px;">
           <span style="font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--sage-700);">
-            🧭 Tu Faro Personal y Tarjeta de Anclaje ACT
+            Tu Faro Personal y Tarjeta de Anclaje ACT
           </span>
           ${anchors.length > 1 ? `
             <button type="button" class="btn-secondary" id="btn-rotate-anchor-banner" style="font-size: 0.72rem; padding: 3px 10px;">
-              🔄 Otra tarjeta de anclaje
+              Otra tarjeta de anclaje
             </button>
           ` : ''}
         </div>
@@ -866,13 +863,13 @@ class EspacioActApp {
         <div class="flex-between" style="flex-wrap: wrap; gap: 6px;">
           <label class="form-label" for="act-thought-input" style="margin-bottom: 0;">3. ¿Qué pensamiento te repite «${mindName}»?</label>
           <button type="button" class="btn-secondary" id="btn-edit-mind-name" style="font-size: 0.75rem; padding: 4px 10px;">
-            📻 Apodo: <strong>«${mindName}»</strong>
+            Apodo:<strong>«${mindName}»</strong>
           </button>
         </div>
         <textarea id="act-thought-input" class="form-textarea mt-2" rows="2" style="min-height: 70px;" placeholder="Escribe el pensamiento que te atrapa ahora mismo...">${rawThought}</textarea>
         <div style="margin-top: 8px;">
           <button type="button" class="btn-inline-link" id="btn-act-toggle-thought-examples" style="font-size: 0.78rem;">
-            ${this.showThoughtExamples ? '▴ Ocultar ejemplos' : '💡 ¿Bloqueado? Ver ejemplos de pensamientos'}
+            ${this.showThoughtExamples ?'▴ Ocultar ejemplos' :'¿Bloqueado? Ver ejemplos de pensamientos'}
           </button>
           ${this.showThoughtExamples ? `
             <div class="quick-chips-row" style="margin-top: 8px;">
@@ -918,7 +915,7 @@ class EspacioActApp {
         <div class="stream-container">
           <div class="stream-water-lines"></div>
           <div class="floating-leaf" id="floating-leaf-thought">
-            <span>🍃</span>
+<span></span>
             <span id="floating-leaf-text">${cleanThought}</span>
           </div>
         </div>
@@ -975,7 +972,7 @@ class EspacioActApp {
           <!-- Autopilot Column -->
           <div class="choice-box ${this.entryData.choiceType === 'autopilot' ? 'selected-autopilot' : ''}" id="choice-autopilot-box">
             <div>
-              <span class="choice-badge autopilot">⚡ Piloto Automático</span>
+<span class="choice-badge autopilot">Piloto Automático</span>
               <textarea id="act-autopilot-urge" class="form-textarea mt-2" style="min-height: 62px;" placeholder="¿Qué te pide el reflejo rápido?">${this.entryData.autopilotUrge}</textarea>
               ${this.showStep4Examples ? `
                 <div class="quick-chips-row" style="margin-top: 8px; margin-bottom: 4px;">
@@ -995,13 +992,13 @@ class EspacioActApp {
           <!-- Value Column -->
           <div class="choice-box ${this.entryData.choiceType === 'value' ? 'selected-value' : ''}" id="choice-value-box">
             <div>
-              <span class="choice-badge value">🌿 Opción con Valores</span>
+<span class="choice-badge value">Opción con Valores</span>
 
               ${profileValues.length > 0 ? `
                 <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; margin-bottom: 6px;">
                   ${profileValues.map(val => `
                     <span class="zone-tag" style="cursor: pointer; ${this.entryData.valueChosen === val ? 'background-color: var(--sage-500); color: #fff;' : ''}" data-val-chip="${escAttr(val)}">
-                      💎 ${val}
+                      ${val}
                     </span>
                   `).join('')}
                 </div>
@@ -1038,7 +1035,7 @@ class EspacioActApp {
 
         <div style="margin-top: 8px;">
           <button type="button" class="btn-inline-link" id="btn-act-toggle-step4-examples" style="font-size: 0.78rem;">
-            ${this.showStep4Examples ? '▴ Ocultar ejemplos' : '💡 ¿Bloqueado? Ver ejemplos de respuestas, valores y acciones'}
+            ${this.showStep4Examples ?'▴ Ocultar ejemplos' :'¿Bloqueado? Ver ejemplos de respuestas, valores y acciones'}
           </button>
         </div>
       </div>
@@ -1046,7 +1043,7 @@ class EspacioActApp {
       <!-- Exercise #2: Passengers on the Bus / Carrying Your Cards (Steven C. Hayes) -->
       <div class="form-group mt-4" style="background: var(--bg-surface-elevated); padding: 15px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); border-left: 4px solid var(--sage-500);">
         <label class="form-label" style="font-size: 0.92rem; margin-bottom: 8px;">
-          🚌 El Pasajero en el Autobús (Disposición ACT — Steven C. Hayes)
+          El Pasajero en el Autobús (Disposición ACT — Steven C. Hayes)
         </label>
 
         ${savedPassengers.length > 0 ? `
@@ -1055,7 +1052,7 @@ class EspacioActApp {
               <button type="button" class="badge passenger-chip-btn ${this.entryData.carriedPassenger === p ? 'active' : ''}"
                       data-passenger-chip="${escAttr(p)}"
                       style="cursor: pointer; padding: 5px 10px; font-size: 0.76rem; white-space: normal; text-align: left; border: 1px solid ${this.entryData.carriedPassenger === p ? 'var(--sage-500)' : 'var(--border-subtle)'}; background: ${this.entryData.carriedPassenger === p ? 'var(--sage-500)' : 'var(--bg-surface)'}; color: ${this.entryData.carriedPassenger === p ? '#fff' : 'var(--text-secondary)'};">
-                🚌 ${p}
+                ${p}
               </button>
             `).join('')}
           </div>
@@ -1067,7 +1064,7 @@ class EspacioActApp {
 
         <div style="margin-top: 8px;">
           <button type="button" class="btn-inline-link" id="btn-act-toggle-passenger-examples" style="font-size: 0.78rem;">
-            ${this.showPassengerExamples ? '▴ Ocultar ejemplos' : '💡 Ver ejemplos de pasajeros'}
+            ${this.showPassengerExamples ?'▴ Ocultar ejemplos' :'Ver ejemplos de pasajeros'}
           </button>
           ${this.showPassengerExamples ? `
             <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
@@ -1075,7 +1072,7 @@ class EspacioActApp {
                 <button type="button" class="badge passenger-chip-btn ${this.entryData.carriedPassenger === p ? 'active' : ''}"
                         data-passenger-chip="${escAttr(p)}"
                         style="cursor: pointer; padding: 5px 10px; font-size: 0.76rem; white-space: normal; text-align: left; border: 1px solid ${this.entryData.carriedPassenger === p ? 'var(--sage-500)' : 'var(--border-subtle)'}; background: ${this.entryData.carriedPassenger === p ? 'var(--sage-500)' : 'var(--bg-surface)'}; color: ${this.entryData.carriedPassenger === p ? '#fff' : 'var(--text-secondary)'};">
-                  🎒 ${p}
+                  ${p}
                 </button>
               `).join('')}
             </div>
@@ -1084,7 +1081,7 @@ class EspacioActApp {
 
         <label style="display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 0.78rem; color: var(--text-secondary); cursor: pointer;">
           <input type="checkbox" id="chk-save-passenger-to-bus" ${this.entryData.savePassengerToBus ? 'checked' : ''} style="width: 16px; height: 16px;">
-          <span>📌 Dejar este pasajero fichado en <strong>"Mi Autobús"</strong> (Valores y Rutina) para seguir trabajándolo a medio plazo</span>
+<span>Dejar este pasajero fichado en<strong>"Mi Autobús"</strong> (Valores y Rutina) para seguir trabajándolo a medio plazo</span>
         </label>
       </div>
 
@@ -1290,7 +1287,7 @@ class EspacioActApp {
       }
       this.breathingPausedByUser = false;
       this.setStep(2);
-      window.app?.showToast('Pasando directo a hacer espacio en el cuerpo 🌿');
+      window.app?.showToast('Pasando directo a hacer espacio en el cuerpo');
     });
 
     document.getElementById('btn-act-skip-unnamed')?.addEventListener('click', () => {
@@ -1301,7 +1298,7 @@ class EspacioActApp {
       }
       this.breathingPausedByUser = false;
       this.setStep(2);
-      window.app?.showToast('Avanzando al cuerpo sin forzar etiqueta 🌿');
+      window.app?.showToast('Avanzando al cuerpo sin forzar etiqueta');
     });
 
     document.querySelectorAll('.quick-family-chip[data-quick-family]').forEach(btn => {
@@ -1317,7 +1314,7 @@ class EspacioActApp {
         this.entryData.emotions = ['Malestar / Activación en curso'];
         this.entryData.lastFocusedEmotion = 'Malestar / Activación en curso';
         this.entryData.emotion = 'Malestar / Activación en curso';
-        window.app?.showToast('Continuando sin etiqueta específica; puedes hacerle hueco en el cuerpo 🌿');
+        window.app?.showToast('Continuando sin etiqueta específica; puedes hacerle hueco en el cuerpo');
       }
       this.breathingPausedByUser = false;
       this.setStep(2);
@@ -1340,7 +1337,7 @@ class EspacioActApp {
         const nextVal = st.vibration === false;
         st.vibration = nextVal;
         window.stateManager.saveSettings(st);
-        e.currentTarget.textContent = `📳 Vibración guía: ${nextVal ? 'Sí' : 'No'}`;
+        e.currentTarget.textContent =`Vibración guía: ${nextVal ?'Sí' :'No'}`;
         e.currentTarget.style.borderColor = nextVal ? 'var(--sage-500)' : 'var(--border-subtle)';
         if (nextVal) window.app?.triggerHaptic([60]);
         window.app?.showToast(nextVal ? 'Vibración guía activada' : 'Vibración guía desactivada');
@@ -1351,7 +1348,7 @@ class EspacioActApp {
         const nextVal = st.sound !== true;
         st.sound = nextVal;
         window.stateManager.saveSettings(st);
-        e.currentTarget.textContent = `🔔 Tonos ojos cerrados: ${nextVal ? 'Sí' : 'No'}`;
+        e.currentTarget.textContent =`Tonos ojos cerrados: ${nextVal ?'Sí' :'No'}`;
         e.currentTarget.style.borderColor = nextVal ? 'var(--sage-500)' : 'var(--border-subtle)';
         if (nextVal) window.app?.playGentleTone(432, 350);
         window.app?.showToast(nextVal ? 'Tonos suaves activados' : 'Tonos suaves desactivados');
@@ -1617,7 +1614,7 @@ class EspacioActApp {
             });
             const hoverBox = wheelContainer.querySelector('.wheel-hover-example');
             if (hoverBox) {
-              hoverBox.innerHTML = `🔒 <strong>${famId}</strong> es una categoría general. Concreta tocando uno de sus matices resaltados en el anillo exterior.`;
+              hoverBox.innerHTML =`<strong>${famId}</strong> es una categoría general. Concreta tocando uno de sus matices resaltados en el anillo exterior.`;
               hoverBox.style.opacity = '1';
             }
             window.app?.showToast(`Concreta qué matiz de ${famId} sientes en el anillo exterior`);
@@ -1733,7 +1730,7 @@ class EspacioActApp {
       modalBody.innerHTML = `
         <div class="flex-between" style="margin-bottom: 10px; gap: 10px; flex-wrap: wrap;">
           <div>
-            <h3 class="card-title" style="margin-bottom: 2px;">🎡 Rueda de las Emociones (Vista Maximizada)</h3>
+<h3 class="card-title" style="margin-bottom: 2px;">Rueda de las Emociones (Vista Maximizada)</h3>
             <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Toca una o varias emociones concretas en el anillo exterior para nombrar lo que sientes.</p>
           </div>
           <button type="button" class="btn-secondary" id="btn-modal-wheel-x" aria-label="Cerrar" style="font-size: 0.85rem; padding: 6px 11px;">✕</button>
@@ -1751,7 +1748,7 @@ class EspacioActApp {
           </button>
           ${!isInEspacioAct ? `
             <button type="button" class="btn-primary" id="btn-modal-wheel-go-act" style="font-size: 0.84rem; padding: 8px 16px;">
-              ⚡ Procesar en Espacio ACT →
+              Procesar en Espacio ACT →
             </button>
           ` : ''}
         </div>
@@ -1797,7 +1794,7 @@ class EspacioActApp {
     const currentName = window.stateManager.getMindName();
 
     modalBody.innerHTML = `
-      <h3 class="card-title">📻 Apodo de tu Generador de Pensamientos</h3>
+<h3 class="card-title">Apodo de tu Generador de Pensamientos</h3>
       <p class="card-subtitle mt-2">
         Steven C. Hayes bautizó a su mente como <em>"George"</em> para recordar que esa voz es como una radio o generador automático de comentarios, no tu identidad ni una orden que debas obedecer.
       </p>
@@ -1920,9 +1917,9 @@ class EspacioActApp {
           </div>
 
           <div style="font-size: 0.82rem; color: var(--text-muted); border-top: 1px solid var(--border-subtle); padding-top: 8px; margin-top: 8px;">
-            Elección: <strong>${entry.choiceType === 'value' ? '🌿 ' + entry.valueChosen : '⚡ Piloto Automático'}</strong>
+            Elección:<strong>${entry.choiceType ==='value' ?'' + entry.valueChosen :'Piloto Automático'}</strong>
             ${entry.committedAction ? `<br>Acción: "${entry.committedAction}"` : ''}
-            ${entry.carriedPassenger ? `<br>🚌 Pasajero a bordo: "${entry.carriedPassenger}"` : ''}
+            ${entry.carriedPassenger ?`<br>Pasajero a bordo:"${entry.carriedPassenger}"` :''}
           </div>
         </div>
 
