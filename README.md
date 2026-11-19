@@ -50,7 +50,7 @@ En filosofía griega, *khōra* significa *el espacio que da cabida sin juzgar*: 
 * **Protégela de ojos ajenos:** desde **⚙️ Configuración → Bloqueo de Privacidad y Cifrado (AES-256)** puedes poner un **PIN / contraseña** y activar **FaceID / Huella** para que nadie pueda abrirla ni leer el almacenamiento interno.
 * **📲 Úsala como App en tu móvil (sin descargar de tiendas):**
   * **iPhone / iPad (Safari):** abre la URL en Safari → pulsa **Compartir** (⬆️) → **«Añadir a pantalla de inicio»** → **ábrela siempre desde el nuevo icono**. *(Importante: en iPhone haz esto antes de guardar datos reales para que no queden aislados en una pestaña temporal.)*
-  * **Android (Chrome):** abre la URL → menú **⋮** → **«Instalar aplicación»**.
+  * **Android (Chrome):** abre la URL → menú **⋮** → **«Instalar aplicación»**. *(Nota: al abrir la app instalada, Chrome muestra siempre la notificación «Toca para copiar la URL de esta aplicación»; es normal en cualquier PWA y puedes ocultarla manteniendo pulsada la notificación para desactivar solo ese canal.)*
 * **Mueve tus datos entre dispositivos:** en **⚙️ Configuración → Copias de Seguridad** puedes exportar/importar un archivo `.json` en cualquier momento o guardarlo con 1 toque en *Archivos / iCloud Drive / Google Drive*.
 
 *(La app arranca con unos pocos **ejemplos guía** marcados con `🧪 Ejemplo guía` para que no la veas vacía; puedes editarlos o borrarlos todos de golpe pulsando **`🧹 Quitar ejemplos`**.)*

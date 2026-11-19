@@ -1,6 +1,6 @@
 {
   "name": "khora",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Khora — Tu espacio ACT (PWA local-first con cifrado AES-256 y SQLite opcional)",
   "license": "MIT",
   "homepage": "https://jcarrascof.github.io/khora/",

@@ -2045,6 +2045,7 @@
 
     'Khōra bloqueado 🔒': 'Khōra locked 🔒',
     'Espacio de Acompañamiento ACT iniciado': 'ACT Support Space started',
+    'Aviso ocultado — puedes instalar Khōra en tu pantalla de inicio desde el menú del navegador': 'Notice hidden — you can install Khōra on your home screen from the browser menu',
     'Aterrizando en el cuerpo (Aceptación ACT) 🌿': 'Grounding in your body (ACT Acceptance) 🌿',
     'Tema oscuro activado': 'Dark theme activated',
     'Tema claro activado': 'Light theme activated',
