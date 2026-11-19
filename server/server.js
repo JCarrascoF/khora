@@ -5,6 +5,11 @@ const crypto = require('node:crypto');
 const { DatabaseSync } = require('node:sqlite');
 
 const ROOT_DIR = path.join(__dirname, '..');
+// En ejecución local (`npm start`), carga `.env` si existe sin sobrescribir variables ya definidas en el entorno (p. ej. Docker).
+const ENV_FILE_PATH = path.join(ROOT_DIR, '.env');
+if (fs.existsSync(ENV_FILE_PATH)) {
+  process.loadEnvFile(ENV_FILE_PATH);
+}
 const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
 const PORT = Number(process.env.PORT) || 8080;
 const HOST = process.env.HOST || '0.0.0.0';
@@ -453,6 +458,34 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
+      const validateCollectionValue = (key, value) => {
+        if (ARRAY_KEYS.includes(key)) {
+          return Array.isArray(value) ? null : `La colección "${key}" debe ser un array`;
+        }
+        return value && typeof value === 'object' && !Array.isArray(value)
+          ? null
+          : `La clave "${key}" debe ser un objeto JSON`;
+      };
+
+      for (const col of ARRAY_KEYS) {
+        if (Object.prototype.hasOwnProperty.call(payload, col)) {
+          const errMsg = validateCollectionValue(col, payload[col]);
+          if (errMsg) {
+            sendJson(res, 400, { ok: false, error: errMsg });
+            return;
+          }
+        }
+      }
+      for (const key of SINGLETON_KEYS) {
+        if (Object.prototype.hasOwnProperty.call(payload, key) && payload[key] !== undefined) {
+          const errMsg = validateCollectionValue(key, payload[key]);
+          if (errMsg) {
+            sendJson(res, 400, { ok: false, error: errMsg });
+            return;
+          }
+        }
+      }
+
       const now = Date.now();
       withTransaction(() => {
         ARRAY_KEYS.forEach((col) => {
@@ -490,6 +523,15 @@ const server = http.createServer(async (req, res) => {
       const value = (payload && typeof payload === 'object' && Object.prototype.hasOwnProperty.call(payload, 'data'))
         ? payload.data
         : payload;
+
+      if (ARRAY_KEYS.includes(key) && !Array.isArray(value)) {
+        sendJson(res, 400, { ok: false, error: `La colección "${key}" debe ser un array` });
+        return;
+      }
+      if (!ARRAY_KEYS.includes(key) && (!value || typeof value !== 'object' || Array.isArray(value))) {
+        sendJson(res, 400, { ok: false, error: `La clave "${key}" debe ser un objeto JSON` });
+        return;
+      }
 
       const now = Date.now();
       withTransaction(() => {
