@@ -128,7 +128,8 @@ function loadToolkitHarness({ withApp = false, withI18n = false, initialLang = '
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;')
           .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#39;')
+          .replace(/'/g, '&#39;'),
+      scrollToTop: () => {}
     },
     stateManager: {
       getSettings: () => ({ showAnchorsCard: true }),

@@ -67,6 +67,7 @@ class PazFalsaApp {
     this.currentStep = step;
     this.render();
     this.bindEvents();
+    window.KhoraUtils.scrollToTop();
   }
 
   render() {

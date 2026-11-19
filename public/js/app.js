@@ -555,7 +555,7 @@ class AppController {
 
     // Scroll to top gently
     if (!options.keepModal) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.KhoraUtils.scrollToTop();
     }
 
     // Re-render target subapp if necessary
