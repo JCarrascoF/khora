@@ -366,7 +366,7 @@ class BrujulaValoresApp {
       this.currentStep = 2;
       this.render();
       this.bindEvents();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.KhoraUtils.scrollToTop();
     });
 
     // Step 2 Events
@@ -419,7 +419,7 @@ class BrujulaValoresApp {
       this.currentStep = 1;
       this.render();
       this.bindEvents();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.KhoraUtils.scrollToTop();
     });
 
     document.getElementById('btn-compass-save')?.addEventListener('click', () => {

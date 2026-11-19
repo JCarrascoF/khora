@@ -143,7 +143,8 @@ function loadActSpaceHarness({ coreValues = [], busPassengers = [], mindName = '
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;')
           .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#39;')
+          .replace(/'/g, '&#39;'),
+      scrollToTop: () => {}
     },
     stateManager: {
       getSettings: () => ({ vibration: true, sound: false }),
