@@ -112,7 +112,7 @@ test('server.js enforces auth, serves health, and persists state in SQLite', asy
   assert.ok(cookieHeader && cookieHeader.includes('khora_act_session='), 'Expected session cookie');
   const cookiePair = cookieHeader.split(';')[0];
 
-  // 4. PUT /api/state and GET /api/state round-trip
+  // 4. PUT /api/state and GET /api/state round-trip (including array pillFavorites)
   const putRes = await invokeServer(server, {
     method: 'PUT',
     url: '/api/state',
@@ -122,7 +122,8 @@ test('server.js enforces auth, serves health, and persists state in SQLite', asy
     },
     body: {
       settings: { palette: 'musgo', theme: 'dark' },
-      anchors: [{ id: 'a1', text: 'Respirar' }]
+      anchors: [{ id: 'a1', text: 'Respirar' }],
+      pillFavorites: ['pill_1', 'pill_2', 'a1', 'demo_anc_1']
     }
   });
   assert.equal(putRes.status, 200);
@@ -137,6 +138,26 @@ test('server.js enforces auth, serves health, and persists state in SQLite', asy
   assert.equal(stateJson.ok, true);
   assert.equal(stateJson.state.settings.palette, 'musgo');
   assert.equal(stateJson.state.anchors[0].text, 'Respirar');
+  assert.deepEqual(stateJson.state.pillFavorites, ['pill_1', 'pill_2', 'a1', 'demo_anc_1']);
+
+  // 4b. PUT /api/state/pillFavorites accepts plain array
+  const putFavRes = await invokeServer(server, {
+    method: 'PUT',
+    url: '/api/state/pillFavorites',
+    headers: {
+      'content-type': 'application/json',
+      cookie: cookiePair
+    },
+    body: { data: ['pill_1', 'a1'] }
+  });
+  assert.equal(putFavRes.status, 200);
+  const getAfterFavRes = await invokeServer(server, {
+    method: 'GET',
+    url: '/api/state',
+    headers: { cookie: cookiePair }
+  });
+  assert.equal(getAfterFavRes.status, 200);
+  assert.deepEqual(getAfterFavRes.json().state.pillFavorites, ['pill_1', 'a1']);
 
   // 5. Invalid collection/payload returns 400
   const badPutRes = await invokeServer(server, {
