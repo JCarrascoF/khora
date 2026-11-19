@@ -1,0 +1,2783 @@
+/**
+ * Static ES -> EN dictionaries and catalogs for Khōra i18n.
+ * Loaded immediately before public/js/i18n.js.
+ */
+(function () {
+  const DOMAIN_MAP_EN = {
+    'Pareja': 'Partner',
+    'Trabajo': 'Work',
+    'Familia': 'Family',
+    'Amigos': 'Friends',
+    'Amistad': 'Friendship',
+    'Amistad / Amigos': 'Friendship / Friends',
+    'Conmigo Mismo': 'Myself',
+    'Otro': 'Other',
+    'General': 'General',
+    'Salud / Personal': 'Health / Personal'
+  };
+
+  const EMOTION_MAP_EN = {
+    'Ira': 'Anger',
+    'Miedo': 'Fear',
+    'Tristeza': 'Sadness',
+    'Aversión': 'Aversion',
+    'Sorpresa': 'Surprise',
+    'Alegría / Paz': 'Joy / Peace',
+    'Ira / Enfado': 'Anger / Rage',
+    'Miedo / Ansiedad': 'Fear / Anxiety',
+    'Tristeza / Duelo': 'Sadness / Grief',
+    'Asco / Aversión': 'Disgust / Aversion',
+    'Sorpresa / Bloqueo': 'Surprise / Freeze',
+    'Alegría / Paz y Firmeza': 'Joy / Peace & Firmness',
+    // Anger nuances
+    'Rabia': 'Rage',
+    'Frustración': 'Frustration',
+    'Resentimiento': 'Resentment',
+    'Indignación': 'Indignation',
+    'Irritabilidad': 'Irritability',
+    'Celos / Envidia': 'Jealousy / Envy',
+    'Herido / Ofensa': 'Hurt / Offense',
+    // Fear nuances
+    'Ansiedad': 'Anxiety',
+    'Pánico': 'Panic',
+    'Inseguridad': 'Insecurity',
+    'Rechazo': 'Rejection',
+    'Sumisión': 'Submission',
+    'Desamparo': 'Helplessness',
+    'Vulnerabilidad': 'Vulnerability',
+    // Sadness nuances
+    'Pena / Duelo': 'Sorrow / Grief',
+    'Soledad': 'Loneliness',
+    'Culpa': 'Guilt',
+    'Vergüenza': 'Shame',
+    'Desesperanza': 'Hopelessness',
+    'Vacío': 'Emptiness',
+    'Melancolía': 'Melancholy',
+    // Aversion nuances
+    'Repulsión / Asco': 'Revulsion / Disgust',
+    'Desprecio': 'Contempt',
+    'Decepción': 'Disappointment',
+    'Desaprobación': 'Disapproval',
+    'Traición': 'Betrayal',
+    'Menosprecio': 'Belittlement',
+    'Hastío': 'Weariness',
+    // Surprise nuances
+    'Conmoción / Shock': 'Shock',
+    'Desconcierto': 'Bewilderment',
+    'Desbordamiento': 'Overwhelm',
+    'Parálisis': 'Paralysis',
+    'Indecisión': 'Indecision',
+    'Anestesia': 'Numbing',
+    'Extrañeza': 'Unreality',
+    // Joy / Peace nuances
+    'Alegría / Gozo': 'Joy / Delight',
+    'Serenidad': 'Serenity',
+    'Alivio': 'Relief',
+    'Gratitud': 'Gratitude',
+    'Esperanza': 'Hope',
+    'Compasión': 'Compassion',
+    'Dignidad / Firmeza': 'Dignity / Firmness',
+    // Fallback label & SVG wheel split tspan segments
+    'Malestar / Activación en curso': 'Discomfort / Ongoing Activation',
+    'Alegría': 'Joy',
+    '/ Paz': '/ Peace',
+    'Pena': 'Sorrow',
+    '/ Duelo': '/ Grief',
+    'Celos': 'Jealousy',
+    '/ Envidia': '/ Envy',
+    'Herido': 'Hurt',
+    '/ Ofensa': '/ Offense',
+    'Repulsión': 'Revulsion',
+    '/ Asco': '/ Disgust',
+    'Conmoción': 'Shock',
+    '/ Shock': '/ Shock',
+    '/ Gozo': '/ Delight',
+    '/ Firmeza': '/ Firmness',
+    'sin etiqueta': 'unlabeled',
+    'tensión': 'tension',
+    'el cuerpo': 'the body'
+  };
+
+  const BODY_ZONES_EN = {
+    'Cabeza': 'Head',
+    'Mandíbula/Garganta': 'Jaw/Throat',
+    'Hombros/Cuello': 'Shoulders/Neck',
+    'Pecho/Corazón': 'Chest/Heart',
+    'Estómago/Plexo': 'Stomach/Solar Plexus',
+    'Espalda': 'Back',
+    'Brazos/Manos': 'Arms/Hands',
+    'Piernas/Pies': 'Legs/Feet'
+  };
+
+  const PHYSICAL_CHIPS_EN = {
+    '🪨 Bloque pesado': '🪨 Heavy block',
+    '🪢 Nudo apretado': '🪢 Tight knot',
+    '🔥 Presión ardiente': '🔥 Burning pressure',
+    '🕳️ Hueco / Vacío': '🕳️ Hollow / Emptiness',
+    '⚡ Corriente eléctrica': '⚡ Electric current',
+    '🌡️ Caliente / Hirviendo': '🌡️ Hot / Boiling',
+    '🧊 Fría / Helada': '🧊 Cold / Freezing',
+    '🌀 Girando / Pulsante': '🌀 Spinning / Pulsing',
+    '🔒 Rígida / Inmóvil': '🔒 Rigid / Still'
+  };
+
+  const VALUES_EN = {
+    'Dignidad': 'Dignity',
+    'Autocuidado': 'Self-Care',
+    'Honestidad': 'Honesty',
+    'Paz Interior': 'Inner Peace',
+    'Autonomía': 'Autonomy',
+    'Valentía': 'Courage',
+    'Respeto Mutuo': 'Mutual Respect',
+    'Respeto mutuo': 'Mutual Respect',
+    'Presencia y Calma': 'Presence & Calm',
+    'Compasión Propia': 'Self-Compassion',
+    'Compasión': 'Compassion',
+    'Límites Sanos': 'Healthy Boundaries',
+    'Calma': 'Calm',
+    'Autenticidad': 'Authenticity',
+    'Aceptación': 'Acceptance',
+    'Aceptación ACT': 'ACT Acceptance',
+    'Momento Presente': 'Present Moment',
+    'Presente': 'Present',
+    'Defusión': 'Defusion',
+    'Yo Contexto': 'Self-as-Context',
+    'Valores': 'Values',
+    'Acción': 'Action',
+    'Límites': 'Boundaries',
+    'Mente': 'Mind',
+    'Compromiso': 'Commitment',
+    'Anclaje': 'Anchor',
+    'Paz Falsa': 'False Peace',
+    'Espacio ACT': 'ACT Space',
+    'Personal': 'Personal'
+  };
+
+  const ACT_GLOSSARY_EN = {
+    'autoabandono': {
+      title: 'Self-Abandonment',
+      plain: 'Putting your own needs, boundaries, or wellbeing last just so someone else does not get upset.',
+      example: 'Saying "no worries, I\'ll take care of it" while exhausted just to avoid a sour face.'
+    },
+    'paz-falsa': {
+      title: 'False Peace',
+      plain: 'Apparent calm on the outside achieved by staying silent or giving in, leaving you at war inside (with resentment or exhaustion).',
+      example: 'Agreeing to a plan you hate to avoid arguing and spending the afternoon shut down and resentful.'
+    },
+    'sumision-emocional': {
+      title: 'Emotional Submission',
+      plain: 'Making yourself small or automatically agreeing with someone out of fear of their anger, coldness, or disapproval.',
+      example: 'Apologizing when you actually did nothing wrong, just to defuse tension.'
+    },
+    'peaje-emocional': {
+      title: 'Emotional Toll',
+      plain: 'The physical and mental bill (rumination, fatigue, knot in your stomach, irritability) you pay after giving in against your will.',
+      example: 'Feeling empty or getting a headache hours after a conversation where you swallowed what you thought.'
+    },
+    'defusion': {
+      title: 'Cognitive Defusion',
+      plain: 'Stepping back to see your thoughts as mere words or stories told by your mind, not absolute truths you must obey.',
+      example: 'Shifting from "I am selfish" to noticing: "my mind is telling me the \'I am selfish\' story again."'
+    },
+    'piloto-automatico': {
+      title: 'Autopilot',
+      plain: 'Reacting by pure learned reflex (people-pleasing, over-justifying, or fleeing) without pausing a second to choose what you want.',
+      example: 'Saying "yes, sure" in half a second before checking your calendar or how your body feels.'
+    },
+    'aceptacion': {
+      title: 'ACT Acceptance / Willingness',
+      plain: 'Not resignation or putting up with mistreatment; it is making room in your body for clean discomfort (like guilt or jitteriness when setting a boundary) so you can act on your values.',
+      example: 'Holding the tingle of guilt for 10 minutes after saying "not today" without rushing to take it back.'
+    },
+    'fisicalizar': {
+      title: 'Physicalizing the Sensation',
+      plain: 'Stopping mental over-analysis and observing the emotion as if it were a physical object in your body (shape, weight, temperature).',
+      example: 'Noticing anxiety as "a warm heavy block in my chest" instead of arguing about why it is there.'
+    },
+    'yo-contexto': {
+      title: 'Self-as-Context (Observing Self)',
+      plain: 'Realizing you are the conscious person noticing your fears and thoughts (the bus driver), not the fears themselves.',
+      example: 'You are the sky; today\'s overwhelm is just a passing cloud moving across without harming you.'
+    },
+    'hexaflex': {
+      title: 'Hexaflex (Psychological Flexibility)',
+      plain: 'The 6 psychological muscles of ACT (Acceptance, Defusion, Present Moment, Self-as-Context, Values, and Committed Action) that let you adapt and stay true to yourself.',
+      example: 'Training these 6 skills to keep steering toward what matters even when fear shows up.'
+    },
+    'dolor-limpio': {
+      title: 'Clean Pain vs. Dirty Pain',
+      plain: 'Clean pain is the natural discomfort of living or setting a boundary; dirty pain is the extra self-attack and guilt your mind piles on top.',
+      example: 'Feeling tension when speaking a truth (clean pain) vs. beating yourself up for 3 days calling yourself selfish (dirty pain).'
+    },
+    'pasajeros-autobus': {
+      title: 'Passengers on the Bus',
+      plain: 'Your recurring fears, worries, and guilt. They can board and shout, but they have no hands to turn the steering wheel if you drive toward your values.',
+      example: 'The fear of disappointing someone shouting at you to cave while you protect your rest.'
+    },
+    'valores-act': {
+      title: 'ACT Values (Hayes Constructor)',
+      plain: 'In ACT, a value is not a goal to check off or an abstract noun, but a chosen quality of your own behavior (how you choose to act and care across life areas).',
+      example: '"Being an attentive, caring partner who listens warmly while expressing honest boundaries" rather than a single word.'
+    },
+    'deconstructor-yo': {
+      title: '"I Am" Label Deconstructor',
+      plain: 'Steven Hayes exercise to dismantle rigid identity labels ("I am weak", "I am a pushover") and turn them into concrete, changeable behaviors.',
+      example: 'Moving from "I can\'t say no" to "when asked urgently while looking down, I feel fear and give in."'
+    },
+    'postura-si': {
+      title: 'Somatic "YES" Posture',
+      plain: 'Steven Hayes bodily practice (dropping shoulders, opening palms, exhaling slowly) to disarm the physical defense or submission reflex before speaking.',
+      example: 'Resting open palms on your thighs and softening your jaw before expressing a boundary.'
+    },
+    'pivote-act': {
+      title: 'The Pivot: From Pain to Yearning',
+      plain: 'Hayes principle: underneath every wound or fear pushing you to cave lies a legitimate yearning. Pivoting means honoring that yearning with dignity rather than submission.',
+      example: 'Behind fear of your partner getting angry lies your yearning for connection; pivot by speaking kindly while protecting your rest.'
+    },
+    'hojas-rio': {
+      title: 'Leaves on a Stream',
+      plain: 'Visual defusion exercise: place an intrusive thought onto a leaf floating down a stream and watch it pass without pushing or obeying it.',
+      example: 'Watching "they will get mad at me" drift past on a leaf while keeping your steady breath.'
+    },
+    'generador-pensamientos': {
+      title: 'Thought Generator Nickname (Hayes)',
+      plain: 'Giving a nickname to your automatic thought factory (e.g., "George", "Disaster Radio", or "The Judge") to remember you are the listener, not the broadcaster.',
+      example: '"Oh, Disaster Radio is telling me again they will be angry if I say no. Thanks for the alert."'
+    },
+    'echar-el-ancla': {
+      title: 'Dropping Anchor (Russ Harris ACE Protocol)',
+      plain: 'In ACT, dropping anchor is not meant to make the emotional storm vanish (that would be avoidance), but to steady the boat: Acknowledge what you feel (A), Come back into your body (C), and Engage with what is in front of you (E).',
+      example: 'Noticing distress, pressing your feet firmly into the floor as you exhale, and spotting 3 real objects in the room before deciding.'
+    },
+    'evitacion-experiencial': {
+      title: 'Experiential Avoidance',
+      plain: 'Attempting to fight, suppress, numb, or escape uncomfortable emotions, thoughts, or sensations, even when doing so shrinks the life you value.',
+      example: 'Canceling something meaningful or saying yes to everything just to avoid the tingle of anxiety or guilt.'
+    }
+  };
+
+  const ACT_GLOSSARY_PATTERNS_EN = [
+    { key: 'sumision-emocional', regex: /\bemotional submission\b/i },
+    { key: 'peaje-emocional', regex: /\bemotional toll\b|\bself-abandonment toll\b/i },
+    { key: 'defusion', regex: /\bcognitive defusion\b|\bdefusion\b/i },
+    { key: 'piloto-automatico', regex: /\bautopilot\b/i },
+    { key: 'fisicalizar', regex: /\bphysicaliz(?:e|ing) the sensation\b|\bphysicalizing\b/i },
+    { key: 'yo-contexto', regex: /\bself-as-context\b|\bobserving self\b/i },
+    { key: 'dolor-limpio', regex: /\bclean pain\b|\bdirty pain\b/i },
+    { key: 'pasajeros-autobus', regex: /\bpassengers on the bus\b|\bpassenger on the bus\b|\bpassengers on my bus\b/i },
+    { key: 'valores-act', regex: /\bconstructed values\b|\bact values\b|\bmy real values\b/i },
+    { key: 'deconstructor-yo', regex: /\b"i am" (?:label )?deconstructor\b|\bdeconstructor\b/i },
+    { key: 'postura-si', regex: /\bsomatic "yes" posture\b|\b"yes" posture\b/i },
+    { key: 'pivote-act', regex: /\bthe pivot: from pain to yearning\b|\bthe pivot\b/i },
+    { key: 'hojas-rio', regex: /\bleaves on a stream\b/i },
+    { key: 'generador-pensamientos', regex: /\bthought generator\b|\bmental radio\b/i },
+    { key: 'echar-el-ancla', regex: /\bdropping anchor\b|\bdrop anchor\b|\bace protocol\b/i },
+    { key: 'evitacion-experiencial', regex: /\bexperiential avoidance\b/i },
+    { key: 'autoabandono', regex: /\bself-abandonment\b/i },
+    { key: 'paz-falsa', regex: /\bfalse peace\b/i },
+    { key: 'hexaflex', regex: /\bhexaflex\b/i },
+    { key: 'aceptacion', regex: /\bmaking room\b|\bact acceptance\b|\bwillingness\b/i }
+  ];
+
+  const DEFAULT_ANCHORS_EN = [
+    {
+      id: 'a1',
+      text: 'Your emotions are messengers, not dictators. You can feel them and still choose your behavior with dignity.',
+      author: 'Steven C. Hayes',
+      category: 'Acceptance'
+    },
+    {
+      id: 'a2',
+      text: 'Giving in to avoid conflict with others is usually the beginning of conflict and resentment within yourself.',
+      author: 'False Peace',
+      category: 'Boundaries'
+    },
+    {
+      id: 'a3',
+      text: 'Does what I am about to do move me closer to the person I want to be, or away from them for short-term comfort?',
+      author: 'Russ Harris',
+      category: 'Values'
+    },
+    {
+      id: 'a4',
+      text: 'Do not wrestle with your thoughts like monsters in a swamp. They are just words generated by an overprotective mind.',
+      author: 'Defusion',
+      category: 'Mind'
+    },
+    {
+      id: 'a5',
+      text: 'Being willing to feel discomfort is the price of admission for living a meaningful life.',
+      author: 'Kelly G. Wilson',
+      category: 'Commitment'
+    }
+  ];
+
+  const DEFAULT_PASSENGERS_EN = [
+    {
+      id: 'pas_seed_1',
+      isExample: true,
+      icon: '⚖️',
+      name: 'The Guilt Police ("You\'re selfish")',
+      shouts: 'If you prioritize yourself or say no, you will hurt them and they will think badly of you.',
+      protectsFrom: 'Feeling like a bad person or being rejected',
+      detour: 'Giving in and carrying everything even when exhausted',
+      driverReply: 'I know you are trying to protect me from rejection, but caving goes against my values. Take a back seat; I am driving today.',
+      status: 'seated'
+    },
+    {
+      id: 'pas_seed_2',
+      isExample: true,
+      icon: '😰',
+      name: 'The Anger Watchdog',
+      shouts: 'Take the safe detour and cave right now so nobody pulls a long face.',
+      protectsFrom: 'Tension, conflict, or someone turning cold',
+      detour: 'Swallowing what I think and smiling to appease',
+      driverReply: 'Thanks for warning me about fear of conflict, yet my hands stay on the wheel toward my values. Ride in the back.',
+      status: 'loud'
+    }
+  ];
+
+  const SEED_VALUE_EN = {
+    id: 'val_seed_1',
+    domain: 'Pareja',
+    statement: 'Being a caring, attentive partner who listens tenderly yet expresses honest boundaries',
+    microAction: 'Listen to how they feel without interrupting and calmly say when I need rest',
+    willingness: 'Hold discomfort if there is a disagreement instead of automatically caving out of fear',
+    lensUsed: 'Guide example (Hayes)'
+  };
+
+  const SEED_REFLECTION_EN = {
+    id: 'ref_seed_1',
+    text: 'I notice that whenever someone close goes quiet or shifts their tone, I instantly go on alert and over-explain myself to win back approval, even if it leaves me drained afterward.',
+    category: 'Patrón o bucle que me cuesta',
+    clinicalExtract: {
+      emotions: ['Anxiety / Hypervigilance', 'Exhaustion / Burden'],
+      hexaflexProcess: 'Experiential Avoidance / False Peace + Cognitive Defusion',
+      behaviorPattern: 'Over-explaining or preemptive apologizing; Hypervigilance to micro-interpersonal cues',
+      sessionFocus: 'Explore in Partner what protective function appeasing plays, what fear surfaces when holding another\'s silence without justifying, and how to rehearse minimal boundaries while tolerating guilt.'
+    }
+  };
+
+  const DEMO_ITEMS_EN = {
+    demo_pf_1: {
+      situation: 'Planning meeting: my manager assigned extra weekend work without asking first.',
+      internalConflict: {
+        wanted: 'Say my weekend was already booked and offer to reprioritize Monday\'s tasks.',
+        did: 'Nodded and agreed without pushback, pretending I did not mind.'
+      },
+      note: 'Felt huge tightness in my chest and anger at myself for smiling when screaming no inside.',
+      followUpNotes: [
+        {
+          id: 'n1',
+          text: 'Re-analysis: On Monday I was wiped out and snapped at a teammate. Caving did not prevent conflict; it only shifted it onto innocent people.'
+        }
+      ]
+    },
+    demo_pf_2: {
+      situation: 'My partner chose a loud dinner with friends when I needed calm and rest.',
+      internalConflict: {
+        wanted: 'Ask to stay home or suggest a quiet evening together.',
+        did: 'Went along silently and stayed distant and quiet all night.'
+      },
+      note: 'Wearing the "everything is fine" mask drains three times the energy.'
+    },
+    demo_pf_3: {
+      situation: 'Intrusive remark about my personal schedule during a family call.',
+      internalConflict: {
+        wanted: 'Set a calm boundary: "I appreciate your concern, though I manage that part of my life."',
+        did: 'Quickly changed the subject and felt small and patronized.'
+      },
+      note: 'Still trying to please the image they hold of me.'
+    },
+    demo_act_1: {
+      thought: 'Nobody values what I do; I always end up fixing everything while they take advantage of me.',
+      reframedThought: 'I notice with curiosity that George (my mind) is telling me the story that nobody values what I do and I have to fix everything.',
+      autopilotUrge: 'Send an angry message in the group chat and turn off my phone.',
+      valueChosen: 'Dignidad',
+      committedAction: 'Write a clear, calm email defining deliverable boundaries without reactive complaining.',
+      followUpNotes: [
+        {
+          id: 'n2',
+          text: 'The email worked. They respected the boundary with zero drama and I saved myself two days of guilt and regret.'
+        }
+      ]
+    },
+    demo_act_2: {
+      thought: 'If I say what I truly think, they will reject me and I will end up alone.',
+      reframedThought: 'I am having the thought that if I am honest I will be rejected.',
+      autopilotUrge: 'Give in again and apologize preemptively.',
+      valueChosen: 'Autenticidad',
+      committedAction: 'Pause 10 minutes, breathe into my solar plexus, and state my view gently yet firmly.'
+    },
+    demo_pat_1: {
+      title: 'Giving in on leisure plans out of fear of anger or coldness',
+      loop: {
+        trigger: 'A plan is suggested that clashes with my need for rest or what I actually want.',
+        autoResponse: 'I immediately give in while faking enthusiasm or indifference.',
+        shortTermGain: 'Instant false peace: I avoid a sour look, tension, or someone getting upset.',
+        longTermCost: 'Accumulated exhaustion, quiet resentment toward the other person, and disconnect from dignity.'
+      },
+      weeklyExperiment: {
+        text: 'This week, when an unexpected request arrives, I will ask for 15 minutes to check my schedule and how I feel before answering yes or no.'
+      },
+      checkins: [
+        {
+          id: 'chk_1',
+          learned: 'I paused before replying. The other person was not upset at all; my mind predicted a catastrophe that never happened.',
+          nextStep: 'Offer a proactive alternative next time.'
+        }
+      ]
+    },
+    demo_comp_1: {
+      situation: 'Hesitating about canceling a family lunch so I can recover after an exhausting week.',
+      answers: {
+        motive: 'Guilt and fear of being judged selfish.',
+        shortVsLong: 'Short term I dodge an awkward phone call; long term I enter Monday completely burnt out.',
+        fear: 'That they will think I do not care about them.'
+      },
+      keyAction: 'Call at 11:00 am, warmly share that I need to rest today, and suggest seeing each other next weekend.'
+    },
+    dec_1: {
+      rigidLabel: 'I am a weak person who cannot set boundaries',
+      softened: 'I am having the automatic thought that I am weak',
+      contextualized: 'When my partner looks disappointed and I look down and apologize, I feel a deep wave of vulnerability.'
+    },
+    piv_1: {
+      pain: 'Panic that my partner will pull away if I say I do not want to go out tonight.',
+      yearning: 'I yearn for closeness, mutual understanding, and a safe space to be myself.',
+      pivotAction: 'Express my need for rest warmly: "I love you and want to enjoy tomorrow rested; tonight my body needs quiet."'
+    },
+    demo_ref_1: SEED_REFLECTION_EN,
+    demo_ref_2: {
+      id: 'demo_ref_2',
+      text: 'This week I said no to an extra work task without inventing sick excuses; I felt a strong knot in my stomach and guilt for two hours, then genuine relief and integrity.',
+      clinicalExtract: {
+        emotions: ['Relief / Integrity'],
+        hexaflexProcess: 'Flexibility / Committed Action + Somatic Awareness',
+        behaviorPattern: 'Value-aligned alternative behavior (willingness to hold discomfort)',
+        sessionFocus: 'Reinforce discriminative learning in Work: what helped sustain discomfort and how to generalize this value-driven move to higher-stakes contexts.'
+      }
+    }
+  };
+
+  // Localized domain catalogs for all subapps (keep `.id` properties untouched!)
+  const CATALOGS_EN = {
+    navGroups: {
+      'ahora-mismo': {
+        label: 'Right now:',
+        items: [
+          { id: 'guia-inicio', label: 'Home' },
+          { id: 'espacio-act', label: 'Process Emotion' },
+          { id: 'pildoras-trucos', label: '1-Min Toolkit' },
+          { id: 'brujula-valores', label: 'Choose Action' },
+          { id: 'paz-falsa', label: 'Just Gave In' },
+          { id: 'pildoras-estudio', label: 'Readings & Exercises' }
+        ]
+      },
+      'yo': {
+        label: 'Self:',
+        items: [
+          { id: 'perfil-valores', label: 'My Values' },
+          { id: 'perfil-foco', label: 'Focus & Patterns' },
+          { id: 'perfil-autobus', label: 'My Bus' }
+        ]
+      },
+      'insight': {
+        label: 'Progress:',
+        items: [
+          { id: 'insight-terapia', label: 'Therapy Notebook' },
+          { id: 'insight-historial', label: 'Cool-Down History' },
+          { id: 'insight-graficos', label: 'Charts & Hexaflex' }
+        ]
+      }
+    },
+    brujula: {
+      valuesCatalog: {
+        'Dignidad': 'Self-respect without caving out of fear',
+        'Autocuidado': 'Protecting my energy and rest',
+        'Honestidad': 'Speaking my truth calmly',
+        'Paz Interior': 'Real calm without inner submission',
+        'Autonomía': 'Choosing for myself, not from pressure',
+        'Valentía': 'Holding an uncomfortable boundary',
+        'Respeto Mutuo': 'Fair agreements for both sides',
+        'Presencia y Calma': 'Grounding here amid doubt',
+        'Compasión Propia': 'Treating myself with human kindness'
+      },
+      situationChips: [
+        'I am asked for something I do not have the energy for today',
+        'I want to say "no" to a plan without giving a thousand excuses',
+        'I fear they will get mad or pull a long face if I set a boundary',
+        'I am overloaded and hesitating about stopping to rest',
+        'I swallow what I think to avoid creating tension'
+      ],
+      barrierOptions: {
+        miedo_enfado: {
+          label: '😰 Fear of anger or disapproval',
+          motive: 'Appeasing out of fear of conflict or rejection',
+          shortVsLong: 'Instant relief on the outside, yet exhaustion and false peace inside',
+          fear: 'That they will get angry or withdraw affection if I set a boundary'
+        },
+        culpa: {
+          label: '⚖️ Guilt or feeling selfish',
+          motive: 'Fusing with guilt when prioritizing my needs',
+          shortVsLong: 'Avoid feeling selfish right now, yet build drain and resentment',
+          fear: 'Believing I am a bad person for protecting my energy'
+        },
+        agobio: {
+          label: '🌪️ Overwhelm / Wanting it off my plate now',
+          motive: 'Experiential avoidance: fleeing physical discomfort',
+          shortVsLong: 'Temporary relief now, yet my world and margin shrink',
+          fear: 'That distress or uncertainty will feel unbearable'
+        },
+        piloto: {
+          label: '🔒 Automatic people-pleasing inertia',
+          motive: 'Autopilot reflex to say "yes" without checking with myself',
+          shortVsLong: 'I reply fast to ease tension, yet betray myself again',
+          fear: 'Not knowing how to hold silence or a firm answer'
+        }
+      },
+      actionChips: [
+        'Ask for 15 minutes before giving a final answer',
+        'Say kindly that today I cannot, in 1 simple sentence without justifying',
+        'Calmly express what I actually need or prefer to do',
+        'Stand by my decision even if the other person dislikes it at first'
+      ]
+    },
+    pazFalsa: {
+      situationChips: [
+        'Agreed to a plan or request when I had zero energy',
+        'Held back my opinion to avoid a sour look or argument',
+        'Apologized or gave ten excuses when I had done nothing wrong',
+        'Took on a task or responsibility that was not mine'
+      ],
+      wantedChips: [
+        'Say that I need to rest today',
+        'Calmly say that I disagree',
+        'Say that I cannot take this on'
+      ],
+      didChips: [
+        'Said yes with a smile and swallowed the discomfort',
+        'Went quiet and changed the subject',
+        'Over-justified myself and ended up giving in'
+      ]
+    },
+    radarPatrones: {
+      oppositesTemplates: [
+        {
+          label: '⏱️ Vary Timing (Break urgency)',
+          text: 'This week, when triggered, I will ask for 15 minutes before answering yes or no so I can check what I truly want.'
+        },
+        {
+          label: '💬 Vary Form (Zero over-justifying)',
+          text: 'I will state my boundary or preference in 1 kind sentence, holding 30 seconds without adding excuses.'
+        },
+        {
+          label: '🧘 Vary Body (Break shrinking posture)',
+          text: 'I will adopt the YES Posture (loose shoulders, open breath) before replying, instead of shrinking.'
+        },
+        {
+          label: '🔄 Do the Opposite of Hiding',
+          text: 'Instead of saying "whatever you want", I will openly suggest an option I genuinely enjoy.'
+        }
+      ]
+    },
+    espacioActFamilies: {
+      'Ira': {
+        label: 'Anger / Irritation',
+        desc: 'Crossed boundaries, grievance, or frustration',
+        nuances: {
+          'Rabia': { desc: 'Intense fury and visceral urge to confront or defend', example: 'Ex: "I feel like exploding at how they spoke to me in front of everyone"' },
+          'Frustración': { desc: 'Blocked against an obstacle or unfair demand', example: 'Ex: "No matter what I do, the situation stays stuck and I feel trapped"' },
+          'Resentimiento': { desc: 'Quiet bitterness after caving against your own will', example: 'Ex: "I gave in on weekend plans and now it boils inside me"' },
+          'Indignación': { desc: 'Reaction to unequal treatment, disrespect, or mistreatment', example: 'Ex: "What they ask of me they wouldn\'t ask anyone else; it feels unfair"' },
+          'Irritabilidad': { desc: 'Reactive hypersensitivity from accumulated overload', example: 'Ex: "Every tiny thing sets me off today; I am at my limit"' },
+          'Celos / Envidia': { desc: 'Fear of losing your place or aching longing for what another receives', example: 'Ex: "It stings seeing the care or calm they give others and not me"' },
+          'Herido / Ofensa': { desc: 'Sharp hurt mixed with anger after feeling attacked or judged', example: 'Ex: "Their dismissive comment stung and made me shut down inside"' }
+        }
+      },
+      'Miedo': {
+        label: 'Fear / Anxiety',
+        desc: 'Threat to connection, rejection, or safety',
+        nuances: {
+          'Ansiedad': { desc: 'Catastrophic anticipation and constant hypervigilance', example: 'Ex: "I can\'t stop spinning over what could go wrong tomorrow"' },
+          'Pánico': { desc: 'Overwhelming somatic alarm and urge to escape', example: 'Ex: "My heart is racing and I feel suffocated; I need to get out of here"' },
+          'Inseguridad': { desc: 'Paralyzing doubt about my own worth or capability', example: 'Ex: "What if I am not enough? What if I lose their affection if I speak up?"' },
+          'Rechazo': { desc: 'Vivid fear of being excluded or unaccepted when being real', example: 'Ex: "If I disagree, I feel they will push me away or punish me with silence"' },
+          'Sumisión': { desc: 'Automatic shrinking to disarm someone else\'s threat', example: 'Ex: "I automatically said yes so they wouldn\'t get upset with me"' },
+          'Desamparo': { desc: 'Feeling unprotected or without a net during conflict', example: 'Ex: "I feel nobody will hold space for me if I express my distress"' },
+          'Vulnerabilidad': { desc: 'Feeling fragile and exposed without armor around others', example: 'Ex: "My voice shakes when saying what I need and I feel exposed"' }
+        }
+      },
+      'Tristeza': {
+        label: 'Sadness / Grief',
+        desc: 'Loss, disconnection, or inner wound',
+        nuances: {
+          'Pena / Duelo': { desc: 'Clean ache over a real loss or what could not be', example: 'Ex: "I cry quietly accepting that this bond cannot give me what I need"' },
+          'Soledad': { desc: 'Deep lack of connection even while around people', example: 'Ex: "I have company, yet nobody sees what I am really going through"' },
+          'Culpa': { desc: 'Heavy weight from believing I caused harm or acted selfishly', example: 'Ex: "I feel selfish for putting my rest first"' },
+          'Vergüenza': { desc: 'Urge to hide from feeling defective or inadequate', example: 'Ex: "I feel so small… how did I let it reach this point?"' },
+          'Desesperanza': { desc: 'Belief that nothing will change no matter how hard I try', example: 'Ex: "Whatever I say or do, we always end up in the same loop"' },
+          'Vacío': { desc: 'Hollow sensation after silencing my own desires', example: 'Ex: "I barely remember what I enjoy outside other people\'s expectations"' },
+          'Melancolía': { desc: 'Bittersweet longing for a past sense of calm or closeness', example: 'Ex: "I miss feeling free without carrying this daily weight"' }
+        }
+      },
+      'Aversión': {
+        label: 'Disgust / Aversion',
+        desc: 'Moral rejection, contempt, or disillusionment',
+        nuances: {
+          'Repulsión / Asco': { desc: 'Physical or moral recoil at hypocrisy or manipulation', example: 'Ex: "Their double standard turns my stomach: they say one thing and do another"' },
+          'Desprecio': { desc: 'Cold distancing and stern judgment toward unworthy behavior', example: 'Ex: "I feel dry rejection toward behavior so lacking in empathy"' },
+          'Decepción': { desc: 'Sharp drop in expectations when meeting someone\'s reality', example: 'Ex: "I hoped for care after my effort and was met with indifference"' },
+          'Desaprobación': { desc: 'Firm disagreement with something crossing your values', example: 'Ex: "What is happening here is not right and I do not want to endorse it"' },
+          'Traición': { desc: 'Painful breach of the implicit trust of care and loyalty', example: 'Ex: "I trusted them to have my back and they only looked out for themselves"' },
+          'Menosprecio': { desc: 'Feeling treated as invisible or lesser', example: 'Ex: "They talk to me as if my opinion or time meant nothing"' },
+          'Hastío': { desc: 'Chronic weariness from repeating the same draining script', example: 'Ex: "Same argument, same script again. I am exhausted"' }
+        }
+      },
+      'Sorpresa': {
+        label: 'Surprise / Freeze',
+        desc: 'Startle, paralysis, and mental overload',
+        nuances: {
+          'Conmoción / Shock': { desc: 'Sudden impact from the unexpected that takes your breath away', example: 'Ex: "I froze at their reply; I did not expect it at all"' },
+          'Desconcierto': { desc: 'Temporary loss of bearings facing mixed signals', example: 'Ex: "They say they love me yet demand things that hurt me"' },
+          'Desbordamiento': { desc: 'Too many emotional demands hitting at the exact same time', example: 'Ex: "There are so many fires at once I feel like dropping everything"' },
+          'Parálisis': { desc: 'Physical or mental freeze fearing the consequences', example: 'Ex: "I know what I should reply, yet my body locks up"' },
+          'Indecisión': { desc: 'Paralyzing inner dilemma fearing discomfort either way', example: 'Ex: "If I say yes I betray myself; if I say no they get upset"' },
+          'Anestesia': { desc: 'Automatic shutdown reflex: numbing so as not to hurt', example: 'Ex: "Something big happened yet I feel neither anger nor sadness, just fog"' },
+          'Extrañeza': { desc: 'Feeling detached from yourself or unreal inside the scene', example: 'Ex: "It feels like watching my life from outside; I don\'t recognize myself here"' }
+        }
+      },
+      'Alegría / Paz': {
+        label: 'Joy / Peace & Firmness',
+        desc: 'Wellbeing, openness, dignity, and connection',
+        nuances: {
+          'Alegría / Gozo': { desc: 'Warm vitality, enthusiasm, or genuine enjoyment right now', example: 'Ex: "Enjoying this free moment without worrying about pleasing"' },
+          'Serenidad': { desc: 'Spacious calm resting with reality without fighting it', example: 'Ex: "I breathe deep knowing I do not have to control the other person"' },
+          'Alivio': { desc: 'Physical lightness after setting down a burden or speaking truth', example: 'Ex: "My jaw loosened the moment I canceled the plan I dreaded"' },
+          'Gratitud': { desc: 'Warm appreciation for what matters in you or a safe bond', example: 'Ex: "Grateful to be honest and have safe spaces"' },
+          'Esperanza': { desc: 'Quiet trust in your capacity to shift direction', example: 'Ex: "I know breaking the habit is hard, yet today I took a real step"' },
+          'Compasión': { desc: 'Gentle gaze toward your own human vulnerability', example: 'Ex: "Holding myself kindly instead of insulting myself for feeling afraid"' },
+          'Dignidad / Firmeza': { desc: 'Respectful groundedness after holding a boundary calmly', example: 'Ex: "I spoke my mind firmly without aggression. I am at peace"' }
+        }
+      }
+    },
+    perfil: {
+      quickConcernPresets: [
+        { text: 'I struggle to set boundaries at work without feeling guilty', context: 'Trabajo' },
+        { text: 'Tension or fear of arguing with my partner when I say what I need', context: 'Pareja' },
+        { text: 'Family overload and guilt when stopping to rest', context: 'Familia' },
+        { text: 'Constant rumination and harsh self-demands', context: 'Conmigo Mismo' }
+      ],
+      passengerArchetypes: [
+        {
+          icon: '⚖️',
+          name: 'The Guilt Police',
+          shouts: 'If you say no or rest, you are selfish and will hurt people.',
+          protectsFrom: 'Feeling like a bad or guilty person',
+          detour: 'Saying yes to everything and putting myself last'
+        },
+        {
+          icon: '😰',
+          name: 'The Anger Watchdog',
+          shouts: 'Do not speak up; they will get upset or pull a long face.',
+          protectsFrom: 'Conflict, tension, or another person\'s coldness',
+          detour: 'Swallowing my opinion and caving fast'
+        },
+        {
+          icon: '🎭',
+          name: 'The Automatic Pleaser',
+          shouts: 'Smile, say "it\'s fine", and handle it yourself to keep peace.',
+          protectsFrom: 'Disapproval or letting others down',
+          detour: 'Over-explaining and taking on burdens that are not mine'
+        },
+        {
+          icon: '🏋️',
+          name: 'The Perfectionist Judge',
+          shouts: 'You must handle everything without complaining or slowing down.',
+          protectsFrom: 'Feeling inadequate, weak, or vulnerable',
+          detour: 'Ignoring my fatigue until burnout'
+        },
+        {
+          icon: '🌪️',
+          name: 'The Catastrophizer',
+          shouts: 'What if it goes wrong and the discomfort becomes unbearable?',
+          protectsFrom: 'Uncertainty and losing control',
+          detour: 'Freezing up or postponing the decision'
+        }
+      ],
+      domains: {
+        'Pareja': 'Partner',
+        'Trabajo': 'Work',
+        'Familia': 'Family',
+        'Amistad': 'Friendship / Friends',
+        'Conmigo Mismo': 'Myself'
+      },
+      barriersCatalog: {
+        miedo_conflicto: {
+          label: 'Fear of anger/conflict',
+          desc: 'I anticipate tension or a blowup if I speak my mind'
+        },
+        culpa_limites: {
+          label: 'Guilt when prioritizing myself',
+          desc: 'I feel selfish or harmful whenever I care for my needs'
+        },
+        impulso_ceder: {
+          label: 'Urge to cave/people-please',
+          desc: 'I say "yes" or "I don\'t mind" on autopilot to keep peace'
+        },
+        rumiacion_ansiosa: {
+          label: 'Catastrophic anticipation',
+          desc: 'My mind loops endlessly imagining the worst-case scenario'
+        },
+        miedo_rechazo: {
+          label: 'Fear of rejection/disapproval',
+          desc: 'I fear losing affection or respect if I fail expectations'
+        },
+        paralisis_expresar: {
+          label: 'Freeze when expressing needs',
+          desc: 'My body locks up and I struggle to find calm words'
+        },
+        intolerancia_incertidumbre: {
+          label: 'Fear of uncertainty / Control',
+          desc: 'I crave 100% mental guarantees before acting and overwhelm in doubt'
+        },
+        autoexigencia_rigida: {
+          label: 'Rigid self-demands & overload',
+          desc: 'I fuse with "I have to handle everything" and struggle to stop guilt-free'
+        }
+      },
+      challengeCategories: {
+        limites: 'Setting boundaries',
+        conflicto: 'Conflict handling',
+        sumision: 'Avoiding submission',
+        culpa: 'Guilt & perfectionism',
+        ansiedad: 'Anxiety & anticipation',
+        autoestima: 'Self-worth & dignity'
+      },
+      hayesLenses: {
+        anverso_dolor: {
+          title: 'The Flip Side of Pain ("Where it hurts, it matters")',
+          prompt: 'Steven Hayes says: "We hurt where we care." Underneath what aches in this area, what human quality do you want to embody?',
+          prefix: 'Choosing'
+        },
+        milagro_sin_miedo: {
+          title: 'The Fearless Miracle ("If guilt didn\'t rule")',
+          prompt: 'Imagine acting free from fear of anger or guilt for keeping boundaries. How would you treat this situation or bond?',
+          prefix: 'Acting from'
+        },
+        espejo_10_anos: {
+          title: 'The 10-Year Mirror ("Who I chose to be")',
+          prompt: 'Looking back ten years from now, what concrete way of showing up here would make you genuinely proud of yourself?',
+          prefix: 'Being someone capable of'
+        },
+        punto_dulce: {
+          title: '🍯 The Sweet Spot ("Lived Wholeness")',
+          prompt: 'Recall a real moment (even small) when you felt dignified, present, and at peace in this area. What quality of yours was alive then?',
+          prefix: 'Cultivating and living from'
+        }
+      },
+      domainSeeds: {
+        'Pareja': [
+          'being an understanding, attentive partner',
+          'expressing my truth tenderly without submission',
+          'caring for closeness without abandoning myself',
+          'listening wholeheartedly and holding fair agreements'
+        ],
+        'Trabajo': [
+          'working with excellence and honesty while honoring my rest',
+          'communicating professional boundaries calmly',
+          'adding value without buying into others\' urgency',
+          'asking for clarity on workloads and priorities guilt-free'
+        ],
+        'Familia': [
+          'showing up with warmth without taking on burdens that are not mine',
+          'honoring the bond from adulthood and mutual respect',
+          'sharing genuine time while keeping my own autonomy'
+        ],
+        'Amistad': [
+          'being a loyal, authentic friend who does not fake availability when needing quiet',
+          'nurturing friendships through reciprocity and genuine listening',
+          'suggesting plans I also enjoy instead of caving on autopilot'
+        ],
+        'Conmigo Mismo': [
+          'treating myself with the same compassion and dignity I offer loved ones',
+          'caring for my physical and mental energy without calling myself selfish',
+          'acting true to my conscience even when it feels shaky',
+          'giving myself permission to rest before reaching burnout'
+        ]
+      },
+      domainActionHelpers: {
+        'Pareja': {
+          microActions: [
+            'Ask warmly how their day went and share one gentle need of my own',
+            'Say "I need 20 minutes to breathe before we continue" without storming out or attacking'
+          ],
+          willingnessOptions: [
+            'Hold discomfort if their first reaction is disappointment or silence, without rushing to cave',
+            'Allow them to be upset or quiet briefly without assuming it is my fault'
+          ]
+        },
+        'Trabajo': {
+          microActions: [
+            'Reply to an urgent ping with "I can review this first thing tomorrow or reprioritize current tasks"',
+            'Shut my laptop at my agreed time without writing an apology essay'
+          ],
+          willingnessOptions: [
+            'Hold the jitteriness of not seeming "always available" this evening',
+            'Make room for the thought "they will think I am not committed"'
+          ]
+        },
+        'Familia': {
+          microActions: [
+            'Listen warmly without automatically taking responsibility for fixing someone else\'s issue',
+            'Decide beforehand how long I will stay and honor it gently'
+          ],
+          willingnessOptions: [
+            'Tolerate the feeling of "disappointing someone" while keeping a kind boundary'
+          ]
+        },
+        'Amistad': {
+          microActions: [
+            'Say "Today I\'d prefer a quiet plan" or suggest an alternative I actually enjoy'
+          ],
+          willingnessOptions: [
+            'Accept that the other person might seem surprised by my new honesty at first'
+          ]
+        },
+        'Conmigo Mismo': {
+          microActions: [
+            'Take a 5-minute screen-free pause whenever I feel shoulder or jaw tension',
+            'Validate out loud what I am feeling before judging myself'
+          ],
+          willingnessOptions: [
+            'Make space for brief guilt or unease whenever I pause to rest'
+          ]
+        }
+      }
+    },
+    pildoras: {
+      mantras: {
+        mantra_1: {
+          text: 'I do not have to turn off my own wellbeing just to keep someone else comfortable.',
+          context: 'Boundaries & Dignity'
+        },
+        mantra_2: {
+          text: 'Peace bought at the cost of your dignity is not peace: it is an expensive truce with your inner critic.',
+          context: 'False Peace'
+        },
+        mantra_3: {
+          text: 'Setting a boundary is not an act of hostility; it is the indispensable condition for a bond to stay real.',
+          context: 'Authentic Relationships'
+        },
+        mantra_4: {
+          text: 'You can hold the discomfort of someone else\'s reaction. Guilt when saying "no" is merely the echo of old habits, not proof of harm.',
+          context: 'Emotional Sovereignty'
+        },
+        mantra_5: {
+          text: 'You are not responsible for how others choose to handle their frustration when you communicate with serenity and truth.',
+          context: 'Differentiation'
+        },
+        mantra_6: {
+          text: 'Making room for discomfort is the entry fee to a life where you also matter.',
+          context: 'ACT Acceptance'
+        }
+      },
+      pills: {
+        pill_1: {
+          categoryLabel: 'Defusion',
+          title: 'What is cognitive defusion and how to use it in 30 seconds?',
+          readTime: '1 min',
+          summary: 'Learn to watch your thoughts as passing words rather than absolute commands you must obey.',
+          content: `
+            <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--sage-700); margin-bottom: 8px;">The trap of cognitive fusion</h4>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              When we are "fused" with the mind, the thought <em>"If I say no, they will reject me"</em> feels like an undeniable fact. We mistake the thought for who we are.
+            </p>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              <strong>Cognitive defusion</strong> means stepping back to see a thought for what it truly is: a stream of sounds, words, and images generated by an evolutionary organ built to spot danger, not make you happy.
+            </p>
+            <h4 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-top: 14px; margin-bottom: 6px;">The three-prefix trick:</h4>
+            <ul style="padding-left: 20px; line-height: 1.6; margin-bottom: 14px;">
+              <li>Instead of <em>"I am a coward"</em>, say: <strong>"I am having the thought that I am a coward"</strong>.</li>
+              <li>Even better: <strong>"I notice my mind is telling me the story that I am a coward"</strong>.</li>
+              <li>Or with compassion: <strong>"Thank you, mind, for trying to protect me by bringing up that fear"</strong>.</li>
+            </ul>
+          `
+        },
+        pill_2: {
+          categoryLabel: 'Boundaries',
+          title: 'The difference between stating your stance and over-justifying yourself',
+          readTime: '1 min',
+          summary: 'The habit of talking too much around a boundary is the symptom of learned guilt.',
+          content: `
+            <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--sage-700); margin-bottom: 8px;">Over-justification as disguised submission</h4>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              Have you caught yourself giving 5 minutes of medical, work, or family excuses when you simply did not want to attend a gathering?
+            </p>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              Over-explaining springs from the unconscious belief that <strong>your preference alone is not valid</strong>; you feel the other person must "grant permission" or "pardon you" before you are allowed to rest.
+            </p>
+            <h4 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-top: 14px; margin-bottom: 6px;">The rule of serene simplicity:</h4>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              An adult does not ask permission for their boundaries. An adult shares their availability courteously:
+              <br><em>"Thank you for inviting me, though I won\'t be able to make it today. Hope you have a great time."</em>
+            </p>
+          `
+        },
+        pill_3: {
+          categoryLabel: 'Acceptance',
+          title: 'How to tolerate someone else\'s uncomfortable reaction without caving',
+          readTime: '1 min',
+          summary: 'Someone else\'s frown is not an emergency you have to fix immediately.',
+          content: `
+            <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--sage-700); margin-bottom: 8px;">The urge to put out someone else\'s fire</h4>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              When you say "no" or hold a boundary and the other person sighs, turns cold, or frowns, your nervous system hits red alert: <em>"Danger! Fix this right now."</em> And usually we fix it by caving or apologizing.
+            </p>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              In ACT, tolerating another person\'s reaction means <strong>making room for somatic discomfort</strong>: feeling the knot in your throat or stomach without rushing to people-please it away.
+            </p>
+          `
+        },
+        pill_4: {
+          categoryLabel: 'Boundaries',
+          title: 'The invisible cost of people-pleasing: Deferred resentment',
+          readTime: '1 min',
+          summary: 'Caving to keep the peace does not erase conflict: it stores it in your body with interest.',
+          content: `
+            <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--sage-700); margin-bottom: 8px;">The bill always arrives</h4>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              When you silence your thoughts so the other person stays unbothered, it seems you avoided a problem. Yet humans never forget self-betrayal.
+            </p>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              That unspoken discomfort mutates into <strong>quiet resentment</strong>. Weeks later you find yourself cold, distant, sarcastic, or snapping over something trivial.
+            </p>
+          `
+        },
+        pill_5: {
+          categoryLabel: 'Acceptance',
+          title: 'Clean Pain vs. Dirty Pain in ACT Therapy',
+          readTime: '1 min',
+          summary: 'Learn to separate the unavoidable pain of living from the suffering added by fighting it.',
+          content: `
+            <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--sage-700); margin-bottom: 8px;">The two arrows of suffering</h4>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              <strong>Clean pain:</strong> Natural sadness over a loss, the brief reflex guilt when setting a boundary, or ordinary fear before a challenge. It is life happening in your body.
+            </p>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              <strong>Dirty pain:</strong> The rumination you manufacture trying to escape clean pain: <em>"Why am I so weak? Why does this always happen to me? I shouldn\'t feel like this. I\'ll cave just to make this dread stop."</em>
+            </p>
+          `
+        },
+        pill_6: {
+          categoryLabel: 'Present Moment',
+          title: 'Dropping Anchor (ACE): What to do when dread or fear overwhelms you',
+          readTime: '1 min',
+          summary: 'Why trying to suppress anxiety pours fuel on the fire (experiential avoidance) and how Russ Harris stabilizes the boat.',
+          content: `
+            <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--sage-700); margin-bottom: 8px;">Don\'t wait for the storm to pass before steadying the boat</h4>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              In Acceptance and Commitment Therapy (ACT), fighting fear or trying to force away distress is called <strong>experiential avoidance</strong>: the harder you wrestle not to feel it, the louder your mind rings the alarm.
+            </p>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              Russ Harris\'s <strong>ACE</strong> protocol does not aim to switch off your emotions, but to <em>drop anchor</em> inside the storm so autopilot does not sweep you away:
+            </p>
+            <ul style="padding-left: 20px; line-height: 1.6; margin-bottom: 14px;">
+              <li><strong>A — Acknowledge:</strong> Notice with curiosity what is happening inside (<em>"Here is overwhelm and racing thoughts"</em>).</li>
+              <li><strong>C — Come back into your body:</strong> Press your feet into the floor, gently roll your shoulders, and exhale slowly making room around the feeling.</li>
+              <li><strong>E — Engage in the present:</strong> Spot 3 real sights and 2 real sounds around you; then choose one small meaningful next step.</li>
+            </ul>
+          `
+        }
+      },
+      tricksCatalog: {
+        trick_drop_anchor: {
+          title: '⚓ Dropping Anchor: ACE Protocol (Russ Harris)',
+          intentLabel: '🌊 Overwhelm / Dread / Fear',
+          badge: 'ACT Stabilization',
+          duration: '1 min',
+          desc: 'During an emotional storm (dread, fear, freeze, overwhelm): steady the boat without fighting the wave using the 3 ACE steps.'
+        },
+        trick_bus_driver: {
+          title: '🚌 The ACT Bus: Hold the Wheel & Seat Passengers',
+          intentLabel: '🚌 Steering Control',
+          badge: 'Hayes Metaphor',
+          duration: '1 min',
+          desc: 'When mental noise (fears, guilt, worries) wants to steer for you: say "you go against my values" without kicking them off the bus.'
+        },
+        trick_serene_silence: {
+          title: 'The Rule of Serene Simplicity (Say NO Without Excuses)',
+          intentLabel: '🚫 Saying NO',
+          badge: 'Clean Boundaries',
+          duration: '1 min',
+          desc: 'Craft an excuse-free boundary and practice holding 15 seconds of silence without filling it with apologies.'
+        },
+        trick_comic_voice: {
+          title: 'Cartoon Voice & The Three Prefixes',
+          intentLabel: '🧠 Disarm Rumination',
+          badge: 'Instant Defusion',
+          duration: '30 sec',
+          desc: 'Reframe catastrophic thoughts in a silly cartoon voice and distancing prefixes so they lose their tyrannical grip.'
+        },
+        trick_cold_breath: {
+          title: 'Holding Another\'s Coldness (3 Differentiation Breaths)',
+          intentLabel: '🥶 Coldness / Frowns',
+          badge: 'Somatic Sovereignty',
+          duration: '1 min',
+          desc: 'Guided pacer to resist rushing to cave whenever someone sighs, pulls a face, or turns cold.'
+        },
+        trick_two_arrows: {
+          title: 'The Two Arrows (Pull Out the Dirty Guilt Arrow)',
+          intentLabel: '⚖️ Dissolve Guilt',
+          badge: 'Clean Acceptance',
+          duration: '1 min',
+          desc: 'Separate clean pain (the natural discomfort of a boundary) from the second arrow of self-punishment and discard it live.'
+        },
+        trick_pause_rescue: {
+          title: 'The 2-Minute Pause (Slow the Rescue Impulse)',
+          intentLabel: '🛑 Rescue Impulse',
+          badge: 'Self-Containment',
+          duration: '2 min',
+          desc: 'Zen breathing countdown so the anxiety spike drops before you volunteer to fix someone else\'s problem.'
+        },
+        trick_somatic_yes: {
+          title: '🧘‍♂️ The Somatic "YES" Posture (Steven Hayes)',
+          intentLabel: '🥶 Open Posture',
+          badge: 'Body Regulation',
+          duration: '45 sec',
+          desc: 'Disarm physical threat armor (tense shoulders, clenched jaw) live before holding a boundary or tough talk.'
+        }
+      }
+    }
+  };
+
+  // Exhaustive ES -> EN UI & Toast & Confirm & Placeholder Map
+  const EXACT_MAP = {
+    ...DOMAIN_MAP_EN,
+    ...EMOTION_MAP_EN,
+    ...BODY_ZONES_EN,
+    ...PHYSICAL_CHIPS_EN,
+    ...VALUES_EN,
+
+    // Global Header & Nav & Subnav
+    'Tu espacio ACT': 'Your ACT space',
+    'Crisis ACT': 'ACT Crisis',
+    'Procesar momento de saturación emocional': 'Process a moment of emotional overwhelm',
+    'Bloquear pantalla ahora': 'Lock screen now',
+    'Bloquear aplicación': 'Lock application',
+    'Configuración: paleta, tema, idioma y copias de seguridad': 'Settings: palette, theme, language & backups',
+    'Configuración': 'Settings',
+    'Cambiar idioma (ES / EN)': 'Switch language (ES / EN)',
+    'Navegación principal': 'Main navigation',
+    'Ahora mismo': 'Right now',
+    'Yo': 'Self',
+    'Evolución: Cuaderno de Terapia, Historial en Frío y Gráficos': 'Progress: Therapy Notebook, Cool-Down History & Charts',
+    'Evolución e Historial': 'Progress & History',
+    'Sub-navegación del espacio actual': 'Current space sub-navigation',
+    'Guía de Inicio': 'Home Guide',
+    'Mi Perfil ACT': 'My ACT Profile',
+    'Píldoras y Anclajes': 'Pills & Anchors',
+    'El Panel de Insight': 'Insights Panel',
+    'Bloqueo de Privacidad': 'Privacy Lock',
+    'Configuración · Almacenamiento: Navegador local (solo este dispositivo)': 'Settings · Storage: Local browser (this device only)',
+    'Configuración · Almacenamiento: BD SQLite conectada': 'Settings · Storage: SQLite DB connected',
+    'Configuración · Almacenamiento: BD SQLite (sin conexión, usando caché local)': 'Settings · Storage: SQLite DB (offline, using local cache)',
+
+    // Home View (Guia de Inicio)
+    '🧭 ¿En qué momento estás ahora?': '🧭 Where are you right now?',
+    'Elige tu situación para ir directo al ejercicio adecuado.': 'Pick what fits best to jump straight to the right tool.',
+    '💎 Mis Valores →': '💎 My Values →',
+    '🧭 Mi Foco →': '🧭 My Focus →',
+    '📌 Foco:': '📌 Focus:',
+    '🔥 Ahora Mismo (En Caliente)': '🔥 Right Now (In the Heat)',
+    '🌊 Siento una emoción intensa, ansiedad o bloqueo': '🌊 Feeling intense emotion, anxiety, or freeze',
+    '⏱️ 3 min': '⏱️ 3 min',
+    '⏱️ 1 min': '⏱️ 1 min',
+    '⏱️ 2 min': '⏱️ 2 min',
+    '⏱️ 2-3 min': '⏱️ 2-3 min',
+    '⏱️ 30-60 seg': '⏱️ 30-60 sec',
+    'Pones nombre exacto a la emoción, la bajas al cuerpo y separas el pensamiento que la alimenta.': 'Put an exact name on the emotion, bring it into your body, and unhook the thought feeding it.',
+    'Bajar la intensidad emocional y elegir tu próximo paso sin actuar en piloto automático.': 'Lower emotional intensity and choose your next step instead of reacting on autopilot.',
+    '⚡ Necesito cortar un impulso urgente ahora mismo': '⚡ I need to stop an urgent impulse right now',
+    'Ejecutas un micro-truco guiado en vivo (Echar el Ancla, Decir NO en 15s, Frenar rescate o Postura del SÍ).': 'Run a guided live micro-technique (Dropping Anchor, Say NO in 15s, Rescue Pause, or YES Posture).',
+    'Estabilizarte en 60 segundos y evitar justificarte de más o ceder por pánico.': 'Ground yourself in 60 seconds and avoid over-explaining or caving from panic.',
+    '⚖️ Dudo qué hacer o temo ceder ante alguien': '⚖️ Torn on what to do or afraid to give in',
+    'Eliges qué te está frenando, tu valor faro y una micro-acción honesta en 2 pasos.': 'Spot what is holding you back, pick your guiding value, and choose an honest micro-action in 2 steps.',
+    'Salir de la indecisión con una respuesta clara y alineada contigo.': 'Step out of indecision with a clear answer aligned with your values.',
+    '🏳️ Acabo de callarme o decir «sí» queriendo decir «no»': '🏳️ I just stayed silent or said "yes" wanting to say "no"',
+    'Anotas qué querías hacer realmente vs. qué cediste y mides tu desgaste.': 'Log what you truly wanted vs. how you gave in, and measure its real toll.',
+    'Visibilizar el coste de la «falsa paz» y detectar dónde necesitas límites.': 'Spot the hidden cost of "false peace" and see where boundaries are needed.',
+    '📖 Entrenar y Leer (En calma)': '📖 Train & Read (In Calm Moments)',
+    '📖 Lecturas y Ejercicios ACT': '📖 ACT Readings & Exercises',
+    'Píldoras de 1 min, frases ancla, Deconstructor «Yo Soy» y El Pivote (Dolor → Anhelo).': '1-min pills, anchor cards, "I Am" Deconstructor, and The Pivot (Pain → Yearning).',
+    'Abrir →': 'Open →',
+    '✨ Qué aporta:': '✨ What it brings:',
+    'Qué haces:': 'What you do:',
+    'Ejemplo:': 'Example:',
+    '🧪 Ejemplo': '🧪 Example',
+    '🧪 Ejemplo guía': '🧪 Guide Example',
+    '· Tu espacio ACT · Creado con ❤️ por': '· Your ACT space · Created with ❤️ by',
+    '☕ Apoyar en Ko-fi': '☕ Support on Ko-fi',
+    '⚠️ El navegador exige': '⚠️ The browser requires',
+    'para activar Web Crypto AES-256 (funciona en GitHub Pages, localhost o Tailscale HTTPS).': 'to enable Web Crypto AES-256 (works on GitHub Pages, localhost, or Tailscale HTTPS).',
+    'debajo o abre el menú': 'below or open the menu',
+    'en Chrome.': 'in Chrome.',
+    'Herramienta gratuita y privada de práctica personal. No sustituye el acompañamiento de un profesional de la psicología.': 'Free, private personal practice tool. Does not replace care from a licensed mental health professional.',
+
+    // Shared UI Buttons & Actions
+    'Cerrar': 'Close',
+    'Cancelar': 'Cancel',
+    'Listo': 'Done',
+    '✓ Listo / Cerrar': '✓ Done / Close',
+    'Atrás': 'Back',
+    '← Atrás': '← Back',
+    'Siguiente': 'Next',
+    'Todos': 'All',
+    'Favorito': 'Favorite',
+    'Guardar en favoritos': 'Save to favorites',
+    'Quitar de favoritos': 'Remove from favorites',
+    '🧹 Quitar ejemplos': '🧹 Remove examples',
+    '🧪 Cargar Datos Demo': '🧪 Load Demo Data',
+    '🗑️ Limpiar Todo': '🗑️ Clear All',
+    '🗑️ Eliminar': '🗑️ Delete',
+    '✏️ Editar': '✏️ Edit',
+    '💾 Exportar JSON': '💾 Export JSON',
+    '📥 Importar JSON': '📥 Import JSON',
+    '💾 Exportar Copia JSON': '💾 Export JSON Backup',
+    'Cambiar a modo claro': 'Switch to light mode',
+    'Cambiar a modo oscuro': 'Switch to dark mode',
+
+    // Settings Modal (openSettingsModal)
+    '⚙️ Configuración y Ajustes Técnicos': '⚙️ Technical Settings & Preferences',
+    'Privacidad AES-256, tema visual, almacenamiento SQLite/Navegador, copias de seguridad y app móvil.': 'AES-256 privacy, theme, language, SQLite/Browser storage, backups, and mobile app.',
+    '🔐 Bloqueo de Privacidad y Cifrado (AES-256)': '🔐 Privacy Lock & Encryption (AES-256)',
+    '🛡️ Cifrado AES-256-GCM Activo': '🛡️ AES-256-GCM Encryption Active',
+    'Sin bloqueo / sin cifrar': 'Unlocked / Unencrypted',
+    'Cifra todos tus registros (navegador y SQLite) con tu PIN o contraseña y permite desbloquear con FaceID / Huella. Si olvidas la clave sin tener copia JSON, los datos cifrados no se podrán recuperar.': 'Encrypts all your entries (browser and SQLite) with your PIN or password and supports FaceID / Touch unlock. Without a JSON backup, forgotten passcodes cannot be recovered.',
+    '🔒 Bloquear ahora': '🔒 Lock now',
+    '👆 FaceID / Huella activo (Quitar)': '👆 FaceID / Biometrics active (Remove)',
+    '👆 Activar FaceID / Huella': '👆 Enable FaceID / Biometrics',
+    'Auto-bloqueo:': 'Auto-lock:',
+    'Al cambiar de app': 'On leaving app',
+    'Solo manual / al abrir': 'Manual / on open only',
+    'Solo al abrir/manual': 'On open / manual only',
+    'Auto-bloqueo: Al cambiar de app': 'Auto-lock: On leaving app',
+    'Auto-bloqueo: 1 min': 'Auto-lock: 1 min',
+    'Auto-bloqueo: 5 min': 'Auto-lock: 5 min',
+    'Auto-bloqueo: 15 min': 'Auto-lock: 15 min',
+    'Auto-bloqueo: Solo al abrir/manual': 'Auto-lock: On open / manual',
+    'PIN/clave actual para quitar cifrado': 'Current PIN/password to disable encryption',
+    '🔓 Desactivar cifrado': '🔓 Disable encryption',
+    'PIN o contraseña (mín. 4)': 'PIN or password (min. 4)',
+    'Repetir PIN / contraseña': 'Repeat PIN / password',
+    '🛡️ Activar Bloqueo + Cifrado AES-256': '🛡️ Enable Lock + AES-256 Encryption',
+    '🎨 Apariencia y Guía Sensorial': '🎨 Appearance & Sensory Guide',
+    '🎨 Apariencia, Idioma y Guía Sensorial': '🎨 Appearance, Language & Sensory Guide',
+    'Idioma / Language': 'Language / Idioma',
+    '☀️ Modo Claro': '☀️ Light Mode',
+    '🌙 Modo Oscuro': '🌙 Dark Mode',
+    'Vibración guía: Activada': 'Guided haptic: On',
+    'Vibración guía: Desactivada': 'Guided haptic: Off',
+    '📳 Vibración guía: Activada': '📳 Guided haptic: On',
+    '📳 Vibración guía: Desactivada': '📳 Guided haptic: Off',
+    '🔔 Tonos ojos cerrados: Activados': '🔔 Eyes-closed tones: On',
+    '🔔 Tonos ojos cerrados: Desactivados': '🔔 Eyes-closed tones: Off',
+    '💾 Base de Datos y Sincronización': '💾 Database & Synchronization',
+    '🔒 Sesión requerida para BD SQLite': '🔒 Sign in required for SQLite DB',
+    '🟡 Servidor SQLite no accesible ahora': '🟡 SQLite server not reachable now',
+    '🗄️ Base de Datos SQLite (Servidor Docker)': '🗄️ SQLite Database (Docker Server)',
+    '📱 Almacenamiento en el Navegador (Solo este dispositivo)': '📱 Browser Storage (This Device Only)',
+    'Activo': 'Active',
+    'Elegir': 'Choose',
+    'Sincroniza automáticamente en': 'Automatically syncs to',
+    '(con respaldo local en el navegador). Ideal para uso personal monousuario.': '(with local browser backup). Ideal for single-user personal use.',
+    'Guarda solo en este dispositivo sin enviar ni sobrescribir datos en el servidor.': 'Saves only on this device without sending or overwriting server data.',
+    '⬆️ Subir Navegador → BD SQLite': '⬆️ Push Browser → SQLite DB',
+    '⬇️ Descargar BD SQLite → Navegador': '⬇️ Pull SQLite DB → Browser',
+    '🔑 Iniciar sesión para sincronizar con SQLite': '🔑 Sign in to sync with SQLite',
+    '🚪 Cerrar sesión del servidor': '🚪 Sign out of server',
+    '📦 Copias de Seguridad y Gestión de Datos': '📦 Backups & Data Management',
+    '🟢 Persistencia móvil reforzada (IndexedDB)': '🟢 Reinforced mobile persistence (IndexedDB)',
+    '💾 Respaldo doble (IndexedDB + Local)': '💾 Dual backup (IndexedDB + Local)',
+    '📲 Guardar / Compartir Copia en Móvil': '📲 Save / Share Mobile Backup',
+    '🗄️ Descargar SQLite (.db)': '🗄️ Download SQLite (.db)',
+    '📲 Usar como App en el Móvil (PWA)': '📲 Install as Mobile App (PWA)',
+    '📲 Instalar App en este dispositivo': '📲 Install App on this device',
+    '🌱 Sobre Khōra — Tu espacio ACT': '🌱 About Khōra — Your ACT space',
+    'En filosofía griega,': 'In Greek philosophy,',
+    'es el espacio que da cabida sin juzgar. Esta aplicación es gratuita, sin rastreadores y guarda tus datos únicamente en tu dispositivo. Es una herramienta personal de práctica ACT y no sustituye la terapia psicológica.': 'means the space that holds without judging. This app is free, tracker-free, and stores your data exclusively on your device. It is a personal ACT practice tool and does not replace psychological therapy.',
+    '☕ Invítame a un café en Ko-fi': '☕ Buy me a coffee on Ko-fi',
+    'Compartir': 'Share',
+    '«Añadir a pantalla de inicio»': '"Add to Home Screen"',
+    'Menú': 'Menu',
+    '«Instalar aplicación»': '"Install app"',
+    'Offline:': 'Offline:',
+    'Funciona sin conexión en modo': 'Works offline in',
+    'Navegador': 'Browser',
+    'tras la primera carga.': 'mode after first load.',
+
+    // Privacy Lock & Login & Install Gate & Persistence Warning Banners
+    'Khōra bloqueado': 'Khōra locked',
+    'Tus datos están protegidos con cifrado': 'Your data is protected with',
+    '. Introduce tu PIN o contraseña para descifrarlos.': 'encryption. Enter your PIN or password to unlock.',
+    'PIN o contraseña': 'PIN or password',
+    '🔓 Desbloquear': '🔓 Unlock',
+    '👆 Desbloquear con FaceID / Huella': '👆 Unlock with FaceID / Biometrics',
+    '🔒 Iniciar sesión en Khōra': '🔒 Sign in to Khōra',
+    'Los datos compartidos de la base de datos SQLite están protegidos. Introduce tus credenciales para sincronizar.': 'Shared SQLite database records are protected. Enter your credentials to synchronize.',
+    'Usuario': 'Username',
+    'Contraseña': 'Password',
+    'Tu contraseña': 'Your password',
+    '🔓 Entrar y sincronizar': '🔓 Sign in & sync',
+    '📱 Usar solo en este navegador (sin acceder a la BD)': '📱 Use on this browser only (skip server DB)',
+    '📲 Cómo instalar': '📲 How to install',
+    'Ocultar aviso': 'Dismiss banner',
+    'Nueva versión de Khōra disponible': 'New version of Khōra available',
+    'Actualizar': 'Update',
+    'Actualizando…': 'Updating…',
+    'Más tarde': 'Later',
+    '📲 Instala Khōra antes de guardar tus datos': '📲 Install Khōra before saving your data',
+    'Estás abriendo tu espacio ACT en una pestaña temporal del móvil sin servidor detrás.': 'You are opening Your ACT space in a temporary mobile browser tab without a backend server.',
+    '¿Por qué importa esto?': 'Why does this matter?',
+    'En móvil (especialmente en iPhone), la memoria de una pestaña normal de navegador': 'On mobile (especially iPhone), normal browser tab storage',
+    'no se comparte': 'is NOT shared',
+    'con el icono de la Pantalla de Inicio y Safari puede borrar pestañas inactivas a los 7 días.': 'with the Home Screen app icon, and Safari may purge inactive tabs after 7 days.',
+    '🍎 Pasos en iPhone / iPad (Safari):': '🍎 Steps on iPhone / iPad (Safari):',
+    'Pulsa el botón': 'Tap the',
+    '(cuadrado con flecha hacia arriba ⬆️) en la barra de Safari.': '(square with upward arrow ⬆️) button in the Safari toolbar.',
+    'Baja y toca': 'Scroll down and tap',
+    'Cierra Safari y abre Khōra desde el nuevo icono': 'Close Safari and open Khōra from the new icon',
+    'de tu pantalla de inicio antes de escribir tus datos.': 'on your Home Screen before saving personal entries.',
+    '🤖 Pasos en Android (Chrome):': '🤖 Steps on Android (Chrome):',
+    '«Instalar App»': '"Install App"',
+    'del navegador.': '.',
+    'Elige': 'Choose',
+    'Ábrela siempre desde el icono instalado para asegurar persistencia offline y almacenamiento propio.': 'Always open it from the installed icon to ensure offline persistence and dedicated storage.',
+    '📲 Instalar Khōra ahora': '📲 Install Khōra now',
+    '💾 Ya tengo datos aquí: Exportar copia JSON primero': '💾 I already have data here: Export JSON backup first',
+    'Explorar en el navegador por ahora (sin instalar)': 'Explore in browser for now (without installing)',
+
+    // SOS Modal
+    '🧭 Tu Faro Personal ACT': '🧭 Your Personal ACT Lighthouse',
+    '⚓ Asistencia Rápida en Crisis ACT': '⚓ Quick ACT Crisis Assistance',
+    'En ACT no luchamos contra la ola emocional ni intentamos suprimirla. Primero echamos el ancla para no ser arrastrados y luego elegimos hacia dónde llevar el timón.': 'In ACT we do not fight or suppress the emotional wave. First we drop anchor so we are not swept away, then we steer toward our values.',
+    '⚓ 1. Echar el Ancla en 60s (Protocolo ACE)': '⚓ 1. Drop Anchor in 60s (ACE Protocol)',
+    'Para picos de angustia, agobio o miedo intenso: reconoce la ola (A), vuelve al cuerpo (C) y conecta con el presente (E).': 'For spikes of dread, overwhelm, or intense fear: acknowledge the wave (A), come back into your body (C), and engage with the present (E).',
+    '🛑 2. Frenar el Piloto Automático': '🛑 2. Slow Down Autopilot',
+    'Cuando sientes urgencia de huir, ceder por miedo o reaccionar en caliente:': 'When you feel an urgent urge to flee, cave out of fear, or react in the heat of the moment:',
+    '🚌 Negar el Volante': '🚌 Hold the Wheel',
+    '⏳ Pausa de 2 Minutos': '⏳ 2-Minute Pause',
+    '🌪️ 3. Procesar la Crisis en 4 Pasos (El Espacio ACT)': '🌪️ 3. Process the Crisis in 4 Steps (The ACT Space)',
+    '🧭 Empezar en Rueda Emocional': '🧭 Start on Emotion Wheel',
+    '🌬️ Ir directo al Cuerpo (Paso 2)': '🌬️ Go Straight to Body (Step 2)',
+
+    // Brujula de Valores
+    '🧭 La Brújula de Valores': '🧭 The Values Compass',
+    'Pasar de «¿qué espera el otro?» a «¿qué elijo yo?».': 'Shift from "what do they expect?" to "what do I choose?".',
+    'Una micro-acción clara para desbloquear tu decisión.': 'A clear micro-action to unstick your decision.',
+    'Nortes Fijados Recientemente': 'Recently Set Compasses',
+    '1. ¿En qué situación dudas o sientes presión para ceder?': '1. Where are you hesitating or feeling pressured to cave?',
+    'Toca un ejemplo arriba o escribe tu situación en 1 línea...': 'Tap an example above or describe your situation in 1 line...',
+    '2. ¿Qué te está frenando ahora mismo? (Elige 1)': '2. What is holding you back right now? (Pick 1)',
+    'Elegir Valor Faro y Acción': 'Choose Guiding Value & Action',
+    '1. Elige el Valor que guía tu respuesta': '1. Choose the Value guiding your response',
+    'Toca una micro-acción sugerida o escríbela con tus palabras...': 'Tap a suggested micro-action or write it in your own words...',
+    'Fijar Mi Micro-Acción': 'Set My Micro-Action',
+    'Norte fijado con éxito': 'Compass direction set',
+    'Tu Micro-Acción Elegida:': 'Your Chosen Micro-Action:',
+    'Nueva Consulta': 'New Check-In',
+    'Situación de encrucijada': 'Crossroads situation',
+
+    // Paz Falsa
+    '🏳️ El Espejo de la Paz Falsa': '🏳️ The False Peace Mirror',
+    'Contrastar qué querías decir vs. qué cediste por miedo.': 'Contrast what you truly wanted to say vs. what you gave up out of fear.',
+    'Medir el desgaste de callarte y detectar dónde poner límites.': 'Measure the toll of staying silent and spot where boundaries belong.',
+    '¿Dónde acabas de ceder o callarte?': 'Where did you just cave or stay silent?',
+    'Vínculo y convivencia': 'Bond & closeness',
+    'Ámbito profesional': 'Work environment',
+    'Entorno cercano': 'Close relatives',
+    'Círculo social': 'Social circle',
+    'Otro contexto': 'Other context',
+    '¿Qué ocurrió? (Toca un ejemplo o escríbelo)': 'What happened? (Tap an example or write it)',
+    'Describe brevemente qué te pidieron o qué pasó...': 'Briefly describe what was asked or what happened...',
+    'La Verdad vs. La Máscara': 'Truth vs. The Mask',
+    '🌿 ¿Qué quería hacer o decir yo realmente?': '🌿 What did I truly want to do or say?',
+    'Lo que necesitabas de verdad...': 'What you genuinely needed...',
+    '⚡ ¿Qué hice al final por miedo o sumisión?': '⚡ What did I actually do out of fear or submission?',
+    'Cómo cediste por fuera...': 'How you gave in on the outside...',
+    'El Peaje Emocional': 'The Emotional Toll',
+    '🔥 Resentimiento hacia la otra persona o situación': '🔥 Resentment toward the other person or situation',
+    '🔋 Agotamiento Físico o Pesadez Somática': '🔋 Physical Exhaustion or Somatic Heaviness',
+    '🌪️ Ansiedad o Hipervigilancia': '🌪️ Anxiety or Hypervigilance',
+    '🕳️ Sensación de Vacío o Desconexión de Uno Mismo': '🕳️ Emptiness or Disconnection from Yourself',
+    'Nota de desahogo libre (opcional)': 'Free venting note (optional)',
+    'Escribe aquí cualquier sensación o pensamiento crudo para vaciar la mente...': 'Write any raw feeling or thought here to clear your mind...',
+    'Guardar en mi Historial': 'Save to My History',
+    'Has nombrado la verdad con valentía': 'You named the truth with courage',
+    'Tu dolor y tu resentimiento son señales de que tus límites importan.': 'Your ache and resentment are signals that your boundaries matter.',
+    'Momento de concesión': 'Moment of concession',
+    'Ver en Panel de Insight': 'View in Insights Panel',
+    'Nuevo Registro': 'New Entry',
+
+    // Radar de Patrones
+    '🔄 El Radar de Patrones': '🔄 The Pattern Radar',
+    '+ Nuevo Patrón': '+ New Pattern',
+    'Mapear un bucle que se repite y diseñar 1 micro-experimento semanal.': 'Map a recurring loop and design 1 small weekly experiment.',
+    'Romper hábitos de complacencia con cambios pequeños y medibles.': 'Break people-pleasing habits through small, measurable shifts.',
+    'Todos los ámbitos': 'All life areas',
+    'No tienes patrones mapeados en este ámbito': 'No patterns mapped in this life area yet',
+    'En los momentos de calma es cuando mejor podemos ver las trampas que nos tiende el piloto automático.': 'Calm moments are when we can best spot the traps set by autopilot.',
+    'Eliminar patrón': 'Delete pattern',
+    '1. Detonante': '1. Trigger',
+    '2. Mi Respuesta Automática (Sumisión/Evitación)': '2. My Automatic Response (Submission/Avoidance)',
+    '3. Alivio Inmediato (Falsa Paz)': '3. Short-Term Relief (False Peace)',
+    '4. Coste a Largo Plazo': '4. Long-Term Cost',
+    '🧪 Experimento ACT de la Semana': '🧪 Weekly ACT Experiment',
+    'Editar experimento': 'Edit experiment',
+    'Sin experimento definido todavía.': 'No experiment defined yet.',
+    'Último check-in:': 'Last check-in:',
+    'Aún no has hecho check-in esta semana': 'No check-in logged this week yet',
+    '🌟 Conseguido con éxito': '🌟 Accomplished',
+    '🌿 En progreso y aprendizaje': '🌿 In progress & learning',
+    '💧 Postergado con compasión': '💧 Deferred with compassion',
+    'Último aprendizaje registrado:': 'Latest insight recorded:',
+    '📝 Hacer Check-in Semanal': '📝 Log Weekly Check-in',
+    'Mapear un Bucle Recurrente': 'Map a Recurring Loop',
+    'Usa una plantilla rápida o rellena tu caso.': 'Use a quick template or fill in your own case.',
+    'Nombre del Patrón': 'Pattern Name',
+    'Ej: Ceder en planes por miedo a mala cara': 'E.g., Giving in on plans fearing disapproval',
+    'Ámbito': 'Life Area',
+    '1. Detonante habitual': '1. Common Trigger',
+    'Qué situación o gesto dispara el bucle...': 'What situation or cue triggers the loop...',
+    '2. Mi respuesta automática': '2. My Automatic Response',
+    'Qué haces de inmediato por reflejo...': 'What you do right away on reflex...',
+    '3. Alivio inmediato (Falsa Paz)': '3. Short-term relief (False Peace)',
+    'Qué evitas a corto plazo...': 'What you avoid short-term...',
+    '4. Coste a largo plazo': '4. Long-term cost',
+    'Qué factura pagas después...': 'What toll you pay afterward...',
+    'Un micro-cambio pequeño y realista para esta semana...': 'A small, realistic micro-shift for this week...',
+    '🔀 Práctica de Opuestos (Generador de Micro-Variaciones — Steven C. Hayes):': '🔀 Practice of Opposites (Micro-Variation Generator — Steven C. Hayes):',
+    'Guardar Patrón': 'Save Pattern',
+    'Definir Experimento Semanal': 'Define Weekly Experiment',
+    'Para el patrón:': 'For the pattern:',
+    'Experimento de conducta ACT': 'ACT Behavioral Experiment',
+    'Debe ser una micro-acción realista, no un cambio titánico inalcanzable:': 'Keep it a realistic micro-action, not an overwhelming leap:',
+    'Guardar Experimento': 'Save Experiment',
+    'Check-in Semanal del Experimento': 'Weekly Experiment Check-in',
+    '¿Cómo resultó esta semana?': 'How did it go this week?',
+    '🌟 Conseguido:': '🌟 Accomplished:',
+    'Apliqué la micro-acción y sostuve la incomodidad': 'I applied the micro-action and held the discomfort',
+    '🌿 En progreso:': '🌿 In progress:',
+    'Lo intenté o me di cuenta justo a tiempo': 'I tried or caught myself just in time',
+    '💧 Caí en el piloto:': '💧 Slipped into autopilot:',
+    'Cedo de nuevo pero me trato con compasión': 'Gave in again, yet treating myself with compassion',
+    '¿Qué aprendiste sobre tu mente o sobre la situación?': 'What did you learn about your mind or the situation?',
+    'Ej: Descubrí que la otra persona no se molestó tanto como mi mente predecía, o noté mucha culpa que fue bajando tras 10 minutos...': 'E.g., Found the other person wasn\'t nearly as upset as my mind predicted, or noticed strong guilt that eased after 10 minutes...',
+    'Guardar Check-in': 'Save Check-in',
+
+    // Espacio ACT
+    '🌪️ El Espacio ACT': '🌪️ The ACT Space',
+    'Nombrar la emoción, bajarla al cuerpo y desenganchar la mente.': 'Name the emotion, locate it in your body, and unhook from the thought.',
+    'Bajar la intensidad del malestar y responder desde tus valores.': 'Soften the distress intensity and respond from your values.',
+    '1. Rueda Emocional': '1. Emotion Wheel',
+    '2. Identificación Física': '2. Body Mapping',
+    '3. Defusión Mental': '3. Cognitive Defusion',
+    '4. Valores y Autobús': '4. Values & Bus',
+    'Aún no has seleccionado ninguna emoción — puedes marcar una o varias abajo o usar un acceso rápido.': 'No emotion selected yet — pick one or more below or use a quick shortcut.',
+    '🌊 No sé nombrarla aún (Avanzar)': '🌊 Can\'t name it yet (Continue)',
+    '1. Nombra lo que sientes (toca 1 o varias emociones)': '1. Name what you feel (tap 1 or more emotions)',
+    'Atajo rápido:': 'Quick shortcut:',
+    '⚡ Saltar directo al Cuerpo (si estás muy saturado/a)': '⚡ Jump straight to Body (if overwhelmed)',
+    'Poner nombre exacto ayuda a tomar distancia de la ola.': 'Putting a precise name on it helps you step back from the wave.',
+    '🔍 Ampliar Rueda': '🔍 Expand Wheel',
+    '📋 Ver en Lista / Buscar': '📋 List / Search View',
+    '🎡 Volver a Rueda': '🎡 Back to Wheel',
+    'Intensidad del malestar presente': 'Current distress intensity',
+    'Paso 2: Identificación Física en el Cuerpo': 'Step 2: Physical Mapping in the Body',
+    '¿Qué sientes?': 'What do you feel?',
+    'Elige 1 o varias': 'Pick 1 or more',
+    'Pasa el ratón por el anillo exterior para ampliar y ver un ejemplo identificador.': 'Hover or tap the outer ring to zoom in and see a concrete example.',
+    '🔍 Filtrar o buscar emoción exacta (ej. culpa, resentimiento, desamparo, vacío)...': '🔍 Filter or search exact emotion (e.g., guilt, resentment, helplessness, emptiness)...',
+    '🎨 Fisicalizar la Sensación (Técnica de Steven C. Hayes)': '🎨 Physicalize the Sensation (Steven C. Hayes Technique)',
+    'Forma / Textura:': 'Shape / Texture:',
+    'Temperatura / Dinamismo:': 'Temperature / Movement:',
+    '🌬️ Hacerle Hueco en el Cuerpo': '🌬️ Make Room in the Body',
+    'Respira para hacer espacio a la sensación sin pelear contra ella.': 'Breathe to open space around the sensation without fighting it.',
+    '🧘‍♂️ Practicar la Postura Somática del "SÍ" (Steven Hayes)': '🧘‍♂️ Practice the Somatic "YES" Posture (Steven Hayes)',
+    '📳 Vibración guía: Sí': '📳 Guided haptic: Yes',
+    '📳 Vibración guía: No': '📳 Guided haptic: No',
+    '🔔 Tonos ojos cerrados: Sí': '🔔 Eyes-closed tones: Yes',
+    '🔔 Tonos ojos cerrados: No': '🔔 Eyes-closed tones: No',
+    'Inhala profundamente': 'Inhale deeply',
+    'Inhala suavemente': 'Inhale gently',
+    'Deja entrar el aire, siente el espacio en tu interior...': 'Let the air in, feel the space inside you...',
+    'Mantén la calma': 'Hold gently',
+    'Observa sin juzgar lo que está presente en tu cuerpo...': 'Observe without judging what is present in your body...',
+    'Exhala soltando la lucha': 'Exhale, releasing the struggle',
+    'Hazle hueco a la incomodidad, no necesitas pelear contra la ola...': 'Make room for the discomfort; you don\'t need to fight the wave...',
+    'Pausa serena': 'Calm pause',
+    'Descansa en el presente antes del próximo aliento...': 'Rest in the present before the next breath...',
+    'Expande suavemente alrededor de la sensación...': 'Gently expand around the sensation...',
+    'Pausar Respiración Guiada': 'Pause Guided Breathing',
+    'Reanudar Respiración Guiada': 'Resume Guided Breathing',
+    '← Volver a la Rueda': '← Back to Wheel',
+    'Paso 3: Desarmar la Mente (Defusión)': 'Step 3: Disarm the Mind (Defusion)',
+    '🧭 Tu Faro Personal y Tarjeta de Anclaje ACT': '🧭 Your Personal Lighthouse & ACT Anchor Card',
+    'Otro anclaje ↻': 'Next anchor ↻',
+    'Se van a enfadar si digo que no': 'They will get angry if I say no',
+    'Soy egoísta por priorizarme': 'I am selfish for putting myself first',
+    'Tengo que poder con todo sin fallar': 'I must handle everything without failing',
+    'No voy a ser capaz de sostener esto': 'I won\'t be able to hold this discomfort',
+    'Si no cedo, me van a rechazar': 'If I don\'t cave, they will reject me',
+    'Toca una frase habitual arriba o escribe el pensamiento que te atrapa...': 'Tap a common phrase above or type the thought hooking you...',
+    '1. Nombrar el Proceso Mental': '1. Name the Mental Process',
+    '3. Gratitud y No-Lucha': '3. Gratitude & Non-Struggle',
+    'Ejercicio Visual: Hojas en el Río': 'Visual Exercise: Leaves on a Stream',
+    'Paso 4: Valores y Autobús ACT': 'Step 4: Values & The ACT Bus',
+    'El Cruce de Caminos: Piloto Automático vs. Tus Valores': 'The Choice Point: Autopilot vs. Your Values',
+    '⚡ Piloto Automático': '⚡ Autopilot',
+    'Callarme y ceder': 'Stay silent & give in',
+    'Justificarme de más': 'Over-justify myself',
+    'Contestar a la defensiva': 'Snap defensively',
+    'Huir o posponer': 'Escape or procrastinate',
+    '¿Qué te pide el reflejo rápido?': 'What is the fast reflex urging you to do?',
+    'Esta vez caí en piloto': 'Slipped into autopilot this time',
+    '✓ Seleccionado': '✓ Selected',
+    '🌿 Opción con Valores': '🌿 Values Move',
+    'Respirar y responder en 15 min': 'Breathe & reply in 15 min',
+    'Expresar mi límite en 1 frase amable': 'State my boundary in 1 kind sentence',
+    'Priorizar mi descanso sin disculparme': 'Prioritize my rest without apologizing',
+    'Hablar con cariño pero sin ceder': 'Speak kindly without caving',
+    'Micro-acción concreta que eliges dar...': 'Concrete micro-action you choose to take...',
+    '✓ ELEGIR MIS VALORES': '✓ CHOOSE MY VALUES',
+    '🚌 El Pasajero en el Autobús (Disposición ACT — Steven C. Hayes)': '🚌 Passenger on the Bus (ACT Willingness — Steven C. Hayes)',
+    'Ej: Llevo en el bolsillo el nudo en el estómago mientras mantengo mi límite con serenidad...': 'E.g., I carry the knot in my stomach alongside me while holding my boundary calmly...',
+    '📌 Dejar este pasajero fichado en': '📌 Log this passenger in',
+    '"Mi Autobús"': '"My Bus"',
+    '(Valores y Rutina) para seguir trabajándolo a medio plazo': '(Self & Values) to keep working on it long-term',
+    'Completar e Integrar en Historial': 'Complete & Save to History',
+    '🎡 Rueda de las Emociones (Vista Maximizada)': '🎡 Emotion Wheel (Expanded View)',
+    'Toca una o varias emociones concretas en el anillo exterior para nombrar lo que sientes.': 'Tap one or more specific emotions in the outer ring to name what you feel.',
+    'Limpiar selección': 'Clear selection',
+    '📻 Apodo de tu Generador de Pensamientos': '📻 Your Thought Generator Nickname',
+    'Steven C. Hayes bautizó a su mente como': 'Steven C. Hayes nicknamed his mind',
+    'para recordar que esa voz es como una radio o generador automático de comentarios, no tu identidad ni una orden que debas obedecer.': 'to remember that voice is an automatic comment generator, not your identity or a command to obey.',
+    '¿Qué apodo quieres darle a esa radio automática?': 'What nickname would you like for your automatic radio?',
+    'Ej: George, Radio Catástrofe, Doña Culpa, El Juez Interior...': 'E.g., George, Disaster Radio, Ms. Guilt, The Inner Judge...',
+    'Guardar Nombre': 'Save Name',
+    'La Postura Somática del "SÍ"': 'The Somatic "YES" Posture',
+    'Ejercicio corporal de Steven Hayes para salir del modo defensa antes de un límite o conversación difícil.': 'Steven Hayes physical exercise to step out of defense mode before a tough conversation or boundary.',
+    '1. Observa la Postura del "NO" (Resistencia):': '1. Notice the "NO" Posture (Armor):',
+    'Hombros encogidos, mandíbula apretada, puños cerrados o respiración corta. Tu cuerpo intenta blindarse contra la reacción ajena.': 'Raised shoulders, clenched jaw, tight fists, or shallow breath. Your body braces against someone else\'s reaction.',
+    '2. Cambia a la Postura del "SÍ" (Apertura):': '2. Shift into the "YES" Posture (Openness):',
+    '"Tu postura le informa a tu sistema nervioso de que estás a salvo incluso en medio de la incomodidad."': '"Your posture signals to your nervous system that you are safe even right inside discomfort."',
+    'Has navegado la tormenta con presencia': 'You navigated the storm with presence',
+    'Has observado la emoción sin dejarte gobernar por ella. Cada vez que nombras lo que sientes y eliges tus valores, ensanchas tu libertad interior.': 'You observed the emotion without being ruled by it. Every time you name what you feel and choose your values, your inner freedom grows.',
+    'Nueva Consulta ACT': 'New ACT Check-In',
+    'Ver Estadísticas y Aprendizajes': 'View Charts & Insights',
+    'Elección:': 'Choice:',
+    'pasajero a bordo:': 'Passenger aboard:',
+    '🚌 Pasajero a bordo:': '🚌 Passenger aboard:',
+
+    // Perfil ACT
+    '💎 Mis Valores (Brújula Vital)': '💎 My Values (Life Compass)',
+    '🧭 Eje Central ACT': '🧭 Core ACT Axis',
+    'Definir quién eliges ser en tus 5 ámbitos vitales y en qué conducta concreta se nota.': 'Define who you choose to be across your 5 life areas and the concrete behavior it shows up in.',
+    'Tener un Faro claro que guía toda la app cuando aparece la duda o el miedo.': 'Keep a clear Lighthouse guiding the whole app whenever doubt or fear appears.',
+    '🧭 Mi Foco Actual y Ruta Sugerida': '🧭 Current Focus & Suggested Route',
+    '🎯 Orientación': '🎯 Orientation',
+    'Anotar qué situación tienes en mente y qué barreras se te activan.': 'Note what situation is on your mind and which barriers show up.',
+    'Conectar tu bloqueo actual con tu valor de ese ámbito y ver qué herramienta encaja mejor.': 'Connect your current block with your value in that domain and see which tool fits best.',
+    '🚌 Mi Autobús ACT y Radio Mental': '🚌 My ACT Bus & Mental Radio',
+    '💺 Disposición ACT': '💺 ACT Willingness',
+    'Identificar a tus pasajeros recurrentes (miedos y culpas) y sentarlos atrás sin pelear con ellos.': 'Spot your recurring passengers (fears and guilt) and seat them in the back without fighting them.',
+    'Reconocer tus voces habituales al vuelo para que no giren tu volante.': 'Recognize familiar inner voices on the fly so they cannot grab the wheel.',
+    '📌 ¿Qué situación tienes en mente ahora?': '📌 What situation is on your mind right now?',
+    'Toca un foco arriba o describe tu situación en 1 línea...': 'Tap a preset above or describe your situation in 1 line...',
+    'Ámbito:': 'Domain:',
+    '✏️ Actualizar Mi Foco': '✏️ Update My Focus',
+    '💡 Guardar Foco y Orientar Ruta': '💡 Save Focus & Get Route',
+    '🧱 Barreras que se te activan': '🧱 Barriers getting triggered',
+    'Editar pasajero': 'Edit passenger',
+    'Quitar pasajero': 'Remove passenger',
+    '🚨 Intentando desviar': '🚨 Trying to steer',
+    '💺 Asiento trasero': '💺 Back seat',
+    '🛡️ Intenta protegerme de:': '🛡️ Trying to protect me from:',
+    '↪️ Desvío que me pide:': '↪️ Detour it demands:',
+    '🧭 Tu respuesta:': '🧭 Your reply:',
+    '🧭 Rumbo del Autobús (Valor Faro)': '🧭 Bus Destination (Guiding Value)',
+    '🧑‍✈️ Al Volante: Tú (Yo Observador)': '🧑‍✈️ At the Wheel: You (Observing Self)',
+    'Los pasajeros pueden gritar, pero solo tú tienes manos para girar el volante.': 'Passengers can shout all they want, yet only your hands hold the steering wheel.',
+    '+ Subir / Fichar Pasajero': '+ Add / Board Passenger',
+    'Apodo para tu radio mental (ej. George, Radio Catástrofe)...': 'Nickname for your mental radio (e.g., George, Disaster Radio)...',
+    'Guardar apodo': 'Save nickname',
+    'Radio Catástrofe': 'Disaster Radio',
+    'El Juez Interior': 'The Inner Judge',
+    'Doña Culpa': 'Ms. Guilt',
+    'El Alarmista': 'The Alarmist',
+    'Miedos activos que intentan hacerte girar': 'Active fears trying to steer you off course',
+    '✨ Despejado junto al volante: todos tus pasajeros viajan en los asientos traseros.': '✨ All clear near the wheel: all your passengers are seated in the back.',
+    '🚨 Junto al volante (activo ahora)': '🚨 Near the wheel (active now)',
+    '💺 En los asientos traseros': '💺 In the back seats',
+    '🧪 Hay pasajeros de ejemplo en tu autobús. Edítalos para adaptarlos a ti o quítalos cuando quieras.': '🧪 Guide passenger examples are aboard your bus. Edit them to fit you or remove examples anytime.',
+    'Aún no hay pasajeros sentados atrás. Cuando reconozcas uno del pasillo, mándalo atrás sin echarlo.': 'No passengers seated in the back yet. When you notice one near the aisle, invite them to sit in the back.',
+    '💡 Hoja de Ruta Sugerida': '💡 Suggested Route',
+    '🧭 Toca un foco arriba o marca una barrera para ver qué flujo encaja mejor.': '🧭 Tap a focus above or select a barrier to see which tool fits best.',
+    'Ir ahora →': 'Go now →',
+    'Por qué encaja:': 'Why it fits:',
+    '💎 Al servicio de tu valor:': '💎 In service of your value:',
+    '💎 Mis Valores Faro por Ámbito': '💎 My Guiding Values by Life Area',
+    'En ACT un valor no es una meta que se tacha, sino cómo eliges actuar en cada área de tu vida.': 'In ACT a value is not a goal to check off, but how you choose to act in each life area.',
+    '✓ Definido': '✓ Defined',
+    '+ Definir': '+ Define',
+    '🧪 Estás viendo valores de ejemplo para inspirarte. Puedes editarlos para hacerlos tuyos o quitar todos los ejemplos.': '🧪 Viewing guide value examples for inspiration. Edit them to make them yours or clear examples anytime.',
+    'Aún no has definido valores. Toca cualquier ámbito de arriba para construir tu primer faro en 2 pasos.': 'No values defined yet. Tap any life area above to craft your first lighthouse in 2 steps.',
+    'Retirar este valor': 'Remove this value',
+    '🌟 Valor Faro Principal': '🌟 Primary Lighthouse Value',
+    '⭐ Fijar como Faro': '⭐ Set as Lighthouse',
+    'Activo como guía en tu pantalla de inicio, tu Autobús y tus herramientas de crisis.': 'Active as your guide on Home, My Bus, and Crisis tools.',
+    '🌱 Conducta visible (micro-acción):': '🌱 Visible behavior (micro-action):',
+    '🛡️ Incomodidad que acepto sostener:': '🛡️ Discomfort I am willing to hold:',
+    '🧭 Usar en La Brújula': '🧭 Use in Compass',
+    '📊 4. Resumen de Progresión': '📊 4. Progress Summary',
+    'Valores Construidos': 'Constructed Values',
+    'Barreras Detectadas': 'Detected Barriers',
+    'Registros ACT': 'ACT Logs',
+    'Acción por Valores': 'Value-Driven Ratio',
+    'Añadir aprendizaje o micro-victoria...': 'Add a learning or micro-win...',
+    '📝 Anotar': '📝 Note',
+    'Paso 1 de 2: Ámbito y Declaración de Valor': 'Step 1 of 2: Domain & Value Statement',
+    'Editar Valor': 'Edit Value',
+    '¿Quién eliges ser en este ámbito aunque haya incomodidad?': 'Who do you choose to be in this area even when discomfort shows up?',
+    '🔭 Elige una pregunta guía (opcional):': '🔭 Choose a guiding lens (optional):',
+    '🌱 Toca una o más semillas para armar tu frase:': '🌱 Tap one or more seeds to build your statement:',
+    'Toca las semillas arriba o escribe cómo quieres actuar...': 'Tap seeds above or write how you want to act...',
+    '💡 Clave ACT:': '💡 ACT Key:',
+    'Exprésalo como una cualidad tuya continua (ej. "comunicar con calma"), no como una reacción ajena ("que no se enfaden").': 'Phrase it as your own ongoing quality (e.g. "communicate calmly"), not someone else\'s reaction ("make them not get mad").',
+    'Siguiente: Bajarlo a Tierra →': 'Next: Ground It →',
+    '🌱 Paso 2 de 2: Bajarlo a Tierra': '🌱 Step 2 of 2: Grounding It in Action',
+    'Convierte tu valor en un gesto concreto y en disposición ante la incomodidad.': 'Turn your value into a concrete gesture and willingness toward discomfort.',
+    '🌱 ¿En qué gesto pequeño se nota este valor?': '🌱 What small gesture reflects this value?',
+    'Toca una sugerencia o escribe un micro-gesto concreto...': 'Tap a suggestion or write one concrete micro-step...',
+    '🛡️ ¿Qué incomodidad estás dispuesto/a a sostener por él?': '🛡️ What discomfort are you willing to make room for?',
+    'Ej: Sostener la culpa pasajera si pongo un límite amable...': 'E.g., Hold fleeting guilt while setting a kind boundary...',
+    '← Ajustar Frase': '← Adjust Statement',
+    '💾 Guardar Valor en mi Brújula': '💾 Save Value to Compass',
+    'Editar Pasajero de tu Autobús': 'Edit Bus Passenger',
+    'Fichar un Pasajero Recurrente': 'Board a Recurring Passenger',
+    'Usa un arquetipo rápido o escribe libremente qué dice ese miedo, de qué intenta protegerte y cómo le respondes.': 'Pick a quick archetype or write what this fear says, what it tries to protect you from, and your driver response.',
+    'Plantillas rápidas (opcional — puedes editar cualquier campo):': 'Quick templates (optional — feel free to edit any field):',
+    '1. Identidad del pasajero': '1. Passenger identity',
+    'Nombre del pasajero (ej: El Policía de la Culpa, La Duda...)': 'Passenger name (e.g., Guilt Police, Doubt...)',
+    '📢 ¿Qué frase exacta te grita?': '📢 What exact phrase does it shout?',
+    'Escribe o adapta lo que te dice esa voz...': 'Write or adapt what that voice says...',
+    '🛡️ ¿De qué intenta protegerte en el fondo?': '🛡️ What is it ultimately trying to protect you from?',
+    'En ACT todo pasajero intenta protegerte de algo, aunque lo haga metiendo miedo.': 'In ACT every passenger tries to protect you from something, even if it does so by triggering fear.',
+    'Ej: De quedar como mala persona o que se enfaden...': 'E.g., From looking selfish or making them angry...',
+    '↪️ ¿Qué desvío te pide tomar cuando aparece?': '↪️ What detour does it push you toward?',
+    'Ej: Decir que sí sin pensarlo, callarme, posponer...': 'E.g., Saying yes automatically, staying silent, postponing...',
+    '🧭 Respuesta de tu conductor (100% editable)': '🧭 Your driver reply (100% editable)',
+    'Cómo reconoces su miedo sin darle el volante...': 'How you acknowledge its fear without handing over the wheel...',
+    '¿Dónde viaja ahora mismo?': 'Where is it riding right now?',
+    'Guardar Cambios': 'Save Changes',
+    'Subir Pasajero al Autobús': 'Add Passenger to Bus',
+    '🎯 Añadir Reto Concreto': '🎯 Add Concrete Challenge',
+    'Define una situación o miedo concreto que quieras entrenar esta semana.': 'Define a concrete situation or fear you want to train this week.',
+    '¿Qué quieres trabajar?': 'What do you want to practice?',
+    "Ej: 'Decir que no a planes que no me apetecen sin justificarme'...": "E.g., 'Saying no to plans I don't want without excuses'...",
+    'Categoría': 'Category',
+    '🎯 Añadir Reto': '🎯 Add Challenge',
+    'Registrar en "El Espejo de la Paz Falsa"': 'Log in "The False Peace Mirror"',
+    'Captura en caliente cuándo cedes o acallas tu criterio para evitar malestar ajeno, midiendo su peaje real en resentimiento y agotamiento.': 'Capture in real time when you cave or silence yourself to avoid discomfort, measuring its true toll.',
+    'Ejecutar "La Regla de la Sencillez Serena" (15s)': 'Run "The Rule of Serene Simplicity" (15s)',
+    'Di tu límite o postura en una sola frase amable y sostén 15 segundos de silencio sin sobre-explicarte ni pedir disculpas en exceso.': 'Speak your boundary in one kind sentence and hold 15 seconds of silence without over-apologizing.',
+    'Ejecutar "⚓ Echar el Ancla: Protocolo ACE" (60s)': 'Run "⚓ Dropping Anchor: ACE Protocol" (60s)',
+    'Estabiliza el sistema nervioso en plena tormenta de angustia, miedo o sobrecarga reconociendo la ola (A), volviendo al cuerpo (C) y conectando con el presente (E).': 'Steady your nervous system amid panic or overload: Acknowledge (A), Come back to body (C), Engage present (E).',
+    'Desarmar en "El Espacio ACT"': 'Unhook in "The ACT Space"',
+    'Pon nombre exacto a la emoción en la Rueda, localízala en tu cuerpo y observa el pensamiento automático con el nombre de tu mente.': 'Name the exact emotion on the Wheel, map it in the body, and notice the thought with your mind\'s nickname.',
+    'Mapear el Bucle en "Radar de Patrones"': 'Map the Loop in "Pattern Radar"',
+    'Dibuja en frío tu ciclo repetitivo (Detonante → Sumisión → Falsa Paz → Coste) y define un pequeño experimento conductual esta semana.': 'Sketch your repetitive cycle calmly and pick one tiny behavioral experiment for this week.',
+    'Clarificar Acción en "La Brújula"': 'Clarify Action in "Values Compass"',
+    'Responde en 2 minutos a la pregunta clave de Steven Hayes para pasar de la evitación o el miedo al "¿qué persona elijo ser?".': 'Answer Steven Hayes\'s core question in 2 minutes to shift from fear to "who do I choose to be?".',
+    'Ejercicio Guiado: "🚌 El Autobús ACT: Negar el Volante y Dar Asiento"': 'Guided Exercise: "🚌 The ACT Bus: Hold the Wheel & Seat Passengers"',
+    'Tienes pasajeros haciendo ruido junto al volante. Practica en 60 segundos negarles el desvío sin pelear ni echarlos del autobús.': 'Passengers are noisy near the wheel. Practice holding the wheel for 60 seconds without fighting or kicking them off.',
+    'Explorar en "El Espacio ACT"': 'Explore in "The ACT Space"',
+    'Nombra qué emoción precisa te despierta esta situación y elige una micro-acción alineada con tus valores.': 'Name the exact emotion this situation triggers and pick a value-aligned micro-action.',
+    'Consultar "La Brújula de Valores"': 'Open "The Values Compass"',
+    'Transforma la preocupación en una pregunta concreta de dirección vital en 2 minutos.': 'Turn worry into a concrete question of life direction in 2 minutes.',
+    'Construye abajo un valor concreto para dar dirección a este paso.': 'Craft a concrete value below to give direction to this step.',
+    'De sentirme egoísta o culpable': 'From feeling selfish or guilty',
+    'Del rechazo o abandono': 'From rejection or abandonment',
+    'De un conflicto o mala cara': 'From conflict or disapproval',
+    'De perder el control': 'From losing control',
+    'Ceder automáticamente': 'Cave automatically',
+    'Callarme lo que pienso': 'Swallow what I think',
+    'Posponer o huir': 'Procrastinate or avoid',
+
+    // Pildoras, Mantras, Anclajes & Tricks
+    '⚡ Botiquín de 1 Minuto': '⚡ 1-Minute Toolkit',
+    'Ejecutar una micro-técnica guiada paso a paso.': 'Run a guided micro-technique step by step.',
+    'Frenar el piloto automático en vivo.': 'Interrupt autopilot in real time.',
+    '¿Qué necesitas desatascar ahora mismo?': 'What do you need to unstick right now?',
+    'Todos los trucos': 'All tools',
+    '🌊 Agobio / Angustia / Miedo': '🌊 Overwhelm / Dread / Fear',
+    '🚫 Decir NO sin disculparme': '🚫 Say NO without apologizing',
+    '🧠 Mente catastrofista': '🧠 Catastrophizing mind',
+    '🥶 Mala cara / Distancia ajena': '🥶 Frowns / Coldness',
+    '⚖️ Culpa y juicio interno': '⚖️ Guilt & inner critic',
+    '🛑 Impulso de resolverle la vida': '🛑 Urge to rescue/fix',
+    '⚡ Ejecutar este truco paso a paso': '⚡ Run this exercise step by step',
+    'Reencuadrar etiquetas rígidas, transformar dolor en anhelo y guardar mantras.': 'Reframe rigid labels, pivot pain into yearning, and save anchor cards.',
+    'Entrenar flexibilidad psicológica en frío sin sub-menús extra.': 'Build psychological flexibility in calm moments without extra clutter.',
+    '✨ Mantra de Presencia y Límites': '✨ Presence & Boundaries Mantra',
+    '🔄 Otro Mantra': '🔄 Next Mantra',
+    '+ Crear mi propio Mantra / Anclaje': '+ Create My Own Mantra / Anchor',
+    'Frases personales y de referentes ACT que también ves como faro en momentos de crisis': 'Personal and ACT anchor quotes you also see during moments of distress',
+    '+ Nuevo Anclaje': '+ New Anchor',
+    'Miniguías de Bolsillo (Lecturas de 1 Minuto)': 'Pocket Mini-Guides (1-Minute Reads)',
+    'Micro-reflexiones para afianzar la flexibilidad psicológica en el metro o antes de dormir': 'Micro-reflections to strengthen psychological flexibility anytime',
+    'Leer píldora completa →': 'Read full pill →',
+    'Practicar truco →': 'Practice exercise →',
+    'Cerrar Lectura': 'Close Reader',
+    '🏷️ El Deconstructor del "Yo Soy"': '🏷️ The "I Am" Label Deconstructor',
+    'Desmonta una etiqueta fija en una conducta concreta y modificable.': 'Dismantle a rigid identity label into a concrete, workable behavior.',
+    '1. Etiqueta rígida ("Yo soy...")': '1. Rigid label ("I am...")',
+    'Toca una etiqueta arriba o escribe la tuya...': 'Tap a preset above or write yours...',
+    '2. Tomar distancia (Defusión)': '2. Step back (Defusion)',
+    'Tengo el pensamiento de que...': 'I am having the thought that...',
+    '3. En contexto real (Situación + Conducta + Sensación)': '3. In real context (Situation + Behavior + Sensation)',
+    'Cuando pasa X y hago Y, entonces siento Z...': 'When X happens and I do Y, then I feel Z...',
+    '✨ Guardar Deconstrucción': '✨ Save Deconstruction',
+    'Aún no has desmontado ninguna etiqueta. Toca un ejemplo arriba para probar en 30 segundos.': 'No labels deconstructed yet. Tap a preset above to try it in 30 seconds.',
+    'Etiqueta original:': 'Original label:',
+    'Realidad en contexto:': 'Context reality:',
+    '🔄 El Pivote: Del Dolor al Anhelo': '🔄 The Pivot: From Pain to Yearning',
+    'Detrás de cada miedo hay algo legítimo que te importa. Cuídalo con dignidad, no con sumisión.': 'Underneath every fear lies something legitimate you care for. Honor it with dignity, not submission.',
+    '1. ¿Qué te duele o qué temes?': '1. What hurts or what do you fear?',
+    'Toca una plantilla arriba o describe qué temes...': 'Tap a preset above or describe what you fear...',
+    '2. ¿Qué anhelo legítimo hay debajo?': '2. What legitimate yearning lies beneath?',
+    'Qué valor o necesidad real buscas cuidar...': 'What real value or need are you hoping to honor...',
+    '3. El Pivote: ¿Cómo lo cuidas con dignidad?': '3. The Pivot: How do you care for it with dignity?',
+    'Una frase o gesto amable pero firme...': 'One kind yet firm phrase or gesture...',
+    '🔄 Fijar este Pivote': '🔄 Save This Pivot',
+    'Aún no has guardado ningún pivote. Toca un ejemplo arriba para adaptarlo rápido.': 'No pivots saved yet. Tap a preset above to adapt one quickly.',
+
+    // Trick Runners
+    'Protocolo ACE • Russ Harris': 'ACE Protocol • Russ Harris',
+    '⚓ Echar el Ancla en la Tormenta (ACE)': '⚓ Dropping Anchor in the Storm (ACE)',
+    'No es para borrar la ola emocional, sino para sujetar el barco y recuperar el control de tus manos y tus pies.': 'Not to erase the emotional wave, but to steady the boat and regain control of your hands and feet.',
+    'A — Acknowledge (Reconocer sin luchar)': 'A — Acknowledge (Notice without fighting)',
+    'Nombra con curiosidad qué hay dentro ahora mismo (reconocer no es rendirse ni pelear):': 'Name with curiosity what is present inside right now (acknowledging is neither giving up nor fighting):',
+    'Agobio / saturación': 'Overwhelm / saturation',
+    'Miedo o ansiedad física': 'Fear or physical anxiety',
+    'Presión en pecho / estómago': 'Tightness in chest / stomach',
+    'Pensamientos acelerados': 'Racing thoughts',
+    'Impulso de huir o ceder': 'Urge to flee or cave',
+    'Reconozco con curiosidad que aquí dentro hay agobio y pensamientos acelerados.': 'I notice with curiosity that overwhelm and racing thoughts are here right now.',
+    'C — Come back into your body (Volver al cuerpo físico)': 'C — Come back into your body',
+    'Marca cada micro-gesto físico conforme lo realizas:': 'Check off each physical micro-gesture as you do it:',
+    '🦶 Empujar suavemente las plantas de los pies contra el suelo y sentir su firmeza': '🦶 Gently press both feet into the floor and feel its solidity',
+    '🤲 Juntar las palmas o estirar los dedos y soltar los hombros hacia abajo': '🤲 Press your palms together or stretch your fingers and drop your shoulders',
+    '🌬️ Hacer una exhalación lenta de 6 segundos abriendo espacio alrededor de la sensación': '🌬️ Take a slow 6-second exhale opening space around the feeling',
+    '🌬️ Guiar exhalación de 6s': '🌬️ Guide 6s exhale',
+    '✓ Espacio somático abierto': '✓ Somatic space opened',
+    'E — Engage in the present (Conectar con el aquí y ahora: 3-2-1)': 'E — Engage in the present (Connect 3-2-1)',
+    'Mira alrededor y ancla tu atención al mundo físico presente:': 'Look around and anchor your attention in the physical world right here:',
+    '👀 3 cosas reales que veo ahora mismo en esta habitación o lugar...': '👀 3 real things I see right here in this room or place...',
+    '👂 2 sonidos o texturas que noto ahora (el aire, la ropa, un ruido lejano)...': '👂 2 sounds or textures I feel right now (air, clothes, distant sound)...',
+    '👣 1 acción pequeña y valiosa que elijo hacer en el próximo minuto...': '👣 1 small, meaningful action I choose in the next minute...',
+    '⚓ Ancla Echada: Estoy Aquí y Elijo Mi Paso': '⚓ Anchor Dropped: I Am Here & Choose My Step',
+
+    'Micro-Guía Guiada • Límites': 'Guided Micro-Tool • Boundaries',
+    'La Regla de la Sencillez Serena': 'The Rule of Serene Simplicity',
+    'Decir NO sin justificarte durante media hora y sostener el silencio con dignidad.': 'Say NO without half an hour of excuses and hold silence with dignity.',
+    'Paso 1: Elige tu fórmula limpia de respuesta': 'Step 1: Pick your clean response formula',
+    'Sin rodeos, sin excusas elaboradas y sin pedir permiso para descansar:': 'Direct, without elaborate excuses or asking permission to rest:',
+    '"Agradezco mucho que hayas pensado en mí, pero esta vez no me es posible. Que lo paséis muy bien."': '"Thank you so much for thinking of me, though I can\'t make it this time. Hope you have a lovely time."',
+    '"Revisé mi agenda y mis energías para hoy y no podré unirme. Espero que lo comprendas."': '"I checked my schedule and energy for today and won\'t be able to join. Thanks for understanding."',
+    '"No voy a poder encargarme de esto. Gracias por consultarme."': '"I won\'t be able to take this on. Thanks for checking with me."',
+    'Paso 2: El Desafío de los 15 Segundos de Silencio': 'Step 2: The 15-Second Silence Challenge',
+    'El reto es enviar o decir la frase y sostener 15 segundos en silencio completo:': 'The challenge is sending or saying it, then holding 15 full seconds of silence:',
+    'Al decir tu frase, tu mente entrará en pánico y te exigirá rellenar el hueco con disculpas.': 'Once spoken, your mind may panic and urge you to fill the gap with apologies.',
+    '⏱️ Empezar 15s de Silencio': '⏱️ Start 15s of Silence',
+    'Respira... no añadas ni una sola palabra...': 'Breathe... don\'t add a single extra word...',
+    '🌟 ¡Reto completado! Has sostenido tu límite sin entregarte a la sumisión.': '🌟 Challenge complete! You held your boundary without caving.',
+
+    'Micro-Guía • Defusión': 'Micro-Guide • Defusion',
+    'La Voz de Dibujos Animados': 'The Cartoon Voice',
+    'Desactiva el dramatismo de los pensamientos catastróficos en 30 segundos.': 'Take the sting out of catastrophic thoughts in 30 seconds.',
+    'Paso 1: ¿Qué pensamiento te tiene atrapado?': 'Step 1: What thought has hooked you?',
+    'Si no cedo, van a pensar que soy un monstruo egoísta': 'If I don\'t cave, they will think I am a selfish monster',
+    'Paso 2: Léelo mentalmente con la voz de Mickey Mouse o Pato Donald': 'Step 2: Hear it in your head in Mickey Mouse or Donald Duck\'s voice',
+    '"Si no cedo, van a pensar que soy un monstruo egoísta"': '"If I don\'t cave, they will think I am a selfish monster"',
+    'Nota cómo al cambiar el tono sonoro, las palabras pierden su autoridad como órdenes absolutas.': 'Notice how changing the sound tone strips those words of authority as absolute orders.',
+    'Paso 3: Fórmulas de Distanciamiento Automático': 'Step 3: Automatic Defusion Prefixes',
+    '✨ Pensamiento Desenganchado / Cerrar': '✨ Thought Unhooked / Close',
+
+    'Micro-Guía • Somática': 'Micro-Guide • Somatic',
+    'Sostener la Frialdad Ajena': 'Holding Another\'s Coldness',
+    '3 Alientos de Diferenciación para no correr a complacer cuando el otro pone mala cara.': '3 Differentiation Breaths to avoid rushing to appease when someone frowns.',
+    'Aliento 1: Diferenciar mi cuerpo del suyo': 'Breath 1: Separate my body from theirs',
+    '"Siento el nudo en la garganta o el estómago. Es solo incomodidad somática pasajera, no es un peligro mortal."': '"I feel a knot in my throat or stomach. It is just passing somatic discomfort, not a mortal danger."',
+    'Siguiente Aliento →': 'Next Breath →',
+    'Aliento 2: El derecho a la propia emoción': 'Breath 2: Right to one\'s own emotion',
+    '"La otra persona tiene pleno derecho a su decepción o enfado. Y yo tengo pleno derecho a mi necesidad y mi descanso."': '"The other person has every right to feel disappointed or upset. And I have every right to my need and rest."',
+    'Aliento 3: Cortar el impulso de rescate': 'Breath 3: Interrupt the rescue impulse',
+    '"No tengo que apagar el fuego ajeno entregando mi paz interior. Puedo sostener esta distancia sin romperme."': '"I don\'t have to put out someone else\'s fire by surrendering my inner peace. I can hold this distance intact."',
+    '🌿 Sostenido con Dignidad / Terminar': '🌿 Held with Dignity / Finish',
+
+    'Micro-Guía • Aceptación': 'Micro-Guide • Acceptance',
+    'La Técnica de las Dos Flechas': 'The Two Arrows Technique',
+    'Arranca la segunda flecha del auto-castigo y quédate solo con la emoción limpia.': 'Pull out the second arrow of self-attack and stay only with clean emotion.',
+    '🏹 1ª Flecha: Dolor Limpio (Inevitables del límite)': '🏹 1st Arrow: Clean Pain (Unavoidable part of boundaries)',
+    'Lo que ocurrió objetivamente en la realidad:': 'What objectively happened in reality:',
+    'He dicho que no a ir a la cena y sentí un pellizco de culpa refleja.': 'I said no to dinner and felt a quick pinch of reflex guilt.',
+    '🏹 2ª Flecha: Dolor Sucio (Opcional - La historia que te clavas tú)': '🏹 2nd Arrow: Dirty Pain (Optional - The story you stab yourself with)',
+    'El juicio moral con el que te flagelas:': 'The harsh moral judgment you pile on yourself:',
+    '"Soy una persona egoísta, no sé cuidar a mis relaciones, se van a cansar de mí y me quedaré solo."': '"I\'m selfish, I ruin relationships, everyone will get tired of me and I\'ll end up alone."',
+    '🏹 Arrancar la 2ª Flecha (Soltar el Machaque)': '🏹 Pull Out the 2nd Arrow (Drop Self-Attack)',
+    '✨ ': '✨ ',
+    '2ª Flecha descartada:': '2nd Arrow discarded:',
+    'La incomodidad que sientes es solo la 1ª flecha (el eco del hábito). Ábrele los brazos y trátate con compasión.': 'The discomfort you feel is just the 1st arrow (an echo of habit). Make room for it and meet yourself kindly.',
+
+    'Micro-Guía • Auto-contención': 'Micro-Guide • Self-Containment',
+    'La Pausa de los 2 Minutos': 'The 2-Minute Pause',
+    'Frena el impulso impulsivo de ofrecerte voluntario o resolverle la incomodidad al otro.': 'Pause the automatic urge to volunteer or rescue someone else from discomfort.',
+    'Mantener Pausa Activa': 'Hold Active Pause',
+    '"Espera antes de levantar la mano o decir \'yo me encargo\'. Permite que haya silencio. Observa la urgencia de rescatar en tu pecho y déjala pasar como una ola."': '"Wait before raising your hand or saying \'I\'ll do it\'. Let silence sit. Notice the rescue urge in your chest and watch it pass like a wave."',
+    '⏱️ Iniciar Cuenta Atrás 2 Min': '⏱️ Start 2-Min Countdown',
+    '"1 minuto cumplido. Siente cómo la urgencia fisiológica empieza a perder intensidad. Respira hondo."': '"1 minute done. Notice the physical urgency losing intensity. Take a slow breath."',
+    '¡Pausa completada!': 'Pause completed!',
+    'El pico de reactividad ha bajado. Ahora puedes elegir desde la calma si realmente deseas actuar o dejar que el otro se responsabilice.': 'The reactivity spike has dropped. Now you can choose calmly whether you truly wish to act or let them own their part.',
+
+    'Metáfora ACT de Hayes • Control del Volante': 'Hayes ACT Metaphor • Steering Control',
+    '🚌 El Autobús ACT: Negar el Volante y Dar Asiento': '🚌 The ACT Bus: Hold the Wheel & Seat Passengers',
+    'El ruido no tiene manos para girar el volante: puedes dejar subir al miedo o agobio sin cederle la dirección.': 'Noise has no hands to turn the wheel: let fear or overwhelm ride along without handing over control.',
+    'Paso 1: ¿Qué pasajero acaba de gritar junto al volante?': 'Step 1: Which passenger just shouted near the wheel?',
+    'El miedo a decepcionar o generar tensión': 'Fear of disappointing or causing tension',
+    '📢 ¿Qué desvío te exige hacer ahora mismo?': '📢 What detour is it demanding right now?',
+    'Cede, quédate callado o pospón lo que importa para que no haya incomodidad.': 'Cave in, stay quiet, or postpone what matters so there is no discomfort.',
+    '🛡️ ¿De qué intenta protegerte al gritar eso? (opcional)': '🛡️ What is it trying to protect you from? (optional)',
+    'El rechazo, la tensión o sentir culpa': 'Rejection, tension, or feeling guilty',
+    'Del rechazo': 'From rejection',
+    'De sentir culpa': 'From feeling guilty',
+    'De fallar o perder control': 'From failing or losing control',
+    'Ej: De que se enfaden conmigo...': 'E.g., From them getting upset with me...',
+    'Paso 2: El Filtro del Conductor (Tu Ruta)': 'Step 2: Driver\'s Filter (Your Route)',
+    '🧭 Letrero de destino en tu autobús:': '🧭 Bus destination sign:',
+    'Trampa 1 (Obedecer):': 'Trap 1 (Obey):',
+    'Ceder el volante y tomar el desvío para que se calle.': 'Handing over the wheel and taking the detour so it stops shouting.',
+    'Trampa 2 (Discutir):': 'Trap 2 (Argue):',
+    'Parar el autobús para pelear con el pasajero.': 'Pulling over to fight with the passenger.',
+    'Maniobra ACT:': 'ACT Move:',
+    'Reconocer qué protege, sentarlo atrás y conducir hacia tu Valor.': 'Acknowledge what it protects, seat it in the back, and drive toward your Value.',
+    '🚦 Preparar mi respuesta de conductor': '🚦 Draft my driver reply',
+    '💺 Respuesta al pasajero (puedes editarla libremente):': '💺 Reply to passenger (feel free to edit):',
+    '🚌 Conduzco hacia mi valor (y sentar atrás en Mi Autobús)': '🚌 Drive toward my value (and seat in the back of My Bus)',
+
+    'Regulación Corporal • Steven Hayes': 'Body Regulation • Steven Hayes',
+    '🧘‍♂️ La Postura Somática del "SÍ"': '🧘‍♂️ The Somatic "YES" Posture',
+    'Cambia tu postura física en 45 segundos para desactivar la respuesta de amenaza antes de hablar.': 'Shift your body posture in 45 seconds to disarm threat defense before speaking.',
+    'Paso 1: Nota la Postura del "NO" (Blindaje)': 'Step 1: Notice the "NO" Posture (Armor)',
+    'Observa si tienes hombros subidos, mandíbula apretada o respiración corta en el pecho. Es tu cuerpo preparándose para ceder o atacar.': 'Check if your shoulders are raised, jaw clenched, or breathing shallow. That is your body bracing to cave or fight.',
+    'Paso 2: Pasa a la Postura del "SÍ" (Apertura)': 'Step 2: Shift to the "YES" Posture (Openness)',
+    '⬇️ Suelta los hombros hacia atrás y afloja la mandíbula': '⬇️ Drop your shoulders back and loosen your jaw',
+    '🤲 Apoya las palmas abiertas hacia arriba sobre tus muslos': '🤲 Rest open palms facing upward on your thighs',
+    '✓ Cuerpo más abierto y presente': '✓ Body more open and present',
+    '🧘‍♂️ Postura del SÍ Integrada / Cerrar': '🧘‍♂️ "YES" Posture Integrated / Close',
+
+    '⚓ Crear Tarjeta de Anclaje / Mantra ACT': '⚓ Create ACT Anchor Card / Mantra',
+    'Guarda una frase personal que te devuelva al presente, a la aceptación y a tus valores cuando aparezca la tormenta emocional.': 'Save a personal reminder that brings you back to presence, acceptance, and your values in tough moments.',
+    'Frase o Anclaje': 'Quote or Anchor',
+    'Ej: Puedo sentir miedo y aun así dar un paso pequeño hacia lo que me importa...': 'E.g., I can feel fear and still take one small step toward what matters...',
+    'Eje / Categoría': 'Axis / Category',
+    'Guardar Anclaje': 'Save Anchor',
+
+    // Insight & Therapy Notebook
+    '📊 Evolución': '📊 Progress',
+    'Revisar tu evolución, integrar episodios en frío y preparar tu sesión de psicología.': 'Review your trends, reflect on past episodes calmly, and prepare for therapy.',
+    'Visión clara de tus avances y un informe clínico listo para copiar.': 'Clear view of your progress plus a ready-to-copy clinical brief.',
+    'Falsa Paz Registrada': 'False Peace Entries',
+    'Índice Autoabandono': 'Self-Abandonment Index',
+    'Elección por Valores': 'Value-Driven Choices',
+    'Reducción Media Crisis': 'Avg. Crisis Drop',
+    'Perfil de Flexibilidad Psicológica (Hexaflex)': 'Psychological Flexibility Profile (Hexaflex)',
+    '📝 Evaluar mi Hexaflex (1 min)': '📝 Rate My Hexaflex (1 min)',
+    '1. Aceptación': '1. Acceptance',
+    '2. Defusión': '2. Defusion',
+    '3. Presente': '3. Present',
+    '4. Yo Contexto': '4. Self-as-Context',
+    '5. Valores': '5. Values',
+    '6. Acción': '6. Action',
+    'Tendencias Emocionales y Evolución': 'Emotional Trends & Evolution',
+    'Eficacia Defusión (Intensidad inicial)': 'Defusion Efficacy (Initial Intensity)',
+    'Peaje de Autoabandono': 'Self-Abandonment Toll',
+    'Resentimiento Acumulado': 'Accumulated Resentment',
+    'Mapa de Calor por Contextos (Sumisión Emocional)': 'Context Heatmap (Emotional Submission)',
+    '⚓ Gestionar Tarjetas de Anclaje →': '⚓ Manage Anchor Cards →',
+    'Historial de Re-análisis y Consolidación': 'Cool-Down History & Consolidation',
+    'Vuelve a tus registros pasados para integrar perspectiva en frío': 'Revisit past logs with calm perspective to consolidate learning',
+    '⏳ Pendientes de integrar': '⏳ Pending review',
+    '🧪 Este historial contiene registros de demostración/ejemplo para probar los gráficos y el re-análisis.': '🧪 This history contains sample demo entries so you can preview charts and cool-down review.',
+    '⚙️ Los ajustes de base de datos SQLite, copias de seguridad (.db / JSON) y tema están en el icono de Configuración superior.': '⚙️ SQLite database, (.db / JSON) backups, language, and theme live under the top Settings gear icon.',
+    '⚙️ Abrir Configuración y Copias': '⚙️ Open Settings & Backups',
+    '🌟 ¡Todo al día! No tienes registros pendientes de valorar en frío.': '🌟 All caught up! No logs waiting for calm review.',
+    'No hay registros aún. Completa una sesión en "Paz Falsa" o en "Espacio ACT", o pulsa "Cargar Datos de Demostración" para probar.': 'No entries yet. Complete a check-in in "False Peace" or "ACT Space", or load Demo Data from Settings.',
+    '⏳ Pendiente de valorar en frío': '⏳ Pending cool-down review',
+    'Sin descripción': 'No description',
+    'Lo que quería:': 'What I wanted:',
+    'Lo que cedí:': 'How I gave in:',
+    'Distanciamiento:': 'Defusion:',
+    'Dirección elegida:': 'Chosen direction:',
+    '🌱 Valorar e Integrar en frío (Con perspectiva)': '🌱 Review & Consolidate calmly',
+    'Sin datos registrados aún.': 'No data recorded yet.',
+    '🛋️ Cuaderno de Terapia: Reflexiones y Resumen para tu Psicólogo': '🛋️ Therapy Notebook: Reflections & Clinical Summary',
+    'Anota ideas, bucles o dudas entre sesiones. La app extrae procesos ACT y prepara un informe clínico para llevar a consulta.': 'Note ideas, loops, or questions between sessions. Khōra extracts ACT processes and builds a clinical brief.',
+    '📋 Ver / Copiar Informe para mi Psicólogo': '📋 View / Copy Summary for Therapist',
+    'Nueva reflexión o tema para llevar a terapia': 'New reflection or topic for therapy',
+    'Me costó sostener el límite ante...': 'It was hard to hold a boundary when...',
+    'Conseguí frenar el piloto automático en...': 'I managed to pause autopilot when...',
+    'Quiero trabajar en sesión el miedo a...': 'In session I want to explore the fear of...',
+    'Toca un inicio rápido o escribe qué quieres llevar a sesión...': 'Tap a starter above or write what you want to bring to therapy...',
+    'Contexto': 'Context',
+    'Tipo de apunte': 'Note Type',
+    'Patrón o bucle que me cuesta': 'Recurring pattern or loop',
+    'Disparador / Miedo recurrente': 'Recurring trigger / fear',
+    'Idea o insight entre sesiones': 'Between-session insight',
+    'Logro o cambio observado': 'Win or positive shift noticed',
+    'Duda o pregunta para sesión': 'Question for therapy session',
+    '✨ Guardar y Analizar para Terapia': '✨ Save & Analyze for Therapy',
+    '🧪 Hay un apunte de ejemplo en tu Cuaderno para enseñarte cómo extrae los procesos para sesión.': '🧪 Includes a sample entry showing how ACT processes are extracted for your therapy session.',
+    '✅ No tienes reflexiones pendientes por revisar en sesión.': '✅ No pending reflections waiting for session.',
+    'Todavía no hay reflexiones en este filtro. Escribe una arriba cuando notes un patrón o idea.': 'No reflections under this filter yet. Write one above when you spot a loop or insight.',
+    '📌 Pendiente de sesión': '📌 Pending session',
+    '✅ Tratada en sesión': '✅ Discussed in session',
+    '🩺 Detalles Extraídos para el Psicólogo': '🩺 Extracted Clinical Cues',
+    'Emociones detectadas:': 'Detected emotions:',
+    'Proceso ACT / Hexaflex:': 'ACT / Hexaflex process:',
+    'Patrón conductual:': 'Behavioral pattern:',
+    'Posible foco para sesión:': 'Suggested session focus:',
+    '✓ Marcar como tratada en sesión': '✓ Mark as discussed',
+    '↩ Reabrir como pendiente': '↩ Reopen as pending',
+    '📋 Informe Breve para tu Psicólogo': '📋 Brief Summary for Your Therapist',
+    'Consolida tus indicadores ACT, emociones dominantes, pasajeros activos, valores y tus': 'Consolidates your ACT indicators, dominant emotions, active bus passengers, values, and your',
+    'reflexiones pendientes de sesión.': 'reflections pending for session.',
+    '📋 Copiar al Portapapeles': '📋 Copy to Clipboard',
+    '✅ ¡Informe Copiado!': '✅ Summary Copied!',
+    '✅ Copiado / Seleccionado': '✅ Copied / Selected',
+    'Test Rápido de Flexibilidad (Psy-Flex Hexaflex)': 'Quick Flexibility Check (Psy-Flex Hexaflex)',
+    'Evalúa cómo has transitado los 6 procesos de Steven Hayes en los últimos días (0 a 10):': 'Rate how you practiced Steven Hayes\'s 6 processes over recent days (0 to 10):',
+    '🌿 1. Aceptación (Espacio a la incomodidad sin huir)': '🌿 1. Acceptance (Room for discomfort without fleeing)',
+    '🍃 2. Defusión (Tomar distancia de los pensamientos)': '🍃 2. Defusion (Stepping back from thoughts)',
+    '⏱️ 3. Momento Presente (Anclado aquí y ahora vs. rumiación)': '⏱️ 3. Present Moment (Grounded now vs. rumination)',
+    '🌌 4. Yo como Contexto (Sentirse como el cielo que contiene las nubes)': '🌌 4. Self-as-Context (The sky holding passing clouds)',
+    '🧭 5. Claridad de Valores (Saber qué es digno e importante)': '🧭 5. Values Clarity (Knowing what truly matters)',
+    '👣 6. Acción Comprometida (Dar pasos alineados a pesar del miedo)': '👣 6. Committed Action (Moving with values despite fear)',
+    'Guardar Evaluación': 'Save Rating',
+    'Crear Tarjeta de Anclaje': 'Create Anchor Card',
+    'Escribe una frase, metáfora o recordatorio que te devuelva a tu centro y a tus valores.': 'Write a quote, metaphor, or reminder that returns you to your center and values.',
+    'Frase o Recordatorio': 'Quote or Reminder',
+    'Ej: No tengo que complacer para ser valioso...': 'E.g., I do not have to people-please to be worthy...',
+    '🌱 Valorar e Integrar en Frío (Metáfora del Autobús)': '🌱 Cool-Down Review & Consolidation (Bus Metaphor)',
+    '1. Con la perspectiva del tiempo, ¿qué ocurrió con el volante aquel día?': '1. Looking back calmly now, what happened at the steering wheel that day?',
+    '🌿 Llevé el timón hacia mis valores aunque sentí al pasajero gritando': '🌿 I steered toward my values even while hearing the passenger shout',
+    '🏳️ Hice pacto de Paz Falsa: cedí el volante para que el miedo se callara': '🏳️ False Peace bargain: handed over the wheel to quiet fear',
+    '🛑 Paré el autobús discutiendo con el pasajero, pero hoy veo qué valor quiero cuidar': '🛑 Stopped the bus to argue with the passenger, yet now I see my value',
+    '2. ¿Qué intentaba proteger ese pasajero y qué aprendo hoy para integrarlo?': '2. What was that passenger trying to protect, and what am I taking forward?',
+    '¿Qué consecuencias tuvo a medio plazo y qué le dirías hoy a tu versión de ese momento?': 'What medium-term impact did it have, and what would you tell your past self now?',
+    'Ej: Mirándolo con perspectiva, el miedo quería evitar el rechazo, pero al poner el límite no ocurrió el desastre que anticipaba...': 'E.g., Looking back calmly, fear wanted to avoid rejection, yet holding the boundary never caused the disaster I imagined...',
+    '✅ Guardar e Integrar Aprendizaje': '✅ Save & Consolidate Insight',
+
+    // Confirm dialogs & Toasts & Errors
+    '¿Subir y sobrescribir la base de datos SQLite del servidor con los datos actuales de este navegador?': 'Upload and overwrite the server SQLite database with this browser\'s current data?',
+    '¿Descargar los datos de la base de datos SQLite y reemplazar los datos locales de este navegador?': 'Download data from the SQLite database and replace local data in this browser?',
+    '¿Desactivar el bloqueo y guardar los datos sin cifrar?': 'Disable lock and store data unencrypted?',
+    '¿Quitar todos los elementos de ejemplo de la app? Tus registros y valores propios se mantendrán intactos.': 'Remove all guide example items? Your own entries and values stay intact.',
+    '¿Quitar todos los datos de ejemplo de la app? Tus registros y valores propios se conservarán intactos.': 'Remove all guide example items? Your own entries and values stay intact.',
+    '¿Quitar todos los datos de ejemplo de la app? Tus registros propios se conservarán intactos.': 'Remove all guide example items? Your own entries stay intact.',
+    '¿Cargar datos de demostración para explorar los gráficos y analíticas?': 'Load demo data to preview charts and analytics?',
+    '¿Estás seguro de que deseas eliminar TODOS los registros guardados en este dispositivo?': 'Are you sure you want to delete ALL records saved on this device?',
+    '¿Eliminar este patrón del radar?': 'Remove this pattern from the radar?',
+    '¿Eliminar esta reflexión del Cuaderno de Terapia?': 'Delete this reflection from the Therapy Notebook?',
+
+    'Khōra bloqueado 🔒': 'Khōra locked 🔒',
+    'Espacio de Acompañamiento ACT iniciado': 'ACT Support Space started',
+    'Aterrizando en el cuerpo (Aceptación ACT) 🌿': 'Grounding in your body (ACT Acceptance) 🌿',
+    'Tema oscuro activado': 'Dark theme activated',
+    'Tema claro activado': 'Light theme activated',
+    'Paleta Avena y Arcilla activada': 'Oat & Clay palette activated',
+    'Paleta Papel y Musgo activada': 'Paper & Moss palette activated',
+    'Paleta Sepia y Pergamino activada': 'Sepia & Parchment palette activated',
+    'Paleta Niebla y Pastel activada': 'Mist & Pastel palette activated',
+    'Sepia y Pergamino': 'Sepia & Parchment',
+    'Libro clásico, dorada': 'Classic book, warm gold',
+    'Niebla y Pastel': 'Mist & Pastel',
+    'Grises serenos y pastel': 'Calm grays & soft pastels',
+    'Personalizada': 'Custom',
+    'Tu tema propio': 'Your own theme',
+    'Paleta Personalizada activada': 'Custom palette activated',
+    'Fondo': 'Background',
+    'Texto': 'Text',
+    'Acento': 'Accent',
+    'Exportar tema (.json)': 'Export theme (.json)',
+    'Importar tema (.json)': 'Import theme (.json)',
+    'Restablecer': 'Reset',
+    'Tema personal exportado (khora-theme.json)': 'Personal theme exported (khora-theme.json)',
+    'Tema personal importado correctamente': 'Personal theme imported successfully',
+    'El archivo de tema no tiene un formato JSON válido': 'Theme file is not valid JSON',
+    'Tema personal restablecido': 'Personal theme reset',
+    'Estilo de superficie (A / B)': 'Surface style (A / B)',
+    'Cuaderno': 'Notebook',
+    'Filetes 1px, sin cards': '1px hairlines, no cards',
+    'Lino': 'Linen',
+    'Capas tonales suaves': 'Soft tonal layers',
+    'Estilo Cuaderno (filetes 1px) activado': 'Notebook style (1px hairlines) activated',
+    'Estilo Lino (capas suaves) activado': 'Linen style (soft layers) activated',
+    'Paleta de colores': 'Color palette',
+    'Avena y Arcilla': 'Oat & Clay',
+    'Cálida, envolvente': 'Warm, enveloping',
+    'Papel y Musgo': 'Paper & Moss',
+    'Sobria, editorial': 'Quiet, editorial',
+    'Modo claro': 'Light mode',
+    'Modo oscuro': 'Dark mode',
+    'Luz': 'Light',
+    'Aspecto claro u oscuro': 'Light or dark appearance',
+    'Claro': 'Light',
+    'Oscuro': 'Dark',
+    'Superficie': 'Surface',
+    'Superficie (A / B)': 'Surface (A / B)',
+    'Continuo': 'Continuous',
+    'Por bloques': 'Blocked',
+    'Superficie continua activada': 'Continuous surface activated',
+    'Superficie por bloques activada': 'Blocked surface activated',
+    'Filetes 1px sin cards o capas suaves': '1px hairlines without cards or soft layers',
+    'Botones': 'Buttons',
+    'Subrayado sin cajas o relleno con borde': 'Underlined without boxes or filled with border',
+    'Subrayado': 'Underlined',
+    'Relleno': 'Filled',
+    'Botones subrayados activados': 'Underlined buttons activated',
+    'Botones con relleno activados': 'Filled buttons activated',
+    'Apariencia': 'Appearance',
+    'Privacidad': 'Privacy',
+    'Datos y App': 'Data & App',
+    'Idioma': 'Language',
+    'Vibración guía': 'Guided haptics',
+    'Impulsos suaves en ejercicios de respiración y anclaje': 'Gentle pulses during breathing and grounding',
+    'Tonos con ojos cerrados': 'Eyes-closed tones',
+    'Campana suave al cambiar de fase': 'Soft chime on phase transitions',
+    'Tarjetas de anclaje en Lecturas': 'Anchor cards in Readings',
+    'Mostrar tus frases ancla en la parte superior': 'Show your anchor phrases at the top',
+    'Apariencia, idioma y guía sensorial': 'Appearance, language & sensory guide',
+    'espacio de calma': 'calm space',
+    'Necesito calma ahora': 'I need calm now',
+    '← Salir del modo calma': '← Exit calm mode',
+    'Anclaje suave · sin prisa': 'Gentle grounding · no rush',
+    'Guía de esta pantalla': 'Screen guide',
+    'Enviar feedback': 'Send feedback',
+    'Apoyar en Ko-fi': 'Support on Ko-fi',
+    'Khōra es una app desarrollada con ❤️ por': 'Khōra is an app developed with ❤️ by',
+    'Si quieres apoyarme, puedes hacerlo en': 'If you’d like to support me, you can do so on',
+    'Buenos días. Sin prisa, estás en un lugar seguro.': 'Good morning. No rush, you are in a safe space.',
+    'Buenas tardes. Tómate un respiro antes de seguir.': 'Good afternoon. Take a breath before moving on.',
+    'Buenas noches. Sin prisa, estás en un lugar seguro.': 'Good evening. No rush, you are in a safe space.',
+    '¿Dónde quieres poner atención ahora?': 'Where would you like to place your attention right now?',
+    'No hace falta resolver nada de golpe. Elige el lugar desde el que quieres observarlo.': 'You do not need to solve anything at once. Choose where you want to observe from.',
+    'Siento una emoción intensa o bloqueo': 'I feel an intense emotion or block',
+    'Acompaña lo que notas en el cuerpo y toma distancia del pensamiento que lo alimenta.': 'Stay with what you notice in your body and step back from the thought feeding it.',
+    'Botiquín de un minuto': 'One-minute first-aid kit',
+    'Echar el ancla (ACE), pausa de 2 minutos o decir «no» con serenidad.': 'Drop anchor (ACE), 2-minute pause, or saying "no" with calm.',
+    'Dudo qué hacer o temo ceder': 'I hesitate or fear giving in',
+    'Aclara qué te está frenando y elige un micro-paso fiel a tus valores.': 'Clarify what is holding you back and choose one small step aligned with your values.',
+    'Acabo de ceder (Paz Falsa)': 'I just gave in (False Peace)',
+    'Déjalo por escrito sin reproche para ver con claridad el desgaste real.': 'Write it down without judgment to see the real emotional cost clearly.',
+    'En calma': 'In calm',
+    'Lecturas y ejercicios ACT': 'ACT readings & exercises',
+    'Píldoras de 1 minuto, frases ancla, Deconstructor «Yo Soy» y El Pivote.': '1-minute pills, anchor phrases, "I Am" Deconstructor, and The Pivot.',
+    'Asistencia rápida en crisis ACT': 'Quick ACT crisis support',
+    '1. Echar el Ancla en 60s (Protocolo ACE)': '1. Drop Anchor in 60s (ACE Protocol)',
+    '2. Frenar el piloto automático': '2. Slow down autopilot',
+    '3. Procesar la crisis en 4 pasos': '3. Process the crisis in 4 steps',
+    'Aterrizando en el cuerpo (Aceptación ACT)': 'Grounding in your body (ACT Acceptance)',
+    'Vibración guía activada': 'Guided haptic enabled',
+    'Vibración guía desactivada': 'Guided haptic disabled',
+    'Tonos suaves activados': 'Gentle tones enabled',
+    'Tonos suaves desactivados': 'Gentle tones disabled',
+    'Modo Navegador activado: datos guardados solo en este dispositivo': 'Browser Mode active: data saved on this device only',
+    'Modo BD SQLite activado y sincronizado': 'SQLite DB Mode active and synced',
+    'Modo BD SQLite activado (sin conexión ahora; se usará caché local hasta reconectar)': 'SQLite DB Mode active (offline right now; using local cache until reconnected)',
+    'Datos del navegador subidos a BD SQLite': 'Browser data pushed to SQLite DB',
+    'No se pudo conectar con el servidor SQLite': 'Could not connect to SQLite server',
+    'Datos descargados de BD SQLite a este navegador': 'SQLite DB data pulled to this browser',
+    'No se pudo descargar desde el servidor SQLite': 'Could not pull from SQLite server',
+    'Sesión cerrada': 'Signed out',
+    'Inicia sesión en el servidor SQLite o usa Exportar JSON': 'Sign in to the SQLite server or use Export JSON',
+    'Descargando base de datos SQLite (.db)': 'Downloading SQLite database (.db)',
+    'Las dos claves no coinciden': 'Passcodes do not match',
+    'No se pudo activar el cifrado': 'Could not enable encryption',
+    'Cifrado AES-256-GCM y bloqueo activados 🛡️': 'AES-256-GCM encryption & lock enabled 🛡️',
+    'FaceID / Huella activado en este dispositivo 👆': 'FaceID / Biometrics enabled on this device 👆',
+    'No se pudo activar la biometría': 'Could not enable biometrics',
+    'Desbloqueo biométrico retirado': 'Biometric unlock removed',
+    'Tiempo de auto-bloqueo actualizado': 'Auto-lock timer updated',
+    'Introduce tu PIN o contraseña actual para quitar el cifrado': 'Enter your current PIN or password to remove encryption',
+    'PIN o contraseña incorrectos': 'Incorrect PIN or password',
+    'PIN o contraseña incorrectos.': 'Incorrect PIN or password.',
+    'Bloqueo y cifrado desactivados': 'Lock and encryption disabled',
+    'Copia de seguridad JSON descargada': 'JSON backup downloaded',
+    'Datos restaurados correctamente': 'Data restored successfully',
+    'El archivo no tiene un formato JSON válido': 'File does not contain valid JSON format',
+    'Datos de ejemplo eliminados — tus registros propios se mantienen': 'Example data removed — your own records remain',
+    'Ejemplos retirados — tus datos propios se mantienen': 'Examples removed — your own data remains',
+    'Datos de demostración cargados': 'Demo data loaded',
+    'Todos los datos han sido eliminados': 'All data cleared',
+    'Instalando Khōra en tu dispositivo...': 'Installing Khōra on your device...',
+    'No se pudo verificar FaceID / Huella': 'Could not verify FaceID / Biometrics',
+    'Modo Navegador activado (sin acceso al servidor)': 'Browser Mode enabled (no server access)',
+    'Sesión iniciada y datos sincronizados': 'Signed in and data synced',
+    'Usuario o contraseña incorrectos': 'Incorrect username or password',
+    'Desbloquea primero la app para exportar tus datos': 'Unlock the app first to export your data',
+    'Copia de seguridad compartida / guardada': 'Backup shared / saved',
+    'Modo exploración en pestaña activa — recuerda instalarla antes de guardar datos reales': 'Browser tab preview active — remember to install before saving real entries',
+    'Elige o escribe una micro-acción concreta': 'Choose or write a concrete micro-action',
+    'Norte de valores fijado': 'Value direction saved',
+    'Pasando directo a hacer espacio en el cuerpo 🌿': 'Moving straight to making room in the body 🌿',
+    'Avanzando al cuerpo sin forzar etiqueta 🌿': 'Moving to the body without forcing a label 🌿',
+    'Continuando sin etiqueta específica; puedes hacerle hueco en el cuerpo 🌿': 'Continuing without a specific label; you can make room in your body 🌿',
+    'Re-enmarque seleccionado': 'Reframe selected',
+    'Crisis procesada e integrada en tu historial': 'Episode processed and saved to your history',
+    'Informe clínico copiado al portapapeles': 'Clinical brief copied to clipboard',
+    'Informe preparado para copiar': 'Brief ready to copy',
+    'Escribe tu reflexión o idea antes de guardarla para terapia': 'Write your reflection or thought before saving for therapy',
+    'Reflexión analizada y guardada en tu Cuaderno de Terapia': 'Reflection analyzed and saved to your Therapy Notebook',
+    'Marcada como tratada en sesión': 'Marked as discussed in session',
+    'Reabierta como pendiente de sesión': 'Reopened as pending session',
+    'Reflexión eliminada': 'Reflection deleted',
+    'Hexaflex evaluado y actualizado': 'Hexaflex rated and updated',
+    'Escribe la frase de anclaje antes de guardar': 'Write your anchor phrase before saving',
+    'Anclaje guardado': 'Anchor saved',
+    'Escribe tu reflexión para guardarla': 'Write your reflection before saving',
+    'Reflexión de consolidación guardada': 'Consolidation reflection saved',
+    'Registro de autoabandono guardado': 'Self-abandonment log saved',
+    'Toca una semilla o escribe cómo quieres actuar en este ámbito': 'Tap a seed or write how you choose to act in this area',
+    'Respuesta ACT sugerida (puedes retocarla)': 'Suggested ACT reply (feel free to edit)',
+    'Ponle un nombre breve al pasajero': 'Give the passenger a short name',
+    'Escribe el reto concreto que quieres trabajar': 'Write the concrete challenge you want to work on',
+    'Foco actualizado y ruta orientada': 'Focus updated & route oriented',
+    'Foco actualizado — hoja de ruta explicada': 'Focus updated — route explained',
+    'Describe brevemente lo que te preocupa para generar la ruta': 'Briefly describe what is on your mind to generate your route',
+    'Valor retirado': 'Value removed',
+    'Apodo de tu generador de pensamientos actualizado': 'Thought generator nickname updated',
+    'Estado del pasajero actualizado 🚌': 'Passenger status updated 🚌',
+    'Pasajero retirado del autobús': 'Passenger removed from the bus',
+    'Estado del reto actualizado': 'Challenge status updated',
+    'Reto quitado': 'Challenge removed',
+    'Nota de progreso añadida': 'Progress note added',
+    '⚓ Ancla echada: estás presente y al mando de tu conducta': '⚓ Anchor dropped: you are present and in charge of your steps',
+    'Límite y dignidad sostenidos con éxito': 'Boundary and dignity held successfully',
+    'Pensamiento desarmado con éxito': 'Thought disarmed successfully',
+    'Alientos completados. Has protegido tu centro.': 'Breaths complete. You protected your center.',
+    'Segunda flecha desactivada': 'Second arrow disarmed',
+    'Impulso de rescate contenido con éxito': 'Rescue impulse paused successfully',
+    'Volante firme en tus valores 🧭': 'Hands steady on your values wheel 🧭',
+    'Autobús en marcha hacia tus valores 🚌': 'Bus rolling toward your values 🚌',
+    'Postura del SÍ integrada 🧘‍♂️': '"YES" Posture integrated 🧘‍♂️',
+    'Añadido a favoritos ❤️': 'Added to favorites ❤️',
+    'Eliminado de favoritos': 'Removed from favorites',
+    'Por favor escribe la etiqueta rígida': 'Please enter the rigid label',
+    'Etiqueta deconstruida con éxito': 'Label deconstructed successfully',
+    'Completa al menos el dolor y la acción pivotada': 'Please enter at least the pain and the pivoted action',
+    'Pivote hacia valores guardado': 'Values pivot saved',
+    'Escribe tu frase de anclaje antes de guardar': 'Write your anchor phrase before saving',
+    'Anclaje ACT guardado en tu botiquín ⚓': 'ACT anchor saved to your toolkit ⚓',
+    'Patrón eliminado': 'Pattern removed',
+    'Por favor dale un nombre al patrón': 'Please give the pattern a name',
+    'Patrón recurrente registrado': 'Recurring pattern saved',
+    'Por favor describe el experimento': 'Please describe the experiment',
+    'Experimento semanal actualizado': 'Weekly experiment updated',
+    'Check-in semanal guardado': 'Weekly check-in saved',
+    'Tu navegador requiere HTTPS o localhost para cifrar con AES-256.': 'Your browser requires HTTPS or localhost for AES-256 encryption.',
+    'Usa un PIN o contraseña de al menos 4 caracteres.': 'Use a PIN or password of at least 4 characters.',
+    'No se pudo activar el cifrado en este navegador.': 'Could not enable encryption in this browser.',
+    'No hay bóveda configurada.': 'No privacy vault configured.',
+    'Web Crypto no disponible en este contexto.': 'Web Crypto is not available in this context.',
+    'Tu navegador o dispositivo no soporta FaceID / Huella (WebAuthn).': 'Your browser or device does not support FaceID / Biometrics (WebAuthn).',
+    'Desbloquea primero la bóveda con tu PIN/contraseña.': 'Unlock the vault with your PIN/password first.',
+    'Registro biométrico cancelado.': 'Biometric enrollment canceled.',
+    'No se pudo registrar FaceID / Huella en este dispositivo.': 'Could not register FaceID / Biometrics on this device.',
+    'Desbloqueo biométrico no disponible en este dispositivo.': 'Biometric unlock is not available on this device.',
+    'Verificación biométrica cancelada.': 'Biometric verification canceled.',
+    'Fetch no disponible': 'Fetch unavailable',
+    'Credenciales incorrectas': 'Incorrect credentials',
+    'No se pudo conectar con el servidor': 'Could not connect to server',
+
+    // Local preset arrays inside Deconstruct / Pivot / Pattern templates / Therapy / Retro
+    'Soy demasiado blando/a': 'I am too soft',
+    'Tengo el pensamiento automático de que soy demasiado blando/a': 'I am having the automatic thought that I am too soft',
+    'Cuando alguien insiste y yo cedo para evitar un conflicto, noto presión en el pecho y miedo al rechazo.': 'When someone insists and I cave to avoid conflict, I notice chest tightness and fear of rejection.',
+    'Soy incapaz de decir que no': 'I am incapable of saying no',
+    'Mi mente me repite la historia de que no sé decir que no': 'My mind keeps replaying the story that I cannot say no',
+    'Cuando me piden algo urgente con mala cara y digo «sí» en automático, luego siento agotamiento y rabia.': 'When asked urgently with a frown and I say "yes" on autopilot, I end up drained and resentful.',
+    'Soy egoísta si miro por mí': 'I am selfish if I look after myself',
+    'Aparece el pensamiento de que soy egoísta cuando cuido mi descanso': 'The thought shows up that I am selfish whenever I protect my rest',
+    'Cuando priorizo descansar frente a un plan ajeno, noto culpa física en el estómago aunque mi límite sea sano.': 'When I prioritize rest over someone else\'s plan, I feel physical guilt in my stomach even though my boundary is healthy.',
+    'Soy culpable de que el otro se enfade': 'I am to blame when someone gets mad',
+    'Estoy teniendo la creencia de que la emoción del otro depende de mí': 'I am having the belief that someone else\'s feelings depend on me',
+    'Cuando el otro se muestra frío o serio tras escuchar mi opinión, entro en alerta y busco explicarme de más.': 'When someone turns cold after hearing my view, I go on alert and over-explain.',
+
+    'Miedo al enfado → Vínculo seguro': 'Fear of anger → Safe connection',
+    'Temo que si pongo un límite se enfaden conmigo o se enfríe la relación.': 'I fear that setting a boundary will make them angry or cool our bond.',
+    'Anhelo una relación cercana, honesta y segura donde ambos podamos expresarnos sin miedo.': 'I yearn for a close, honest, safe relationship where both of us can speak freely.',
+    'Hablar desde el cariño y con firmeza: «Me importas y quiero estar bien contigo, por eso hoy necesito cuidar esto».': 'Speak with warmth and firmness: "You matter to me and I want us to be good, which is why I need to take care of this today."',
+    'Culpa al descansar → Autocuidado': 'Guilt when resting → Self-care',
+    'Me da culpa parar y decir que hoy no llego a todo.': 'I feel guilty stopping and saying I cannot get to everything today.',
+    'Anhelo tratarme con respeto y tener energía real para lo que de verdad importa.': 'I yearn to treat myself with respect and have real energy for what truly matters.',
+    'Cerrar a tiempo hoy sin pedir perdón en exceso, sosteniendo el cosquilleo de culpa.': 'Close on time today without over-apologizing, holding the fleeting tingle of guilt.',
+    'Agobio por exigencias → Autonomía': 'Overloaded by demands → Autonomy',
+    'Me saturo asumiendo cargas que otros me pasan con urgencia.': 'I overwhelm myself taking on urgent demands handed over by others.',
+    'Anhelo elegir mis prioridades con calma y llevar el timón de mi tiempo.': 'I yearn to choose my priorities calmly and steer my own time.',
+    'Responder: «Puedo revisarlo mañana o repriorizar lo que ya tengo en marcha».': 'Reply: "I can look at this tomorrow or reprioritize what is already underway."',
+    'Dignidad y conexión auténtica': 'Dignity and authentic connection',
+
+    'Ceder en planes por miedo a mala cara': 'Caving on plans fearing disapproval',
+    'Exceso de carga laboral sin poner límites': 'Work overload without boundaries',
+    'Sobre-explicarme cuando digo lo que pienso': 'Over-explaining when sharing my view',
+    'Se propone un plan que no deseo o chocan necesidades.': 'A plan comes up I don\'t want or our needs clash.',
+    'Digo que sí rápido fingiendo entusiasmo o me callo.': 'I quickly say yes faking enthusiasm or stay quiet.',
+    'Evito tensión inmediata y caras largas.': 'I avoid immediate tension and sour faces.',
+    'Agotamiento, sensación de traicionarme y resentimiento.': 'Exhaustion, feeling like I betrayed myself, and resentment.',
+    'Pedir 15 minutos antes de responder sí o no para consultar qué quiero realmente.': 'Ask for 15 minutes before answering yes or no so I can check what I truly want.',
+    'Llega una petición urgente al final del día o fuera de mis funciones.': 'An urgent request arrives late in the day or outside my scope.',
+    'La asumo sin rechistar dejando mi descanso para después.': 'I accept without pushback and push my rest aside.',
+    'Parezco imprescindible y evito decepcionar.': 'I look indispensable and avoid letting anyone down.',
+    'Estrés crónico, pérdida de descanso y resentimiento laboral.': 'Chronic stress, lost rest, and workplace resentment.',
+    'Responder: «Puedo revisarlo mañana a primera hora o repriorizar lo actual».': 'Reply: "I can review this first thing tomorrow or reprioritize current work."',
+    'Noto frialdad o silencio del otro al dar mi opinión.': 'I notice coldness or silence after sharing my opinion.',
+    'Me pongo en alerta y doy excusas durante minutos para recuperar aprobación.': 'I go on alert and give excuses for minutes to regain approval.',
+    'Calmo momentáneamente mi ansiedad por el vínculo.': 'I briefly soothe my attachment anxiety.',
+    'Desgaste enorme y pérdida de dignidad frente al otro.': 'Huge emotional drain and loss of self-respect.',
+    'Expresar mi límite o postura en 1 sola frase amable y sostener 15 segundos de silencio.': 'State my boundary in 1 kind sentence and hold 15 seconds of silence.',
+
+    // Persistence warning banners (split across <strong> and text node)
+    'Modo Navegador Local:': 'Local Browser Mode:',
+    'tus datos se guardan solo en este navegador. Exporta una copia JSON cuando quieras moverlos o hacer respaldo.': 'your data stays on this browser only. Export a JSON backup anytime to move or safeguard it.',
+    'tus datos se guardan solo en este dispositivo. Exporta una copia JSON cuando quieras moverlos o hacer respaldo.': 'your data stays on this device only. Export a JSON backup anytime to move or safeguard it.',
+    'Pestaña temporal en móvil:': 'Temporary mobile tab:',
+    'añade Khōra a tu Pantalla de Inicio antes de guardar datos reales (en iPhone los datos de pestaña suelta no pasan al icono y caducan a los 7 días).': 'add Khōra to your Home Screen before saving personal data (on iPhone, regular tab data does not transfer to the icon and expires after 7 days).',
+
+    // Section aria-labels
+    'La Brújula de Valores': 'The Values Compass',
+    'El Espejo de la Paz Falsa': 'The False Peace Mirror',
+    'El Espacio ACT': 'The ACT Space',
+    'El Radar de Patrones': 'The Pattern Radar',
+
+    // PerfilApp (Values builder & Bus Passengers modals/cards)
+    '+ Construir Valor': '+ Build Value',
+    'Viajan contigo, pero no mandan en el rumbo': 'They ride with you, yet they do not steer the route',
+    '💡 Donde duele importa': '💡 Where it hurts, it matters',
+    '✨ Sin miedo ni culpa': '✨ Without fear or guilt',
+    '🔭 A 10 años': '🔭 10-year mirror',
+    '🍯 Mi mejor versión': '🍯 The Sweet Spot',
+    '🚌 Fichar un Pasajero Recurrente': '🚌 Board a Recurring Passenger',
+    '🚌 Editar Pasajero de tu Autobús': '🚌 Edit Bus Passenger',
+    '🚌 Guardar Cambios': '🚌 Save Changes',
+    '🚌 Subir Pasajero al Autobús': '🚌 Add Passenger to Bus',
+    'Si dices que no, se va a enfadar o te retirará la palabra.': 'If you say no, they will get angry or give you the silent treatment.',
+    'Tienes que poder con todo sin quejarte.': 'You have to handle everything without complaining.',
+    'Calla y cede ahora para que haya paz.': 'Stay quiet and give in now so there is peace.',
+    '✨ Generar respuesta ACT con mis datos': '✨ Generate ACT reply from my inputs',
+    'pasarlo mal': 'pain',
+    'ceder': 'giving in',
+    'del rechazo o abandono': 'rejection or abandonment',
+    'de un conflicto o mala cara': 'conflict or disapproval',
+    'de sentirme egoísta o culpable': 'feeling selfish or guilty',
+    'de fallar o perder el control': 'failing or losing control',
+    'callarme y ceder': 'staying silent and giving in',
+    'justificarme de más': 'over-explaining',
+    'asumir carga que no me toca': 'taking on extra burden',
+    'huir o posponer': 'escaping or postponing',
+    'Asumir carga que no me toca': 'Take on extra burden',
+    'De fallar o perder el control': 'From failing or losing control',
+
+    // EspacioActApp (Step 1-4 & Post-save)
+    'esta emoción': 'this emotion',
+    'me siento totalmente desbordado y nadie me apoya': 'I feel completely overwhelmed and unsupported',
+    '✓ Elijo este Valor': '✓ I Choose This Value',
+    'Comprometerme con mi Valor': 'Commit to My Value',
+    'Completar Procesamiento ACT': 'Complete ACT Processing',
+    'El miedo a que se enfade o ponga mala cara': 'Fear that they will get angry or pull a long face',
+    'Baja los hombros suavemente. Abre las palmas de las manos apoyadas en tus piernas orientadas hacia arriba. Eleva ligeramente la barbilla y exhala lentamente.': 'Gently drop your shoulders. Rest your open palms facing upward on your thighs. Slightly lift your chin and exhale slowly.',
+    'Emoción:': 'Emotion:',
+    '🔥 Ira': '🔥 Anger',
+    '⚡ Miedo': '⚡ Fear',
+    '💧 Tristeza': '💧 Sadness',
+    '⚖️ Aversión': '⚖️ Aversion',
+    '🌪️ Sorpresa': '🌪️ Surprise',
+    '🌿 Alegría / Paz': '🌿 Joy / Peace',
+
+    // PazFalsaApp, RadarPatronesApp, PildorasAnclajesApp & InsightApp
+    'Observar el coste de la falsa paz no es para juzgarte, sino para recuperar la lealtad contigo mismo. Tu dolor y tu resentimiento son señales de que tus límites importan.': 'Observing the cost of false peace is not for judging yourself, but for reclaiming loyalty to yourself. Your ache and resentment are signals that your boundaries matter.',
+    'Hacer otra consulta': 'New Check-In',
+    'Volver al Inicio Guiado': 'Back to Guided Home',
+    'Todas': 'All',
+    'Esta semana me di cuenta de que cedo cuando...': 'This week I noticed I give in when...',
+    'Aliento 1: Hacer espacio a la alarma corporal': 'Breath 1: Make room for the bodily alarm',
+    '⚡ Ejecutar este truco ahora': '⚡ Run this exercise now',
+    'Mirar lo vivido cuando pasa el tiempo transforma un episodio puntual en aprendizaje integrado para tu ruta.': 'Looking back calmly once time has passed turns a single episode into integrated learning for your route.',
+    '🚌 Mantuve el volante en mis valores aunque el pasajero hizo ruido': '🚌 I kept the wheel on my values even while the passenger made noise',
+    '🤝 Ceder en planes por evitar malas caras': '🤝 Caving on plans fearing sour faces',
+    'Ceder en planes por miedo al enfado o frialdad': 'Caving on plans fearing anger or coldness',
+    'Me proponen un plan cuando estoy agotado/a o no me apetece.': 'Someone suggests a plan when I am exhausted or not in the mood.',
+    'Agotamiento, resentimiento acumulado y distancia interna.': 'Exhaustion, accumulated resentment, and internal distance.',
+    '💼 Asumir carga extra en el trabajo sin decir no': '💼 Taking extra workload without saying no',
+    'Asumir tareas fuera de horario o alcance por miedo a decepcionar': 'Taking on after-hours tasks fearing disappointment',
+    'Acepto de inmediato y me quedo hasta tarde para cumplir.': 'I accept immediately and stay late to deliver.',
+    'Me perciben disponible y evito incomodar.': 'I seem available and avoid making things awkward.',
+    '💬 Sobre-justificarme cuando alguien cambia el tono': '💬 Over-explaining when someone shifts tone',
+    'Dar mil explicaciones cuando noto silencio o frialdad ajena': 'Giving endless explanations when I notice silence or coldness',
+    'Alguien cercano suspira, cambia el tono o se queda serio.': 'Someone close sighs, shifts tone, or turns serious.',
+    'Desgaste mental, hipervigilancia e inseguridad.': 'Mental drain, hypervigilance, and insecurity.',
+    'Cambiar Faro →': 'Change Lighthouse →',
+    '🧪 El Experimento ACT de la Semana': '🧪 This Week\'s ACT Experiment',
+    '🔄 Otra tarjeta de anclaje': '🔄 Next anchor card',
+    '🧭 Paso 1 de 2: Ámbito y Declaración de Valor': '🧭 Step 1 of 2: Domain & Value Statement',
+    '▶️ Iniciar Reto de Silencio (15s)': '▶️ Start 15s Silence Challenge',
+    '1. "Estoy teniendo el pensamiento de que..."': '1. "I am having the thought that..."',
+    '🏹 1ª Flecha: Dolor Limpio (Inevitable)': '🏹 1st Arrow: Clean Pain (Unavoidable)',
+    '🗑️ Arrancar y Descartar la 2ª Flecha': '🗑️ Pull Out & Discard the 2nd Arrow',
+    '▶️ Iniciar Pausa de 2 Minutos': '▶️ Start 2-Minute Pause',
+    '🧘‍♂️ Postura Integrada / Continuar': '🧘‍♂️ Posture Integrated / Continue',
+    'Cuidar mi dignidad y actuar con honestidad y calma': 'Honor my dignity and act with honesty and calm',
+
+    // Header warning pill, desktop first-visit local storage modal & feedback modal
+    'Aviso de almacenamiento local': 'Local storage notice',
+    'Sin servidor de base de datos: tus datos se guardan solo en este navegador. Pulsa para ver detalles o exportar copia.': 'No database server: your data is saved only in this browser. Tap for details or to export a backup.',
+    'Sin servidor conectado: tus datos se guardan solo en este navegador. Pulsa para más detalles o exportar copia JSON': 'No server connected: your data stays on this browser only. Tap for details or to export a JSON backup',
+    'Pestaña temporal sin instalar: pulsa para ver cómo fijar Khōra o exportar copia JSON': 'Temporary browser tab: tap to learn how to install Khōra or export a JSON backup',
+    'Solo navegador': 'Browser only',
+    'Pestaña temporal': 'Temporary tab',
+    'Aviso fijado junto al título — pulsa «⚠️ Solo navegador» cuando quieras hacer copia': 'Notice pinned beside title — tap "⚠️ Browser only" anytime to back up',
+    'Aviso fijado junto al título — pulsa «⚠️ Solo navegador» para ver detalles': 'Notice pinned beside title — tap "⚠️ Browser only" for details',
+    'Aviso fijado junto al título — pulsa «⚠️ Pestaña temporal» para ver detalles': 'Notice pinned beside title — tap "⚠️ Temporary tab" for details',
+    '💾 Almacenamiento Local (Sin Servidor)': '💾 Local Storage (No Server)',
+    'Khōra funciona de forma 100% privada directamente en tu navegador.': 'Khōra runs 100% privately right inside your browser.',
+    '¿Qué debes tener en cuenta?': 'What should you keep in mind?',
+    'Tus registros se guardan únicamente en la memoria de este navegador y dispositivo. Si borras los datos del navegador o cambias de equipo sin exportar una copia, se perderán.': 'Your entries are stored exclusively in this browser and device. Clearing site data or switching devices without an exported backup will erase them.',
+    '💾 Exporta una copia JSON periódicamente desde el botón de respaldo o pulsando el aviso': '💾 Export a JSON backup regularly using the backup button or by tapping the',
+    '«⚠️ Solo navegador»': '"⚠️ Browser only"',
+    'junto al título.': 'badge beside the title.',
+    '🔐 Puedes activar cifrado AES-256 con PIN/contraseña o conectar un servidor SQLite propio desde': '🔐 You can enable AES-256 encryption with a PIN/passcode or connect your own SQLite server under',
+    '⚙️ Configuración': '⚙️ Settings',
+    '✓ Entendido, empezar a usar Khōra': '✓ Got it, start using Khōra',
+    '💾 Exportar copia JSON ahora': '💾 Export JSON backup now',
+    '⚙️ Ver opciones de Configuración': '⚙️ Open Settings options',
+    '💬 Enviar Feedback': '💬 Send Feedback',
+    '💬 Enviar Feedback o Sugerencia': '💬 Send Feedback or Suggestion',
+    'Comparte cualquier idea de mejora, fallo detectado o comentario sobre tu experiencia con Khōra.': 'Share any improvement idea, bug report, or thought about your experience with Khōra.',
+    'Tipo de comentario': 'Feedback type',
+    '💡 Sugerencia o nueva idea': '💡 Suggestion or new idea',
+    '🐛 Fallo o problema técnico': '🐛 Bug or technical issue',
+    '💚 Comentario sobre la app': '💚 General app feedback',
+    'Título breve': 'Short summary',
+    'Resumen breve (ej: Idea para el historial, ajuste en móvil...)': 'Brief title (e.g., History filter idea, mobile layout note...)',
+    'Detalles': 'Details',
+    'Describe tu sugerencia, comentario o qué ocurrió...': 'Describe your suggestion, comment, or what happened...',
+    '🐙 Enviar en GitHub Issues': '🐙 Submit via GitHub Issues',
+    '📋 Copiar mensaje': '📋 Copy message',
+    'Abriendo GitHub Issues con tu mensaje preparado': 'Opening GitHub Issues with your prefilled message',
+    'Feedback copiado al portapapeles': 'Feedback copied to clipboard',
+    'Feedback preparado para copiar': 'Feedback ready to copy',
+
+    // Historial en Frio retrospective emotion & context filtering
+    'Vuelve a tus registros pasados para integrar perspectiva en frío o filtra por emoción y ámbito': 'Revisit past logs with calm perspective or filter by emotion and life area',
+    '🔍 Explorar por emoción sentida (para reflexionar a pasado):': '🔍 Filter by emotion felt (for retrospective reflection):',
+    'Todas las emociones': 'All emotions',
+    '⚡ Miedo / Ansiedad': '⚡ Fear / Anxiety',
+    '🔥 Ira / Resentimiento': '🔥 Anger / Resentment',
+    '💧 Tristeza / Culpa': '💧 Sadness / Guilt',
+    '🔋 Agotamiento': '🔋 Exhaustion',
+    '🌪️ Bloqueo': '🌪️ Freeze / Overwhelm',
+    '🔍 Buscar por emoción, pensamiento o situación...': '🔍 Search by emotion, thought, or situation...',
+    '🛋️ Reflexionar sobre este patrón en Cuaderno de Terapia': '🛋️ Reflect on this pattern in Therapy Notebook',
+    '✕ Limpiar filtros': '✕ Clear filters',
+    'No hay episodios guardados que coincidan con este filtro.': 'No saved episodes match this filter.',
+
+    // Contextual Help System (?, inline ⓘ triggers) & Barrier explanation
+    'Guía y ayuda de esta pantalla': 'Screen guide & help',
+    'Ayuda de esta pantalla': 'Help for this screen',
+    'ⓘ ¿Para qué sirve?': 'ⓘ What is this for?',
+    'Marca qué bloqueo notas ahora mismo: alimenta la': 'Check any block you feel right now: it feeds your',
+    'para recomendarte el ejercicio ACT más útil.': 'to recommend the most helpful ACT exercise.',
+    'ⓘ ¿Cómo se calcula?': 'ⓘ How is it calculated?',
+    'ⓘ ¿Qué es un Valor en ACT?': 'ⓘ What is a Value in ACT?',
+    'ⓘ Metáfora del Autobús': 'ⓘ Bus Metaphor',
+    'ⓘ ¿Cómo se usa?': 'ⓘ How is it used?',
+    'ⓘ ¿Cómo ayuda esto?': 'ⓘ How does this help?',
+    'ⓘ ¿Qué mide?': 'ⓘ What does it measure?',
+    'ⓘ ¿Cómo funciona?': 'ⓘ How does it work?',
+    '📘 Guía rápida de esta pantalla': '📘 Quick guide for this screen',
+    '🎯 Cuándo usarla:': '🎯 When to use it:',
+    '🪜 Cómo funciona paso a paso': '🪜 Step-by-step guide',
+    '✓ Entendido': '✓ Got it',
+    'ⓘ Ayuda contextual ACT': 'ⓘ Contextual ACT Help',
+
+    // Help catalog: Screens
+    '🏠 Guía de Inicio — ¿Qué necesitas ahora?': '🏠 Start Guide — What do you need right now?',
+    'Es tu punto de entrada rápido según cómo te sientas en este momento: en medio de una ola emocional o con calma para entrenar.': 'Your quick entry point based on how you feel right now: in the middle of an emotional wave or calm enough to practice.',
+    '1. Arriba ves tu Valor Faro actual y tu foco activo para orientarte de un vistazo.': '1. At the top you see your current Lighthouse Value and active Focus at a glance.',
+    '1. Arriba ves tu Valor Faro actual para orientarte de un vistazo.': '1. At the top you see your current Lighthouse Value at a glance.',
+    '2. Elige una tarjeta de «Ahora Mismo (En Caliente)» si estás bloqueado/a, saturado/a o temes ceder.': '2. Pick a card under «Right Now (In the Moment)» if you feel stuck, overwhelmed, or tempted to give in.',
+    '3. Usa «Entrenar y Leer (En calma)» para fortalecer límites, desmontar etiquetas y guardar anclajes.': '3. Use «Practice & Read (In Calm)» to strengthen boundaries, unhook from labels, and save anchors.',
+    'En Khōra no hace falta rellenarlo todo ni entrar cada día: abre solo la herramienta que encaja contigo ahora.': 'You do not need to fill everything out or check in daily in Khōra: just open the tool that fits you right now.',
+
+    '🌪️ El Espacio ACT — Procesar en 4 Pasos': '🌪️ The ACT Space — 4-Step Processing',
+    'Úsalo cuando notes una emoción intensa (ansiedad, miedo, enfado, culpa o bloqueo) para atravesarla sin dejarte arrastrar.': 'Use this when you feel an intense emotion (anxiety, fear, anger, guilt, or freeze) so you can move through it without getting swept away.',
+    '1. Rueda Emocional: nombra con precisión qué sientes (o salta directo al cuerpo si estás muy saturado/a).': '1. Emotion Wheel: name accurately what you feel (or jump straight to the body if you feel too overwhelmed).',
+    '2. Cuerpo y Fisicalización: ubica la sensación en tu silueta, obsérvala con curiosidad y hazle hueco respirando.': '2. Body & Physicalizing: locate the sensation on the silhouette, notice it with curiosity, and breathe room around it.',
+    '3. Defusión y Valores: desengancha la mente llamándola por su apodo y elige una micro-acción fiel a tus valores.': '3. Defusion & Values: unhook from your mind using its nickname and choose a micro-action true to your values.',
+    'El objetivo no es suprimir la emoción ni sentir cero miedo, sino bajar la lucha y recuperar tu margen de elección.': 'The goal is not to erase the emotion or feel zero fear, but to drop the tug-of-war and reclaim your room to choose.',
+
+    'Cuando acabas de callarte, pedir perdón de más o decir «sí» queriendo decir «no» para evitar una mala cara ajena.': 'When you just held your tongue, over-apologized, or said «yes» wanting to say «no» just to avoid someone’s displeasure.',
+    '1. Anota dónde ocurrió y qué pedía la otra persona.': '1. Note where it happened and what the other person asked for.',
+    '2. Contrasta «lo que querías hacer realmente» frente a «lo que hiciste por fuera».': '2. Contrast «what you really wanted to do» against «what you did on the outside».',
+    '3. Mide del 0 al 10 tu peaje real (resentimiento, agotamiento, ansiedad y vacío) para hacerlo visible.': '3. Rate your real toll from 0 to 10 (resentment, exhaustion, anxiety, and emptiness) so it becomes visible.',
+    'Nombrar la falsa paz no sirve para machacarte: tu resentimiento indica dónde te importa cuidar tus límites.': 'Naming false peace is not about beating yourself up: your resentment signals where protecting your boundaries matters to you.',
+
+    'Antes de responder o tomar una decisión difícil, cuando dudas entre complacer al otro o ser fiel a lo que importa para ti.': 'Before replying or making a hard decision, when you are torn between pleasing someone else and honoring what matters to you.',
+    '1. Resume en una línea la situación y marca qué miedo te frena ahora mismo.': '1. Summarize the situation in one line and check which fear is holding you back right now.',
+    '2. Elige el Valor que quieres representar como brújula (por encima del miedo inmediato).': '2. Choose the Value you want to stand for as your compass (above the immediate fear).',
+    '3. Fija una micro-acción concreta y honesta que dependa al 100% de ti.': '3. Commit to a concrete, honest micro-action that is 100% within your control.',
+    'Pasa de «¿qué esperan que haga?» a «¿qué clase de persona elijo ser aquí?».': 'Shift from «what do they expect me to do?» to «what kind of person do I choose to be here?».',
+
+    '⚡ Botiquín de 1 Minuto (Micro-Trucos)': '⚡ 1-Minute Toolkit (Micro-Tricks)',
+    'Cuando necesitas frenar un impulso urgente en vivo en menos de 60 segundos (decir no, soltar culpa o bajar ansiedad).': 'When you need to pause an urgent impulse live in under 60 seconds (saying no, dropping guilt, or easing anxiety).',
+    '1. Filtra arriba por lo que quieres desatascar ahora mismo.': '1. Filter at the top by what you want to unstick right now.',
+    '2. Abre el ejercicio guiado paso a paso (Echar el Ancla, Silencio de 15s, Dos Flechas, Autobús ACT o Postura del SÍ).': '2. Open the step-by-step guided exercise (Drop Anchor, 15s Silence, Two Arrows, ACT Bus, or YES Posture).',
+    '3. Síguelo en directo antes de contestar o decidir.': '3. Follow it live before answering or deciding.',
+    'Los temporizadores (15s de silencio o 2 minutos de pausa) cortan el reflejo automático de justificarte.': 'The timers (15s of silence or a 2-minute pause) interrupt the automatic reflex to over-explain yourself.',
+
+    '📖 Lecturas y Ejercicios ACT (En Calma)': '📖 ACT Readings & Exercises (In Calm)',
+    'En momentos tranquilos para recordar ideas clave, desmontar etiquetas rígidas y ensanchar tu perspectiva.': 'During calm moments to revisit key ideas, unpack rigid labels, and widen your perspective.',
+    '1. Revisa tus Tarjetas de Anclaje ACT o añade frases propias que quieras tener presentes en crisis.': '1. Review your ACT Anchor Cards or add your own reminders to keep handy during a storm.',
+    '2. Usa el Deconstructor del «Yo Soy» para pasar de «soy egoísta/débil» a hechos concretos.': '2. Use the «I Am» Deconstructor to shift from «I am selfish/weak» to concrete facts.',
+    '3. Practica El Pivote para transformar un temor en el anhelo legítimo que esconde.': '3. Practice The Pivot to transform a fear into the valid longing hidden underneath.',
+    'Lo que entrenas en calma se vuelve accesible con mucho menos esfuerzo cuando llega la tormenta.': 'What you practice in calm moments becomes available with far less effort when the storm hits.',
+
+    '💎 Mis Valores — Tu Brújula Vital': '💎 My Values — Your Life Compass',
+    'Para definir quién eliges ser en tus áreas vitales (Pareja, Trabajo, Familia, Amistad, Conmigo Mismo).': 'To define who you choose to be across your life areas (Partner, Work, Family, Friends, With Myself).',
+    '1. Pulsa cualquier ámbito o «+ Construir Valor» para crear tu frase con las 4 preguntas guía de Steven Hayes.': '1. Tap any area or «+ Build Value» to craft your statement with Steven Hayes’ 4 guiding questions.',
+    '2. Conviértelo en un pequeño gesto visible y nombra qué incomodidad estás dispuesto/a a sostener.': '2. Turn it into a small visible action and name the discomfort you are willing to carry.',
+    '3. Fija tu Valor Faro principal: guiará tu pantalla de inicio, tu Autobús ACT y tus crisis.': '3. Set your main Lighthouse Value: it guides your start screen, ACT Bus, and tough moments.',
+    'Un valor no es un resultado ajeno («que me quieran»), sino una dirección continua («comunicar con afecto y honestidad»).': 'A value is not someone else’s reaction («make them like me»), but an ongoing direction («communicate with warmth and honesty»).',
+
+    '🧭 Mi Foco y Radar de Patrones': '🧭 My Focus & Pattern Radar',
+    'Para situar qué tema te preocupa ahora, marcar qué barreras se te activan y mapear bucles repetitivos.': 'To pin down what is weighing on you right now, mark active barriers, and map repeating loops.',
+    '1. Arriba a la izquierda escribe tu Foco actual y marca tus «Barreras que se te activan».': '1. At top left, write your current Focus and check your «Barriers getting triggered».',
+    '2. A la derecha se calcula automáticamente tu «Hoja de Ruta Sugerida» con los ejercicios más afines.': '2. On the right, your «Suggested Route» updates automatically with the best-matching tools.',
+    '3. Abajo, en «El Radar de Patrones», dibuja tus bucles repetitivos y define un micro-experimento semanal.': '3. Below, in «The Pattern Radar», map your repeating loops and define one weekly micro-experiment.',
+    'Marcar las barreras no es una etiqueta negativa: es el filtro que le dice a la app qué ejercicio encaja mejor contigo.': 'Checking barriers is not a negative label: it is the filter that tells the app which exercise fits you best.',
+
+    'Para poner nombre a tu «radio automática» y tener localizados los miedos que suelen intentar coger tu volante.': 'To name your «automatic mind radio» and spot the fears that tend to grab for your steering wheel.',
+    '1. Bautiza a tu mente pensante (ej. «George» o «Radio Catástrofe») para recordar que solo es un comentarista.': '1. Name your thinking mind (e.g. «George» or «Doom Radio») to remember it is only a commentator.',
+    '2. Registra tus pasajeros recurrentes: qué gritan, de qué intentan protegerte y qué desvío te piden.': '2. Log your recurring passengers: what they shout, what they try to protect you from, and which detour they urge.',
+    '3. Mándalos al asiento trasero sin pelear ni echarlos, y practica con el simulador en 1 minuto.': '3. Seat them in the back without fighting or kicking them off, and practice with the 1-minute simulator.',
+    'En ACT los miedos no desaparecen del autobús; aprendes a conducir hacia tus valores aunque sigan hablando atrás.': 'In ACT, fears never vanish from the bus; you learn to keep driving toward your values even while they chatter behind you.',
+
+    '🛋️ Cuaderno de Terapia': '🛋️ Therapy Notebook',
+    'Entre sesiones de psicología para anotar bucles, disparadores, dudas o pequeños logros que no quieres olvidar.': 'Between therapy sessions to capture loops, triggers, questions, or small wins you do not want to forget.',
+    '1. Escribe lo que observaste (o usa un inicio rápido) y selecciona ámbito y tipo de apunte.': '1. Write what you noticed (or pick a quick starter) and choose an area and note type.',
+    '2. La app extrae automáticamente emociones y procesos ACT/Hexaflex orientativos para sesión.': '2. The app automatically suggests emotions and ACT/Hexaflex themes for your session.',
+    '3. Pulsa «Ver / Copiar Informe para mi Psicólogo» para llevar un resumen ordenado listo para compartir.': '3. Tap «View / Copy Therapist Brief» to get a clean summary ready to share.',
+    'Marca las reflexiones como «Tratadas en sesión» cuando ya las hayáis trabajado en consulta.': 'Mark notes as «Discussed in session» once you have covered them with your therapist.',
+
+    '🌱 Historial en Frío y Consolidación': '🌱 Cool-Down History & Consolidation',
+    'Para revisar episodios pasados (Espacio ACT y Paz Falsa), filtrarlos por emoción o ámbito y sacar aprendizajes.': 'To review past episodes (ACT Space & False Peace), filter by emotion or area, and gather insights.',
+    '1. Filtra por emoción sentida (Miedo, Ira, Tristeza, Agotamiento…), ámbito o palabra clave.': '1. Filter by felt emotion (Fear, Anger, Sadness, Exhaustion…), area, or keyword.',
+    '2. Abre «Valorar e Integrar en frío» en cualquier episodio para reflexionar qué pasó con perspectiva.': '2. Open «Cool-Down Review & Consolidate» on any episode to reflect with hindsight.',
+    '3. Usa «Reflexionar sobre este patrón en Cuaderno de Terapia» para sintetizar varios episodios repetidos.': '3. Use «Reflect on this pattern in Therapy Notebook» to synthesize recurring episodes.',
+    'Mirar en frío un episodio pasado transforma la culpa en aprendizaje práctico para la próxima vez.': 'Looking back calmly at a past episode turns guilt into practical learning for next time.',
+
+    '📈 Gráficos y Perfil Hexaflex': '📈 Charts & Hexaflex Profile',
+    'Para observar tendencias de intensidad, peaje de falsa paz, ámbitos con más sumisión y tu perfil Hexaflex.': 'To observe trends in emotional intensity, false-peace toll, high-appeasement areas, and your Hexaflex profile.',
+    '1. Evalúa de 0 a 10 los 6 procesos de flexibilidad psicológica en «Evaluar mi Hexaflex (1 min)».': '1. Rate the 6 psychological flexibility processes from 0 to 10 in «Rate my Hexaflex (1 min)».',
+    '2. Revisa si baja la intensidad en tus crisis y qué ocurre con tu resentimiento en el tiempo.': '2. Check if wave intensity drops and what happens to your resentment over time.',
+    '3. Observa en el mapa de calor en qué contextos (Trabajo, Pareja, Familia…) cedes más a menudo.': '3. Look at the heatmap to see which areas (Work, Partner, Family…) trigger appeasement most often.',
+    'Los gráficos no buscan la perfección: ayudan a detectar patrones con curiosidad científica y compasión.': 'Charts are not about perfection: they help you spot patterns with scientific curiosity and compassion.',
+
+    // Help catalog: Inline Topics (ⓘ)
+    '🧱 Barreras que se te activan — ¿Para qué sirven?': '🧱 Triggered Barriers — What are they for?',
+    'Son los bloqueos psicológicos habituales (miedo al conflicto, culpa al poner límites, urgencia de ceder, rumiación…) que aparecen cuando intentas actuar según tus valores.': 'These are common psychological blocks (fear of conflict, guilt when setting boundaries, urgency to give in, rumination…) that show up when you try to act on your values.',
+    '🎯 Para qué sirven aquí: al activar uno o varios chips, Khōra los cruza con tu Foco actual y recalcula al instante tu «💡 Hoja de Ruta Sugerida».': '🎯 What they do here: when you select one or more chips, Khōra cross-references them with your Focus and immediately recalculates your «💡 Suggested Route».',
+    '💡 Ejemplo: si marcas «Culpa al cuidar mis límites», te priorizará herramientas de límites breves y el Espejo de la Paz Falsa.': '💡 Example: if you check «Guilt protecting my boundaries», it will prioritize short boundary tools and the False Peace Mirror.',
+    '🧭 También quedan reflejadas en tu resumen de progresión para detectar qué barrera te frena más a menudo.': '🧭 They also appear in your progress summary so you can notice which barrier slows you down most often.',
+    'No es un examen ni queda fijo: actívalas o desactívalas según lo que notes presente en tu momento actual.': 'This is neither a test nor permanent: toggle them on or off depending on what feels active right now.',
+
+    '💡 Hoja de Ruta Sugerida — ¿Cómo se calcula?': '💡 Suggested Route — How is it calculated?',
+    'Es una recomendación local en tu propio navegador (sin IA externa ni servidores) basada en reglas transparentes.': 'A local recommendation computed right in your browser (no external AI or servers) using transparent rules.',
+    '🚌 Si tienes pasajeros haciendo ruido junto al volante, sugiere primero el ejercicio del Autobús ACT.': '🚌 If passengers are making noise near the steering wheel, it suggests the ACT Bus exercise first.',
+    '🧱 Suma afinidad según las barreras que has marcado y las palabras clave de tu situación en «Mi Foco».': '🧱 It adds relevance based on the barriers you selected and keywords from your «My Focus» note.',
+    '💎 Conecta cada herramienta sugerida con el Valor Faro de ese ámbito para que recuerdes el «para qué».': '💎 It pairs each suggested tool with that area’s Lighthouse Value so you keep your «why» in sight.',
+    'Puedes ignorar cualquier sugerencia y entrar directamente al ejercicio que prefieras.': 'You are always free to skip any suggestion and open whichever exercise you prefer.',
+
+    '💎 ¿Qué es un Valor Faro en ACT?': '💎 What is a Lighthouse Value in ACT?',
+    'Según Steven Hayes, un valor es una dirección vital continua (como ir hacia el Oeste), nunca un destino que se tacha ni algo que dependa de otra persona.': 'In Steven Hayes’ ACT, a value is an ongoing life direction (like heading West)—never a box to check off or something controlled by someone else.',
+    '🧭 Valor (depende de ti): «Expresar mis necesidades con honestidad y calma».': '🧭 Value (up to you): «Express my needs honestly and calmly».',
+    '🚧 Trampa de meta ajena (no depende de ti): «Conseguir que nunca se enfaden conmigo».': '🚧 External-goal trap (not up to you): «Make sure nobody ever gets mad at me».',
+    '🌱 Micro-acción y Disposición: cada valor se aterriza en un gesto pequeño y en aceptar el pellizco de incomodidad que conlleva.': '🌱 Micro-action & Willingness: each value lands in one small gesture plus willingness to feel a pinch of discomfort.',
+    'Tu primer valor de la lista actúa como Valor Faro principal visible en el inicio y en momentos de crisis.': 'Your first listed value acts as your primary Lighthouse Value shown on the home screen and during tough moments.',
+
+    '🚌 La Metáfora del Autobús (Steven C. Hayes)': '🚌 The Bus Metaphor (Steven C. Hayes)',
+    'Tú conduces el autobús de tu vida hacia tus valores. Tus miedos, dudas y culpas son pasajeros que suben contigo e intentan hacerte girar cuando gritan.': 'You drive your life’s bus toward your values. Your fears, doubts, and guilt are passengers riding along who try to steer when they shout.',
+    '❌ Luchar o intentar echarlos suele obligarte a parar el autobús y discutir con ellos.': '❌ Fighting or trying to kick them off forces you to stop the bus and argue with them.',
+    '❌ Obedecerlos («digo que sí para que se callen») te saca de tu ruta y acaba en Falsa Paz.': '❌ Obeying them («I say yes just to quiet them down») pulls you off course and ends in False Peace.',
+    '✅ Maniobra ACT: escuchar de qué intentan protegerte, sentarlos en los asientos traseros y mantener las manos en el volante.': '✅ ACT move: notice what they try to protect you from, seat them in the back rows, and keep your hands on the wheel.',
+    'Bautizar a tu mente (ej. «George») ayuda a recordar que esa voz es ruido automático, no una orden.': 'Naming your mind (e.g. «George») helps you remember that voice is automatic chatter, not an order.',
+
+    '🔄 El Radar de Patrones y Práctica de Opuestos': '🔄 Pattern Radar & Practicing Opposites',
+    'Sirve para estudiar en frío un bucle que se repite una y otra vez y probar una pequeña variación conductual realista.': 'Helps you calmly examine a recurring loop and test one small, realistic behavioral shift.',
+    '1. Dibuja las 4 piezas del bucle: Detonante → Respuesta automática → Alivio rápido (Falsa Paz) → Coste real después.': '1. Map the 4 loop steps: Trigger → Automatic response → Quick relief (False Peace) → Real cost afterward.',
+    '2. Elige 1 micro-experimento para la semana (usando los generadores de Opuestos: variar tiempo, forma o postura).': '2. Pick 1 micro-experiment for the week (using Opposite generators: vary timing, wording, or posture).',
+    '3. Haz check-in cuando quieras para registrar qué descubrió la experiencia frente a lo que predecía tu mente.': '3. Check in whenever you like to log what really happened versus what your mind predicted.',
+    'Los cambios pequeños pero medibles rompen hábitos de complacencia mucho mejor que propósitos gigantes.': 'Small, observable shifts break people-pleasing habits far better than sweeping resolutions.',
+
+    '🎨 Fisicalizar la Sensación (Aceptación Somática)': '🎨 Physicalizing the Sensation (Somatic Acceptance)',
+    'En vez de darle vueltas mentales a por qué sientes ansiedad o miedo, bajas la atención a tu cuerpo y describes la sensación como si fuera un objeto físico.': 'Instead of analyzing why you feel anxious or afraid, you drop attention into your body and describe the sensation as a physical object.',
+    '1. Marca dónde está en el cuerpo y qué forma o temperatura tendría.': '1. Spot where it sits in your body and what shape or temperature it has.',
+    '2. Respira «alrededor» de ella haciendo espacio en lugar de intentar apretar o huir.': '2. Breathe «around» it to make room rather than bracing against it or fleeing.',
+    '3. Usa la Postura Somática del «SÍ» (hombros sueltos, palmas abiertas) para avisar a tu sistema nervioso de que estás a salvo.': '3. Try the «YES» Somatic Posture (dropped shoulders, open palms) to signal safety to your nervous system.',
+    'Cuando dejas de pelear con la sensación física, suele perder intensidad por sí sola.': 'When you stop wrestling with the physical sensation, its grip often loosens on its own.',
+
+    '🍃 Fórmulas de Distanciamiento (Defusión Cognitiva)': '🍃 Distancing Phrases (Cognitive Defusion)',
+    'Cuando estamos fusionados con un pensamiento («soy egoísta»), lo vivimos como una verdad absoluta. La defusión restaura distancia.': 'When fused with a thought («I am selfish»), it feels like absolute truth. Defusion restores healthy distance.',
+    '• Anteponer «Estoy teniendo el pensamiento de que…» convierte una verdad en un evento mental.': '• Prefixing «I am having the thought that…» turns a rigid truth into a passing mental event.',
+    '• Decir «Observo que George (mi mente) me cuenta la historia de que…» añade perspectiva y humor.': '• Saying «I notice George (my mind) is telling me the story that…» adds perspective and humor.',
+    '• Las Hojas en el Río ayudan a ver los pensamientos pasar sin tener que agarrarlos ni obedecerlos.': '• Leaves on a Stream lets you watch thoughts drift by without grabbing or obeying them.',
+    'No hace falta discutir si el pensamiento es verdadero o falso: basta preguntarse si seguirlo te acerca a tus valores.': 'You do not need to debate whether a thought is true or false—just ask if obeying it moves you toward your values.',
+
+    '🏳️ El Peaje Emocional de la Falsa Paz': '🏳️ The Emotional Toll of False Peace',
+    'Ceder automáticamente suele traer alivio de 5 minutos por fuera, pero cobra una factura física y emocional por dentro.': 'Giving in automatically often buys 5 minutes of outward relief, while charging a physical and emotional price inside.',
+    '🔥 Resentimiento, 🔋 Agotamiento, 🌪️ Ansiedad y 🕳️ Vacío resumen el coste real de callar o complacer.': '🔥 Resentment, 🔋 Exhaustion, 🌪️ Anxiety, and 🕳️ Emptiness capture the real cost of silencing or appeasing.',
+    '📊 Su media alimenta el «Índice de Autoabandono» para que veas qué situaciones o contextos te desgastan más.': '📊 Their average feeds your «Self-Abandonment Index» so you can spot which situations drain you most.',
+    'Reconocer este coste es el primer paso para elegir límites más cuidadosos contigo.': 'Recognizing this cost is the first step toward choosing kinder boundaries with yourself.',
+
+    '🏷️ Deconstructor «Yo Soy» y 🔄 El Pivote': '🏷️ «I Am» Deconstructor & 🔄 The Pivot',
+    'Dos prácticas breves en calma para flexibilizar juicios rígidos y transformar miedos en dirección valiosa.': 'Two short calm-state practices to soften rigid self-judgments and turn fears into valued direction.',
+    '🏷️ Deconstructor: transforma etiquetas globales («soy débil») en un pensamiento dentro de un contexto concreto y modificable.': '🏷️ Deconstructor: unpacks global labels («I am weak») into one thought inside a specific, workable context.',
+    '🔄 El Pivote: en la otra cara de cada dolor o miedo hay algo legítimo que valoras (vínculo, respeto, descanso); aprende a cuidarlo con dignidad en vez de sumisión.': '🔄 The Pivot: on the flip side of every fear or ache sits something you genuinely value (connection, respect, rest)—care for it with dignity instead of submission.',
+    'Puedes probar cualquiera tocando una plantilla arriba y guardarla adaptada a tus palabras.': 'You can test either one by tapping a template above and saving it in your own words.',
+
+    '🛋️ Cuaderno de Terapia e Informe Clínico': '🛋️ Therapy Notebook & Clinical Brief',
+    'Un bloc pensado para capturar entre sesiones lo que suele olvidarse al sentarse en consulta.': 'A notebook designed to capture between sessions what tends to slip your mind once you sit in therapy.',
+    '🩺 Khōra detecta de forma local palabras clave emocionales y procesos del Hexaflex para sugerir focos de sesión.': '🩺 Khōra locally spots emotional keywords and Hexaflex themes to suggest session focus areas.',
+    '📋 El botón «Ver / Copiar Informe para mi Psicólogo» reúne indicadores, emociones frecuentes, pasajeros, valores y temas pendientes en texto plano listo para pegar.': '📋 The «View / Copy Therapist Brief» button gathers metrics, top emotions, passengers, values, and open topics into plain text ready to paste.',
+    'Ningún dato sale de tu navegador a menos que tú copies o exportes el texto.': 'No data leaves your browser unless you copy or export the text yourself.',
+
+    // Hover tool-presentation tooltip & all 26 topic guides (time, what you do, what it brings)
+    'Información de esta herramienta': 'About this tool',
+    '💡 Pulsa ⓘ para ver la guía paso a paso': '💡 Click ⓘ to view the step-by-step guide',
+    '⏱️ 10 seg': '⏱️ 10 sec',
+    '⏱️ 15 seg': '⏱️ 15 sec',
+    '⏱️ 30 seg': '⏱️ 30 sec',
+    '⏱️ Instantáneo': '⏱️ Instant',
+    '⏱️ Consulta rápida': '⏱️ Quick check',
+    '⏱️ Consulta visual': '⏱️ Visual overview',
+
+    'Elegir cómo te encuentras ahora mismo (en caliente o en calma) para ir directo al ejercicio adecuado.': 'Pick how you feel right now (in a heated moment or in calm) to jump straight to the right exercise.',
+    'Orientarte sin fricción según lo que necesites en este instante.': 'Orient yourself effortlessly around what you need right now.',
+    'Anotar reflexiones, bloqueos o avances entre sesiones y preparar un resumen clínico listo para copiar.': 'Jot down reflections, stuck loops, or wins between sessions and prepare a copy-ready clinical brief.',
+    'Llegar a tu sesión de psicología con los temas importantes claros y ordenados.': 'Arrive at your therapy session with key themes clear and organized.',
+    'Filtrar episodios pasados por emoción o ámbito y revisarlos en frío con perspectiva.': 'Filter past episodes by emotion or life area and review them calmly with hindsight.',
+    'Detectar patrones emocionales repetidos y convertir episodios difíciles en aprendizaje.': 'Spot repeating emotional patterns and turn tough moments into learning.',
+    'Revisar tu evolución, integrar episodios en frío y observar tendencias y tu perfil Hexaflex.': 'Review your progress, integrate past episodes calmly, and track trends alongside your Hexaflex profile.',
+    'Visión clara de tus avances para detectar patrones con curiosidad y compasión.': 'Clear visibility into your progress to spot patterns with curiosity and compassion.',
+    'Ubicar la emoción en el cuerpo, describirla como un objeto físico y respirar haciéndole espacio.': 'Locate the emotion in your body, describe it like a physical object, and breathe room around it.',
+    'Dejar de pelear con la sensación física para que pierda rigidez.': 'Stop wrestling the physical sensation so its grip loosens.',
+    'Anteponer una frase de perspectiva o soltar tus pensamientos en las Hojas en el Río.': 'Add a distancing prefix or let your thoughts float on Leaves on a Stream.',
+    'Separarte del pensamiento automático para que no funcione como una orden.': 'Step back from the automatic thought so it stops acting like a command.',
+    'Valorar del 0 al 10 cuánto resentimiento, agotamiento, ansiedad y vacío te dejó ceder.': 'Rate from 0 to 10 how much resentment, exhaustion, anxiety, and emptiness giving in left behind.',
+    'Hacer visible la factura interna de complacer y calcular tu Índice de Autoabandono.': 'Make the inner cost of people-pleasing visible and compute your Self-Abandonment Index.',
+
+    '🧭 Nortes Fijados Recientemente': '🧭 Recently Set Compasses',
+    'Revisar las micro-acciones y valores que ya has elegido en dilemas recientes.': 'Revisit the micro-actions and values you already chose in recent dilemmas.',
+    'Reforzar tu confianza recordando cómo ya has respondido desde tus valores.': 'Strengthen confidence by remembering how you have already acted from your values.',
+    'Es tu registro de decisiones tomadas con la Brújula de Valores.': 'Your log of choices guided by the Values Compass.',
+    'Cada micro-acción honesta suma dirección vital aunque el resultado externo no dependa de ti.': 'Every honest micro-action adds valued direction even when the external outcome is outside your control.',
+    '• Cada tarjeta guarda la situación, el miedo que apareció, el valor elegido y tu micro-acción.': '• Each card saves the situation, the fear that showed up, the chosen value, and your micro-action.',
+    '• Revisarlo antes de una conversación difícil te recuerda que puedes actuar aunque haya miedo.': '• Reviewing it before a hard conversation reminds you that you can act even while afraid.',
+
+    '⚓ Mis Tarjetas de Anclaje ACT': '⚓ My ACT Anchor Cards',
+    'Guardar y repasar frases breves o mantras personales alineados con tus valores.': 'Save and revisit short phrases or personal mantras aligned with your values.',
+    'Tener recordatorios rápidos a mano cuando aparece una ola emocional.': 'Keep quick reminders close at hand whenever an emotional wave hits.',
+    'Frases cortas de perspectiva ACT y recordatorios propios que también aparecen en tu botón SOS de crisis.': 'Short ACT perspective phrases and personal reminders that also show up in your SOS crisis assistant.',
+    'Las mejores frases ancla no son positivismo forzado, sino recordatorios de aceptación y valores.': 'The best anchor phrases are not forced positivity, but reminders of acceptance and values.',
+    '1. Desliza las tarjetas para leer tus anclajes guardados.': '1. Swipe through the cards to read your saved anchors.',
+    '2. Pulsa «+ Nuevo Anclaje» para escribir una frase tuya que te devuelva al presente.': '2. Tap «+ New Anchor» to write a phrase of your own that brings you back to the present.',
+    '3. Tus tarjetas se integran automáticamente en la ventana de Asistencia Rápida SOS.': '3. Your cards are automatically shown inside the SOS Quick Assistance window.',
+
+    '📖 Miniguías de Bolsillo (Lecturas de 1 Minuto)': '📖 Pocket Mini-Guides (1-Minute Reads)',
+    'Leer micro-reflexiones prácticas sobre defusión, límites y aceptación y abrir su truco guiado.': 'Read bite-sized insights on defusion, boundaries, and acceptance and launch their guided trick.',
+    'Entrenar flexibilidad psicológica en calma para que sea accesible en crisis.': 'Practice psychological flexibility while calm so it is ready during a storm.',
+    'Lecturas breves diseñadas para asimilar conceptos ACT en momentos tranquilos.': 'Short reads designed to absorb ACT concepts during quiet moments.',
+    '1. Filtra por categoría (Defusión, Límites, Aceptación) o marca tus favoritas con ❤️.': '1. Filter by category (Defusion, Boundaries, Acceptance) or star favorites with ❤️.',
+    '2. Abre cualquier píldora para leer el desglose completo en menos de 1 minuto.': '2. Open any pill to read the full breakdown in under 1 minute.',
+    '3. Pulsa «⚡ Ejecutar truco guiado» para practicar la técnica asociada al instante.': '3. Tap «⚡ Run guided trick» to practice the linked technique right away.',
+
+    'Desmontar una etiqueta fija en una conducta concreta y modificable.': 'Break a rigid self-label down into a specific, workable behavior.',
+    'Soltar juicios absolutos sobre ti y recuperar margen de cambio.': 'Release all-or-nothing judgments about yourself and reclaim room for change.',
+
+    'Transformar lo que te duele o temes en el valor o anhelo legítimo que esconde.': 'Turn what hurts or scares you into the legitimate value or longing hidden inside it.',
+    'Cuidar lo que te importa con dignidad en lugar de sumisión.': 'Care for what matters to you with dignity instead of submission.',
+    'En ACT, detrás de cada miedo o culpa suele esconderse algo que te importa de verdad (vínculo, respeto, descanso).': 'In ACT, beneath every fear or pang of guilt sits something you genuinely care about (connection, respect, rest).',
+    'Donde hay dolor hay algo que valoras: el pivote te devuelve la dirección sin luchar contra el miedo.': 'Where there is pain, there is something you value: the pivot restores direction without fighting fear.',
+    '1. Nombra qué te duele o qué temes que ocurra.': '1. Name what hurts or what you fear might happen.',
+    '2. Pregúntate qué anhelo sano o valor hay en la otra cara de ese dolor.': '2. Ask what healthy longing or value sits on the flip side of that pain.',
+    '3. Elige un gesto digno para honrar ese anhelo sin caer en la falsa paz.': '3. Choose one dignified action to honor that longing without slipping into false peace.',
+
+    'Describir en una línea la situación o conversación que te preocupa y marcar su ámbito.': 'Describe the situation or conversation on your mind in one line and pick its life area.',
+    'Conectar tu preocupación actual con tu Valor Faro de ese ámbito y afinar tu ruta sugerida.': 'Connect your current concern with that area’s Lighthouse Value and sharpen your suggested route.',
+    'Te ayuda a aterrizar una preocupación difusa en un contexto concreto (Pareja, Trabajo, Familia, Amigos).': 'Helps turn a vague worry into a concrete context (Partner, Work, Family, Friends).',
+    'Puedes actualizar tu foco tantas veces como cambie tu semana.': 'You can update your focus whenever your week shifts.',
+    '1. Toca un chip rápido o escribe en una frase qué situación tienes presente.': '1. Tap a quick chip or write in one sentence what is weighing on you.',
+    '2. Selecciona el ámbito para ver al instante tu Valor Faro en esa área.': '2. Pick the area to see your matching Lighthouse Value right away.',
+    '3. Pulsa Guardar para que la Hoja de Ruta Sugerida adapte sus recomendaciones.': '3. Hit Save so your Suggested Route adapts its recommendations.',
+
+    'Marcar qué bloqueos internos (miedo al conflicto, culpa, urgencia de ceder, rumiación…) notas activos ahora.': 'Check which internal blocks (fear of conflict, guilt, urge to give in, rumination…) feel active right now.',
+    'Alimentar la Hoja de Ruta Sugerida para recomendarte el ejercicio ACT más útil.': 'Feed your Suggested Route to recommend the most useful ACT exercise right now.',
+    'Cruzar localmente tu Foco, tus barreras activas y tu Autobús ACT sin enviar datos fuera.': 'Cross-reference your Focus, active barriers, and ACT Bus locally without sending any data out.',
+    'Proponerte las herramientas ACT que mejor encajan con tu bloqueo actual.': 'Suggest the ACT tools that best match your current block.',
+
+    '📊 Resumen de Progresión': '📊 Progress Summary',
+    '💡 ¿Bloqueado con la hoja en blanco? Ver ejemplos': '💡 Stuck on a blank page? Show examples',
+    '▴ Ocultar ejemplos': '▴ Hide examples',
+    'Escribe con tus propias palabras cómo quieres actuar en este ámbito...': 'Write in your own words how you want to show up in this area...',
+    '⭐ Valor Principal (Portada)': '⭐ Primary Value (Home)',
+    '⭐ Fijar como Principal': '⭐ Set as Primary',
+    '🔭 Preguntas guía para inspirarte': '🔭 Guiding questions for inspiration',
+    'Donde duele:': 'Where it hurts:',
+    'Detrás de lo que te frustra aquí, ¿qué cualidad humana te gustaría encarnar?': 'Behind what frustrates you here, what human quality would you like to embody?',
+    'Sin miedo ni culpa:': 'Without fear or guilt:',
+    'Si hoy no mandaran el miedo ni la culpa, ¿cómo actuarías?': 'If fear and guilt were not in charge today, how would you act?',
+    'Tu huella:': 'Your legacy:',
+    '¿Qué te gustaría que recordaran quienes te importan de cómo te comportaste?': 'What would you like people you care about to remember about how you showed up?',
+    'Tu dignidad:': 'Your dignity:',
+    '¿Qué forma de actuar aquí te haría sentir en paz contigo al mirarte al espejo?': 'What way of acting here would leave you at peace looking in the mirror?',
+    '💎 ¿Qué es un Valor en ACT?': '💎 What is a Value in ACT?',
+    'Tener una brújula clara que guía toda la app cuando aparece la duda o el miedo.': 'Have a clear compass guiding the whole app whenever doubt or fear shows up.',
+    'El valor que marques como «Valor Principal (Portada)» aparece destacado en Inicio y en momentos de crisis.': 'The value you mark as «Primary Value (Home)» appears highlighted on Start and during tough moments.',
+    '🔭 Preguntas guía para descubrir valores (ACT)': '🔭 Guiding questions to discover values (ACT)',
+    'Usar 4 perspectivas clínicas de ACT para descubrir qué cualidad humana quieres encarnar en este ámbito.': 'Use 4 classic ACT lenses to uncover what human quality you want to embody in this area.',
+    'Salir del «¿qué debería hacer?» para conectar con lo que de verdad te importa.': 'Step out of «what should I do?» and connect with what truly matters to you.',
+    'Son 4 preguntas clásicas de Terapia de Aceptación y Compromiso (Steven C. Hayes, Kelly Wilson y Russ Harris) pensadas para inspirarte antes de elegir semillas o escribir tu frase.': 'Four classic Acceptance & Commitment Therapy (ACT) prompts (Steven C. Hayes, Kelly Wilson, and Russ Harris) to inspire you before picking seeds or writing your statement.',
+    '• Donde duele (Hayes): «Sufrimos donde nos importa»; detrás de tu frustración suele haber algo valioso que quieres cuidar.': '• Where it hurts (Hayes): «We hurt where we care»; behind your frustration sits something valuable you want to protect.',
+    '• Sin miedo ni culpa (Pregunta del milagro): cómo elegirías comportarte si el miedo al rechazo no decidiera hoy.': '• Without fear or guilt (Miracle question): how you would choose to act if fear of rejection had no vote today.',
+    '• Tu huella (Wilson / Hayes): qué cualidad humana quieres que recuerden quienes te quieren.': '• Your legacy (Wilson / Hayes): what human quality you want the people you love to remember.',
+    '• Tu dignidad: qué acción te deja en paz contigo al mirarte al espejo.': '• Your dignity: what action leaves you at peace looking in the mirror.',
+    'No hace falta elegir ninguna: léelas solo para inspirarte y construye tu frase libremente.': 'No need to pick one: just read them for inspiration and craft your statement freely.',
+    '⚓ Tarjetas de Anclaje en Lecturas: Activadas': '⚓ Anchor Cards in Readings: Enabled',
+    '⚓ Tarjetas de Anclaje en Lecturas: Desactivadas': '⚓ Anchor Cards in Readings: Disabled',
+    'Tarjetas de Anclaje activadas': 'Anchor Cards enabled',
+    'Tarjetas de Anclaje ocultas': 'Anchor Cards hidden',
+    '💎 Tus Valores Faro («Yo»):': '💎 Your Guiding Values ("Self"):',
+    'Valores ACT universales:': 'Universal ACT values:',
+    '📖 Lecturas y Conceptos ACT': '📖 ACT Concepts & Readings',
+    'Elige un concepto para leer su explicación breve y practicar sus dinámicas guiadas.': 'Pick a concept to read its short explanation and practice its guided activities.',
+    'Explorar →': 'Explore →',
+    '📖 Lecturas breves': '📖 Short readings',
+    '▾ Leer explicación completa (1 min)': '▾ Read full explanation (1 min)',
+    '▴ Ocultar lectura': '▴ Hide reading',
+    '🎯 Dinámicas guiadas para practicar': '🎯 Guided activities to practice',
+    '💎 ¿Qué valor(es) perturba? (opcional)': '💎 Which value(s) does it disrupt? (optional)',
+    '▴ Ocultar listado': '▴ Hide list',
+    '🗑️ Borrar': '🗑️ Delete',
+    '✏️ Editar Tarjeta de Anclaje / Mantra ACT': '✏️ Edit ACT Anchor / Mantra Card',
+    'Anclaje ACT actualizado ⚓': 'ACT anchor updated ⚓',
+    'Anclaje eliminado': 'Anchor deleted',
+    '🧭 Rumbo del Autobús (Todos tus Valores)': '🧭 Bus Destination Sign (All Your Values)',
+    'Editar Valores →': 'Edit Values →',
+    'Todos los valores': 'All values',
+    '💎 Valores que perturba:': '💎 Values it disrupts:',
+    '💎 ¿Qué valor(es) intenta perturbar o desviar este pasajero? (opcional)': '💎 Which value(s) does this passenger try to disrupt or steer away from? (optional)',
+    'Puedes marcar 1 o varios valores hacia los que este pasajero intenta hacerte girar.': 'You can select 1 or more values that this passenger tries to pull you away from.',
+    '✨ Anclaje en Foco': '✨ Featured Anchor',
+    '🔄 Siguiente': '🔄 Next',
+    'Aún no tienes tarjetas de anclaje guardadas. Crea la primera para verla aquí y en tu botón SOS.': 'You have no saved anchor cards yet. Create your first one to see it here and in your SOS button.',
+    '1. ¿En qué situación dudas o sientes presión?': '1. In what situation do you doubt or feel pressure?',
+    'Describe con tus palabras la situación en 1 línea...': 'Describe the situation in your own words in 1 line...',
+    '💡 ¿Bloqueado? Ver ejemplos de situaciones': '💡 Stuck? Show situation examples',
+    '2. ¿Qué te está frenando ahora mismo? (opcional)': '2. What is holding you back right now? (optional)',
+    '✏️ Otro bloqueo / Escribirlo yo': '✏️ Another block / Write my own',
+    'Escribe qué sientes que te frena...': 'Write what you feel is holding you back...',
+    'Elegir Valor y Acción': 'Choose Value & Action',
+    '1. ¿Qué Valor guía tu respuesta hoy?': '1. Which Value guides your response today?',
+    '💎 Tus Valores («Yo»):': '💎 Your Values ("Self"):',
+    'Escribe tu valor (ej: Presencia, Honestidad, Cuidado, Curiosidad...)': 'Write your value (e.g., Presence, Honesty, Care, Curiosity...)',
+    '▴ Ocultar ejemplos de valores': '▴ Hide value examples',
+    '💡 ¿Bloqueado? Ver ejemplos de valores': '💡 Stuck? Show value examples',
+    'Escribe con tus palabras una micro-acción concreta para hoy...': 'Write a concrete micro-action for today in your own words...',
+    '💡 ¿Necesitas ideas? Ver ejemplos de micro-acciones': '💡 Need ideas? Show micro-action examples',
+    'Escribe o elige el valor que guía tu respuesta': 'Write or pick the value guiding your response',
+    'Escribe o elige una micro-acción concreta': 'Write or pick a concrete micro-action',
+    '💡 ¿Bloqueado? Ver ejemplos de pensamientos': '💡 Stuck? Show thought examples',
+    'Escribe el pensamiento que te atrapa ahora mismo...': 'Write the thought catching you right now...',
+    '[tu pensamiento]': '[your thought]',
+    'Valor guía (ej: Honestidad, Presencia, Cuidado...)': 'Guiding value (e.g., Honesty, Presence, Care...)',
+    '💡 ¿Bloqueado? Ver ejemplos de respuestas, valores y acciones': '💡 Stuck? Show response, value, and action examples',
+    '¿Qué pensamiento o sensación incómoda llevas contigo mientras avanzas?': 'What uncomfortable thought or feeling are you carrying with you as you move forward?',
+    '💡 Ver ejemplos de pasajeros': '💡 Show passenger examples',
+    'Otro ámbito': 'Other area',
+    'Escribe tu ámbito (ej: Salud, Crianza, Creatividad, Estudios...)': 'Write your area (e.g., Health, Parenting, Creativity, Studies...)',
+    'Escribe el nombre del ámbito personalizado': 'Write the name of your custom area',
+    'Escribe cómo quieres actuar en este ámbito (o abre un ejemplo)': 'Write how you want to act in this area (or open an example)',
+    '🌱 ¿En qué gesto pequeño se nota este valor? (opcional)': '🌱 What small action shows this value? (optional)',
+    'Escribe un micro-gesto concreto y realizable...': 'Write a concrete, doable micro-action...',
+    '🛡️ ¿Qué incomodidad estás dispuesto/a a sostener por él? (opcional)': '🛡️ What discomfort are you willing to hold for it? (optional)',
+    'Escribe qué emoción o duda aceptarías sentir...': 'Write what emotion or doubt you would be willing to feel...',
+    '💡 ¿Necesitas ideas? Ver ejemplos': '💡 Need ideas? Show examples',
+    'Ejemplos de micro-gesto:': 'Micro-action examples:',
+    'Ejemplos de disposición:': 'Willingness examples:',
+    'Escribe con tus palabras qué dice ese pensamiento/miedo, de qué intenta protegerte y cómo le respondes.': 'Write in your own words what that thought/fear says, what it tries to protect you from, and how you respond.',
+    '💡 ¿Bloqueado? Ver ejemplos de pasajeros y frases': '💡 Stuck? Show passenger and phrase examples',
+    'Ejemplos de arquetipos (opcional — puedes editar cualquier campo):': 'Archetype examples (optional — you can edit any field):',
+    'Nombre del pasajero (ej: La Duda, El Miedo al Qué Dirán...)': 'Passenger name (e.g., Doubt, Fear of Judgment...)',
+    'Escribe con tus palabras lo que te dice esa voz...': 'Write in your own words what that voice tells you...',
+    'Ej: De quedar mal, de sufrir rechazo o fallar...': 'E.g.: Looking bad, rejection, or failing...',
+    'Ej: Callarme, posponer, evitar la escena...': 'E.g.: Staying silent, postponing, avoiding the scene...',
+    'Describe tu caso con tus palabras o abre ejemplos si te quedas en blanco.': 'Describe your case in your own words or open examples if you get stuck.',
+    '💡 ¿Bloqueado? Ver plantillas de ejemplo': '💡 Stuck? Show example templates',
+    '▴ Ocultar plantillas de ejemplo': '▴ Hide example templates',
+    '💡 ¿Bloqueado? Ver ejemplos': '💡 Stuck? Show examples',
+    'Escribe la etiqueta fija que te dices...': 'Write the rigid label you tell yourself...',
+    'Describe qué te duele o qué temes...': 'Describe what hurts or what you fear...',
+    'Describe brevemente con tus palabras qué ocurrió...': 'Briefly describe what happened in your own words...',
+    '⚡ ¿Qué hice al final?': '⚡ What did I end up doing?',
+    'Cómo actuaste por fuera...': 'How you acted on the outside...',
+    'Escribe con tus palabras qué quieres llevar a sesión...': 'Write in your own words what you want to bring to session...',
+    '💡 ¿Bloqueado? Ver inicios de ejemplo': '💡 Stuck? Show starter examples',
+    'Esta semana me di cuenta de que...': 'This week I noticed that...',
+    'Me costó sostener lo que necesitaba ante...': 'It was hard to stand by what I needed when...',
+    'Quiero trabajar en sesión...': 'I want to work on in session...',
+    '💎 Mis Valores': '💎 My Values',
+    'En ACT un valor no es una meta que se tacha, sino cómo eliges actuar en lo que te importa.': 'In ACT, a value is not a goal you check off, but how you choose to act in what matters to you.',
+    'Aún no has definido valores. Pulsa el botón para construir tu primer valor en 2 pasos.': 'You have not defined any values yet. Click the button to build your first value in 2 steps.',
+    'Observa tus bucles automáticos y diseña pequeños experimentos de cambio.': 'Observe your automatic loops and design small experiments for change.',
+    'Anota ideas, bucles o dudas entre sesiones para llevar un resumen clínico a consulta.': 'Jot down ideas, loops, or questions between sessions to bring a clinical brief to therapy.',
+    '🎯 Talleres en calma': '🎯 Calm-state workshops',
+    '⚡ Practicar trucos rápidos en el Botiquín →': '⚡ Practice quick tricks in the First-Aid Kit →',
+    '🌿 En silencio': '🌿 Quiet now',
+    '💺 Volver a asientos traseros': '💺 Back to rear seats',
+    '🌿 Ya no me desvía': '🌿 No longer steers me off course',
+    'Siguen en tu historia, pero ya no te hacen girar el volante.': 'Still part of your story, no longer turning the wheel.',
+    '🚦 Ensayar respuesta (1 min)': '🚦 Practice response (1 min)',
+    '1. ¿Qué pasajero acaba de gritar junto al volante?': '1. Which passenger just shouted near the wheel?',
+    'Nombre del miedo o pensamiento...': 'Name of the fear or thought...',
+    '📢 ¿Qué te dice o desvío te pide?': '📢 What does it tell you or ask you to do?',
+    'Qué frase te dice para hacerte girar...': 'What phrase does it say to pull you off course...',
+    '🛡️ ¿De qué intenta protegerte? (opcional)': '🛡️ What is it trying to protect you from? (optional)',
+    'Ej: De quedar mal, sufrir rechazo o fallar...': 'E.g.: Looking bad, rejection, or failing...',
+    '💡 Ver ejemplos': '💡 Show examples',
+    '🧭 2. Tu rumbo': '🧭 2. Your direction',
+    'Ni obedecer el desvío ni parar a discutir: reconócelo, siéntalo atrás y sigue conduciendo.': 'Do not obey the detour or stop to argue: acknowledge it, sit it in the back, and keep driving.',
+    '3. Ensaya tu respuesta al pasajero:': '3. Practice your response to the passenger:',
+    'Escribe cómo le respondes sin cederle el volante...': 'Write how you respond without handing over the wheel...',
+    '💺 Sentar atrás y seguir conduciendo': '💺 Sit in back & keep driving',
+    '1. Pasajero junto al volante': '1. Passenger near the wheel',
+    'Agrupadas por área ACT. Pulsa en cualquier miniguía para desplegar su explicación y sus dinámicas guiadas.': 'Grouped by ACT area. Tap any mini-guide to expand its explanation and guided activities.',
+    '🧠 Defusión': '🧠 Defusion',
+    '🛡️ Límites': '🛡️ Boundaries',
+    '🫂 Aceptación': '🫂 Acceptance',
+    '⚓ Momento Presente': '⚓ Present Moment',
+    'Defusión Cognitiva': 'Cognitive Defusion',
+    '🧠 Defusión Cognitiva': '🧠 Cognitive Defusion',
+    'Tomar distancia de pensamientos rígidos y etiquetas («soy…»).': 'Step back from rigid thoughts and self-labels («I am…»).',
+    'Límites y Soberanía': 'Boundaries & Sovereignty',
+    '🛡️ Límites y Soberanía': '🛡️ Boundaries & Sovereignty',
+    'Decir «no» sin sobre-explicarte y frenar el impulso de rescate.': 'Say «no» without over-explaining and pause the rescue reflex.',
+    'Aceptación y Compasión': 'Acceptance & Compassion',
+    '🫂 Aceptación y Compasión': '🫂 Acceptance & Compassion',
+    'Sostener la incomodidad ajena y soltar el dolor sucio de culpa.': 'Hold space for others’ discomfort and let go of dirty guilt.',
+    'Momento Presente y Regulación': 'Present Moment & Grounding',
+    '⚓ Momento Presente y Regulación': '⚓ Present Moment & Grounding',
+    'Echar el ancla en medio de la tormenta y regular la postura corporal.': 'Drop anchor in the storm and settle your physical posture.',
+    'Taller interactivo': 'Interactive workshop',
+    'El Deconstructor del "Yo Soy"': 'The "I Am" Deconstructor',
+    '▾ Leer y ver dinámicas': '▾ Read & see activities',
+    '▴ Ocultar lectura y dinámicas': '▴ Hide reading & activities',
+    '🎯 Dinámicas y ejercicios guiados que valen para trabajar esto:': '🎯 Guided activities & exercises for this area:',
+    'Practicar →': 'Practice →',
+    'Abrir taller →': 'Open workshop →',
+    'No hay miniguías que coincidan con este filtro.': 'No mini-guides match this filter.',
+    'Actividad Reciente': 'Recent Activity',
+    'Para repasar tus cambios recientes en Khōra o dejar apuntada una pequeña victoria o aprendizaje del día.': 'To review your recent changes in Khōra or jot down a small win or takeaway from today.',
+    '1. Revisa la línea temporal de cambios en tu foco, valores, barreras y pasajeros.': '1. Review the timeline of updates across your focus, values, barriers, and passengers.',
+    '2. Escribe una micro-victoria o aprendizaje rápido abajo y pulsa «📝 Anotar».': '2. Write a quick micro-win or insight below and tap «📝 Jot down».',
+    '3. Vuelve aquí cuando necesites recordar todo lo que ya estás moviendo aunque cueste.': '3. Come back whenever you need a reminder of everything you are already moving forward, even when it feels hard.',
+    'Mi Foco': 'My Focus',
+    'Mis Patrones': 'My Patterns',
+    'Para situar qué tema te preocupa ahora, marcar qué barreras se te activan y ver qué ejercicio te ayuda más.': 'To pin down what is weighing on you right now, check active barriers, and see which exercise helps most.',
+    '1. A la izquierda escribe tu Foco actual, elige su ámbito y marca tus «Barreras que se te activan».': '1. On the left, write your current Focus, choose its area, and check your «Barriers getting triggered».',
+    '3. Pulsa cualquiera de las tarjetas sugeridas para ir directo a trabajarlo.': '3. Tap any suggested card to jump straight into working on it.',
+    'Para estudiar en frío un bucle repetitivo (detonante → sumisión → falsa paz → coste) y probar un pequeño giro realista.': 'To calmly examine a repeating loop (trigger → submission → false peace → cost) and test a small realistic shift.',
+    '1. Pulsa «+ Nuevo Patrón» y dibuja las 4 piezas del bucle junto con su ámbito.': '1. Tap «+ New Pattern» and map the 4 steps of the loop along with its life area.',
+    '2. Elige 1 micro-experimento semanal usando los generadores de Práctica de Opuestos.': '2. Choose 1 weekly micro-experiment using the Opposite Action generators.',
+    '3. Haz check-in cuando quieras para contrastar qué ocurrió en la realidad frente a lo que temía tu mente.': '3. Check in whenever you like to compare what happened in reality against what your mind feared.',
+    '🌱 Actividad Reciente y Micro-Victorias': '🌱 Recent Activity & Micro-Wins',
+    'Revisar tus últimos pasos en Khōra (foco, valores, barreras y pasajeros) y anotar micro-victorias.': 'Review your latest steps in Khōra (focus, values, barriers, and passengers) and jot down micro-wins.',
+    'Ver tu constancia y tus pequeños avances cotidianos en un mismo sitio.': 'See your consistency and small daily wins in one place.',
+    '• Muestra una línea temporal breve con tus últimos cambios de foco, valores, barreras y pasajeros.': '• Shows a short timeline of your latest focus, value, barrier, and passenger updates.',
+    '• Puedes anotar aprendizajes rápidos o micro-victorias del día.': '• Lets you jot down quick learnings or daily micro-wins.',
+    'Aún no hay actividad registrada. Tus cambios de foco, valores y notas irán apareciendo aquí.': 'No activity logged yet. Your focus updates, values, and notes will appear here.',
+    'Reunir tus indicadores de valores construidos, barreras detectadas, registros ACT y elecciones por valores.': 'Gather your counts of built values, active barriers, ACT logs, and value-driven choices.',
+    'Ver de un vistazo tu constancia y tus últimos movimientos hacia tus valores.': 'See your consistency and recent steps toward your values at a glance.',
+    'Un registro ligero de tus pasos recientes en Khōra.': 'A lightweight snapshot of your recent steps in Khōra.',
+    'La flexibilidad psicológica se construye con pequeños gestos repetidos, no con días perfectos.': 'Psychological flexibility is built through small repeated gestures, not perfect days.',
+    '• Muestra cuántos valores, barreras y episodios has trabajado hasta ahora.': '• Shows how many values, barriers, and episodes you have worked through so far.',
+    '• Debajo recoge una línea temporal breve con tus últimos cambios de foco, valores y pasajeros.': '• Below sits a brief timeline of your latest focus, value, and passenger updates.',
+
+    '📈 Perfil de Flexibilidad Psicológica (Hexaflex)': '📈 Psychological Flexibility Profile (Hexaflex)',
+    'Autoevaluar del 0 al 10 los 6 procesos ACT (Aceptación, Defusión, Presente, Yo Contexto, Valores y Acción).': 'Self-rate the 6 ACT processes from 0 to 10 (Acceptance, Defusion, Present, Self-as-Context, Values, and Action).',
+    'Visualizar qué proceso tienes más fuerte y cuál necesita entrenamiento suave.': 'Visualize which process is strongest right now and which one could use gentle practice.',
+    'El Hexaflex de Steven Hayes resume las 6 habilidades que componen la flexibilidad psicológica.': 'Steven Hayes’ Hexaflex summarizes the 6 core skills that make up psychological flexibility.',
+    'No hay puntuaciones buenas o malas: es un mapa orientativo para saber qué herramienta practicar.': 'There are no good or bad scores: it is a guiding map to see which skill to practice.',
+    '1. Pulsa «Evaluar mi Hexaflex (1 min)» para puntuar cómo te has sentido en cada proceso.': '1. Tap «Rate my Hexaflex (1 min)» to score how you have felt across each process.',
+    '2. El gráfico radar dibuja tu equilibrio actual entre aceptación, defusión, presencia y acción.': '2. The radar chart plots your current balance across acceptance, defusion, presence, and action.',
+    '3. Repítelo cada cierto tiempo para observar qué área se va fortaleciendo.': '3. Revisit it from time to time to see which area grows stronger.',
+
+    '📈 Tendencias Emocionales y Evolución': '📈 Emotional Trends & Evolution',
+    'Comparar en el tiempo la intensidad de tus olas emocionales frente al peaje de falsa paz y resentimiento.': 'Compare your emotional wave intensity over time against your false-peace toll and resentment.',
+    'Observar con perspectiva cómo evoluciona tu margen de respuesta.': 'See with perspective how your room to respond evolves over time.',
+    'Cruza en una sola gráfica tus sesiones de Espacio ACT y tus registros de Paz Falsa.': 'Brings your ACT Space sessions and False Peace entries together on one chart.',
+    'En ACT el progreso no es dejar de sentir emociones intensas, sino ceder menos al piloto automático.': 'In ACT, progress does not mean never feeling intense emotions—it means giving in to autopilot less often.',
+    '• Línea verde: intensidad emocional procesada en Espacio ACT.': '• Green line: emotional intensity processed in ACT Space.',
+    '• Nodos cálidos y línea discontinua: peaje de autoabandono y resentimiento acumulado en Paz Falsa.': '• Warm dots & dashed line: self-abandonment toll and cumulative resentment from False Peace.',
+
+    '📈 Mapa de Calor por Contextos (Sumisión Emocional)': '📈 Context Heatmap (Emotional Submission)',
+    'Agrupar tus registros de Falsa Paz según el ámbito vital donde ocurrieron (Trabajo, Pareja, Familia…).': 'Group your False Peace entries by the life area where they occurred (Work, Partner, Family…).',
+    'Identificar en qué entorno te cuesta más poner límites.': 'Spot which environment makes setting boundaries hardest for you.',
+    'Muestra cuántos episodios de Falsa Paz se concentran en cada área de tu vida.': 'Shows how many False Peace episodes cluster in each area of your life.',
+    'Detectar el contexto donde más cedes te ayuda a preparar frases ancla específicas antes de entrar en él.': 'Spotting where you give in most helps you prepare targeted anchor phrases before stepping into that context.',
+    '• Te permite ver de un vistazo si tu mayor desgaste está en Trabajo, Pareja, Familia o Amigos.': '• Lets you see at a glance whether your heaviest drain occurs at Work, with your Partner, Family, or Friends.',
+    '• Úsalo para decidir en qué ámbito construir tu próximo Valor Faro o micro-experimento en el Radar.': '• Use it to choose which area needs your next Lighthouse Value or Pattern Radar micro-experiment.',
+
+    // Canvas chart axis & labels
+    'Ene': 'Jan',
+    'Abr': 'Apr',
+    'Ago': 'Aug',
+    'Dic': 'Dec'
+  };
+
+  globalThis.KHORA_I18N_DICT = {
+    DOMAIN_MAP_EN,
+    EMOTION_MAP_EN,
+    BODY_ZONES_EN,
+    PHYSICAL_CHIPS_EN,
+    VALUES_EN,
+    ACT_GLOSSARY_EN,
+    ACT_GLOSSARY_PATTERNS_EN,
+    DEFAULT_ANCHORS_EN,
+    DEFAULT_PASSENGERS_EN,
+    SEED_VALUE_EN,
+    SEED_REFLECTION_EN,
+    DEMO_ITEMS_EN,
+    CATALOGS_EN,
+    EXACT_MAP
+  };
+})();

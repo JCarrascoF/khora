@@ -8,19 +8,19 @@ class RadarPatronesApp {
     this.selectedCategory = 'all'; // 'all' | 'Pareja' | 'Trabajo' | 'Familia' | 'Amigos' | 'Otro'
     this.oppositesTemplates = [
       {
-        label: '⏱️ Variar el Tiempo (Romper la urgencia)',
+        label:'Variar el Tiempo (Romper la urgencia)',
         text: 'Esta semana, ante el detonante, pediré 15 minutos antes de responder sí o no para consultar qué quiero realmente.'
       },
       {
-        label: '💬 Variar la Forma (Cero sobre-justificación)',
+        label:'Variar la Forma (Cero sobre-justificación)',
         text: 'Expresaré mi límite o preferencia en 1 sola frase amable, sosteniendo 30 segundos sin dar excusas.'
       },
       {
-        label: '🧘 Variar el Cuerpo (Romper el apocamiento)',
+        label:'Variar el Cuerpo (Romper el apocamiento)',
         text: 'Adoptaré la Postura del SÍ (hombros sueltos, respiración abierta) antes de contestar, en lugar de encogerme.'
       },
       {
-        label: '🔄 Hacer el Opuesto a Esconderme',
+        label:'Hacer el Opuesto a Esconderme',
         text: "En vez de decir 'me da igual', propondré abiertamente una opción que sí me apetezca."
       }
     ];
@@ -30,7 +30,7 @@ class RadarPatronesApp {
     return `
       <div class="form-group" style="margin-top: 8px; padding: 10px 12px; background: var(--bg-surface-elevated); border-radius: var(--radius-md); border: 1px dashed var(--sage-400);">
         <label class="form-label" style="font-size: 0.78rem; color: var(--sage-700); margin-bottom: 6px;">
-          🔀 Práctica de Opuestos (Generador de Micro-Variaciones — Steven C. Hayes):
+          Práctica de Opuestos (Generador de Micro-Variaciones — Steven C. Hayes):
         </label>
         <div style="display: flex; flex-direction: column; gap: 6px;" class="modal-grid-2col">
           ${this.oppositesTemplates.map(op => `
@@ -101,7 +101,7 @@ class RadarPatronesApp {
   renderEmptyState() {
     return `
       <div style="text-align: center; padding: 40px 20px; background-color: var(--bg-surface-elevated); border-radius: var(--radius-md);">
-        <div style="font-size: 2.2rem; margin-bottom: 10px;">🔬</div>
+<div style="font-size: 2.2rem; margin-bottom: 10px;"></div>
         <h3 class="card-title" style="font-size: 1.1rem;">No tienes patrones mapeados en este ámbito</h3>
         <p class="card-subtitle mt-2" style="max-width: 460px; margin: 0 auto; font-size: 0.88rem;">
           En los momentos de calma es cuando mejor podemos ver las trampas que nos tiende el piloto automático.
@@ -121,109 +121,82 @@ class RadarPatronesApp {
     const latestCheckin = checkins.length > 0 ? checkins[0] : null;
 
     return `
-      <div class="card" style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); margin-bottom: 24px; padding: 20px;">
-        <div class="flex-between" style="margin-bottom: 12px;">
+<article class="cozy-pattern-layer">
+  <div class="flex-between" style="margin-bottom: 14px; align-items: flex-start; gap: 12px;">
           <div>
-            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-              <span class="badge" style="background: var(--sage-100); color: var(--sage-800); margin-bottom: 6px;">
-                ${pattern.category}
-              </span>
-              ${window.stateManager?.isExampleItem?.(pattern) ? '<span class="badge example-item-badge" style="margin-bottom: 6px;">🧪 Ejemplo guía</span>' : ''}
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 4px;">
+        <span class="cozy-meta-tag">${pattern.category}</span>
+        ${window.stateManager?.isExampleItem?.(pattern) ? '<span class="cozy-meta-muted">Ejemplo guía</span>' : ''}
             </div>
-            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-top: 4px;">
-              ${pattern.title}
-            </h3>
+      <h3 class="cozy-pattern-title">${pattern.title}</h3>
           </div>
           <button type="button" class="btn-icon" data-delete-pattern-id="${pattern.id}" title="Eliminar patrón" style="width: 32px; height: 32px; border: none; background: transparent; color: var(--text-muted);">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
           </button>
         </div>
 
-        <!-- The 4-step loop diagram -->
-        <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 16px;">
-          <div style="background-color: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-md); border-left: 4px solid var(--accent-tension);">
-            <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--accent-tension); margin-bottom: 2px;">
-              1. Detonante Habitual
+  <!-- 4-step loop as quiet hairline sequence (no 4 colorful boxes) -->
+  <div class="cozy-loop-list">
+    <div class="cozy-loop-row">
+      <span class="cozy-loop-step">01 · Detonante habitual</span>
+      <p>${loop.trigger || '—'}</p>
             </div>
-            <div style="font-size: 0.88rem; color: var(--text-primary);">${loop.trigger || '—'}</div>
+    <div class="cozy-loop-row">
+      <span class="cozy-loop-step">02 · Respuesta automática</span>
+      <p>${loop.autoResponse || '—'}</p>
           </div>
-
-          <div style="background-color: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-md); border-left: 4px solid var(--accent-warmth);">
-            <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--accent-warmth); margin-bottom: 2px;">
-              2. Mi Respuesta Automática (Sumisión/Evitación)
+    <div class="cozy-loop-row">
+      <span class="cozy-loop-step">03 · Alivio inmediato (Paz Falsa)</span>
+      <p>${loop.shortTermGain || '—'}</p>
             </div>
-            <div style="font-size: 0.88rem; color: var(--text-primary);">${loop.autoResponse || '—'}</div>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div style="background-color: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-md); border-left: 4px solid var(--sage-400);">
-              <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--sage-600); margin-bottom: 2px;">
-                3. Alivio Inmediato (Falsa Paz)
-              </div>
-              <div style="font-size: 0.82rem; color: var(--text-secondary);">${loop.shortTermGain || '—'}</div>
-            </div>
-
-            <div style="background-color: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-md); border-left: 4px solid var(--accent-sorrow);">
-              <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--accent-sorrow); margin-bottom: 2px;">
-                4. Coste a Largo Plazo
-              </div>
-              <div style="font-size: 0.82rem; color: var(--text-secondary);">${loop.longTermCost || '—'}</div>
-            </div>
+    <div class="cozy-loop-row">
+      <span class="cozy-loop-step">04 · Coste a largo plazo</span>
+      <p>${loop.longTermCost || '—'}</p>
           </div>
         </div>
 
-        <!-- Weekly ACT Experiment Box -->
-        <div style="background: linear-gradient(135deg, rgba(87, 139, 116, 0.15), rgba(74, 122, 102, 0.05)); border: 1px dashed var(--sage-400); border-radius: var(--radius-md); padding: 16px; margin-bottom: 14px;">
-          <div class="flex-between">
-            <span style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--sage-700);">
-              🧪 El Experimento ACT de la Semana
-            </span>
-            <button type="button" class="btn-add-followup" data-edit-exp-id="${pattern.id}" style="font-size: 0.75rem;">
+  <!-- Weekly ACT Experiment as editorial quote block (no green gradient, no dashed box) -->
+  <div class="cozy-experiment-quote">
+    <div class="flex-between" style="gap: 10px;">
+      <span class="cozy-meta-accent">Experimento ACT de la semana</span>
+      <button type="button" class="btn-inline-link" data-edit-exp-id="${pattern.id}" style="font-size: 0.76rem;">
               Editar experimento
             </button>
           </div>
-          <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary); margin-top: 6px; line-height: 1.4;">
-            "${exp.text || 'Sin experimento definido todavía.'}"
-          </div>
+    <p class="cozy-value-quote" style="font-size: 1.02rem; margin-top: 6px;">
+      «${exp.text || 'Sin experimento definido todavía.'}»
+    </p>
         </div>
 
         <!-- Weekly Check-in Section -->
-        <div class="flex-between" style="border-top: 1px solid var(--border-subtle); padding-top: 12px;">
-          <div>
-            ${latestCheckin ? `
-              <span style="font-size: 0.8rem; color: var(--text-muted);">
-                Último check-in: <strong>${this.renderCheckinStatusBadge(latestCheckin.status)}</strong>
-              </span>
-            ` : `
-              <span style="font-size: 0.8rem; color: var(--text-muted);">
-                Aún no has hecho check-in esta semana
-              </span>
-            `}
-          </div>
-
-          <button type="button" class="btn-secondary" data-checkin-pattern-id="${pattern.id}" style="font-size: 0.82rem; padding: 6px 14px;">
-            📝 Check-in Semanal
+  <div class="flex-between" style="padding-top: 14px; border-top: 1px solid var(--border-subtle); gap: 12px; flex-wrap: wrap;">
+    <div style="font-size: 0.82rem; color: var(--text-muted);">
+      ${latestCheckin
+        ? `Último check-in: <strong>${this.renderCheckinStatusBadge(latestCheckin.status)}</strong>`
+        : 'Aún no has hecho check-in esta semana'}
+    </div>
+    <button type="button" class="btn-secondary" data-checkin-pattern-id="${pattern.id}" style="font-size: 0.8rem; padding: 6px 14px;">
+      Check-in Semanal
           </button>
         </div>
 
-        <!-- History of check-ins if any -->
         ${checkins.length > 0 ? `
-          <div style="margin-top: 12px; font-size: 0.82rem; background: var(--bg-surface); padding: 10px 14px; border-radius: var(--radius-sm);">
-            <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">Último aprendizaje registrado:</div>
-            <div style="color: var(--text-secondary); font-style: italic;">"${latestCheckin.learned}"</div>
+    <div style="margin-top: 12px; padding-left: 12px; border-left: 2px solid var(--border-subtle); font-size: 0.82rem; color: var(--text-secondary);">
+      <span style="color: var(--text-muted); display: block; font-size: 0.74rem; margin-bottom: 2px;">Último aprendizaje</span>
+      <span style="font-family: var(--font-serif); font-style: italic;">«${latestCheckin.learned}»</span>
           </div>
         ` : ''}
-      </div>
+</article>
     `;
   }
 
   renderCheckinStatusBadge(status) {
     if (status === 'completed') {
-      return '<span style="color: #426f5c;">🌟 Conseguido con éxito</span>';
+      return'<span style="color: var(--accent-calm);">Conseguido con éxito</span>';
     } else if (status === 'in_progress') {
-      return '<span style="color: #c98a58;">🌿 En progreso y aprendizaje</span>';
+      return'<span style="color: var(--accent-warmth);">En progreso y aprendizaje</span>';
     } else {
-      return '<span style="color: #607b8b;">💧 Postergado con compasión</span>';
+      return'<span style="color: var(--accent-sorrow);">Postergado con compasión</span>';
     }
   }
 
@@ -284,7 +257,7 @@ class RadarPatronesApp {
 
     const patternTemplates = [
       {
-        chip: '🤝 Ceder en planes por evitar malas caras',
+        chip:'Ceder en planes por evitar malas caras',
         title: 'Ceder en planes por miedo al enfado o frialdad',
         cat: 'Pareja',
         trigger: 'Me proponen un plan cuando estoy agotado/a o no me apetece.',
@@ -294,7 +267,7 @@ class RadarPatronesApp {
         exp: 'Pedir 15 minutos antes de responder sí o no para consultar qué quiero realmente.'
       },
       {
-        chip: '💼 Asumir carga extra en el trabajo sin decir no',
+        chip:'Asumir carga extra en el trabajo sin decir no',
         title: 'Asumir tareas fuera de horario o alcance por miedo a decepcionar',
         cat: 'Trabajo',
         trigger: 'Llega una petición urgente al final del día o fuera de mis funciones.',
@@ -304,7 +277,7 @@ class RadarPatronesApp {
         exp: 'Responder: «Puedo revisarlo mañana a primera hora o repriorizar lo actual».'
       },
       {
-        chip: '💬 Sobre-justificarme cuando alguien cambia el tono',
+        chip:'Sobre-justificarme cuando alguien cambia el tono',
         title: 'Dar mil explicaciones cuando noto silencio o frialdad ajena',
         cat: 'Familia',
         trigger: 'Alguien cercano suspira, cambia el tono o se queda serio.',
@@ -321,12 +294,12 @@ class RadarPatronesApp {
 
       <div style="margin-top: 8px; margin-bottom: 12px;">
         <button type="button" class="btn-inline-link" id="btn-radar-toggle-templates" style="font-size: 0.78rem;">
-          💡 ¿Bloqueado? Ver plantillas de ejemplo
+          ¿Bloqueado? Ver plantillas de ejemplo
         </button>
         <div class="quick-chips-row hidden" id="radar-templates-row" style="margin-top: 8px;">
           ${patternTemplates.map((t, idx) => `
             <button type="button" class="quick-fill-chip" data-pattern-template="${idx}">
-              ⚡ ${t.chip}
+              ${t.chip}
             </button>
           `).join('')}
         </div>
@@ -373,7 +346,7 @@ class RadarPatronesApp {
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="pat-exp">🧪 Experimento ACT de la Semana</label>
+<label class="form-label" for="pat-exp">Experimento ACT de la Semana</label>
         <textarea id="pat-exp" class="form-textarea" rows="2" style="min-height: 68px;" placeholder="Un micro-cambio pequeño y realista para esta semana..."></textarea>
         ${this.renderOppositesGeneratorHtml()}
       </div>
@@ -392,7 +365,7 @@ class RadarPatronesApp {
       if (!row) return;
       const isHidden = row.classList.toggle('hidden');
       e.currentTarget.textContent = isHidden
-        ? '💡 ¿Bloqueado? Ver plantillas de ejemplo'
+        ?'¿Bloqueado? Ver plantillas de ejemplo'
         : '▴ Ocultar plantillas de ejemplo';
     });
 
@@ -523,18 +496,18 @@ class RadarPatronesApp {
 
       <div class="form-group mt-4">
         <label class="form-label">¿Cómo resultó esta semana?</label>
-        <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
-          <label class="btn-secondary" style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left;">
+<div class="pref-radio-list">
+<label class="pref-radio-row">
             <input type="radio" name="chk-status" value="completed" checked>
-            <span><strong>🌟 Conseguido:</strong> Apliqué la micro-acción y sostuve la incomodidad</span>
+<span><strong>Conseguido:</strong> Apliqué la micro-acción y sostuve la incomodidad</span>
           </label>
-          <label class="btn-secondary" style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left;">
+<label class="pref-radio-row">
             <input type="radio" name="chk-status" value="in_progress">
-            <span><strong>🌿 En progreso:</strong> Lo intenté o me di cuenta justo a tiempo</span>
+<span><strong>En progreso:</strong> Lo intenté o me di cuenta justo a tiempo</span>
           </label>
-          <label class="btn-secondary" style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left;">
+<label class="pref-radio-row">
             <input type="radio" name="chk-status" value="delayed">
-            <span><strong>💧 Caí en el piloto:</strong> Cedo de nuevo pero me trato con compasión</span>
+<span><strong>Caí en el piloto:</strong> Cedo de nuevo pero me trato con compasión</span>
           </label>
         </div>
       </div>

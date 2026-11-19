@@ -1,0 +1,354 @@
+/* ==========================================================================
+   KHORA — Tu espacio ACT
+   Linen & Editorial Design System (2 Palettes × Light / Dark)
+   Default Palette: Avena y Arcilla (data-palette="arcilla")
+   Secondary Palette: Papel y Musgo (data-palette="musgo")
+   ========================================================================== */
+
+:root,
+[data-palette="arcilla"] {
+  --font-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, Cambria, serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Primary Accent Spectrum — Arcilla & Oliva (Avena y Arcilla Light) */
+  --sage-50: #f8f4ed;
+  --sage-100: #efe6db;
+  --sage-200: #e3d5c5;
+  --sage-300: #d1baa4;
+  --sage-400: #b88a74;
+  --sage-500: #96553e;
+  --sage-600: #7f4632;
+  --sage-700: #683827;
+  --sage-800: #4d291c;
+  --sage-900: #2e251f;
+
+  /* Earth & Linen Warm Spectrum */
+  --earth-50: #f8f4ed;
+  --earth-100: #f3ede4;
+  --earth-200: #eae1d5;
+  --earth-300: #ded2c2;
+  --earth-400: #c3b2a0;
+  --earth-500: #98887c;
+  --earth-600: #6e5f55;
+  --earth-700: #50433a;
+  --earth-800: #2e251f;
+
+  /* Emotional Accent Tones (Gentle, desaturated, WCAG AA calm) */
+  --accent-calm: #556651;
+  --accent-warmth: #96553e;
+  --accent-sorrow: #5e6d78;
+  --accent-tension: #9a4b38;
+  --accent-clarity: #4f6b64;
+
+  /* Default Light Mode — Avena y Arcilla */
+  --bg-primary: #f3ede4;
+  --bg-surface: #eae1d5;
+  --bg-surface-elevated: #e3d7c7;
+  --bg-surface-subtle: #efe8dd;
+  --bg-input: #f8f4ed;
+  --border-subtle: #ded2c2;
+  --border-focus: #96553e;
+
+  --text-primary: #2e251f;
+  --text-secondary: #5f5147;
+  --text-muted: #76675c;
+  --text-on-accent: #faf6f0;
+
+  --card-shadow: none;
+  --card-shadow-hover: none;
+  --modal-overlay: rgba(34, 26, 21, 0.48);
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-full: 9999px;
+
+  --transition-fast: 0.16s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Mode — Avena y Arcilla (Nogal / Cacao profundo) */
+[data-theme="dark"],
+[data-theme="dark"][data-palette="arcilla"] {
+  --sage-50: #201a17;
+  --sage-100: #2a211d;
+  --sage-200: #3c2e28;
+  --sage-300: #d18b70;
+  --sage-400: #d18b70;
+  --sage-500: #c47c61;
+  --sage-600: #b26b50;
+  --sage-700: #e0a58e;
+  --sage-800: #f2d4c7;
+  --sage-900: #faf0ea;
+
+  --accent-calm: #8fa689;
+  --accent-warmth: #d18b70;
+  --accent-sorrow: #8fa6b5;
+  --accent-tension: #dc826a;
+  --accent-clarity: #87aba1;
+
+  --bg-primary: #1b1613;
+  --bg-surface: #241e1a;
+  --bg-surface-elevated: #2d2520;
+  --bg-surface-subtle: #27201c;
+  --bg-input: #201a17;
+  --border-subtle: #362d27;
+  --border-focus: #d18b70;
+
+  --text-primary: #efe6da;
+  --text-secondary: #c2b3a4;
+  --text-muted: #9a8b7d;
+  --text-on-accent: #1b1613;
+
+  --card-shadow: none;
+  --card-shadow-hover: none;
+  --modal-overlay: rgba(12, 9, 7, 0.72);
+}
+
+/* Secondary Palette — Papel y Musgo (Light) */
+[data-palette="musgo"] {
+  --sage-50: #f6f3ec;
+  --sage-100: #e7ede9;
+  --sage-200: #d0ddd5;
+  --sage-300: #a8bfb2;
+  --sage-400: #6d8c7c;
+  --sage-500: #3b5246;
+  --sage-600: #2f4339;
+  --sage-700: #25362d;
+  --sage-800: #1d2a23;
+  --sage-900: #16201b;
+
+  --accent-calm: #3b5246;
+  --accent-warmth: #8c6849;
+  --accent-sorrow: #596f7b;
+  --accent-tension: #8c4a3b;
+  --accent-clarity: #496c75;
+
+  --bg-primary: #f6f3ec;
+  --bg-surface: #efeae0;
+  --bg-surface-elevated: #e8e2d5;
+  --bg-surface-subtle: #f2ede3;
+  --bg-input: #faf8f3;
+  --border-subtle: #ddd6c8;
+  --border-focus: #3b5246;
+
+  --text-primary: #1f1d1a;
+  --text-secondary: #58524a;
+  --text-muted: #716a60;
+  --text-on-accent: #f8f6f1;
+}
+
+/* Secondary Palette — Papel y Musgo (Dark) */
+[data-theme="dark"][data-palette="musgo"] {
+  --sage-50: #1c1b18;
+  --sage-100: #222b26;
+  --sage-200: #2f3d36;
+  --sage-300: #9cb9a9;
+  --sage-400: #86a896;
+  --sage-500: #779c88;
+  --sage-600: #5c7f6c;
+  --sage-700: #a7c4b4;
+  --sage-800: #d5e4dc;
+  --sage-900: #eef4f0;
+
+  --accent-calm: #86a896;
+  --accent-warmth: #c49b76;
+  --accent-sorrow: #8fa6b3;
+  --accent-tension: #cf7e6a;
+  --accent-clarity: #87a9b3;
+
+  --bg-primary: #171614;
+  --bg-surface: #201e1b;
+  --bg-surface-elevated: #282521;
+  --bg-surface-subtle: #23211e;
+  --bg-input: #1c1b18;
+  --border-subtle: #312e29;
+  --border-focus: #86a896;
+
+  --text-primary: #eae4d8;
+  --text-secondary: #b7afa2;
+  --text-muted: #8f887c;
+  --text-on-accent: #151916;
+}
+
+/* Third Palette — Sepia y Pergamino (Light) */
+[data-palette="sepia"] {
+  --sage-50: #f9f4e6;
+  --sage-100: #efe4cb;
+  --sage-200: #e3d3b1;
+  --sage-300: #ccb488;
+  --sage-400: #ab8656;
+  --sage-500: #8c5e35;
+  --sage-600: #754d2a;
+  --sage-700: #5c3c20;
+  --sage-800: #422b17;
+  --sage-900: #34281b;
+
+  --accent-calm: #60694a;
+  --accent-warmth: #8c5e35;
+  --accent-sorrow: #6a7073;
+  --accent-tension: #964b38;
+  --accent-clarity: #5b6e68;
+
+  --bg-primary: #f4ecd8;
+  --bg-surface: #ebe0c6;
+  --bg-surface-elevated: #e2d4b4;
+  --bg-surface-subtle: #f0e6ce;
+  --bg-input: #f9f3e4;
+  --border-subtle: #d8c8a6;
+  --border-focus: #8c5e35;
+
+  --text-primary: #34281b;
+  --text-secondary: #62503b;
+  --text-muted: #7c6951;
+  --text-on-accent: #faf5e8;
+}
+
+/* Third Palette — Sepia y Pergamino (Dark) */
+[data-theme="dark"][data-palette="sepia"] {
+  --sage-50: #221c15;
+  --sage-100: #2c241a;
+  --sage-200: #3d3224;
+  --sage-300: #d4aa77;
+  --sage-400: #cfa06b;
+  --sage-500: #c2915b;
+  --sage-600: #ad7e4b;
+  --sage-700: #e0bd93;
+  --sage-800: #f0dbbe;
+  --sage-900: #faf0df;
+
+  --accent-calm: #9aa67e;
+  --accent-warmth: #cfa06b;
+  --accent-sorrow: #9aa3a8;
+  --accent-tension: #d6826a;
+  --accent-clarity: #90aba2;
+
+  --bg-primary: #1d1812;
+  --bg-surface: #262018;
+  --bg-surface-elevated: #30281e;
+  --bg-surface-subtle: #2a231a;
+  --bg-input: #221c15;
+  --border-subtle: #3b3125;
+  --border-focus: #cfa06b;
+
+  --text-primary: #efe3c8;
+  --text-secondary: #c4b496;
+  --text-muted: #99896e;
+  --text-on-accent: #1d1812;
+}
+
+/* Fourth Palette — Niebla y Pastel (Grises serenos + azul grisáceo pastel — Light) */
+[data-palette="niebla"] {
+  --sage-50: #f6f7f9;
+  --sage-100: #eaedf0;
+  --sage-200: #d9dfe5;
+  --sage-300: #b8c2cc;
+  --sage-400: #8796a6;
+  --sage-500: #5b6b7c;
+  --sage-600: #4c5b6b;
+  --sage-700: #3d4a57;
+  --sage-800: #2e3740;
+  --sage-900: #22262b;
+
+  --accent-calm: #64827a;
+  --accent-warmth: #8c7b82;
+  --accent-sorrow: #5b6b7c;
+  --accent-tension: #a36a70;
+  --accent-clarity: #637784;
+
+  --bg-primary: #f2f3f5;
+  --bg-surface: #e8eaee;
+  --bg-surface-elevated: #dfe2e7;
+  --bg-surface-subtle: #eceef1;
+  --bg-input: #f8f9fa;
+  --border-subtle: #d4d8de;
+  --border-focus: #5b6b7c;
+
+  --text-primary: #22262b;
+  --text-secondary: #515862;
+  --text-muted: #6d7580;
+  --text-on-accent: #f7f8fa;
+}
+
+/* Fourth Palette — Niebla y Pastel (Grises pizarra + azul grisáceo pastel — Dark) */
+[data-theme="dark"][data-palette="niebla"] {
+  --sage-50: #1e2125;
+  --sage-100: #25292f;
+  --sage-200: #323740;
+  --sage-300: #a2b1c2;
+  --sage-400: #95a5b8;
+  --sage-500: #8fa0b2;
+  --sage-600: #7d8fa2;
+  --sage-700: #b5c2d0;
+  --sage-800: #d5dee8;
+  --sage-900: #edf1f5;
+
+  --accent-calm: #92b5aa;
+  --accent-warmth: #bfa8b2;
+  --accent-sorrow: #8fa0b2;
+  --accent-tension: #cf969d;
+  --accent-clarity: #8da6b2;
+
+  --bg-primary: #1a1c20;
+  --bg-surface: #23262b;
+  --bg-surface-elevated: #2b2f36;
+  --bg-surface-subtle: #26292f;
+  --bg-input: #1f2226;
+  --border-subtle: #353a42;
+  --border-focus: #8fa0b2;
+
+  --text-primary: #e8ebf0;
+  --text-secondary: #b4bcc6;
+  --text-muted: #8b94a0;
+  --text-on-accent: #181a1e;
+}
+
+/* Fifth Palette — Personalizada (User-defined 3-color theme, auto-derived harmony) */
+[data-palette="custom"] {
+  --custom-bg: #f4f1ea;
+  --custom-text: #262420;
+  --custom-accent: #5d6e64;
+  --custom-on-accent: #faf8f4;
+
+  --bg-primary: var(--custom-bg);
+  --bg-surface: color-mix(in srgb, var(--custom-bg) 93%, var(--custom-text) 7%);
+  --bg-surface-elevated: color-mix(in srgb, var(--custom-bg) 88%, var(--custom-text) 12%);
+  --bg-surface-subtle: color-mix(in srgb, var(--custom-bg) 95%, var(--custom-text) 5%);
+  --bg-input: color-mix(in srgb, var(--custom-bg) 96%, #ffffff 4%);
+  --border-subtle: color-mix(in srgb, var(--custom-bg) 82%, var(--custom-text) 18%);
+  --border-focus: var(--custom-accent);
+
+  --text-primary: var(--custom-text);
+  --text-secondary: color-mix(in srgb, var(--custom-text) 72%, var(--custom-bg) 28%);
+  --text-muted: color-mix(in srgb, var(--custom-text) 54%, var(--custom-bg) 46%);
+  --text-on-accent: var(--custom-on-accent);
+
+  --sage-50: var(--bg-input);
+  --sage-100: color-mix(in srgb, var(--custom-accent) 14%, var(--custom-bg) 86%);
+  --sage-200: color-mix(in srgb, var(--custom-accent) 24%, var(--custom-bg) 76%);
+  --sage-300: color-mix(in srgb, var(--custom-accent) 45%, var(--custom-bg) 55%);
+  --sage-400: color-mix(in srgb, var(--custom-accent) 78%, var(--custom-bg) 22%);
+  --sage-500: var(--custom-accent);
+  --sage-600: color-mix(in srgb, var(--custom-accent) 85%, var(--custom-text) 15%);
+  --sage-700: color-mix(in srgb, var(--custom-accent) 70%, var(--custom-text) 30%);
+  --sage-800: var(--custom-text);
+  --sage-900: var(--custom-text);
+
+  --accent-calm: var(--custom-accent);
+  --accent-warmth: var(--custom-accent);
+  --accent-clarity: var(--custom-accent);
+  --accent-sorrow: color-mix(in srgb, var(--custom-accent) 65%, var(--custom-text) 35%);
+  --accent-tension: #a0564b;
+}
+
+[data-theme="dark"][data-palette="custom"] {
+  --custom-bg: #1b1d1c;
+  --custom-text: #eaece9;
+  --custom-accent: #94aba0;
+  --custom-on-accent: #181a19;
+
+  --bg-input: color-mix(in srgb, var(--custom-bg) 96%, #000000 4%);
+  --accent-tension: #d4897c;
+}
+

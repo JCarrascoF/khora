@@ -182,120 +182,120 @@ class PildorasAnclajesApp {
     this.tricksCatalog = [
       {
         id: 'trick_drop_anchor',
-        title: '⚓ Echar el Ancla: Protocolo ACE (Russ Harris)',
+        title:'Echar el Ancla: Protocolo ACE (Russ Harris)',
         intent: 'panic',
-        intentLabel: '🌊 Agobio / Angustia / Miedo',
+        intentLabel:'Agobio / Angustia / Miedo',
         badge: 'Estabilización ACT',
         duration: '1 min',
         desc: 'Cuando hay tormenta emocional (angustia, miedo, bloqueo o agobio): sujeta el barco al fondo marino sin luchar contra la ola mediante los 3 pasos ACE.',
-        icon: '⚓'
+        icon:''
       },
       {
         id: 'trick_bus_driver',
-        title: '🚌 El Autobús ACT: Negar el Volante y Dar Asiento',
+        title:'El Autobús ACT: Negar el Volante y Dar Asiento',
         intent: 'rumination',
-        intentLabel: '🚌 Control del Volante',
+        intentLabel:'Control del Volante',
         badge: 'Metáfora de Hayes',
         duration: '1 min',
         desc: 'Cuando el ruido mental (miedos, agobios, culpa) quiere conducir por ti: dile "vas en contra de mis valores" sin echarlo del autobús.',
-        icon: '🚌'
+        icon:''
       },
       {
         id: 'trick_serene_silence',
         title: 'La Regla de la Sencillez Serena (Decir NO sin justificarse)',
         intent: 'no',
-        intentLabel: '🚫 Decir NO',
+        intentLabel:'Decir NO',
         badge: 'Límites Limpios',
         duration: '1 min',
         desc: 'Genera un límite sin excusas elaboradas y entrena el desafío de sostener 15 segundos de silencio sin rellenarlo con disculpas.',
-        icon: '🛑'
+        icon:''
       },
       {
         id: 'trick_comic_voice',
         title: 'La Voz de Dibujos Animados & Los 3 Prefijos',
         intent: 'rumination',
-        intentLabel: '🧠 Desactivar Rumiación',
+        intentLabel:'Desactivar Rumiación',
         badge: 'Defusión Inmediata',
         duration: '30 seg',
         desc: 'Deforma el pensamiento catastrófico con ritmo caricaturesco y prefijos de distanciamiento para que pierda su poder tiránico.',
-        icon: '🎭'
+        icon:''
       },
       {
         id: 'trick_cold_breath',
         title: 'Sostener la Frialdad Ajena (3 Alientos de Diferenciación)',
         intent: 'cold',
-        intentLabel: '🥶 Mala cara ajena',
+        intentLabel:'Mala cara ajena',
         badge: 'Soberanía Somática',
         duration: '1 min',
         desc: 'Pacer guiado para resistir la urgencia de claudicar cuando la otra persona suspira, pone mala cara o se muestra distante.',
-        icon: '🌬️'
+        icon:''
       },
       {
         id: 'trick_two_arrows',
         title: 'Las Dos Flechas (Arrancar el Dolor Sucio de Culpa)',
         intent: 'guilt',
-        intentLabel: '⚖️ Disolver Culpa',
+        intentLabel:'Disolver Culpa',
         badge: 'Aceptación Limpia',
         duration: '1 min',
         desc: 'Separa el dolor limpio (la incomodidad natural del límite) de la segunda flecha de auto-castigo y deséchala en vivo.',
-        icon: '🏹'
+        icon:''
       },
       {
         id: 'trick_pause_rescue',
         title: 'La Pausa de los 2 Minutos (Frenar el Impulso de Rescate)',
         intent: 'rescue',
-        intentLabel: '🛑 Impulso de Rescate',
+        intentLabel:'Impulso de Rescate',
         badge: 'Auto-contención',
         duration: '2 min',
         desc: 'Cuenta atrás zen con respiración para que baje el pico de ansiedad antes de ofrecerte a resolverle la vida al otro.',
-        icon: '⏳'
+        icon:''
       },
       {
         id: 'trick_somatic_yes',
-        title: '🧘‍♂️ La Postura Somática del "SÍ" (Steven Hayes)',
+        title:'La Postura Somática del"SÍ" (Steven Hayes)',
         intent: 'cold',
-        intentLabel: '🥶 Postura de Apertura',
+        intentLabel:'Postura de Apertura',
         badge: 'Regulación Corporal',
         duration: '45 seg',
         desc: 'Desactiva en vivo la coraza física de amenaza (hombros tensos, mandíbula cerrada) antes de mantener un límite o conversar.',
-        icon: '🧘‍♂️'
+        icon:''
       }
     ];
 
     this.studyAreas = [
       {
         id: 'defusion',
-        icon: '🧠',
+        icon:'',
         title: 'Defusión Cognitiva',
         subtitle: 'Tomar distancia de pensamientos rígidos y etiquetas («soy…»).',
         trickIds: ['trick_comic_voice', 'trick_bus_driver'],
         workshops: [
-          { id: 'deconstruct', icon: '🏷️', title: 'El Deconstructor del "Yo Soy"', duration: '1 min', badge: 'Taller interactivo' }
+          { id:'deconstruct', icon:'', title:'El Deconstructor del"Yo Soy"', duration:'1 min', badge:'Taller interactivo' }
         ]
       },
       {
         id: 'limites',
-        icon: '🛡️',
+        icon:'',
         title: 'Límites y Soberanía',
         subtitle: 'Decir «no» sin sobre-explicarte y frenar el impulso de rescate.',
         trickIds: ['trick_serene_silence', 'trick_pause_rescue'],
         workshops: [
-          { id: 'pivot', icon: '🔄', title: 'El Pivote: Del Dolor al Anhelo', duration: '1 min', badge: 'Taller interactivo' }
+          { id:'pivot', icon:'', title:'El Pivote: Del Dolor al Anhelo', duration:'1 min', badge:'Taller interactivo' }
         ]
       },
       {
         id: 'aceptacion',
-        icon: '🫂',
+        icon:'',
         title: 'Aceptación y Compasión',
         subtitle: 'Sostener la incomodidad ajena y soltar el dolor sucio de culpa.',
         trickIds: ['trick_cold_breath', 'trick_two_arrows', 'trick_somatic_yes'],
         workshops: [
-          { id: 'pivot', icon: '🔄', title: 'El Pivote: Del Dolor al Anhelo', duration: '1 min', badge: 'Taller interactivo' }
+          { id:'pivot', icon:'', title:'El Pivote: Del Dolor al Anhelo', duration:'1 min', badge:'Taller interactivo' }
         ]
       },
       {
         id: 'presente',
-        icon: '⚓',
+        icon:'',
         title: 'Momento Presente y Regulación',
         subtitle: 'Echar el ancla en medio de la tormenta y regular la postura corporal.',
         trickIds: ['trick_drop_anchor', 'trick_somatic_yes'],
@@ -365,7 +365,7 @@ class PildorasAnclajesApp {
       <div class="view-plain-shell">
         <div class="card-header" style="margin-bottom: 12px;">
           <div class="title-with-help">
-            <h2 class="card-title" style="margin: 0;">⚡ Botiquín de 1 Minuto</h2>
+<h2 class="card-title" style="margin: 0;">Botiquín de 1 Minuto</h2>
             <button type="button" class="help-info-trigger" data-help-topic="pildoras-trucos" aria-label="Información de esta herramienta">ⓘ</button>
           </div>
         </div>
@@ -379,22 +379,22 @@ class PildorasAnclajesApp {
             Todos los trucos
           </button>
           <button type="button" class="trick-intent-chip ${this.activeTrickIntent === 'panic' ? 'active' : ''}" data-trick-intent="panic">
-            🌊 Agobio / Angustia / Miedo
+            Agobio / Angustia / Miedo
           </button>
           <button type="button" class="trick-intent-chip ${this.activeTrickIntent === 'no' ? 'active' : ''}" data-trick-intent="no">
-            🚫 Decir NO sin disculparme
+            Decir NO sin disculparme
           </button>
           <button type="button" class="trick-intent-chip ${this.activeTrickIntent === 'rumination' ? 'active' : ''}" data-trick-intent="rumination">
-            🧠 Mente catastrofista
+            Mente catastrofista
           </button>
           <button type="button" class="trick-intent-chip ${this.activeTrickIntent === 'cold' ? 'active' : ''}" data-trick-intent="cold">
-            🥶 Mala cara / Distancia ajena
+            Mala cara / Distancia ajena
           </button>
           <button type="button" class="trick-intent-chip ${this.activeTrickIntent === 'guilt' ? 'active' : ''}" data-trick-intent="guilt">
-            ⚖️ Culpa y juicio interno
+            Culpa y juicio interno
           </button>
           <button type="button" class="trick-intent-chip ${this.activeTrickIntent === 'rescue' ? 'active' : ''}" data-trick-intent="rescue">
-            🛑 Impulso de resolverle la vida
+            Impulso de resolverle la vida
           </button>
         </div>
 
@@ -405,7 +405,7 @@ class PildorasAnclajesApp {
               <div>
                 <div class="flex-between" style="margin-bottom: 6px;">
                   <span class="trick-badge" style="background: var(--sage-100); color: var(--sage-800);">
-                    ${trick.badge} • ⏱️ ${trick.duration}
+                    ${trick.badge} • ${trick.duration}
                   </span>
                   <span style="font-size: 1.4rem;">${trick.icon}</span>
                 </div>
@@ -418,7 +418,7 @@ class PildorasAnclajesApp {
               </div>
 
               <button type="button" class="btn-primary" data-launch-trick-id="${trick.id}" style="font-size: 0.88rem; width: 100%; justify-content: center;">
-                ⚡ Ejecutar este truco paso a paso
+                Ejecutar este truco paso a paso
               </button>
             </div>
           `;
@@ -471,11 +471,7 @@ class PildorasAnclajesApp {
     const safeIdx = anchors.length > 0 ? (this.currentMantraIndex % anchors.length) : 0;
     const featuredAnchor = anchors[safeIdx] || null;
     const isFeaturedFav = featuredAnchor ? favorites.includes(featuredAnchor.id) : false;
-    const esc = (str) => String(str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+    const esc = window.KhoraUtils.escapeHtml;
 
     return `
       ${showAnchorsCard ? `
@@ -484,14 +480,14 @@ class PildorasAnclajesApp {
         <div class="card-header flex-between" style="flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
           <div>
             <div class="title-with-help">
-              <h3 class="card-title" style="font-size: 1.08rem; margin: 0;">⚓ Mis Tarjetas de Anclaje ACT (${anchors.length})</h3>
+<h3 class="card-title" style="font-size: 1.08rem; margin: 0;">Mis Tarjetas de Anclaje ACT (${anchors.length})</h3>
               <button type="button" class="help-info-trigger" data-help-topic="tarjetas-anclaje" aria-label="Información de esta herramienta">ⓘ</button>
             </div>
             <p class="card-subtitle">Frases personales y de referentes ACT que también ves como faro en momentos de crisis</p>
           </div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
             <button type="button" class="btn-secondary" id="btn-toggle-anchors-list" style="font-size: 0.8rem; padding: 6px 12px;">
-              ${this.showAnchorsList ? '▴ Ocultar listado' : `📋 Listar anclajes (${anchors.length})`}
+              ${this.showAnchorsList ?'▴ Ocultar listado' :`Listar anclajes (${anchors.length})`}
             </button>
             <button type="button" class="btn-secondary" id="btn-create-custom-anchor-card" style="font-size: 0.8rem; padding: 6px 12px;">
               + Nuevo Anclaje
@@ -503,15 +499,15 @@ class PildorasAnclajesApp {
           <div style="background: linear-gradient(135deg, rgba(87, 139, 116, 0.16), rgba(66, 111, 92, 0.08)); border: 1px solid var(--sage-400); border-radius: var(--radius-md); padding: 14px 16px; position: relative; overflow: hidden;">
             <div class="flex-between" style="margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
               <span style="font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--sage-700);">
-                ✨ Anclaje en Foco
+                Anclaje en Foco
               </span>
               <div style="display: flex; gap: 6px; align-items: center;">
                 <button type="button" class="btn-icon" data-toggle-fav="${featuredAnchor.id}" title="${isFeaturedFav ? 'Quitar de favoritos' : 'Guardar en favoritos'}" style="width: 30px; height: 30px; color: ${isFeaturedFav ? '#b86b59' : 'var(--text-muted)'};">
-                  ${isFeaturedFav ? '❤️' : '🤍'}
+                  ${isFeaturedFav ?'' :''}
                 </button>
                 ${anchors.length > 1 ? `
                   <button type="button" class="btn-secondary" id="btn-next-mantra" style="font-size: 0.76rem; padding: 4px 10px;">
-                    🔄 Siguiente
+                    Siguiente
                   </button>
                 ` : ''}
               </div>
@@ -524,13 +520,13 @@ class PildorasAnclajesApp {
             </div>
           </div>
         ` : `
-          <div style="padding: 14px; border: 1px dashed var(--border-subtle); border-radius: var(--radius-md); text-align: center; font-size: 0.84rem; color: var(--text-muted);">
+<div style="padding: 14px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); text-align: center; font-size: 0.84rem; color: var(--text-muted);">
             Aún no tienes tarjetas de anclaje guardadas. Crea la primera para verla aquí y en tu botón SOS.
           </div>
         `}
 
         ${this.showAnchorsList ? `
-          <div class="anchor-manage-list" style="margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--border-subtle); display: flex; flex-direction: column; gap: 8px;">
+<div class="anchor-manage-list" style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 8px;">
             ${anchors.map((anc, idx) => `
               <div class="history-item" style="margin-bottom: 0; padding: 11px 13px; background: var(--bg-surface-elevated); ${idx === safeIdx ? 'border-color: var(--sage-500);' : ''}">
                 <div class="flex-between" style="gap: 10px; align-items: flex-start; flex-wrap: wrap;">
@@ -545,10 +541,10 @@ class PildorasAnclajesApp {
                   </div>
                   <div style="display: flex; gap: 6px; align-items: center;">
                     <button type="button" class="btn-secondary" data-edit-anchor-id="${anc.id}" style="font-size: 0.74rem; padding: 4px 9px;">
-                      ✏️ Editar
+                      Editar
                     </button>
                     <button type="button" class="btn-secondary" data-delete-anchor-id="${anc.id}" style="font-size: 0.74rem; padding: 4px 9px; color: var(--accent-tension); border-color: rgba(184, 107, 89, 0.35);">
-                      🗑️ Borrar
+                      Borrar
                     </button>
                   </div>
                 </div>
@@ -564,7 +560,7 @@ class PildorasAnclajesApp {
         <div class="card-header flex-between" style="margin-bottom: 14px;">
           <div>
             <div class="title-with-help">
-              <h2 class="card-title" style="margin: 0;">📖 Lecturas y Conceptos ACT</h2>
+<h2 class="card-title" style="margin: 0;">Lecturas y Conceptos ACT</h2>
               <button type="button" class="help-info-trigger" data-help-topic="miniguias-bolsillo" aria-label="Información de esta herramienta">ⓘ</button>
             </div>
             <p class="card-subtitle">Elige un concepto para leer su explicación breve y practicar sus dinámicas guiadas.</p>
@@ -584,7 +580,7 @@ class PildorasAnclajesApp {
                   <p class="triage-card-desc" style="margin-top: 6px;">${area.subtitle}</p>
                 </div>
                 <div class="triage-card-value flex-between" style="gap: 8px; flex-wrap: wrap;">
-                  <span>📖 ${areaPills.length} ${areaPills.length === 1 ? 'lectura' : 'lecturas'}${workshopsCount > 0 ? ` · 🎯 ${workshopsCount} ${workshopsCount === 1 ? 'taller' : 'talleres'}` : ''}</span>
+<span>${areaPills.length} ${areaPills.length === 1 ?'lectura' :'lecturas'}${workshopsCount > 0 ?` · ${workshopsCount} ${workshopsCount === 1 ?'taller' :'talleres'}` :''}</span>
                   <span style="font-weight: 800; color: var(--sage-600);">Explorar →</span>
                 </div>
               </button>
@@ -627,7 +623,7 @@ class PildorasAnclajesApp {
       <div class="view-plain-shell">
         <div class="card-header" style="margin-bottom: 12px;">
           <div class="title-with-help">
-            <h2 class="card-title" style="margin: 0;">🏷️ El Deconstructor del "Yo Soy"</h2>
+<h2 class="card-title" style="margin: 0;">El Deconstructor del"Yo Soy"</h2>
             <button type="button" class="help-info-trigger" data-help-topic="deconstructor-pivote" aria-label="Información de esta herramienta">ⓘ</button>
           </div>
           <p class="card-subtitle">Desmonta una etiqueta fija en una conducta concreta y modificable.</p>
@@ -651,19 +647,19 @@ class PildorasAnclajesApp {
 
           <div style="margin-bottom: 12px;">
             <button type="button" class="btn-inline-link" id="btn-dec-toggle-examples" style="font-size: 0.78rem;">
-              💡 ¿Bloqueado? Ver ejemplos
+              ¿Bloqueado? Ver ejemplos
             </button>
             <div class="quick-chips-row hidden" id="dec-examples-row" style="margin-top: 8px;">
               ${deconstructPresets.map((p, idx) => `
                 <button type="button" class="quick-fill-chip" data-dec-preset-idx="${idx}">
-                  ⚡ "${p.label}"
+"${p.label}"
                 </button>
               `).join('')}
             </div>
           </div>
 
           <button type="button" class="btn-primary" id="btn-save-deconstruct" style="width: 100%;">
-            ✨ Guardar Deconstrucción
+            Guardar Deconstrucción
           </button>
         </div>
 
@@ -717,7 +713,7 @@ class PildorasAnclajesApp {
       <div class="view-plain-shell">
         <div class="card-header" style="margin-bottom: 12px;">
           <div class="title-with-help">
-            <h2 class="card-title" style="margin: 0;">🔄 El Pivote: Del Dolor al Anhelo</h2>
+<h2 class="card-title" style="margin: 0;">El Pivote: Del Dolor al Anhelo</h2>
             <button type="button" class="help-info-trigger" data-help-topic="el-pivote" aria-label="Información de esta herramienta">ⓘ</button>
           </div>
           <p class="card-subtitle">Detrás de cada miedo hay algo legítimo que te importa. Cuídalo con dignidad, no con sumisión.</p>
@@ -741,19 +737,19 @@ class PildorasAnclajesApp {
 
           <div style="margin-bottom: 12px;">
             <button type="button" class="btn-inline-link" id="btn-pivot-toggle-examples" style="font-size: 0.78rem;">
-              💡 ¿Bloqueado? Ver ejemplos
+              ¿Bloqueado? Ver ejemplos
             </button>
             <div class="quick-chips-row hidden" id="pivot-examples-row" style="margin-top: 8px;">
               ${pivotPresets.map((p, idx) => `
                 <button type="button" class="quick-fill-chip" data-pivot-preset-idx="${idx}">
-                  ⚡ ${p.chip}
+                  ${p.chip}
                 </button>
               `).join('')}
             </div>
           </div>
 
           <button type="button" class="btn-primary" id="btn-save-pivot" style="width: 100%;">
-            🔄 Fijar este Pivote
+            Fijar este Pivote
           </button>
         </div>
 
@@ -768,7 +764,7 @@ class PildorasAnclajesApp {
               Dolor / Temor: "${piv.pain}"
             </div>
             <div style="font-size: 0.85rem; color: var(--sage-700); font-weight: 600; margin-bottom: 4px;">
-              🌱 Anhelo: "${piv.yearning}"
+              Anhelo:"${piv.yearning}"
             </div>
             <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin-top: 4px;">
               Acción: "${piv.pivotAction}"
@@ -837,7 +833,7 @@ class PildorasAnclajesApp {
           <button type="button" class="btn-icon" id="btn-close-runner" style="border: none; background: transparent;">✕</button>
         </div>
 
-        <h3 class="card-title mt-2">⚓ Echar el Ancla en la Tormenta (ACE)</h3>
+<h3 class="card-title mt-2">Echar el Ancla en la Tormenta (ACE)</h3>
         <p class="card-subtitle">No es para borrar la ola emocional, sino para sujetar el barco y recuperar el control de tus manos y tus pies.</p>
 
         <!-- Fase A: Acknowledge -->
@@ -864,20 +860,20 @@ class PildorasAnclajesApp {
           <div style="display: flex; flex-direction: column; gap: 8px;">
             <label class="btn-secondary" style="font-size: 0.82rem; justify-content: flex-start; text-align: left; padding: 9px 12px; cursor: pointer;">
               <input type="checkbox" class="ace-body-chk" style="width: 16px; height: 16px; flex-shrink: 0;">
-              <span>🦶 Empujar suavemente las plantas de los pies contra el suelo y sentir su firmeza</span>
+<span>Empujar suavemente las plantas de los pies contra el suelo y sentir su firmeza</span>
             </label>
             <label class="btn-secondary" style="font-size: 0.82rem; justify-content: flex-start; text-align: left; padding: 9px 12px; cursor: pointer;">
               <input type="checkbox" class="ace-body-chk" style="width: 16px; height: 16px; flex-shrink: 0;">
-              <span>🤲 Juntar las palmas o estirar los dedos y soltar los hombros hacia abajo</span>
+<span>Juntar las palmas o estirar los dedos y soltar los hombros hacia abajo</span>
             </label>
             <div style="display: flex; flex-direction: column; gap: 6px; background: var(--bg-surface); padding: 9px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
               <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; cursor: pointer;">
                 <input type="checkbox" class="ace-body-chk" id="ace-chk-breath" style="width: 16px; height: 16px; flex-shrink: 0;">
-                <span>🌬️ Hacer una exhalación lenta de 6 segundos abriendo espacio alrededor de la sensación</span>
+<span>Hacer una exhalación lenta de 6 segundos abriendo espacio alrededor de la sensación</span>
               </label>
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                 <button type="button" class="btn-secondary" id="btn-ace-exhale-pulse" style="font-size: 0.76rem; padding: 5px 12px; border-color: var(--sage-400);">
-                  🌬️ Guiar exhalación de 6s
+                  Guiar exhalación de 6s
                 </button>
                 <span id="ace-exhale-status" style="font-size: 0.78rem; font-weight: 700; color: var(--sage-700);"></span>
               </div>
@@ -892,17 +888,17 @@ class PildorasAnclajesApp {
 
           <div style="display: flex; flex-direction: column; gap: 8px;">
             <input type="text" id="ace-see-3" class="form-input" style="font-size: 0.84rem; padding: 8px 12px;"
-                   placeholder="👀 3 cosas reales que veo ahora mismo en esta habitación o lugar...">
+                   placeholder="3 cosas reales que veo ahora mismo en esta habitación o lugar...">
             <input type="text" id="ace-hear-2" class="form-input" style="font-size: 0.84rem; padding: 8px 12px;"
-                   placeholder="👂 2 sonidos o texturas que noto ahora (el aire, la ropa, un ruido lejano)...">
+                   placeholder="2 sonidos o texturas que noto ahora (el aire, la ropa, un ruido lejano)...">
             <input type="text" id="ace-action-1" class="form-input" style="font-size: 0.84rem; padding: 8px 12px;"
-                   placeholder="👣 1 acción pequeña y valiosa que elijo hacer en el próximo minuto...">
+                   placeholder="1 acción pequeña y valiosa que elijo hacer en el próximo minuto...">
           </div>
         </div>
 
         <div class="btn-group" style="justify-content: flex-end; margin-top: 14px;">
           <button type="button" class="btn-primary" id="btn-ace-complete" style="width: 100%; justify-content: center;">
-            ⚓ Ancla Echada: Estoy Aquí y Elijo Mi Paso
+            Ancla Echada: Estoy Aquí y Elijo Mi Paso
           </button>
         </div>
       </div>
@@ -965,7 +961,7 @@ class PildorasAnclajesApp {
       window.app?.triggerHaptic([80, 50, 80]);
       window.app?.playGentleTone(432, 450);
       document.getElementById('app-modal')?.classList.remove('active');
-      window.app?.showToast('⚓ Ancla echada: estás presente y al mando de tu conducta');
+      window.app?.showToast('Ancla echada: estás presente y al mando de tu conducta');
     });
   }
 
@@ -1017,7 +1013,7 @@ class PildorasAnclajesApp {
 
             <div style="text-align: center;">
               <button type="button" class="btn-primary" id="btn-start-silence-timer" style="padding: 8px 20px;">
-                ▶️ Iniciar Reto de Silencio (15s)
+                Iniciar Reto de Silencio (15s)
               </button>
               <div id="silence-feedback" style="margin-top: 10px; font-size: 0.85rem; font-weight: 600; color: var(--sage-700);"></div>
             </div>
@@ -1047,8 +1043,8 @@ class PildorasAnclajesApp {
         if (orb) orb.textContent = sec;
         if (sec <= 0) {
           this.stopTrickTimer();
-          if (feedback) feedback.innerHTML = '🌟 ¡Reto completado! Has sostenido tu límite sin entregarte a la sumisión.';
-          if (orb) orb.style.background = 'radial-gradient(circle at 35% 35%, #426f5c, #2b453b)';
+          if (feedback) feedback.innerHTML ='¡Reto completado! Has sostenido tu límite sin entregarte a la sumisión.';
+          if (orb) orb.style.background = 'var(--sage-500)';
           window.app?.showToast('Límite y dignidad sostenidos con éxito');
         }
       }, 1000);
@@ -1101,7 +1097,7 @@ class PildorasAnclajesApp {
 
         <div class="btn-group" style="justify-content: center; margin-top: 16px;">
           <button type="button" class="btn-primary" id="btn-finish-comic">
-            ✨ Pensamiento Desenganchado / Cerrar
+            Pensamiento Desenganchado / Cerrar
           </button>
         </div>
       </div>
@@ -1193,7 +1189,7 @@ class PildorasAnclajesApp {
         orb.className = 'breathing-orb exhale';
         title.textContent = 'Aliento 3: Cortar el impulso de rescate';
         text.textContent = '"No tengo que apagar el fuego ajeno entregando mi paz interior. Puedo sostener esta distancia sin romperme."';
-        nextBtn.textContent = '🌿 Sostenido con Dignidad / Terminar';
+        nextBtn.textContent ='Sostenido con Dignidad / Terminar';
       } else {
         window.app?.showToast('Alientos completados. Has protegido tu centro.');
         document.getElementById('app-modal')?.classList.remove('active');
@@ -1217,7 +1213,7 @@ class PildorasAnclajesApp {
           <!-- Arrow 1: Clean Pain -->
           <div class="trick-step-card" style="border-left-color: var(--sage-500);">
             <div style="font-weight: 700; color: var(--sage-700); margin-bottom: 4px;">
-              🏹 1ª Flecha: Dolor Limpio (Inevitable)
+              1ª Flecha: Dolor Limpio (Inevitable)
             </div>
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px;">Lo que ocurrió objetivamente en la realidad:</p>
             <input type="text" id="arrow-clean" class="form-input" value="He dicho que no a ir a la cena y sentí un pellizco de culpa refleja.">
@@ -1226,7 +1222,7 @@ class PildorasAnclajesApp {
           <!-- Arrow 2: Dirty Pain -->
           <div class="trick-step-card arrow-discard-box" id="dirty-arrow-box" style="border-left-color: var(--accent-tension);">
             <div style="font-weight: 700; color: var(--accent-tension); margin-bottom: 4px;">
-              🏹 2ª Flecha: Dolor Sucio (Opcional - La historia que te clavas tú)
+              2ª Flecha: Dolor Sucio (Opcional - La historia que te clavas tú)
             </div>
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px;">El juicio moral con el que te flagelas:</p>
             <textarea id="arrow-dirty" class="form-textarea" style="min-height: 70px;">"Soy una persona egoísta, no sé cuidar a mis relaciones, se van a cansar de mí y me quedaré solo."</textarea>
@@ -1234,13 +1230,13 @@ class PildorasAnclajesApp {
         </div>
 
         <div style="text-align: center; margin-top: 14px;">
-          <button type="button" class="btn-primary" id="btn-discard-second-arrow" style="background: linear-gradient(135deg, #b86b59, #886548);">
-            🗑️ Arrancar y Descartar la 2ª Flecha
+<button type="button" class="btn-primary" id="btn-discard-second-arrow" style="background: var(--bg-surface);">
+            Arrancar y Descartar la 2ª Flecha
           </button>
         </div>
 
-        <div id="arrow-resolution" style="display: none; margin-top: 16px; background: rgba(87, 139, 116, 0.15); border: 1px dashed var(--sage-500); padding: 14px; border-radius: var(--radius-md); text-align: center; font-size: 0.9rem; color: var(--sage-800);">
-          ✨ <strong>2ª Flecha descartada:</strong> La incomodidad que sientes es solo la 1ª flecha (el eco del hábito). Ábrele los brazos y trátate con compasión.
+<div id="arrow-resolution" style="display: none; margin-top: 16px; background: rgba(87, 139, 116, 0.15); border: 1px solid var(--sage-500); padding: 14px; border-radius: var(--radius-md); text-align: center; font-size: 0.9rem; color: var(--sage-800);">
+<strong>2ª Flecha descartada:</strong> La incomodidad que sientes es solo la 1ª flecha (el eco del hábito). Ábrele los brazos y trátate con compasión.
         </div>
       </div>
     `;
@@ -1286,7 +1282,7 @@ class PildorasAnclajesApp {
 
         <div class="btn-group" style="justify-content: center; margin-top: 14px;">
           <button type="button" class="btn-primary" id="btn-start-pause-timer">
-            ▶️ Iniciar Pausa de 2 Minutos
+            Iniciar Pausa de 2 Minutos
           </button>
         </div>
       </div>
@@ -1323,8 +1319,8 @@ class PildorasAnclajesApp {
 
         if (totalSec <= 0) {
           this.stopTrickTimer();
-          if (orb) orb.style.background = 'radial-gradient(circle at 35% 35%, #426f5c, #2b453b)';
-          if (inst) inst.innerHTML = '🌟 <strong>¡Pausa completada!</strong> El pico de reactividad ha bajado. Ahora puedes elegir desde la calma si realmente deseas actuar o dejar que el otro se responsabilice.';
+          if (orb) orb.style.background = 'var(--sage-500)';
+          if (inst) inst.innerHTML ='<strong>¡Pausa completada!</strong> El pico de reactividad ha bajado. Ahora puedes elegir desde la calma si realmente deseas actuar o dejar que el otro se responsabilice.';
           window.app?.showToast('Impulso de rescate contenido con éxito');
         }
       }, 1000);
@@ -1344,11 +1340,7 @@ class PildorasAnclajesApp {
     const formatRouteValue = (v) => v ? `${v.domain}: ${v.statement}` : 'Cuidar mi dignidad y actuar con honestidad y calma';
     const primaryValue = formatRouteValue(activeRouteValue);
 
-    const esc = (str) => String(str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+    const esc = window.KhoraUtils.escapeHtml;
 
     const firstPas = targetPas || existingPassengers[0] || {};
     const initialProtects = firstPas.protectsFrom || '';
@@ -1362,7 +1354,7 @@ class PildorasAnclajesApp {
           <button type="button" class="btn-icon" id="btn-close-runner" style="border: none; background: transparent;">✕</button>
         </div>
 
-        <h3 class="card-title mt-2">🚌 El Autobús ACT: Negar el Volante y Dar Asiento</h3>
+<h3 class="card-title mt-2">El Autobús ACT: Negar el Volante y Dar Asiento</h3>
         <p class="card-subtitle">El ruido no tiene manos para girar el volante: puedes dejar subir al miedo o agobio sin cederle la dirección.</p>
 
         <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 14px;">
@@ -1371,16 +1363,16 @@ class PildorasAnclajesApp {
             <div style="border-left: 3px solid #b86b59; padding-left: 12px;">
               <div style="font-size: 0.74rem; text-transform: uppercase; color: #b86b59; font-weight: 700;">1. Pasajero junto al volante</div>
               <div style="font-size: 0.94rem; font-weight: 700; color: var(--text-primary); margin-top: 3px;">
-                ${esc(targetPas.icon || '🚌')} ${esc(targetPas.name)}
+                ${esc(targetPas.icon ||'')} ${esc(targetPas.name)}
               </div>
               ${targetPas.shouts ? `
                 <div style="font-size: 0.82rem; font-style: italic; color: var(--text-secondary); margin-top: 4px;">
-                  📢 «${esc(targetPas.shouts)}»
+                  «${esc(targetPas.shouts)}»
                 </div>
               ` : ''}
               ${targetPas.protectsFrom ? `
                 <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">
-                  🛡️ Intenta protegerte de: ${esc(targetPas.protectsFrom)}
+                  Intenta protegerte de: ${esc(targetPas.protectsFrom)}
                 </div>
               ` : ''}
             </div>
@@ -1398,23 +1390,23 @@ class PildorasAnclajesApp {
                             data-bus-detour="${esc(p.detour || '')}"
                             data-bus-reply="${esc(p.driverReply || '')}"
                             style="cursor: pointer; padding: 4px 10px; font-size: 0.74rem; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-secondary);">
-                      ${esc(p.icon || '🚌')} ${esc(p.name)}
+                      ${esc(p.icon ||'')} ${esc(p.name)}
                     </button>
                   `).join('')}
                 </div>
               ` : ''}
               <input type="text" id="bus-runner-name" class="form-input" style="font-size: 0.86rem; margin-bottom: 8px;"
                      value="${esc(firstPas.name || '')}" placeholder="Nombre del miedo o pensamiento...">
-              <label class="form-label" for="bus-runner-shouts" style="font-size: 0.8rem;">📢 ¿Qué te dice o desvío te pide?</label>
+<label class="form-label" for="bus-runner-shouts" style="font-size: 0.8rem;">¿Qué te dice o desvío te pide?</label>
               <input type="text" id="bus-runner-shouts" class="form-input" style="font-size: 0.85rem; margin-bottom: 8px;"
                      value="${esc(firstPas.shouts || '')}" placeholder="Qué frase te dice para hacerte girar...">
 
-              <label class="form-label" for="bus-runner-protects" style="font-size: 0.8rem;">🛡️ ¿De qué intenta protegerte? (opcional)</label>
+<label class="form-label" for="bus-runner-protects" style="font-size: 0.8rem;">¿De qué intenta protegerte? (opcional)</label>
               <input type="text" id="bus-runner-protects" class="form-input" style="font-size: 0.84rem;"
                      value="${esc(initialProtects)}" placeholder="Ej: De quedar mal, sufrir rechazo o fallar...">
               <div style="margin-top: 6px;">
                 <button type="button" class="btn-inline-link" id="btn-bus-runner-toggle-protects" style="font-size: 0.76rem;">
-                  💡 Ver ejemplos
+                  Ver ejemplos
                 </button>
                 <div class="quick-chips-row hidden" id="bus-runner-protects-row" style="margin-top: 6px;">
                   ${['Del rechazo', 'De un conflicto o mala cara', 'De sentir culpa', 'De fallar o perder control'].map(pr => `
@@ -1429,14 +1421,14 @@ class PildorasAnclajesApp {
 
           <!-- 2. Rumbo y clave ACT -->
           <div style="border-left: 3px solid var(--sage-500); padding-left: 12px;">
-            <div style="font-size: 0.74rem; text-transform: uppercase; color: var(--sage-700); font-weight: 700;">🧭 2. Tu rumbo</div>
+<div style="font-size: 0.74rem; text-transform: uppercase; color: var(--sage-700); font-weight: 700;">2. Tu rumbo</div>
             ${profileValues.length > 1 ? `
               <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; margin-bottom: 6px;">
                 ${profileValues.map(val => {
                   const isSel = activeRouteValue && activeRouteValue.id === val.id;
                   return `
                     <button type="button" class="quick-fill-chip bus-runner-route-chip ${isSel ? 'active' : ''}" data-runner-route-id="${esc(val.id)}" style="font-size: 0.74rem; padding: 3px 9px;">
-                      💎 ${esc(val.domain)}
+                      ${esc(val.domain)}
                     </button>
                   `;
                 }).join('')}
@@ -1460,7 +1452,7 @@ class PildorasAnclajesApp {
 
         <div class="btn-group" style="justify-content: flex-end; margin-top: 16px;">
           <button type="button" class="btn-primary" id="btn-bus-drive-on">
-            💺 Sentar atrás y seguir conduciendo
+            Sentar atrás y seguir conduciendo
           </button>
         </div>
       </div>
@@ -1479,7 +1471,7 @@ class PildorasAnclajesApp {
       const row = document.getElementById('bus-runner-protects-row');
       if (!row) return;
       const isHidden = row.classList.toggle('hidden');
-      e.currentTarget.textContent = isHidden ? '💡 Ver ejemplos' : '▴ Ocultar ejemplos';
+      e.currentTarget.textContent = isHidden ?'Ver ejemplos' :'▴ Ocultar ejemplos';
     });
 
     container.querySelectorAll('.bus-runner-route-chip').forEach(btn => {
@@ -1537,7 +1529,7 @@ class PildorasAnclajesApp {
           }
         } else {
           window.stateManager.addBusPassenger({
-            icon: '🚌',
+            icon:'',
             name,
             shouts,
             protectsFrom,
@@ -1552,7 +1544,7 @@ class PildorasAnclajesApp {
         window.perfilApp.render();
         window.perfilApp.bindEvents();
       }
-      window.app?.showToast('Autobús en marcha hacia tus valores 🚌');
+      window.app?.showToast('Autobús en marcha hacia tus valores');
     });
   }
 
@@ -1565,7 +1557,7 @@ class PildorasAnclajesApp {
           <button type="button" class="btn-icon" id="btn-close-runner" style="border: none; background: transparent;">✕</button>
         </div>
 
-        <h3 class="card-title mt-2">🧘‍♂️ La Postura Somática del "SÍ"</h3>
+<h3 class="card-title mt-2">La Postura Somática del"SÍ"</h3>
         <p class="card-subtitle">Cambia tu postura física en 45 segundos para desactivar la respuesta de amenaza antes de hablar.</p>
 
         <div class="trick-step-card mt-4" style="border-left-color: var(--accent-tension);">
@@ -1580,15 +1572,15 @@ class PildorasAnclajesApp {
           <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
             <label class="btn-secondary" style="font-size: 0.82rem; justify-content: flex-start; text-align: left; padding: 8px 12px; cursor: pointer;">
               <input type="checkbox" style="width: 16px; height: 16px; flex-shrink: 0;">
-              <span>⬇️ Suelta los hombros hacia atrás y afloja la mandíbula</span>
+<span>Suelta los hombros hacia atrás y afloja la mandíbula</span>
             </label>
             <label class="btn-secondary" style="font-size: 0.82rem; justify-content: flex-start; text-align: left; padding: 8px 12px; cursor: pointer;">
               <input type="checkbox" style="width: 16px; height: 16px; flex-shrink: 0;">
-              <span>🤲 Apoya las palmas abiertas hacia arriba sobre tus muslos</span>
+<span>Apoya las palmas abiertas hacia arriba sobre tus muslos</span>
             </label>
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px;">
               <button type="button" class="btn-secondary" id="btn-somatic-exhale" style="font-size: 0.78rem; padding: 6px 12px; border-color: var(--sage-400);">
-                🌬️ Guiar exhalación de 6s
+                Guiar exhalación de 6s
               </button>
               <span id="somatic-exhale-status" style="font-size: 0.8rem; font-weight: 700; color: var(--sage-700);"></span>
             </div>
@@ -1597,7 +1589,7 @@ class PildorasAnclajesApp {
 
         <div class="btn-group" style="justify-content: flex-end; margin-top: 14px;">
           <button type="button" class="btn-primary" id="btn-somatic-done" style="width: 100%; justify-content: center;">
-            🧘‍♂️ Postura Integrada / Continuar
+            Postura Integrada / Continuar
           </button>
         </div>
       </div>
@@ -1631,7 +1623,7 @@ class PildorasAnclajesApp {
     document.getElementById('btn-somatic-done')?.addEventListener('click', () => {
       this.stopTrickTimer();
       document.getElementById('app-modal')?.classList.remove('active');
-      window.app?.showToast('Postura del SÍ integrada 🧘‍♂️');
+      window.app?.showToast('Postura del SÍ integrada');
     });
   }
 
@@ -1724,7 +1716,7 @@ class PildorasAnclajesApp {
           e.stopPropagation();
           const id = e.currentTarget.dataset.toggleFav;
           const isFav = window.stateManager.togglePillFavorite(id);
-          window.app?.showToast(isFav ? 'Añadido a favoritos ❤️' : 'Eliminado de favoritos');
+          window.app?.showToast(isFav ?'Añadido a favoritos' :'Eliminado de favoritos');
           this.render();
           this.bindEvents();
         });
@@ -1809,7 +1801,7 @@ class PildorasAnclajesApp {
       const row = document.getElementById('dec-examples-row');
       if (!row) return;
       const isHidden = row.classList.toggle('hidden');
-      e.currentTarget.textContent = isHidden ? '💡 ¿Bloqueado? Ver ejemplos' : '▴ Ocultar ejemplos';
+      e.currentTarget.textContent = isHidden ?'¿Bloqueado? Ver ejemplos' :'▴ Ocultar ejemplos';
     });
 
     document.querySelectorAll('[data-dec-preset-idx]').forEach(btn => {
@@ -1877,7 +1869,7 @@ class PildorasAnclajesApp {
       const row = document.getElementById('pivot-examples-row');
       if (!row) return;
       const isHidden = row.classList.toggle('hidden');
-      e.currentTarget.textContent = isHidden ? '💡 ¿Bloqueado? Ver ejemplos' : '▴ Ocultar ejemplos';
+      e.currentTarget.textContent = isHidden ?'¿Bloqueado? Ver ejemplos' :'▴ Ocultar ejemplos';
     });
 
     document.querySelectorAll('[data-pivot-preset-idx]').forEach(btn => {
@@ -1940,7 +1932,7 @@ class PildorasAnclajesApp {
 
         <div style="margin-top: 14px;">
           <div style="font-size: 0.82rem; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">
-            📖 Lecturas breves
+            Lecturas breves
           </div>
           <div style="display: flex; flex-direction: column; gap: 10px;">
             ${areaPills.map(p => {
@@ -1951,7 +1943,7 @@ class PildorasAnclajesApp {
                   <div class="flex-between" style="gap: 8px;">
                     <strong style="font-size: 0.94rem; color: var(--text-primary);">${p.title}</strong>
                     <button type="button" class="btn-icon" data-modal-pill-fav="${p.id}" style="width: 28px; height: 28px; border: none; background: transparent; font-size: 1rem; color: ${isFav ? '#b86b59' : 'var(--text-muted)'};">
-                      ${isFav ? '❤️' : '🤍'}
+                      ${isFav ?'' :''}
                     </button>
                   </div>
                   <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 4px 0 6px; line-height: 1.45;">
@@ -1974,7 +1966,7 @@ class PildorasAnclajesApp {
         ${area.workshops.length > 0 ? `
           <div style="margin-top: 16px;">
             <div style="font-size: 0.82rem; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">
-              🎯 Talleres en calma
+              Talleres en calma
             </div>
             <div class="pill-activities-list">
               ${area.workshops.map(w => `
@@ -1983,7 +1975,7 @@ class PildorasAnclajesApp {
                     <span style="font-size: 1.2rem; flex-shrink: 0;">${w.icon}</span>
                     <div style="min-width: 0;">
                       <div style="font-size: 0.86rem; font-weight: 700; color: var(--text-primary);">${w.title}</div>
-                      <div style="font-size: 0.75rem; color: var(--text-muted);">${w.badge} • ⏱️ ${w.duration}</div>
+<div style="font-size: 0.75rem; color: var(--text-muted);">${w.badge} • ${w.duration}</div>
                     </div>
                   </div>
                   <span style="font-size: 0.78rem; font-weight: 700; color: var(--sage-600); white-space: nowrap;">Abrir taller →</span>
@@ -1995,7 +1987,7 @@ class PildorasAnclajesApp {
 
         <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end;">
           <button type="button" class="btn-inline-link" id="btn-modal-go-botiquin" style="font-size: 0.8rem;">
-            ⚡ Practicar trucos rápidos en el Botiquín →
+            Practicar trucos rápidos en el Botiquín →
           </button>
         </div>
       </div>
@@ -2021,7 +2013,7 @@ class PildorasAnclajesApp {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const isFav = window.stateManager.togglePillFavorite(btn.dataset.modalPillFav);
-        window.app?.showToast(isFav ? 'Añadido a favoritos ❤️' : 'Eliminado de favoritos');
+        window.app?.showToast(isFav ?'Añadido a favoritos' :'Eliminado de favoritos');
         this.openAreaStudyModal(areaId);
       });
     });
@@ -2075,16 +2067,12 @@ class PildorasAnclajesApp {
     if (!modal || !modalBody) return;
     window.app?.setModalSize?.('default');
 
-    const esc = (str) => String(str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+    const esc = window.KhoraUtils.escapeHtml;
 
     const currentCat = editAnchor?.category || 'Aceptación';
 
     modalBody.innerHTML = `
-      <h3 class="card-title">${editAnchor ? '✏️ Editar Tarjeta de Anclaje / Mantra ACT' : '⚓ Crear Tarjeta de Anclaje / Mantra ACT'}</h3>
+<h3 class="card-title">${editAnchor ?'Editar Tarjeta de Anclaje / Mantra ACT' :'Crear Tarjeta de Anclaje / Mantra ACT'}</h3>
       <p class="card-subtitle mt-2">
         Guarda una frase personal que te devuelva al presente, a la aceptación y a tus valores cuando aparezca la tormenta emocional.
       </p>
@@ -2131,10 +2119,10 @@ class PildorasAnclajesApp {
       }
       if (editAnchor) {
         window.stateManager.updateAnchor(editAnchor.id, { text, category: cat });
-        window.app?.showToast('Anclaje ACT actualizado ⚓');
+        window.app?.showToast('Anclaje ACT actualizado');
       } else {
         window.stateManager.addAnchor(text, 'Personal', cat);
-        window.app?.showToast('Anclaje ACT guardado en tu botiquín ⚓');
+        window.app?.showToast('Anclaje ACT guardado en tu botiquín');
       }
       modal.classList.remove('active');
       this.render();
@@ -2160,7 +2148,7 @@ class PildorasAnclajesApp {
           ${pill.categoryLabel} • Lectura de 1 minuto
         </span>
         <button type="button" class="btn-icon" id="btn-reader-toggle-fav" style="border: none; background: transparent; font-size: 1.2rem;">
-          ${isFav ? '❤️' : '🤍'}
+          ${isFav ?'' :''}
         </button>
       </div>
 
@@ -2175,7 +2163,7 @@ class PildorasAnclajesApp {
       <div class="btn-group" style="margin-top: 24px; justify-content: space-between;">
         ${pill.trickId ? `
           <button type="button" class="btn-secondary" id="btn-modal-launch-trick" style="border-color: var(--sage-400);">
-            ⚡ Ejecutar este truco ahora
+            Ejecutar este truco ahora
           </button>
         ` : '<div></div>'}
         <button type="button" class="btn-primary" id="btn-modal-close-reader">
@@ -2196,8 +2184,8 @@ class PildorasAnclajesApp {
 
     document.getElementById('btn-reader-toggle-fav')?.addEventListener('click', () => {
       const newFavState = window.stateManager.togglePillFavorite(pill.id);
-      document.getElementById('btn-reader-toggle-fav').textContent = newFavState ? '❤️' : '🤍';
-      window.app?.showToast(newFavState ? 'Añadido a favoritos ❤️' : 'Eliminado de favoritos');
+      document.getElementById('btn-reader-toggle-fav').textContent = newFavState ?'' :'';
+      window.app?.showToast(newFavState ?'Añadido a favoritos' :'Eliminado de favoritos');
       this.render();
       this.bindEvents();
     });

@@ -1,51 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <defs>
-    <linearGradient id="actGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#3B6E58"/>
-      <stop offset="100%" stop-color="#1E382E"/>
-    </linearGradient>
-    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#A4D4B4"/>
-      <stop offset="50%" stop-color="#5B9A7D"/>
-      <stop offset="100%" stop-color="#315B48"/>
-    </linearGradient>
-    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.25"/>
-    </filter>
-  </defs>
-
-  <!-- Background container -->
-  <rect width="512" height="512" rx="112" fill="url(#actGrad)"/>
-  
-  <!-- Subtle Zen Hexaflex Ring -->
-  <circle cx="256" cy="256" r="180" fill="none" stroke="#5B9A7D" stroke-width="2.5" stroke-dasharray="8 6" opacity="0.4"/>
-  <circle cx="256" cy="256" r="130" fill="none" stroke="#A4D4B4" stroke-width="1.5" opacity="0.25"/>
-
-  <!-- Compass / Grounding Crosslines (Soft) -->
-  <line x1="256" y1="96" x2="256" y2="416" stroke="#A4D4B4" stroke-width="2" stroke-linecap="round" opacity="0.2"/>
-  <line x1="96" y1="256" x2="416" y2="256" stroke="#A4D4B4" stroke-width="2" stroke-linecap="round" opacity="0.2"/>
-
-  <!-- Main Symbol: The Breathing Leaf / Mindful Center -->
-  <g filter="url(#shadow)">
-    <!-- Outer Gentle Wave Leaves -->
-    <path d="M 256 120 C 330 190, 370 280, 310 350 C 270 395, 220 380, 200 350 C 180 320, 190 270, 230 220 Z" 
-          fill="url(#leafGrad)" opacity="0.85"/>
-    <path d="M 256 120 C 182 190, 142 280, 202 350 C 242 395, 292 380, 312 350 C 332 320, 322 270, 282 220 Z" 
-          fill="#4A8167" opacity="0.7"/>
-
-    <!-- Central S-curve Stem & Core of Acceptance -->
-    <path d="M 256 140 Q 240 256, 256 372" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.9"/>
-    
-    <!-- Mindfulness Anchor Node -->
-    <circle cx="256" cy="256" r="16" fill="#F4EDE2"/>
-    <circle cx="256" cy="256" r="8" fill="#3B6E58"/>
-    
-    <!-- 6 Hexaflex Value Nodes -->
-    <circle cx="256" cy="120" r="7" fill="#E8F4EC"/>
-    <circle cx="360" cy="180" r="7" fill="#E8F4EC"/>
-    <circle cx="360" cy="332" r="7" fill="#E8F4EC"/>
-    <circle cx="256" cy="392" r="7" fill="#E8F4EC"/>
-    <circle cx="152" cy="332" r="7" fill="#E8F4EC"/>
-    <circle cx="152" cy="180" r="7" fill="#E8F4EC"/>
-  </g>
+  <rect width="512" height="512" rx="108" fill="#1B1613"/>
+  <path d="M 357.3 154.7 A 144 144 0 1 1 256 112" fill="none" stroke="#F3EDE4" stroke-width="29" stroke-linecap="round"/>
+  <circle cx="256" cy="256" r="37" fill="#C47C61"/>
 </svg>

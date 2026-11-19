@@ -19,7 +19,11 @@ const STORAGE_KEYS = {
   STORAGE_MODE: 'act_storage_mode',
   VAULT_META: 'act_privacy_vault_meta',
   BIOMETRIC_LOCAL: 'act_biometric_local_wrap',
-  THEME_PREF: 'act_theme_pref'
+  THEME_PREF:'act_theme_pref',
+  PALETTE_PREF:'act_palette_pref',
+  SURFACE_PREF:'act_surface_pref',
+  BUTTONS_PREF:'act_buttons_pref',
+  CUSTOM_PALETTE_PREF:'act_custom_palette_pref'
 };
 
 const SERVER_ARRAY_KEYS = new Set([
@@ -111,6 +115,7 @@ class StateManager {
   constructor() {
     this.listeners = new Set();
     this.memStore = new Map();
+    this.pendingWrites = new Set();
     this.cryptoKey = null;
     this.idbPromise = null;
     this.storagePersisted = false;
@@ -227,163 +232,31 @@ class StateManager {
     }
   }
 
-  // -------------------------------------------------------------
-  // CRYPTO ENGINE (AES-256-GCM + PBKDF2) & BIOMETRIC (WEBAUTHN)
-  // -------------------------------------------------------------
-  isCryptoSupported() {
-    return Boolean(typeof globalThis !== 'undefined' && globalThis.crypto && globalThis.crypto.subtle);
-  }
-
-  isBiometricSupported() {
-    return Boolean(
-      this.isCryptoSupported() &&
-      typeof window !== 'undefined' &&
-      window.PublicKeyCredential &&
-      typeof navigator !== 'undefined' &&
-      navigator.credentials
-    );
-  }
-
-  getVaultMeta() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.VAULT_META)) || null;
-    } catch {
-      return null;
-    }
-  }
-
-  isVaultEnabled() {
-    const meta = this.getVaultMeta();
-    return Boolean(meta && meta.enabled === true && meta.verifier);
-  }
-
-  isVaultLocked() {
-    return Boolean(this.isVaultEnabled() && (this.vaultLocked || !this.cryptoKey));
-  }
-
-  hasBiometricEnabled() {
-    if (!this.isVaultEnabled()) return false;
-    try {
-      const bio = JSON.parse(localStorage.getItem(STORAGE_KEYS.BIOMETRIC_LOCAL) || 'null');
-      return Boolean(bio && bio.credId && bio.wrappedKey && bio.wrapIv && bio.deviceKey);
-    } catch {
-      return false;
-    }
-  }
-
-  getVaultStatus() {
-    const meta = this.getVaultMeta();
-    return {
-      enabled: this.isVaultEnabled(),
-      locked: this.isVaultLocked(),
-      autoLockMinutes: meta?.autoLockMinutes ?? 5,
-      cryptoSupported: this.isCryptoSupported(),
-      biometricSupported: this.isBiometricSupported(),
-      biometricEnabled: this.hasBiometricEnabled(),
-      storagePersisted: this.storagePersisted
-    };
-  }
-
-  bytesToBase64(bytes) {
-    const arr = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
-    if (typeof Buffer !== 'undefined') {
-      return Buffer.from(arr).toString('base64');
-    }
-    let bin = '';
-    for (let i = 0; i < arr.length; i += 1) {
-      bin += String.fromCharCode(arr[i]);
-    }
-    return btoa(bin);
-  }
-
-  base64ToBytes(b64) {
-    if (typeof Buffer !== 'undefined') {
-      return new Uint8Array(Buffer.from(b64, 'base64'));
-    }
-    const bin = atob(b64);
-    const out = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i += 1) {
-      out[i] = bin.charCodeAt(i);
-    }
-    return out;
-  }
-
-  isEncryptedEnvelope(val) {
-    return Boolean(val && typeof val === 'object' && !Array.isArray(val) && val.__ethos_enc === 'v1' && val.iv && val.ct);
-  }
-
-  async deriveAesKey(passphrase, saltB64, iterations = 100000) {
-    const enc = new TextEncoder();
-    const baseKey = await globalThis.crypto.subtle.importKey(
-      'raw',
-      enc.encode(String(passphrase || '')),
-      { name: 'PBKDF2' },
-      false,
-      ['deriveKey']
-    );
-    return globalThis.crypto.subtle.deriveKey(
-      {
-        name: 'PBKDF2',
-        salt: this.base64ToBytes(saltB64),
-        iterations,
-        hash: 'SHA-256'
-      },
-      baseKey,
-      { name: 'AES-GCM', length: 256 },
-      true,
-      ['encrypt', 'decrypt']
-    );
-  }
-
-  async encryptValue(value, cryptoKey = this.cryptoKey) {
-    if (!cryptoKey) throw new Error('NO_CRYPTO_KEY');
-    const iv = globalThis.crypto.getRandomValues(new Uint8Array(12));
-    const enc = new TextEncoder();
-    const cipherBuf = await globalThis.crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv },
-      cryptoKey,
-      enc.encode(JSON.stringify(value))
-    );
-    return {
-      id: 'vault_enc',
-      __ethos_enc: 'v1',
-      alg: 'AES-256-GCM',
-      iv: this.bytesToBase64(iv),
-      ct: this.bytesToBase64(new Uint8Array(cipherBuf))
-    };
-  }
-
-  async decryptValue(rawOrEnvelope, cryptoKey = this.cryptoKey) {
-    let target = rawOrEnvelope;
-    if (Array.isArray(rawOrEnvelope) && rawOrEnvelope.length === 1 && this.isEncryptedEnvelope(rawOrEnvelope[0])) {
-      target = rawOrEnvelope[0];
-    }
-    if (!this.isEncryptedEnvelope(target)) {
-      return rawOrEnvelope;
-    }
-    if (!cryptoKey) throw new Error('VAULT_LOCKED');
-    const plainBuf = await globalThis.crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: this.base64ToBytes(target.iv) },
-      cryptoKey,
-      this.base64ToBytes(target.ct)
-    );
-    const dec = new TextDecoder();
-    return JSON.parse(dec.decode(plainBuf));
-  }
-
   getDefaultValueForKey(storageKey) {
     switch (storageKey) {
       case STORAGE_KEYS.ANCHORS:
         return JSON.parse(JSON.stringify(DEFAULT_ANCHORS));
       case STORAGE_KEYS.SETTINGS: {
         let themePref = 'light';
+        let palettePref ='arcilla';
+        let surfacePref ='editorial';
+        let buttonsPref ='ultraligero';
         try {
           themePref = localStorage.getItem(STORAGE_KEYS.THEME_PREF) ||
             (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          const storedPal = localStorage.getItem(STORAGE_KEYS.PALETTE_PREF);
+          if (['arcilla','musgo','sepia','niebla','custom'].includes(storedPal)) palettePref = storedPal;
+          const storedSurf = localStorage.getItem(STORAGE_KEYS.SURFACE_PREF);
+          if (storedSurf ==='lino' || storedSurf ==='editorial') surfacePref = storedSurf;
+          const storedBtns = localStorage.getItem(STORAGE_KEYS.BUTTONS_PREF);
+          if (storedBtns ==='editorial' || storedBtns ==='ultraligero') buttonsPref = storedBtns;
         } catch {
           themePref = 'light';
+          palettePref ='arcilla';
+          surfacePref ='editorial';
+          buttonsPref ='ultraligero';
         }
-        return { theme: themePref, sound: false, vibration: true, mindName: 'George' };
+        return { theme: themePref, palette: palettePref, surface: surfacePref, buttons: buttonsPref, sound: false, vibration: true, mindName:'George' };
       }
       case STORAGE_KEYS.PROFILE:
         return {
@@ -446,320 +319,6 @@ class StateManager {
       : msg;
   }
 
-  async enableVault(passphrase, autoLockMinutes = 5) {
-    if (!this.isCryptoSupported()) {
-      return { ok: false, error: this.tr('Tu navegador requiere HTTPS o localhost para cifrar con AES-256.') };
-    }
-    const cleanPass = String(passphrase || '');
-    if (cleanPass.length < 4) {
-      return { ok: false, error: this.tr('Usa un PIN o contraseña de al menos 4 caracteres.') };
-    }
-
-    try {
-      this.ensureDefaultSeedsInMemory();
-      const salt = this.bytesToBase64(globalThis.crypto.getRandomValues(new Uint8Array(16)));
-      const iterations = 100000;
-      const key = await this.deriveAesKey(cleanPass, salt, iterations);
-      const verifier = await this.encryptValue('ETHOS_VAULT_OK', key);
-
-      const meta = {
-        enabled: true,
-        alg: 'PBKDF2-SHA256+AES-256-GCM',
-        salt,
-        iterations,
-        verifier,
-        autoLockMinutes: Number.isFinite(Number(autoLockMinutes)) ? Number(autoLockMinutes) : 5,
-        updatedAt: Date.now()
-      };
-
-      const metaStr = JSON.stringify(meta);
-      localStorage.setItem(STORAGE_KEYS.VAULT_META, metaStr);
-      this.idbPut(STORAGE_KEYS.VAULT_META, metaStr);
-
-      this.cryptoKey = key;
-      this.vaultLocked = false;
-
-      await this.encryptAllCurrentData();
-      this.notify('vault_status_changed', this.getVaultStatus());
-      this.notify('vault_unlocked', this.getVaultStatus());
-      return { ok: true };
-    } catch (err) {
-      console.error('enableVault failed', err);
-      return { ok: false, error: this.tr('No se pudo activar el cifrado en este navegador.') };
-    }
-  }
-
-  async encryptAllCurrentData() {
-    if (!this.cryptoKey || this.vaultLocked) return false;
-    for (const key of DATA_STORAGE_KEYS) {
-      let plainVal = this.memStore.has(key) ? this.memStore.get(key) : null;
-      if (plainVal === null || plainVal === undefined) {
-        try {
-          const rawStr = localStorage.getItem(key);
-          if (rawStr) {
-            const parsed = JSON.parse(rawStr);
-            plainVal = await this.decryptValue(parsed, this.cryptoKey);
-          } else {
-            plainVal = this.getDefaultValueForKey(key);
-          }
-        } catch {
-          plainVal = this.getDefaultValueForKey(key);
-        }
-        this.memStore.set(key, JSON.parse(JSON.stringify(plainVal)));
-      }
-      const env = await this.encryptValue(plainVal, this.cryptoKey);
-      const envStr = JSON.stringify(env);
-      localStorage.setItem(key, envStr);
-      this.idbPut(key, envStr);
-    }
-
-    if (this.getStorageMode() === 'db') {
-      await this.pushFullStateToServer();
-    }
-    return true;
-  }
-
-  async unlockVaultWithKey(key) {
-    const meta = this.getVaultMeta();
-    if (!meta || !meta.enabled || !meta.verifier) {
-      return { ok: false, error: this.tr('No hay bóveda configurada.') };
-    }
-    try {
-      const check = await this.decryptValue(meta.verifier, key);
-      if (check !== 'ETHOS_VAULT_OK') {
-        return { ok: false, error: this.tr('PIN o contraseña incorrectos.') };
-      }
-
-      this.cryptoKey = key;
-      this.vaultLocked = false;
-
-      let needsReencrypt = false;
-      for (const storageKey of DATA_STORAGE_KEYS) {
-        const rawStr = localStorage.getItem(storageKey);
-        if (!rawStr) {
-          this.memStore.set(storageKey, this.getDefaultValueForKey(storageKey));
-          needsReencrypt = true;
-          continue;
-        }
-        const parsed = JSON.parse(rawStr);
-        if (this.isEncryptedEnvelope(parsed) || (Array.isArray(parsed) && parsed.length === 1 && this.isEncryptedEnvelope(parsed[0]))) {
-          const decrypted = await this.decryptValue(parsed, key);
-          this.memStore.set(storageKey, decrypted);
-        } else {
-          this.memStore.set(storageKey, parsed);
-          needsReencrypt = true;
-        }
-      }
-
-      const settings = this.getSettings();
-      if (settings.theme) {
-        try {
-          localStorage.setItem(STORAGE_KEYS.THEME_PREF, settings.theme);
-        } catch {
-          // Ignore
-        }
-      }
-
-      if (needsReencrypt) {
-        await this.encryptAllCurrentData();
-      }
-
-      this.notify('vault_unlocked', this.getVaultStatus());
-      this.notify('vault_status_changed', this.getVaultStatus());
-      if (this.getStorageMode() === 'db') {
-        this.initServerSync();
-      }
-      return { ok: true };
-    } catch {
-      this.cryptoKey = null;
-      this.vaultLocked = true;
-      return { ok: false, error: this.tr('PIN o contraseña incorrectos.') };
-    }
-  }
-
-  async unlockVault(passphrase) {
-    if (!this.isCryptoSupported()) {
-      return { ok: false, error: this.tr('Web Crypto no disponible en este contexto.') };
-    }
-    const meta = this.getVaultMeta();
-    if (!meta || !meta.salt) {
-      return { ok: false, error: this.tr('No hay bóveda configurada.') };
-    }
-    try {
-      const key = await this.deriveAesKey(String(passphrase || ''), meta.salt, meta.iterations || 100000);
-      return await this.unlockVaultWithKey(key);
-    } catch {
-      return { ok: false, error: this.tr('PIN o contraseña incorrectos.') };
-    }
-  }
-
-  lockVault() {
-    if (!this.isVaultEnabled()) return false;
-    this.cryptoKey = null;
-    this.vaultLocked = true;
-    this.memStore.clear();
-    this.notify('vault_locked', this.getVaultStatus());
-    this.notify('vault_status_changed', this.getVaultStatus());
-    return true;
-  }
-
-  updateVaultAutoLock(minutes) {
-    const meta = this.getVaultMeta();
-    if (!meta || !meta.enabled) return false;
-    meta.autoLockMinutes = Number(minutes);
-    meta.updatedAt = Date.now();
-    const metaStr = JSON.stringify(meta);
-    localStorage.setItem(STORAGE_KEYS.VAULT_META, metaStr);
-    this.idbPut(STORAGE_KEYS.VAULT_META, metaStr);
-    if (this.getStorageMode() === 'db' && !this.isVaultLocked()) {
-      this.persistKey(STORAGE_KEYS.VAULT_META, meta);
-    }
-    this.notify('vault_status_changed', this.getVaultStatus());
-    return true;
-  }
-
-  async disableVault(passphrase) {
-    const verify = await this.unlockVault(passphrase);
-    if (!verify.ok) return verify;
-
-    const snapshot = this.collectAllState();
-    const disabledMeta = { enabled: false, updatedAt: Date.now() };
-    localStorage.setItem(STORAGE_KEYS.VAULT_META, JSON.stringify(disabledMeta));
-    this.idbPut(STORAGE_KEYS.VAULT_META, JSON.stringify(disabledMeta));
-    localStorage.removeItem(STORAGE_KEYS.BIOMETRIC_LOCAL);
-
-    this.cryptoKey = null;
-    this.vaultLocked = false;
-
-    Object.entries(SERVER_KEY_MAP).forEach(([storageKey, serverKey]) => {
-      if (storageKey === STORAGE_KEYS.VAULT_META) return;
-      const val = snapshot[serverKey] !== undefined ? snapshot[serverKey] : this.getDefaultValueForKey(storageKey);
-      this.memStore.set(storageKey, JSON.parse(JSON.stringify(val)));
-      const serialized = JSON.stringify(val);
-      localStorage.setItem(storageKey, serialized);
-      this.idbPut(storageKey, serialized);
-    });
-
-    if (this.getStorageMode() === 'db') {
-      await this.pushFullStateToServer();
-    }
-
-    this.notify('vault_status_changed', this.getVaultStatus());
-    this.notify('vault_unlocked', this.getVaultStatus());
-    return { ok: true };
-  }
-
-  async registerBiometric() {
-    if (!this.isBiometricSupported()) {
-      return { ok: false, error: this.tr('Tu navegador o dispositivo no soporta FaceID / Huella (WebAuthn).') };
-    }
-    if (!this.cryptoKey || this.vaultLocked) {
-      return { ok: false, error: this.tr('Desbloquea primero la bóveda con tu PIN/contraseña.') };
-    }
-    try {
-      const challenge = globalThis.crypto.getRandomValues(new Uint8Array(32));
-      const userId = globalThis.crypto.getRandomValues(new Uint8Array(16));
-      const credential = await navigator.credentials.create({
-        publicKey: {
-          challenge,
-          rp: { name: (typeof window !== 'undefined' && window.i18n?.isEn?.()) ? 'Khora — Your ACT space' : 'Khora — Tu espacio ACT' },
-          user: { id: userId, name: 'khora-local', displayName: 'Khora' },
-          pubKeyCredParams: [
-            { type: 'public-key', alg: -7 },
-            { type: 'public-key', alg: -257 }
-          ],
-          authenticatorSelection: {
-            authenticatorAttachment: 'platform',
-            userVerification: 'required'
-          },
-          timeout: 60000
-        }
-      });
-      if (!credential || !credential.rawId) {
-        return { ok: false, error: this.tr('Registro biométrico cancelado.') };
-      }
-
-      const rawVaultKey = new Uint8Array(await globalThis.crypto.subtle.exportKey('raw', this.cryptoKey));
-      const deviceKeyRaw = globalThis.crypto.getRandomValues(new Uint8Array(32));
-      const wrapKey = await globalThis.crypto.subtle.importKey(
-        'raw',
-        deviceKeyRaw,
-        { name: 'AES-GCM' },
-        false,
-        ['encrypt']
-      );
-      const wrapIv = globalThis.crypto.getRandomValues(new Uint8Array(12));
-      const wrappedBuf = await globalThis.crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv: wrapIv },
-        wrapKey,
-        rawVaultKey
-      );
-
-      const bioRecord = {
-        credId: this.bytesToBase64(new Uint8Array(credential.rawId)),
-        deviceKey: this.bytesToBase64(deviceKeyRaw),
-        wrapIv: this.bytesToBase64(wrapIv),
-        wrappedKey: this.bytesToBase64(new Uint8Array(wrappedBuf)),
-        createdAt: Date.now()
-      };
-      localStorage.setItem(STORAGE_KEYS.BIOMETRIC_LOCAL, JSON.stringify(bioRecord));
-      this.notify('vault_status_changed', this.getVaultStatus());
-      return { ok: true };
-    } catch (err) {
-      console.error('registerBiometric failed', err);
-      return { ok: false, error: this.tr('No se pudo registrar FaceID / Huella en este dispositivo.') };
-    }
-  }
-
-  removeBiometric() {
-    localStorage.removeItem(STORAGE_KEYS.BIOMETRIC_LOCAL);
-    this.notify('vault_status_changed', this.getVaultStatus());
-  }
-
-  async unlockWithBiometric() {
-    if (!this.hasBiometricEnabled() || !this.isBiometricSupported()) {
-      return { ok: false, error: this.tr('Desbloqueo biométrico no disponible en este dispositivo.') };
-    }
-    try {
-      const bio = JSON.parse(localStorage.getItem(STORAGE_KEYS.BIOMETRIC_LOCAL));
-      const challenge = globalThis.crypto.getRandomValues(new Uint8Array(32));
-      const assertion = await navigator.credentials.get({
-        publicKey: {
-          challenge,
-          allowCredentials: [{ id: this.base64ToBytes(bio.credId), type: 'public-key' }],
-          userVerification: 'required',
-          timeout: 60000
-        }
-      });
-      if (!assertion) {
-        return { ok: false, error: this.tr('Verificación biométrica cancelada.') };
-      }
-
-      const wrapKey = await globalThis.crypto.subtle.importKey(
-        'raw',
-        this.base64ToBytes(bio.deviceKey),
-        { name: 'AES-GCM' },
-        false,
-        ['decrypt']
-      );
-      const rawVaultKey = await globalThis.crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv: this.base64ToBytes(bio.wrapIv) },
-        wrapKey,
-        this.base64ToBytes(bio.wrappedKey)
-      );
-      const restoredKey = await globalThis.crypto.subtle.importKey(
-        'raw',
-        rawVaultKey,
-        { name: 'AES-GCM', length: 256 },
-        true,
-        ['encrypt', 'decrypt']
-      );
-      return await this.unlockVaultWithKey(restoredKey);
-    } catch (err) {
-      console.error('unlockWithBiometric failed', err);
-      return { ok: false, error: this.tr('No se pudo verificar FaceID / Huella.') };
-    }
-  }
 
   getStorageMode() {
     try {
@@ -1076,8 +635,24 @@ class StateManager {
       });
     }
     if (!this.memStore.has(STORAGE_KEYS.SETTINGS)) {
+      let palettePref ='arcilla';
+      let surfacePref ='editorial';
+      let buttonsPref ='ultraligero';
+      try {
+        const storedPal = localStorage.getItem(STORAGE_KEYS.PALETTE_PREF);
+        if (['arcilla','musgo','sepia','niebla','custom'].includes(storedPal)) palettePref = storedPal;
+        const storedSurf = localStorage.getItem(STORAGE_KEYS.SURFACE_PREF);
+        if (storedSurf ==='lino' || storedSurf ==='editorial') surfacePref = storedSurf;
+        const storedBtns = localStorage.getItem(STORAGE_KEYS.BUTTONS_PREF);
+        if (storedBtns ==='editorial' || storedBtns ==='ultraligero') buttonsPref = storedBtns;
+      } catch {
+        // Ignore
+      }
       this.memStore.set(STORAGE_KEYS.SETTINGS, {
         theme: (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light',
+        palette: palettePref,
+        surface: surfacePref,
+        buttons: buttonsPref,
         sound: false,
         vibration: true,
         mindName: 'George'
@@ -1136,6 +711,13 @@ class StateManager {
         // Ignore
       }
     }
+    if (settings.palette) {
+      try {
+        localStorage.setItem(STORAGE_KEYS.PALETTE_PREF, settings.palette);
+      } catch {
+        // Ignore
+      }
+    }
 
     this.initIndexedDbMirror();
 
@@ -1159,15 +741,49 @@ class StateManager {
     return { ...this.dbStatus, mode: this.getStorageMode() };
   }
 
+  trackWrite(promise) {
+    if (!promise || typeof promise.then !=='function') return promise;
+    this.pendingWrites.add(promise);
+    const cleanup = () => this.pendingWrites.delete(promise);
+    promise.then(cleanup, cleanup);
+    return promise;
+  }
+
+  hasPendingWrites() {
+    return this.pendingWrites.size > 0;
+  }
+
+  async flushPendingWrites(timeoutMs = 4000) {
+    if (this.pendingWrites.size === 0) return true;
+    let timedOut = false;
+    const drain = (async () => {
+      while (this.pendingWrites.size > 0 && !timedOut) {
+        await Promise.allSettled(Array.from(this.pendingWrites));
+      }
+      return !timedOut;
+    })();
+    const timeout = new Promise((resolve) => {
+      setTimeout(() => {
+        timedOut = true;
+        resolve(false);
+      }, timeoutMs);
+    });
+    return Promise.race([drain, timeout]);
+  }
+
   persistKey(storageKey, value, syncServer = true) {
     if (this.isVaultLocked() && storageKey !== STORAGE_KEYS.VAULT_META) {
       return;
     }
 
     this.memStore.set(storageKey, JSON.parse(JSON.stringify(value)));
-    if (storageKey === STORAGE_KEYS.SETTINGS && value && value.theme) {
+    if (storageKey === STORAGE_KEYS.SETTINGS && value) {
       try {
-        localStorage.setItem(STORAGE_KEYS.THEME_PREF, value.theme);
+        if (value.theme) localStorage.setItem(STORAGE_KEYS.THEME_PREF, value.theme);
+        if (value.palette) localStorage.setItem(STORAGE_KEYS.PALETTE_PREF, value.palette);
+        if (value.surface) localStorage.setItem(STORAGE_KEYS.SURFACE_PREF, value.surface);
+        if (value.buttons) localStorage.setItem(STORAGE_KEYS.BUTTONS_PREF, value.buttons);
+        if (value.customPalette) localStorage.setItem(STORAGE_KEYS.CUSTOM_PALETTE_PREF, JSON.stringify(value.customPalette));
       } catch {
         // Ignore
       }
@@ -1187,13 +803,13 @@ class StateManager {
 
       const serialized = JSON.stringify(localPayload);
       localStorage.setItem(storageKey, serialized);
-      this.idbPut(storageKey, serialized);
+      await this.idbPut(storageKey, serialized);
 
       if (!syncServer || this.getStorageMode() === 'local') return;
       const serverKey = SERVER_KEY_MAP[storageKey];
       if (!serverKey || typeof fetch !== 'function') return;
 
-      fetch(`/api/state/${serverKey}`, {
+      await fetch(`/api/state/${serverKey}`, {
         method: 'PUT',
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
@@ -1241,9 +857,10 @@ class StateManager {
         });
     };
 
-    writeAndSync().catch((err) => {
+    const writePromise = writeAndSync().catch((err) => {
       console.error('persistKey failed', err);
     });
+    this.trackWrite(writePromise);
   }
 
   collectAllState() {
@@ -1750,7 +1367,7 @@ class StateManager {
       {
         id: 'pas_seed_1',
         isExample: true,
-        icon: '⚖️',
+        icon:'',
         name: 'El Policía de la Culpa ("Eres egoísta")',
         shouts: 'Si te priorizas o dices que no, harás daño y pensarán mal de ti.',
         protectsFrom: 'Sentirme mala persona o que me rechacen',
@@ -1762,7 +1379,7 @@ class StateManager {
       {
         id: 'pas_seed_2',
         isExample: true,
-        icon: '😰',
+        icon:'',
         name: 'El Vigilante del Enfado Ajeno',
         shouts: 'Gira por el camino seguro y cede ahora mismo para evitar caras largas.',
         protectsFrom: 'La tensión, el conflicto o la frialdad del otro',
@@ -1900,7 +1517,7 @@ class StateManager {
         busPassengers: [
           {
             id: 'pas_seed_1',
-            icon: '⚖️',
+            icon:'',
             name: 'El Policía de la Culpa ("Eres egoísta")',
             shouts: 'Si te priorizas o dices que no, harás daño y pensarán mal de ti.',
             protectsFrom: 'Sentirme mala persona o que me rechacen',
@@ -1911,7 +1528,7 @@ class StateManager {
           },
           {
             id: 'pas_seed_2',
-            icon: '😰',
+            icon:'',
             name: 'El Vigilante del Enfado Ajeno',
             shouts: 'Gira por el camino seguro y cede ahora mismo para evitar caras largas.',
             protectsFrom: 'La tensión, el conflicto o la frialdad del otro',
@@ -2005,7 +1622,7 @@ class StateManager {
     p.progressLog.unshift({
       date: Date.now(),
       type: 'values_updated',
-      note: `🌟 Valor Faro Principal fijado (${chosen.domain}): "${chosen.statement}"`
+      note:`Valor Faro Principal fijado (${chosen.domain}):"${chosen.statement}"`
     });
     this.saveProfile(p);
     return chosen;
@@ -2020,7 +1637,7 @@ class StateManager {
     p.progressLog.unshift({
       date: Date.now(),
       type: 'values_updated',
-      note: `✅ Paso dado en ${val.domain}: "${val.microAction || val.statement}"`
+      note:`Paso dado en ${val.domain}:"${val.microAction || val.statement}"`
     });
     this.saveProfile(p);
     return val;
@@ -2047,7 +1664,7 @@ class StateManager {
     if (!Array.isArray(p.busPassengers)) p.busPassengers = [];
     const newPas = {
       id: 'pas_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-      icon: passengerObj.icon || '🚌',
+      icon: passengerObj.icon ||'',
       name: (passengerObj.name || '').trim(),
       shouts: (passengerObj.shouts || '').trim(),
       protectsFrom: (passengerObj.protectsFrom || '').trim(),
@@ -2074,7 +1691,7 @@ class StateManager {
     const target = p.busPassengers.find(pas => pas.id === passengerId);
     if (!target) return null;
 
-    if (patch.icon !== undefined) target.icon = patch.icon || target.icon || '🚌';
+    if (patch.icon !== undefined) target.icon = patch.icon || target.icon ||'';
     if (patch.name !== undefined) target.name = String(patch.name).trim();
     if (patch.shouts !== undefined) target.shouts = String(patch.shouts).trim();
     if (patch.protectsFrom !== undefined) target.protectsFrom = String(patch.protectsFrom).trim();
@@ -2090,7 +1707,7 @@ class StateManager {
     p.progressLog.unshift({
       date: Date.now(),
       type: 'passenger_status',
-      note: `${target.icon || '🚌'} Pasajero actualizado: "${target.name}"`
+      note:`${target.icon ||''} Pasajero actualizado:"${target.name}"`
     });
     this.saveProfile(p);
     return target;
@@ -2103,14 +1720,14 @@ class StateManager {
     if (target) {
       target.status = newStatus;
       const labels = {
-        loud: '🔊 Haciendo ruido (A medias)',
-        seated: '💺 Sentado atrás (En trabajo)',
-        integrated: '🕊️ Aceptado e integrado'
+        loud:'Haciendo ruido (A medias)',
+        seated:'Sentado atrás (En trabajo)',
+        integrated:'Aceptado e integrado'
       };
       p.progressLog.unshift({
         date: Date.now(),
         type: 'passenger_status',
-        note: `🚌 "${target.name}": ${labels[newStatus] || newStatus}`
+        note:`"${target.name}": ${labels[newStatus] || newStatus}`
       });
       this.saveProfile(p);
     }
@@ -2721,4 +2338,6 @@ class StateManager {
 }
 
 // Global instance
+Object.assign(StateManager.prototype, window.KhoraStateVaultMixin(STORAGE_KEYS, DATA_STORAGE_KEYS));
 window.stateManager = new StateManager();
+

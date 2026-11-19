@@ -1,23 +1,93 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="es" data-theme="light" data-palette="arcilla" data-surface="editorial" data-buttons="ultraligero">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Khora — Tu espacio ACT</title>
+  <title>Khōra</title>
   
   <!-- PWA & Mobile Meta Tags -->
-  <meta name="description" content="Khora — Tu espacio ACT. Herramienta personal de Terapia de Aceptación y Compromiso para observar, aceptar y actuar hacia tus valores.">
-  <meta name="theme-color" content="#355749">
+  <meta name="description" content="Khōra — Tu espacio ACT. Herramienta personal de Terapia de Aceptación y Compromiso para observar, aceptar y actuar hacia tus valores.">
+  <meta name="theme-color" content="#F3EDE4">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Khora">
+  <meta name="apple-mobile-web-app-title" content="Khōra">
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/svg+xml" href="./icons/icon-192.svg">
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
 
+  <!-- Pre-paint theme & palette hydration (prevents flash before vault unlock) -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('act_theme_pref');
+        if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+        t = (t === 'dark') ? 'dark' : 'light';
+        var p = localStorage.getItem('act_palette_pref');
+        if (p !== 'musgo' && p !== 'sepia' && p !== 'niebla' && p !== 'custom') p = 'arcilla';
+        var s = localStorage.getItem('act_surface_pref');
+        s = (s === 'lino') ? 'lino' : 'editorial';
+        var b = localStorage.getItem('act_buttons_pref');
+        b = (b === 'editorial') ? 'editorial' : 'ultraligero';
+        document.documentElement.setAttribute('data-theme', t);
+        document.documentElement.setAttribute('data-palette', p);
+        document.documentElement.setAttribute('data-surface', s);
+        document.documentElement.setAttribute('data-buttons', b);
+        var colors = {
+          arcilla: { light: '#F3EDE4', dark: '#1B1613' },
+          musgo: { light: '#F6F3EC', dark: '#171614' },
+          sepia: { light: '#F4ECD8', dark: '#1D1812' },
+          niebla: { light: '#F2F3F5', dark: '#1A1C20' }
+        };
+        var defaultCustom = {
+          light: { bg: '#F4F1EA', text: '#262420', accent: '#5D6E64' },
+          dark: { bg: '#1B1D1C', text: '#EAECE9', accent: '#94ABA0' }
+        };
+        var isHex = function (v) { return typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v); };
+        var relLum = function (hex) {
+          var ch = [1, 3, 5].map(function (i) {
+            var c = parseInt(hex.slice(i, i + 2), 16) / 255;
+            return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+          });
+          return 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2];
+        };
+        var getOnAccent = function (hex) {
+          if (!isHex(hex)) return '#FAF8F4';
+          var lBg = relLum(hex);
+          var lDark = relLum('#1A1A18');
+          var lLight = relLum('#FAF8F4');
+          var cDark = (Math.max(lBg, lDark) + 0.05) / (Math.min(lBg, lDark) + 0.05);
+          var cLight = (Math.max(lBg, lLight) + 0.05) / (Math.min(lBg, lLight) + 0.05);
+          return cDark >= cLight ? '#1A1A18' : '#FAF8F4';
+        };
+        window.__KHORA_PALETTE_COLORS__ = colors;
+        window.__KHORA_DEFAULT_CUSTOM_PALETTE__ = defaultCustom;
+        window.__KHORA_GET_ON_ACCENT__ = getOnAccent;
+        var themeCol = (colors[p] && colors[p][t]) ? colors[p][t] : '#F3EDE4';
+        if (p === 'custom') {
+          var rawCp = localStorage.getItem('act_custom_palette_pref');
+          var cp = rawCp ? JSON.parse(rawCp) : null;
+          var defMode = defaultCustom[t];
+          var src = cp && cp[t] ? cp[t] : {};
+          var bg = isHex(src.bg) ? src.bg : defMode.bg;
+          var text = isHex(src.text) ? src.text : defMode.text;
+          var accent = isHex(src.accent) ? src.accent : defMode.accent;
+          document.documentElement.style.setProperty('--custom-bg', bg);
+          document.documentElement.style.setProperty('--custom-text', text);
+          document.documentElement.style.setProperty('--custom-accent', accent);
+          document.documentElement.style.setProperty('--custom-on-accent', getOnAccent(accent));
+          themeCol = bg;
+        }
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', themeCol);
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- Core Therapeutic Styling -->
-  <link rel="stylesheet" href="./css/styles.css?v=3.1.0">
+  <link rel="stylesheet" href="./css/tokens.css?v=1.0.0">
+  <link rel="stylesheet" href="./css/styles.css?v=1.0.0">
+  <link rel="stylesheet" href="./css/surfaces.css?v=1.0.0">
 </head>
 <body>
 
@@ -26,15 +96,8 @@
     <header class="app-header">
       <div class="header-brand-cluster">
         <div class="brand-wrapper">
-          <div class="brand-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2a10 10 0 1 0 10 10H12V2z"></path>
-              <path d="M12 12 2.1 12a10.1 10.1 0 0 0 9.9 10z"></path>
-            </svg>
-          </div>
           <div class="brand-title-group">
-            <h1>Khora</h1>
-            <p data-i18n="Tu espacio ACT">Tu espacio ACT</p>
+            <h1>Khōra</h1>
           </div>
         </div>
         <button type="button" id="header-storage-warning" class="header-storage-warning hidden" title="Sin servidor de base de datos: tus datos se guardan solo en este navegador. Pulsa para ver detalles o exportar copia." aria-label="Aviso de almacenamiento local">
@@ -46,37 +109,41 @@
       <div class="header-actions">
         <!-- SOS Quick Crisis Processing Button -->
         <button type="button" class="btn-sos" id="btn-sos-crisis" title="Procesar momento de saturación emocional" data-i18n-title="Procesar momento de saturación emocional">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-          <span data-i18n="Crisis ACT">Crisis ACT</span>
+          <span data-i18n="Necesito calma ahora">Necesito calma ahora</span>
         </button>
 
         <!-- Quick Lock Button (Visible only when Privacy Vault is enabled) -->
         <button type="button" class="btn-icon" id="btn-quick-lock" title="Bloquear pantalla ahora" aria-label="Bloquear aplicación" data-i18n-title="Bloquear pantalla ahora" data-i18n-aria-label="Bloquear aplicación" style="display: none;">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
           </svg>
         </button>
 
-        <!-- Contextual Screen Help & ACT Tutorial Button -->
-        <button type="button" class="btn-icon" id="btn-context-help" title="Guía y ayuda de esta pantalla" aria-label="Ayuda de esta pantalla" data-i18n-title="Guía y ayuda de esta pantalla" data-i18n-aria-label="Ayuda de esta pantalla" style="font-weight: 800; font-size: 0.92rem;">
-          ?
+        <!-- Contextual Screen Help Button (?) -->
+        <button type="button" class="btn-icon" id="btn-context-help" title="Guía de esta pantalla" aria-label="Guía de esta pantalla" data-i18n-title="Guía de esta pantalla" data-i18n-aria-label="Guía de esta pantalla">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
         </button>
 
-        <!-- Language Switcher (ES / EN) -->
-        <button type="button" class="btn-icon" id="btn-lang-toggle" title="Cambiar idioma (ES / EN)" aria-label="Cambiar idioma (ES / EN)" data-i18n-title="Cambiar idioma (ES / EN)" data-i18n-aria-label="Cambiar idioma (ES / EN)" style="width: auto; min-width: 38px; padding: 0 9px; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em;">
-          <span id="lang-toggle-label">ES</span>
-        </button>
-
-        <!-- Global Technical Settings (Theme, Language, DB Storage, Backups, Sensory & PWA) -->
-        <button type="button" class="btn-icon" id="btn-settings" title="Configuración: tema, base de datos y copias de seguridad" aria-label="Configuración" data-i18n-title="Configuración: tema, base de datos y copias de seguridad" data-i18n-aria-label="Configuración">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Global Technical Settings (Palette, Theme, Language, DB Storage, Backups, Sensory & PWA) -->
+        <button type="button" class="btn-icon" id="btn-settings" title="Configuración: paleta, tema, idioma y copias de seguridad" aria-label="Configuración" data-i18n-title="Configuración: paleta, tema, idioma y copias de seguridad" data-i18n-aria-label="Configuración">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"></circle>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
           </svg>
         </button>
       </div>
     </header>
+
+    <!-- Immersive Calm Exit Bar (only shown in Crisis ACT immersive mode) -->
+    <div id="crisis-immersive-bar" class="crisis-immersive-bar" aria-label="Modo calma">
+      <button type="button" id="btn-exit-crisis-immersive" class="btn-inline-link" data-i18n="← Salir del modo calma">← Salir del modo calma</button>
+      <span class="crisis-immersive-label" data-i18n="Anclaje suave · sin prisa">Anclaje suave · sin prisa</span>
+    </div>
 
     <!-- Persistence & PWA Installation Warning Banner (Top, directly below header) -->
     <div id="persistence-warning-banner" class="persistence-warning-banner hidden" role="status" aria-live="polite"></div>
@@ -140,14 +207,20 @@
 
     <!-- Persistent Global Footer -->
     <footer id="app-footer" class="app-footer">
-      <div class="app-footer-main">
-        <span>🌱 <strong>Khora</strong> · Tu espacio ACT · Creado con ❤️ por</span>
-        <a id="footer-github-link" href="https://github.com/JCarrascoF/khora" target="_blank" rel="noopener noreferrer">@JCarrascoF</a>
-        <span aria-hidden="true">·</span>
-        <a id="footer-kofi-link" href="https://ko-fi.com/jcarrascof" target="_blank" rel="noopener noreferrer">☕ Apoyar en Ko-fi</a>
-        <span aria-hidden="true">·</span>
-        <button type="button" class="btn-inline-link" id="btn-footer-feedback">💬 Enviar Feedback</button>
+      <div class="app-footer-actions">
+        <button type="button" class="btn-footer-feedback" id="btn-footer-feedback">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span data-i18n="Enviar feedback">Enviar feedback</span>
+        </button>
       </div>
+      <p class="app-footer-main">
+        <span data-i18n="Khōra es una app desarrollada con ❤️ por">Khōra es una app desarrollada con ❤️ por</span>
+        <a id="footer-github-link" href="https://github.com/JCarrascoF/khora" target="_blank" rel="noopener noreferrer">@JCarrascoF</a>.
+        <span data-i18n="Si quieres apoyarme, puedes hacerlo en">Si quieres apoyarme, puedes hacerlo en</span>
+        <a id="footer-kofi-link" href="https://ko-fi.com/jcarrascof" target="_blank" rel="noopener noreferrer">Ko-fi</a>.
+      </p>
       <div class="app-footer-disclaimer">
         Herramienta gratuita y privada de práctica personal. No sustituye el acompañamiento de un profesional de la psicología.
       </div>
@@ -169,15 +242,20 @@
   <div id="privacy-lock-overlay" class="privacy-lock-overlay hidden" role="dialog" aria-modal="true" aria-label="Bloqueo de Privacidad"></div>
 
   <!-- Scripts -->
-  <script src="./js/i18n.js?v=3.1.0"></script>
-  <script src="./js/state.js?v=3.1.0"></script>
-  <script src="./js/subapp-perfil.js?v=3.1.0"></script>
-  <script src="./js/subapp-paz-falsa.js?v=3.1.0"></script>
-  <script src="./js/subapp-espacio-act.js?v=3.1.0"></script>
-  <script src="./js/subapp-radar-patrones.js?v=3.1.0"></script>
-  <script src="./js/subapp-brujula-valores.js?v=3.1.0"></script>
-  <script src="./js/subapp-pildoras-anclajes.js?v=3.1.0"></script>
-  <script src="./js/subapp-insight.js?v=3.1.0"></script>
-  <script src="./js/app.js?v=3.1.0"></script>
+  <script src="./js/utils.js?v=1.0.0"></script>
+  <script src="./js/i18n-dict.js?v=1.0.0"></script>
+  <script src="./js/i18n.js?v=1.0.0"></script>
+  <script src="./js/state-vault.js?v=1.0.0"></script>
+  <script src="./js/state.js?v=1.0.0"></script>
+  <script src="./js/subapp-perfil.js?v=1.0.0"></script>
+  <script src="./js/subapp-paz-falsa.js?v=1.0.0"></script>
+  <script src="./js/subapp-espacio-act.js?v=1.0.0"></script>
+  <script src="./js/subapp-radar-patrones.js?v=1.0.0"></script>
+  <script src="./js/subapp-brujula-valores.js?v=1.0.0"></script>
+  <script src="./js/subapp-pildoras-anclajes.js?v=1.0.0"></script>
+  <script src="./js/subapp-insight.js?v=1.0.0"></script>
+  <script src="./js/app-settings.js?v=1.0.0"></script>
+  <script src="./js/app-help.js?v=1.0.0"></script>
+  <script src="./js/app.js?v=1.0.0"></script>
 </body>
 </html>

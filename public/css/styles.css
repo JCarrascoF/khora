@@ -1,85 +1,3 @@
-/* ==========================================================================
-   ECOSISTEMA ACT - Psychological Flexibility Suite
-   Theme & Therapeutic Design System
-   ========================================================================== */
-
-:root {
-  /* Sage & Forest Spectrum */
-  --sage-50: #f4f7f5;
-  --sage-100: #e5ede8;
-  --sage-200: #ccddd3;
-  --sage-300: #a7c5b5;
-  --sage-400: #7aa792;
-  --sage-500: #578b74;
-  --sage-600: #426f5c;
-  --sage-700: #355749;
-  --sage-800: #2b453b;
-  --sage-900: #1b2e26;
-
-  /* Earth & Clay / Warm Sand Spectrum */
-  --earth-50: #faf7f2;
-  --earth-100: #f4ede2;
-  --earth-200: #e8d9c5;
-  --earth-300: #d6bfa3;
-  --earth-400: #c2a17e;
-  --earth-500: #a8835f;
-  --earth-600: #886548;
-  --earth-700: #6a4d36;
-  --earth-800: #483424;
-
-  /* Emotional Accent Tones (Gentle, desaturated, non-alarming) */
-  --accent-calm: #4a7a66;
-  --accent-warmth: #c98a58;
-  --accent-sorrow: #607b8b;
-  --accent-tension: #b86b59;
-  --accent-clarity: #5c8492;
-
-  /* Default Light Mode Variables */
-  --bg-primary: #f8faf8;
-  --bg-surface: #ffffff;
-  --bg-surface-elevated: #f0f4f1;
-  --bg-surface-subtle: #eaf1ed;
-  --border-subtle: #dbe5df;
-  --border-focus: #578b74;
-  
-  --text-primary: #23312b;
-  --text-secondary: #53675e;
-  --text-muted: #7b9187;
-  --text-on-accent: #ffffff;
-
-  --card-shadow: 0 4px 20px -2px rgba(35, 49, 43, 0.05), 0 2px 6px -1px rgba(35, 49, 43, 0.03);
-  --card-shadow-hover: 0 10px 25px -4px rgba(35, 49, 43, 0.08), 0 4px 10px -2px rgba(35, 49, 43, 0.04);
-  --modal-overlay: rgba(24, 38, 31, 0.45);
-  
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-full: 9999px;
-
-  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Dark Mode Variables */
-[data-theme="dark"] {
-  --bg-primary: #121815;
-  --bg-surface: #1a221e;
-  --bg-surface-elevated: #222c27;
-  --bg-surface-subtle: #28342f;
-  --border-subtle: #2d3b34;
-  --border-focus: #7aa792;
-
-  --text-primary: #edf3f0;
-  --text-secondary: #b0c4ba;
-  --text-muted: #7d968b;
-  --text-on-accent: #ffffff;
-
-  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
-  --card-shadow-hover: 0 10px 25px -4px rgba(0, 0, 0, 0.45);
-  --modal-overlay: rgba(6, 10, 8, 0.7);
-}
-
 /* Base Styles */
 * {
   box-sizing: border-box;
@@ -1276,6 +1194,49 @@ html, body {
   align-items: center;
   gap: 8px;
   animation: toastSlide 0.3s ease-out;
+}
+
+.toast.toast-update {
+  pointer-events: auto;
+  flex-wrap: wrap;
+  max-width: min(92vw, 420px);
+  padding: 10px 14px;
+  gap: 10px;
+}
+
+.toast-update-btn {
+  background-color: var(--sage-500);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.toast-update-btn:hover:not(:disabled) {
+  opacity: 0.92;
+}
+
+.toast-update-btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.toast-update-dismiss {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 2px 4px;
+  cursor: pointer;
+}
+
+.toast-update-dismiss:hover {
+  color: var(--text-primary);
 }
 
 @keyframes toastSlide {
@@ -2539,22 +2500,50 @@ button:disabled {
 
 .app-footer {
   margin-top: 24px;
-  padding: 18px 20px 8px;
+  padding: 18px 20px 10px;
   border-top: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  font-size: 0.76rem;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
   color: var(--text-muted);
   text-align: center;
 }
 
-.app-footer-main {
+.app-footer-actions {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 4px 6px;
+  margin-bottom: 2px;
+}
+
+.btn-footer-feedback {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.btn-footer-feedback:hover {
+  border-color: var(--sage-500);
+  color: var(--text-primary);
+  background: var(--bg-surface-elevated);
+}
+
+.app-footer-main {
+  margin: 0;
+  line-height: 1.5;
+  text-align: center;
 }
 
 .app-footer-main a {
@@ -2571,3 +2560,4 @@ button:disabled {
   font-size: 0.72rem;
   opacity: 0.85;
 }
+

@@ -1,13 +1,13 @@
 {
   "id": "./",
-  "name": "Khora — Tu espacio ACT",
-  "short_name": "Khora",
-  "description": "Khora — Tu espacio ACT. Herramienta de Terapia de Aceptación y Compromiso para observar, aceptar y actuar hacia tus valores.",
+  "name": "Khōra",
+  "short_name": "Khōra",
+  "description": "Khōra — Tu espacio ACT. Herramienta de Terapia de Aceptación y Compromiso para observar, aceptar y actuar hacia tus valores.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#1C2421",
-  "theme_color": "#355749",
+  "background_color": "#F3EDE4",
+  "theme_color": "#F3EDE4",
   "orientation": "portrait-primary",
   "icons": [
     {

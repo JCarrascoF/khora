@@ -1,18 +1,25 @@
-const CACHE_NAME = 'khora-v3.1.0';
+const CACHE_NAME = 'khora-v1.0.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './css/styles.css?v=3.1.0',
-  './js/i18n.js?v=3.1.0',
-  './js/state.js?v=3.1.0',
-  './js/subapp-perfil.js?v=3.1.0',
-  './js/subapp-paz-falsa.js?v=3.1.0',
-  './js/subapp-espacio-act.js?v=3.1.0',
-  './js/subapp-radar-patrones.js?v=3.1.0',
-  './js/subapp-brujula-valores.js?v=3.1.0',
-  './js/subapp-pildoras-anclajes.js?v=3.1.0',
-  './js/subapp-insight.js?v=3.1.0',
-  './js/app.js?v=3.1.0',
+  './css/tokens.css?v=1.0.0',
+  './css/styles.css?v=1.0.0',
+  './css/surfaces.css?v=1.0.0',
+  './js/utils.js?v=1.0.0',
+  './js/i18n-dict.js?v=1.0.0',
+  './js/i18n.js?v=1.0.0',
+  './js/state-vault.js?v=1.0.0',
+  './js/state.js?v=1.0.0',
+  './js/subapp-perfil.js?v=1.0.0',
+  './js/subapp-paz-falsa.js?v=1.0.0',
+  './js/subapp-espacio-act.js?v=1.0.0',
+  './js/subapp-radar-patrones.js?v=1.0.0',
+  './js/subapp-brujula-valores.js?v=1.0.0',
+  './js/subapp-pildoras-anclajes.js?v=1.0.0',
+  './js/subapp-insight.js?v=1.0.0',
+  './js/app-settings.js?v=1.0.0',
+  './js/app-help.js?v=1.0.0',
+  './js/app.js?v=1.0.0',
   './manifest.json',
   './icons/icon-192.svg',
   './icons/icon-512.svg',
@@ -26,8 +33,14 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE.map((url) => new Request(url, { cache: 'reload' })));
-    }).then(() => self.skipWaiting())
+    })
   );
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('activate', (event) => {
@@ -74,7 +87,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Versioned static assets (?v=3.1.0): cache-first (immutable per version)
+  // Versioned static assets (?v=1.0.0): cache-first (immutable per version)
   if (reqUrl.searchParams.has('v')) {
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {

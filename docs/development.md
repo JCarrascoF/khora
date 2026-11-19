@@ -71,7 +71,7 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-Disponible en `http://localhost:8084`.
+Disponible en `http://localhost:8084`. *(Nota: `docker-compose.yml` usa `env_file` con `required: false`, lo que requiere Docker Compose `v2.24+`.)*
 
 #### Activar persistencia SQLite en el servidor *(opcional, solo uso personal monousuario)*
 
@@ -98,7 +98,7 @@ Con `AUTH_PASSWORD` definida, `server/server.js` protege `/api/state`, `/api/sta
 
 ### 2. Node.js directo (sin Docker)
 
-Requiere **Node.js >= 22.5.0**:
+Requiere **Node.js >= 22.5.0** (`npm start` carga `.env` automáticamente si existe, sin sobrescribir variables ya definidas en el shell):
 
 ```bash
 cp .env.example .env
