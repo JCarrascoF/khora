@@ -12,8 +12,9 @@ services:
       # Para activar persistencia en base de datos SQLite en este servidor (solo uso personal monousuario),
       # cambia ENABLE_SQLITE_DB a "true" y descomenta el volumen ./data:/app/data más abajo.
       ENABLE_SQLITE_DB: "${ENABLE_SQLITE_DB:-false}"
-    volumes:
-      # Descomenta la siguiente línea junto con ENABLE_SQLITE_DB=true para guardar en ./data/act.db:
-      # - ./data:/app/data
+    # Descomenta las dos líneas siguientes junto con ENABLE_SQLITE_DB=true para guardar en ./data/act.db:
+    # volumes:
+    #   - ./data:/app/data
     env_file:
-      - .env
+      - path: .env
+        required: false

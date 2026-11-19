@@ -1,0 +1,1958 @@
+/* ==========================================================================
+   KHORA COZY LINEN & EDITORIAL OVERRIDE LAYER
+   Quiet tonal surfaces, zero drop shadows, editorial serif, no pills/clutter
+   ========================================================================== */
+
+html, body {
+  font-family: var(--font-sans);
+  letter-spacing: -0.005em;
+}
+
+/* Editorial Serif Hierarchy */
+.brand-title-group h1,
+.card-title,
+.triage-card-title,
+.cozy-greeting,
+.cozy-home-heading,
+.modal-card h2,
+.modal-card h3,
+.privacy-lock-card h2,
+blockquote {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.form-textarea {
+  font-family: var(--font-serif);
+  background-color: var(--bg-input);
+  line-height: 1.65;
+}
+
+.form-input,
+.form-select {
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+}
+
+.form-select option {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--border-focus) 24%, transparent);
+  background-color: var(--bg-input);
+}
+
+/* Quiet Header */
+.app-header {
+  background-color: color-mix(in srgb, var(--bg-primary) 92%, transparent);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 16px 20px 14px;
+}
+
+.brand-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.brand-title-group h1 {
+  font-size: 1.45rem;
+  line-height: 1.1;
+}
+
+.brand-title-group p {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+
+.btn-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background-color: transparent;
+  color: var(--text-muted);
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.btn-icon:hover {
+  background-color: color-mix(in srgb, var(--text-primary) 5%, transparent);
+  border-color: transparent;
+  color: var(--text-primary);
+}
+
+.btn-sos {
+  background: transparent;
+  color: var(--accent-tension);
+  border: none;
+  padding: 5px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-sos::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--accent-tension);
+  flex-shrink: 0;
+}
+
+.btn-sos:hover {
+  background: color-mix(in srgb, var(--accent-tension) 8%, transparent);
+  border-color: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.header-storage-warning {
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  padding: 4px 9px;
+}
+
+/* Calm Navigation Tabs */
+.app-nav {
+  background-color: var(--bg-primary);
+  border-top: 1px solid var(--border-subtle);
+  box-shadow: none;
+}
+
+@media (min-width: 768px) {
+  .app-nav {
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0 20px;
+    gap: 20px;
+  }
+
+  .nav-item {
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    padding: 11px 2px;
+    font-size: 0.84rem;
+    color: var(--text-muted);
+  }
+
+  .nav-item.nav-item-clock {
+    padding: 11px 4px;
+  }
+
+  .nav-item.active,
+  [data-theme="dark"] .nav-item.active {
+    background-color: transparent;
+    color: var(--text-primary);
+    border-bottom-color: var(--sage-500);
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 767px) {
+  .nav-item {
+    border-radius: var(--radius-md);
+    padding: 7px 14px;
+  }
+  .nav-item.active,
+  [data-theme="dark"] .nav-item.active {
+    background-color: var(--bg-surface);
+    color: var(--sage-500);
+  }
+}
+
+.nav-item svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.65;
+}
+
+/* Contextual Sub-Navigation (Flat editorial text bar, zero box, zero pills) */
+.context-subnav {
+  padding: 0 20px;
+}
+
+.context-subnav-inner {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: 0;
+  box-shadow: none;
+  padding: 10px 0;
+  gap: 16px;
+}
+
+.context-subnav-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+
+.subnav-pill {
+  border-radius: 0;
+  border: none;
+  border-bottom: 1.5px solid transparent;
+  background-color: transparent;
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.82rem;
+  padding: 3px 0;
+}
+
+.subnav-pill:hover {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--text-primary);
+}
+
+.subnav-pill.active,
+[data-theme="dark"] .subnav-pill.active {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--sage-500);
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.subnav-pill-group {
+  border-radius: 0;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--sage-500);
+  box-shadow: none;
+  padding-right: 0;
+  gap: 4px;
+}
+
+[data-theme="dark"] .subnav-pill-group {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--sage-500);
+}
+
+.subnav-pill-group .subnav-pill.active {
+  border-bottom: none;
+  padding-right: 2px;
+}
+
+.subnav-pill-group .subnav-help-trigger,
+[data-theme="dark"] .subnav-pill-group .subnav-help-trigger {
+  color: var(--text-muted);
+}
+
+/* Flat Continuous Page Sections (NO outer .card boxes — content lives on the paper) */
+.card {
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 4px 0 28px;
+  margin-bottom: 16px;
+}
+
+.card + .card {
+  padding-top: 24px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.card:hover,
+[data-theme="dark"] .card:hover {
+  border-color: var(--border-subtle);
+}
+
+.card-title {
+  font-size: 1.5rem;
+  line-height: 1.26;
+}
+
+.card-subtitle {
+  color: var(--text-secondary);
+  line-height: 1.58;
+}
+
+/* Flatten Internal Tabs, Purpose Bars, Quick Chips & Subapp Boxes (No pills, no shadows) */
+.flow-purpose-bar {
+  background-color: transparent;
+  border: none;
+  border-left: 2px solid var(--sage-500);
+  border-radius: 0;
+  padding: 4px 0 4px 14px;
+  margin-bottom: 22px;
+}
+
+.flow-purpose-pill {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--sage-500);
+}
+
+.internal-tabs-bar {
+  gap: 18px;
+  padding-bottom: 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.internal-tab-btn {
+  border-radius: 0;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 8px 2px;
+  margin-bottom: -1px;
+}
+
+.internal-tab-btn:hover {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-primary);
+}
+
+.internal-tab-btn.active {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--sage-500);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.quick-fill-chip {
+  border-radius: 0;
+  border: none;
+  border-bottom: 1.5px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 5px 4px;
+}
+
+.quick-fill-chip:hover {
+  color: var(--text-primary);
+  border-bottom-color: var(--sage-400);
+}
+
+.quick-fill-chip.active {
+  background: transparent;
+  border-bottom: 2px solid var(--sage-500);
+  color: var(--sage-700);
+  font-weight: 600;
+}
+
+.storage-mode-card,
+.anchor-card,
+.defusion-card,
+.history-entry,
+.history-retro-filter-box,
+.pill-activities-box,
+.pill-related-activity-btn,
+.study-area-card {
+  background-color: var(--bg-surface);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  box-shadow: none;
+}
+
+.storage-mode-card:hover,
+.anchor-card:hover,
+.pill-related-activity-btn:hover {
+  background-color: var(--bg-surface-elevated);
+  border-color: var(--border-subtle);
+  transform: none;
+  box-shadow: none;
+}
+
+.storage-mode-card.active {
+  border-color: var(--sage-500);
+  background-color: var(--bg-surface-elevated);
+}
+
+/* Cozy Home Screen (Guia Inicio) */
+.cozy-home-header {
+  padding: 10px 0 22px;
+  max-width: 640px;
+}
+
+.cozy-greeting {
+  font-style: italic;
+  font-size: 0.96rem;
+  color: var(--sage-500);
+  margin-bottom: 6px;
+}
+
+.cozy-home-heading {
+  font-size: clamp(1.55rem, 3.2vw, 1.95rem);
+  line-height: 1.24;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.cozy-home-sub {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 8px;
+  line-height: 1.55;
+}
+
+.cozy-section-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.guided-triage-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 0;
+}
+
+/* Unified Alignment Grid across ALL screens (Header, Nav, Subnav, Main, Footer) */
+.app-container {
+  max-width: 860px;
+}
+
+@media (min-width: 1024px) {
+  .app-container {
+    max-width: 1020px;
+  }
+
+  .app-header,
+  .app-nav,
+  .context-subnav,
+  .app-main,
+  .app-footer {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+@media (min-width: 1360px) {
+  .app-container {
+    max-width: 1120px;
+  }
+
+  .app-header,
+  .app-nav,
+  .context-subnav,
+  .app-main,
+  .app-footer {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+
+.cozy-home-header {
+  max-width: 72ch;
+}
+
+.app-header,
+.context-subnav,
+.app-main,
+.app-footer {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+@media (min-width: 768px) {
+  .app-nav {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .app-header,
+  .context-subnav,
+  .app-main,
+  .app-footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+.cozy-home-header .title-with-help {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+.triage-card {
+  background-color: var(--bg-surface);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  padding: 18px 22px;
+  box-shadow: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  width: 100%;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.triage-card.triage-card-primary {
+  background-color: var(--bg-surface-elevated);
+}
+
+.triage-card:hover {
+  background-color: var(--bg-surface-elevated);
+  border-color: var(--border-subtle);
+  transform: none;
+  box-shadow: none;
+}
+
+.triage-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.triage-card-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.triage-card-title {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  line-height: 1.32;
+}
+
+.triage-card-desc {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.triage-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.triage-card-arrow {
+  color: var(--sage-500);
+  font-size: 0.95rem;
+}
+
+.triage-time-badge {
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0;
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.triage-calm-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.triage-calm-item {
+  background-color: var(--bg-surface);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  padding: 18px 22px;
+  box-shadow: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  text-align: left;
+  width: 100%;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.triage-calm-item:hover {
+  background-color: var(--bg-surface-elevated);
+  border-color: var(--border-subtle);
+  transform: none;
+}
+
+/* Buttons — Marginalia / Ultra-Light (No heavy blocks, calm editorial tint) */
+.btn-primary {
+  background: color-mix(in srgb, var(--sage-500) 9%, transparent);
+  color: var(--sage-700);
+  border: 1px solid transparent;
+  border-bottom: 1.5px solid var(--sage-500);
+  border-radius: 4px 4px 0 0;
+  padding: 8px 16px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  box-shadow: none;
+}
+
+.btn-primary:hover {
+  background: color-mix(in srgb, var(--sage-500) 17%, transparent);
+  border-color: transparent;
+  border-bottom-color: var(--sage-600);
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 0.86rem;
+  font-weight: 500;
+  box-shadow: none;
+}
+
+.btn-secondary:hover {
+  background-color: color-mix(in srgb, var(--text-primary) 4%, transparent);
+  border-color: transparent;
+  color: var(--text-primary);
+}
+
+.btn-footer-feedback {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-muted);
+  padding: 4px 2px;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+}
+
+.btn-footer-feedback:hover {
+  background: transparent;
+  border-color: transparent;
+  border-bottom-color: var(--sage-500);
+  color: var(--text-primary);
+}
+
+/* Badges & Chips — Soft Squared Linen (No 9999px AI pills) */
+.badge,
+.slider-val-badge {
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+.chip-btn {
+  border-radius: 4px 4px 0 0;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-bottom: 1.5px solid var(--border-subtle);
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.chip-btn:hover {
+  background-color: color-mix(in srgb, var(--text-primary) 4%, transparent);
+  border-color: transparent;
+  border-bottom-color: var(--sage-400);
+  color: var(--text-primary);
+}
+
+.chip-btn.selected,
+[data-theme="dark"] .chip-btn.selected {
+  background-color: color-mix(in srgb, var(--sage-500) 9%, transparent);
+  border-color: transparent;
+  border-bottom: 2px solid var(--sage-500);
+  color: var(--sage-700);
+  box-shadow: none;
+}
+
+/* Button Style Variant B1 — Editorial / Papel (data-buttons="editorial") */
+[data-buttons="editorial"] .btn-icon {
+  color: var(--text-secondary);
+}
+
+[data-buttons="editorial"] .btn-icon:hover {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+[data-buttons="editorial"] .btn-sos {
+  border-bottom: 1px solid color-mix(in srgb, var(--accent-tension) 45%, transparent);
+  padding: 4px 6px;
+  border-radius: 0;
+  font-weight: 500;
+}
+
+[data-buttons="editorial"] .btn-sos::before {
+  display: none;
+}
+
+[data-buttons="editorial"] .btn-sos:hover {
+  background: transparent;
+  border-bottom-color: var(--accent-tension);
+}
+
+[data-buttons="editorial"] .btn-primary {
+  background: var(--sage-500);
+  color: var(--text-on-accent);
+  border: 1px solid var(--sage-500);
+  border-radius: var(--radius-sm);
+  padding: 8px 18px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+[data-buttons="editorial"] .btn-primary:hover {
+  background: var(--sage-600);
+  border-color: var(--sage-600);
+}
+
+[data-buttons="editorial"] .btn-secondary {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid color-mix(in srgb, var(--border-subtle) 85%, transparent);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 0.875rem;
+}
+
+[data-buttons="editorial"] .btn-secondary:hover {
+  background-color: var(--bg-surface-subtle);
+  border-color: var(--sage-400);
+  color: var(--text-primary);
+}
+
+[data-buttons="editorial"] .btn-footer-feedback {
+  border: 1px solid color-mix(in srgb, var(--border-subtle) 85%, transparent);
+  border-radius: var(--radius-sm);
+  padding: 5px 12px;
+  color: var(--text-secondary);
+}
+
+[data-buttons="editorial"] .btn-footer-feedback:hover {
+  background: var(--bg-surface-subtle);
+  border-color: var(--sage-400);
+  color: var(--text-primary);
+}
+
+[data-buttons="editorial"] .chip-btn {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+[data-buttons="editorial"] .chip-btn:hover {
+  background-color: var(--bg-surface-subtle);
+  border-color: var(--sage-400);
+  color: var(--text-primary);
+}
+
+[data-buttons="editorial"] .chip-btn.selected,
+[data-theme="dark"][data-buttons="editorial"] .chip-btn.selected {
+  background-color: color-mix(in srgb, var(--sage-500) 13%, transparent);
+  border-color: var(--sage-500);
+  color: var(--sage-700);
+  font-weight: 500;
+}
+
+[data-buttons="editorial"] .quick-fill-chip {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  padding: 5px 10px;
+}
+
+[data-buttons="editorial"] .quick-fill-chip:hover {
+  background: var(--bg-surface-subtle);
+  border-color: var(--sage-400);
+  color: var(--text-primary);
+}
+
+[data-buttons="editorial"] .quick-fill-chip.active {
+  background: color-mix(in srgb, var(--sage-500) 13%, transparent);
+  border-color: var(--sage-500);
+  color: var(--sage-700);
+  font-weight: 500;
+}
+
+[data-buttons="editorial"] .segmented-btn.active {
+  background: var(--sage-500);
+  color: var(--text-on-accent);
+  font-weight: 500;
+}
+
+/* Circular Bicolor Palette Swatches (Apple Books–style inline row) */
+.palette-dots-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.palette-dot-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  position: relative;
+}
+
+.palette-dot-btn:hover {
+  transform: scale(1.08);
+}
+
+.palette-dot-btn.active {
+  box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 3.5px var(--sage-500);
+}
+
+.palette-dot-custom-mark {
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-theme-editor {
+  padding: 14px 0 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.custom-color-pickers {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.custom-color-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-input);
+  font-size: 0.78rem;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.custom-color-field input[type="color"] {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.custom-theme-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.palette-option-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 10px 11px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.palette-option-card:hover {
+  border-color: var(--sage-400);
+}
+
+.palette-option-card.active {
+  border-color: var(--sage-500);
+  background: var(--bg-surface);
+  box-shadow: inset 0 0 0 1px var(--sage-500);
+}
+
+/* Clean Key-Value Preference Rows (Segmented Controls + Quiet Switches) */
+.pref-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.pref-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.pref-row-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.pref-row-label {
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.pref-row-hint {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.segmented-control {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  flex-shrink: 0;
+}
+
+.segmented-btn {
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  font-family: inherit;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.segmented-btn:hover {
+  color: var(--text-primary);
+}
+
+.segmented-btn.active {
+  background: color-mix(in srgb, var(--sage-500) 12%, transparent);
+  color: var(--sage-700);
+  font-weight: 600;
+}
+
+/* Quiet Toggle Switch */
+.pref-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 38px;
+  height: 22px;
+  padding: 2px;
+  border-radius: 9999px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.pref-switch-knob {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.pref-switch.on {
+  background: var(--sage-500);
+  border-color: var(--sage-500);
+}
+
+.pref-switch.on .pref-switch-knob {
+  transform: translateX(16px);
+  background: var(--text-on-accent);
+}
+
+/* Clean Radio Rows (used in Check-in modal) */
+.pref-radio-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.pref-radio-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 11px 4px;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.pref-radio-row strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.pref-radio-row input[type="radio"] {
+  accent-color: var(--sage-500);
+  flex-shrink: 0;
+}
+
+.palette-swatches {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.palette-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+}
+
+/* Modals & Privacy Lock Overlay */
+.modal-card {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+}
+
+.privacy-lock-overlay {
+  background-color: var(--bg-primary);
+}
+
+.privacy-lock-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: none;
+}
+
+/* Toast Notifications */
+.toast {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  border-radius: var(--radius-md);
+  box-shadow: none;
+}
+
+/* Immersive Crisis ACT Mode */
+.crisis-immersive-bar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 8px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.84rem;
+}
+
+.crisis-immersive-label {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--accent-tension);
+  font-size: 0.88rem;
+}
+
+body.crisis-immersive .app-header,
+body.crisis-immersive .app-nav,
+body.crisis-immersive .context-subnav,
+body.crisis-immersive .app-footer,
+body.crisis-immersive .persistence-warning-banner {
+  display: none !important;
+}
+
+body.crisis-immersive .crisis-immersive-bar {
+  display: flex;
+}
+
+body.crisis-immersive .app-container {
+  max-width: 720px;
+  padding-bottom: 32px;
+}
+
+/* Global Footer */
+.app-footer {
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  padding: 18px 20px 14px;
+}
+
+.app-footer-main a,
+.app-footer-main .btn-inline-link {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.app-footer-main a:hover,
+.app-footer-main .btn-inline-link:hover {
+  color: var(--sage-500);
+}
+
+/* ==========================================================================
+   YO SECTION REDESIGN (Mis Valores, Mi Autobús ACT, Mis Patrones)
+   Cozy Linen Layers, Editorial Serif Quotes, Hairline Loops, Zero Gradients
+   ========================================================================== */
+
+.cozy-empty-box {
+  text-align: center;
+  padding: 36px 24px;
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-lg);
+}
+
+.cozy-meta-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: var(--text-muted);
+}
+
+.cozy-meta-accent {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--sage-500);
+}
+
+.cozy-meta-muted {
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+/* Values Stack */
+.cozy-values-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.cozy-value-layer {
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  border: 1px solid transparent;
+  transition: border-color var(--transition-fast);
+}
+
+.cozy-value-layer.cozy-value-primary {
+  background-color: var(--bg-surface-elevated);
+  border-left: 2px solid var(--sage-500);
+}
+
+.cozy-value-quote {
+  font-family: var(--font-serif);
+  font-size: 1.18rem;
+  line-height: 1.48;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.cozy-value-notes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.cozy-value-note p {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 4px 0 0;
+}
+
+.cozy-note-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  color: var(--sage-500);
+}
+
+.cozy-value-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* Patterns (Mis Patrones) */
+.cozy-pattern-layer {
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  margin-bottom: 18px;
+}
+
+.cozy-pattern-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.32;
+  margin: 0;
+}
+
+.cozy-loop-list {
+  margin: 14px 0 18px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.cozy-loop-row {
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.cozy-loop-step {
+  display: block;
+  font-size: 0.69rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+}
+
+.cozy-loop-row p {
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.cozy-experiment-quote {
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-left: 2px solid var(--sage-500);
+  background-color: var(--bg-surface-elevated);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+/* ACT Bus (Mi Autobús) — Calm Linen, Zero Gradients, Zero Dashed Boxes */
+.act-bus-shell {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-primary);
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.act-bus-destination-sign {
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 20px 22px;
+}
+
+.act-bus-destination-sign #btn-bus-change-faro,
+.act-bus-destination-sign .bus-value-sign-chip {
+  background: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.act-bus-cabin {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 16px 22px;
+}
+
+.act-bus-zone-front,
+.act-bus-zone-back {
+  background-color: transparent;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.act-passenger-card {
+  background-color: var(--bg-surface);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  box-shadow: none;
+  padding: 16px 18px;
+}
+
+.act-passenger-card.loud {
+  background-color: var(--bg-surface-elevated);
+  border-left: 2px solid var(--accent-tension);
+}
+
+.act-passenger-card.seated {
+  border-left: 2px solid var(--border-subtle);
+}
+
+.act-passenger-shout {
+  font-family: var(--font-serif);
+  font-style: italic;
+  background: transparent;
+  border: none;
+  border-left: 2px solid var(--border-subtle);
+  border-radius: 0;
+  padding: 4px 0 4px 12px;
+  color: var(--text-primary);
+}
+
+.example-notice-bar {
+  border: none;
+  border-left: 2px solid var(--accent-warmth);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--bg-surface);
+  padding: 10px 14px;
+}
+
+.cozy-meta-tension {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-tension);
+}
+
+/* Bus Layout — Flat, Same Language as Values & Patterns */
+.cozy-bus-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cozy-bus-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.cozy-bus-filter-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid transparent;
+  padding: 2px 0;
+  font-size: 0.78rem;
+  font-family: inherit;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.cozy-bus-filter-btn:hover {
+  color: var(--text-primary);
+}
+
+.cozy-bus-filter-btn.active {
+  color: var(--text-primary);
+  font-weight: 600;
+  border-bottom-color: var(--sage-500);
+}
+
+.cozy-bus-cabin-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 4px 0 18px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.cozy-bus-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cozy-bus-zone-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cozy-bus-zone-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.cozy-passenger-loud {
+  background-color: var(--bg-surface-elevated);
+  border-left: 2px solid var(--accent-tension);
+}
+
+.cozy-passenger-seated {
+  background-color: var(--bg-surface);
+  border-left: 2px solid transparent;
+}
+
+/* ==========================================================================
+   A/B SURFACE MODE SYSTEM
+   data-surface="editorial" (default — Cuaderno: continuous paper + 1px hairlines, ZERO list cards)
+   data-surface="lino"      (Lino: soft tonal linen layers, zero shadows)
+   ========================================================================== */
+
+.settings-section-block {
+  margin-top: 14px;
+  padding: 16px 0 4px;
+  border-top: 1px solid var(--border-subtle);
+  background: transparent;
+}
+
+/* --- MODO LINO (Capas tonales suaves) --- */
+[data-surface="lino"] .settings-section-block {
+  padding: 14px 16px;
+  border-top: none;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+}
+
+/* --- MODO CUADERNO / EDITORIAL (Por defecto — Papel continuo + Filetes 1px, CERO cards) --- */
+:root .guided-triage-grid,
+[data-surface="editorial"] .guided-triage-grid {
+  gap: 0;
+}
+
+:root .triage-card,
+[data-surface="editorial"] .triage-card {
+  background-color: transparent;
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  border-radius: 0;
+  padding: 18px 0;
+}
+
+:root .triage-card:last-child,
+[data-surface="editorial"] .triage-card:last-child {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+:root .triage-card.triage-card-primary,
+[data-surface="editorial"] .triage-card.triage-card-primary {
+  background-color: transparent;
+}
+
+:root .triage-card:hover,
+[data-surface="editorial"] .triage-card:hover {
+  background-color: transparent;
+  border-color: var(--border-subtle);
+}
+
+:root .triage-card:hover .triage-card-title,
+:root .triage-calm-item:hover .triage-card-title,
+[data-surface="editorial"] .triage-card:hover .triage-card-title,
+[data-surface="editorial"] .triage-calm-item:hover .triage-card-title {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+:root .triage-calm-section,
+[data-surface="editorial"] .triage-calm-section {
+  border-top: none;
+  padding-top: 8px;
+}
+
+:root .triage-calm-item,
+[data-surface="editorial"] .triage-calm-item {
+  background-color: transparent;
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: 0;
+  padding: 18px 0;
+}
+
+:root .triage-calm-item:hover,
+[data-surface="editorial"] .triage-calm-item:hover {
+  background-color: transparent;
+}
+
+/* Yo & Subapps in Editorial Mode (Zero list boxes) */
+:root .cozy-values-stack,
+[data-surface="editorial"] .cozy-values-stack {
+  gap: 0;
+}
+
+:root .cozy-value-layer,
+:root .cozy-pattern-layer,
+[data-surface="editorial"] .cozy-value-layer,
+[data-surface="editorial"] .cozy-pattern-layer {
+  background-color: transparent;
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  border-radius: 0;
+  padding: 22px 0;
+  margin-bottom: 0;
+}
+
+:root .cozy-value-layer:last-child,
+:root .cozy-pattern-layer:last-child,
+[data-surface="editorial"] .cozy-value-layer:last-child,
+[data-surface="editorial"] .cozy-pattern-layer:last-child {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+:root .cozy-value-layer.cozy-value-primary,
+[data-surface="editorial"] .cozy-value-layer.cozy-value-primary {
+  background-color: transparent;
+  border-top: none;
+  border-bottom: 1px solid var(--border-subtle);
+  border-left: 2px solid var(--sage-500);
+  padding: 6px 0 6px 18px;
+  margin-bottom: 14px;
+}
+
+:root .cozy-passenger-loud,
+[data-surface="editorial"] .cozy-passenger-loud {
+  background-color: transparent;
+  border-left: 2px solid var(--accent-tension);
+  padding-left: 16px;
+}
+
+:root .cozy-passenger-seated,
+[data-surface="editorial"] .cozy-passenger-seated {
+  background-color: transparent;
+  border-left: none;
+}
+
+:root .cozy-empty-box,
+[data-surface="editorial"] .cozy-empty-box {
+  background-color: transparent;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: 0;
+}
+
+:root .cozy-experiment-quote,
+[data-surface="editorial"] .cozy-experiment-quote {
+  background-color: transparent;
+  border-radius: 0;
+  padding: 6px 0 6px 16px;
+}
+
+:root .anchor-card,
+:root .study-area-card,
+:root .study-area-group,
+:root .trick-card,
+:root .trick-step-card,
+:root .kpi-card,
+:root .choice-box,
+:root .defusion-card,
+:root .defusion-reframing-card,
+:root .body-map-container,
+:root .breathing-pacer-container,
+:root .emotion-wheel-container,
+:root .follow-up-box,
+:root .history-item,
+:root .history-entry,
+:root .history-retro-filter-box,
+:root .pill-activities-box,
+:root .pill-related-activity-btn,
+:root .storage-mode-card,
+:root .cozy-inline-callout,
+:root .personal-anchor-banner,
+:root .example-notice-bar,
+[data-surface="editorial"] .anchor-card,
+[data-surface="editorial"] .study-area-card,
+[data-surface="editorial"] .study-area-group,
+[data-surface="editorial"] .trick-card,
+[data-surface="editorial"] .trick-step-card,
+[data-surface="editorial"] .kpi-card,
+[data-surface="editorial"] .choice-box,
+[data-surface="editorial"] .defusion-card,
+[data-surface="editorial"] .defusion-reframing-card,
+[data-surface="editorial"] .body-map-container,
+[data-surface="editorial"] .breathing-pacer-container,
+[data-surface="editorial"] .emotion-wheel-container,
+[data-surface="editorial"] .follow-up-box,
+[data-surface="editorial"] .history-item,
+[data-surface="editorial"] .history-entry,
+[data-surface="editorial"] .history-retro-filter-box,
+[data-surface="editorial"] .pill-activities-box,
+[data-surface="editorial"] .pill-related-activity-btn,
+[data-surface="editorial"] .storage-mode-card,
+[data-surface="editorial"] .cozy-inline-callout,
+[data-surface="editorial"] .personal-anchor-banner,
+[data-surface="editorial"] .example-notice-bar {
+  background-color: transparent !important;
+  background: transparent !important;
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  border-radius: 0;
+  padding: 16px 0;
+  box-shadow: none;
+}
+
+:root .personal-anchor-banner,
+:root .example-notice-bar,
+:root .cozy-inline-callout,
+[data-surface="editorial"] .personal-anchor-banner,
+[data-surface="editorial"] .example-notice-bar,
+[data-surface="editorial"] .cozy-inline-callout {
+  border-top: none;
+  border-left: 2px solid var(--sage-500);
+  padding: 6px 0 6px 14px;
+}
+
+:root .storage-mode-card,
+[data-surface="editorial"] .storage-mode-card {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+}
+
+:root .storage-mode-card.active,
+[data-surface="editorial"] .storage-mode-card.active {
+  border-color: var(--sage-500);
+  box-shadow: inset 0 0 0 1px var(--sage-500);
+}
+
+:root .trick-intent-chip,
+[data-surface="editorial"] .trick-intent-chip {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+:root .pill-related-activity-btn:hover,
+:root .anchor-card:hover,
+:root .trick-card:hover,
+:root .defusion-reframing-card:hover,
+[data-surface="editorial"] .pill-related-activity-btn:hover,
+[data-surface="editorial"] .anchor-card:hover,
+[data-surface="editorial"] .trick-card:hover,
+[data-surface="editorial"] .defusion-reframing-card:hover {
+  background-color: transparent !important;
+  border-color: var(--border-subtle);
+  transform: none;
+}
+
+/* Editorial safety net: flatten legacy inline bg-surface / sage-tint boxes inside flows & modals */
+:root .subapp-section div[style*="background: var(--bg-surface"],
+:root .subapp-section div[style*="background-color: var(--bg-surface"],
+:root .subapp-section div[style*="rgba(87, 139, 116"],
+:root .modal-card div[style*="background: var(--bg-surface"],
+:root .modal-card div[style*="background-color: var(--bg-surface"],
+:root .modal-card div[style*="rgba(87, 139, 116"],
+[data-surface="editorial"] .subapp-section div[style*="background: var(--bg-surface"],
+[data-surface="editorial"] .subapp-section div[style*="background-color: var(--bg-surface"],
+[data-surface="editorial"] .subapp-section div[style*="rgba(87, 139, 116"],
+[data-surface="editorial"] .modal-card div[style*="background: var(--bg-surface"],
+[data-surface="editorial"] .modal-card div[style*="background-color: var(--bg-surface"],
+[data-surface="editorial"] .modal-card div[style*="rgba(87, 139, 116"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-left: 2px solid var(--border-subtle) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 8px 0 8px 14px !important;
+}
+
+[data-surface="lino"] .subapp-section div[style*="background: var(--bg-surface"],
+[data-surface="lino"] .subapp-section div[style*="background-color: var(--bg-surface"],
+[data-surface="lino"] .subapp-section div[style*="rgba(87, 139, 116"],
+[data-surface="lino"] .modal-card div[style*="background: var(--bg-surface"],
+[data-surface="lino"] .modal-card div[style*="background-color: var(--bg-surface"],
+[data-surface="lino"] .modal-card div[style*="rgba(87, 139, 116"] {
+  background: var(--bg-surface) !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: none !important;
+}
+
+/* Restore Lino Mode explicitly when data-surface="lino" is selected */
+[data-surface="lino"] .guided-triage-grid {
+  gap: 10px;
+}
+
+[data-surface="lino"] .triage-card,
+[data-surface="lino"] .triage-calm-item {
+  background-color: var(--bg-surface);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  padding: 18px 22px;
+}
+
+[data-surface="lino"] .triage-card.triage-card-primary {
+  background-color: var(--bg-surface-elevated);
+}
+
+[data-surface="lino"] .triage-card:hover,
+[data-surface="lino"] .triage-calm-item:hover {
+  background-color: var(--bg-surface-elevated);
+  border-color: var(--border-subtle);
+}
+
+[data-surface="lino"] .triage-calm-section {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 20px;
+}
+
+[data-surface="lino"] .cozy-values-stack {
+  gap: 14px;
+}
+
+[data-surface="lino"] .cozy-value-layer,
+[data-surface="lino"] .cozy-pattern-layer {
+  background-color: var(--bg-surface);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  margin-bottom: 14px;
+}
+
+[data-surface="lino"] .cozy-value-layer.cozy-value-primary {
+  background-color: var(--bg-surface-elevated);
+  border-left: 2px solid var(--sage-500);
+  padding: 20px 22px;
+}
+
+[data-surface="lino"] .cozy-passenger-loud {
+  background-color: var(--bg-surface-elevated);
+  border-left: 2px solid var(--accent-tension);
+  padding: 20px 22px;
+}
+
+[data-surface="lino"] .cozy-passenger-seated {
+  background-color: var(--bg-surface);
+  padding: 20px 22px;
+}
+
+[data-surface="lino"] .cozy-empty-box {
+  background-color: var(--bg-surface);
+  border: none;
+  border-radius: var(--radius-lg);
+}
+
+[data-surface="lino"] .cozy-experiment-quote {
+  background-color: var(--bg-surface-elevated);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 12px 16px;
+}
+
+[data-surface="lino"] .anchor-card,
+[data-surface="lino"] .study-area-card,
+[data-surface="lino"] .study-area-group,
+[data-surface="lino"] .trick-card,
+[data-surface="lino"] .trick-step-card,
+[data-surface="lino"] .kpi-card,
+[data-surface="lino"] .choice-box,
+[data-surface="lino"] .defusion-card,
+[data-surface="lino"] .defusion-reframing-card,
+[data-surface="lino"] .body-map-container,
+[data-surface="lino"] .breathing-pacer-container,
+[data-surface="lino"] .emotion-wheel-container,
+[data-surface="lino"] .follow-up-box,
+[data-surface="lino"] .history-item,
+[data-surface="lino"] .history-entry,
+[data-surface="lino"] .history-retro-filter-box,
+[data-surface="lino"] .pill-activities-box,
+[data-surface="lino"] .pill-related-activity-btn,
+[data-surface="lino"] .cozy-inline-callout,
+[data-surface="lino"] .personal-anchor-banner,
+[data-surface="lino"] .example-notice-bar {
+  background-color: var(--bg-surface) !important;
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+}
+
+[data-surface="lino"] .personal-anchor-banner,
+[data-surface="lino"] .example-notice-bar,
+[data-surface="lino"] .cozy-inline-callout {
+  border-left: 2px solid var(--sage-500);
+}
+
+[data-surface="lino"] .storage-mode-card {
+  background-color: var(--bg-surface) !important;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+}
+
+[data-surface="lino"] .storage-mode-card.active {
+  background-color: var(--bg-surface-elevated) !important;
+  border-color: var(--sage-500);
+}
+
+/* ==========================================================================
+   SINGLE-COLUMN CALM MODALS (Consistent Editorial / Lino Surface Support)
+   ========================================================================== */
+
+.settings-section-title {
+  font-family: var(--font-serif);
+  font-size: 1.06rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.modal-card {
+  max-width: min(92vw, 680px);
+  max-height: 88dvh;
+  overflow-y: auto;
+  padding: 28px 30px 24px;
+}
+
+/* Anchor Settings modal to top and keep steady height across tab switches */
+.modal-overlay:has(#storage-mode-modal-root) {
+  align-items: flex-start;
+  padding-top: clamp(20px, 6dvh, 56px);
+}
+
+.modal-card:has(#storage-mode-modal-root) {
+  min-height: min(620px, 80dvh);
+  display: flex;
+  flex-direction: column;
+}
+
+#storage-mode-modal-root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+#storage-mode-modal-root > .btn-group {
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+@media (min-width: 768px) {
+  .modal-card.modal-medium {
+    max-width: min(92vw, 760px);
+  }
+
+  .modal-card.modal-wide {
+    max-width: min(92vw, 860px);
+  }
+
+  /* Keep modals in a calm 1-column reading flow with smooth vertical scroll */
+  .modal-grid-2col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .modal-grid-2col > * {
+    width: 100%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .modal-card.modal-wide {
+    max-width: min(90vw, 940px);
+  }
+}
+
+.sos-option-block {
+  padding: 16px 0;
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.sos-option-block.sos-option-primary {
+  border-left: 2px solid var(--sage-500);
+  padding-left: 14px;
+}
+
+[data-surface="lino"] .sos-options-stack {
+  gap: 10px;
+}
+
+[data-surface="lino"] .sos-option-block {
+  padding: 15px 17px;
+  border-top: none;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+}
+
+[data-surface="lino"] .sos-option-block.sos-option-primary {
+  background: var(--bg-surface-elevated);
+  border-left: 2px solid var(--sage-500);
+}
+
+/* Respect Reduced Motion Accessibility Preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

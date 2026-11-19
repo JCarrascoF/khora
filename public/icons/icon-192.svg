@@ -1,25 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
-  <defs>
-    <linearGradient id="actGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#3B6E58"/>
-      <stop offset="100%" stop-color="#1E382E"/>
-    </linearGradient>
-    <linearGradient id="leafGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#A4D4B4"/>
-      <stop offset="50%" stop-color="#5B9A7D"/>
-      <stop offset="100%" stop-color="#315B48"/>
-    </linearGradient>
-  </defs>
-
-  <rect width="192" height="192" rx="42" fill="url(#actGrad192)"/>
-  <circle cx="96" cy="96" r="66" fill="none" stroke="#5B9A7D" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.4"/>
-  
-  <path d="M 96 45 C 124 72, 138 105, 116 132 C 101 149, 82 143, 75 132 C 67 120, 71 101, 86 82 Z" 
-        fill="url(#leafGrad192)" opacity="0.85"/>
-  <path d="M 96 45 C 68 72, 54 105, 76 132 C 91 149, 110 143, 117 132 C 125 120, 121 101, 106 82 Z" 
-        fill="#4A8167" opacity="0.7"/>
-
-  <path d="M 96 52 Q 90 96, 96 140" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
-  <circle cx="96" cy="96" r="6" fill="#F4EDE2"/>
-  <circle cx="96" cy="96" r="3" fill="#3B6E58"/>
+  <rect width="192" height="192" rx="40" fill="#1B1613"/>
+  <path d="M 134 58 A 54 54 0 1 1 96 42" fill="none" stroke="#F3EDE4" stroke-width="11" stroke-linecap="round"/>
+  <circle cx="96" cy="96" r="14" fill="#C47C61"/>
 </svg>

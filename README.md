@@ -5,17 +5,19 @@
 
 > 💻 **Probarlo ahora:** [https://jcarrascof.github.io/khora/](https://jcarrascof.github.io/khora/)
 
-# Khora — Tu espacio ACT
+# Khōra — Tu espacio ACT
 
-**Khora** es un espacio personal, privado y sin distracciones pensado para acompañarte en el día a día desde la **Terapia de Aceptación y Compromiso (ACT)**.
+**Khōra** es un espacio personal, privado y sin distracciones pensado para acompañarte en el día a día desde la **Terapia de Aceptación y Compromiso (ACT)**.
 
 En filosofía griega, *khōra* significa *el espacio que da cabida sin juzgar*: un lugar donde observar lo que sientes (miedo, culpa, ansiedad, ganas de ceder), bajarle el ruido a los pensamientos y recordar hacia dónde quieres caminar según tus **valores**.
 
-> 🌱 **Sin cuentas, sin nube ajena y 100% privada:** todo lo que escribes vive en tu propio dispositivo y puedes protegerlo con **PIN/contraseña, FaceID o huella** (cifrado real `AES-256`). Disponible en **Español e Inglés** (`ES` / `EN` arriba a la derecha).
+> **Sin cuentas, sin nube ajena y 100% privada:** todo lo que escribes vive en tu propio dispositivo y puedes protegerlo con **PIN/contraseña, FaceID o huella** (cifrado real `AES-256`). Disponible en **Español e Inglés** (`ES` / `EN` en Ajustes o en el pie).
+>
+> **Diseño tranquilo y personalizable:** modo Claro/Oscuro, 4 paletas cuidadas (*Avena y Arcilla*, *Papel y Musgo*, *Sepia y Pergamino*, *Niebla y Pastel*) + **tema personal exportable (`khora-theme.json`)** y selector de superficie (*Cuaderno* con filetes de 1px o *Lino* con capas suaves).
 
 ---
 
-## ¿Qué puedes hacer en Khora?
+## ¿Qué puedes hacer en Khōra?
 
 ### 1. 🔥 Ahora mismo *(cuando estás en caliente o quieres practicar)*
 * **🌊 Siento una emoción intensa o bloqueo:** pones nombre exacto a lo que sientes, lo localizas en tu cuerpo y tomas distancia del pensamiento que lo alimenta.
@@ -24,7 +26,7 @@ En filosofía griega, *khōra* significa *el espacio que da cabida sin juzgar*: 
 * **🏳️ Acabo de ceder (*Paz Falsa*):** registras cuándo dijiste «sí» queriendo decir «no» para hacer visible su desgaste real.
 * **📖 Lecturas y Ejercicios ACT:** píldoras de 1 minuto, frases ancla, *Deconstructor «Yo Soy»* y *El Pivote (del dolor al anhelo)*.
 
-*(Además, tienes siempre arriba el botón **`⚡ Crisis ACT`** para ir directo a un ejercicio de anclaje en segundos.)*
+*(Además, tienes siempre arriba el botón **«Necesito calma ahora»** para entrar en modo inmersivo sin distracciones y echar el ancla en segundos.)*
 
 ---
 
@@ -44,7 +46,7 @@ En filosofía griega, *khōra* significa *el espacio que da cabida sin juzgar*: 
 
 ## Privacidad, copias de seguridad y uso en el móvil
 
-* **Tus datos son solo tuyos:** Khora no tiene anuncios, rastreadores ni base de datos central en internet.
+* **Tus datos son solo tuyos:** Khōra no tiene anuncios, rastreadores ni base de datos central en internet.
 * **Protégela de ojos ajenos:** desde **⚙️ Configuración → Bloqueo de Privacidad y Cifrado (AES-256)** puedes poner un **PIN / contraseña** y activar **FaceID / Huella** para que nadie pueda abrirla ni leer el almacenamiento interno.
 * **📲 Úsala como App en tu móvil (sin descargar de tiendas):**
   * **iPhone / iPad (Safari):** abre la URL en Safari → pulsa **Compartir** (⬆️) → **«Añadir a pantalla de inicio»** → **ábrela siempre desde el nuevo icono**. *(Importante: en iPhone haz esto antes de guardar datos reales para que no queden aislados en una pestaña temporal.)*
@@ -57,7 +59,7 @@ En filosofía griega, *khōra* significa *el espacio que da cabida sin juzgar*: 
 
 ## Nota importante
 
-Khora es una herramienta personal de autoconocimiento, registro y práctica cotidiana inspirada en la Terapia de Aceptación y Compromiso (ACT). **No es un servicio médico ni sustituye el acompañamiento profesional en salud mental.**
+Khōra es una herramienta personal de autoconocimiento, registro y práctica cotidiana inspirada en la Terapia de Aceptación y Compromiso (ACT). **No es un servicio médico ni sustituye el acompañamiento profesional en salud mental.**
 
 ---
 

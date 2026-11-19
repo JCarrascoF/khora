@@ -5,17 +5,19 @@
 
 > 💻 **Try it now:** [https://jcarrascof.github.io/khora/](https://jcarrascof.github.io/khora/)
 
-# Khora — Your ACT space
+# Khōra — Your ACT space
 
-**Khora** is a private, distraction-free personal space designed to support you day to day through **Acceptance and Commitment Therapy (ACT)**.
+**Khōra** is a private, distraction-free personal space designed to support you day to day through **Acceptance and Commitment Therapy (ACT)**.
 
 In Greek philosophy, *khōra* means *the space that holds without judging*: a place to notice what you feel (fear, guilt, anxiety, urges to cave), turn down the volume on noisy thoughts, and remember where you want to steer according to your **values**.
 
-> 🌱 **No accounts, no third-party cloud, 100% private:** everything you write stays on your own device and can be protected with a **PIN/passcode, FaceID, or fingerprint** (true `AES-256` encryption). Built-in **English & Spanish (`ES` / `EN`)** switcher in the top header.
+> **No accounts, no third-party cloud, 100% private:** everything you write stays on your own device and can be protected with a **PIN/passcode, FaceID, or fingerprint** (true `AES-256` encryption). Built-in **English & Spanish (`ES` / `EN`)** switcher in Settings and the footer.
+>
+> **Calm, customizable design:** Light/Dark mode, 4 curated palettes (*Oat & Clay*, *Paper & Moss*, *Sepia & Parchment*, *Mist & Pastel*) + an **exportable personal theme (`khora-theme.json`)** and surface style toggle (*Notebook* 1px hairlines or *Linen* soft layers).
 
 ---
 
-## What can you do in Khora?
+## What can you do in Khōra?
 
 ### 1. 🔥 Right now *(in the heat of the moment or for quick practice)*
 * **🌊 Feeling intense emotion or freeze:** put an exact name on what you feel, map where it sits in your body, and step back from the thought feeding it.
@@ -24,7 +26,7 @@ In Greek philosophy, *khōra* means *the space that holds without judging*: a pl
 * **🏳️ Just gave in (*False Peace*):** log when you said "yes" wanting to say "no" so its real physical and emotional toll becomes visible.
 * **📖 ACT Readings & Exercises:** 1-minute pocket pills, anchor cards, *"I Am" Label Deconstructor*, and *The Pivot (from pain to yearning)*.
 
-*(Plus, the **`⚡ ACT Crisis`** button in the top header gets you straight to grounding in seconds.)*
+*(Plus, the **"I need calm now"** button in the top header launches distraction-free immersive grounding in seconds.)*
 
 ---
 
@@ -42,22 +44,22 @@ In Greek philosophy, *khōra* means *the space that holds without judging*: a pl
 
 ---
 
-## Privacy, backups & using Khora on your phone
+## Privacy, backups & using Khōra on your phone
 
-* **Your data belongs only to you:** Khora has zero ads, zero trackers, and no central database on the internet.
+* **Your data belongs only to you:** Khōra has zero ads, zero trackers, and no central database on the internet.
 * **Lock away prying eyes:** under **⚙️ Settings → Privacy Lock & Encryption (AES-256)** you can set a **PIN / password** and enable **FaceID / Fingerprint** so nobody can open the app or read local storage.
 * **📲 Use it like a native Mobile App (no app store needed):**
-  * **iPhone / iPad (Safari):** open the URL in Safari → tap **Share** (⬆️) → **"Add to Home Screen"** → **always open Khora from that new icon**. *(Important: on iPhone do this before saving real entries so data does not stay isolated in a temporary browser tab.)*
+  * **iPhone / iPad (Safari):** open the URL in Safari → tap **Share** (⬆️) → **"Add to Home Screen"** → **always open Khōra from that new icon**. *(Important: on iPhone do this before saving real entries so data does not stay isolated in a temporary browser tab.)*
   * **Android (Chrome):** open the URL → menu **⋮** → **"Install app"**.
 * **Move between devices:** in **⚙️ Settings → Backups & Data Management** you can export/import a `.json` backup anytime or save it in one tap to *Files / iCloud Drive / Google Drive*.
 
-*(Khora starts with a few **guide examples** marked `🧪 Guide Example` so the app isn't blank on first launch; edit them anytime or clear them all at once with **`🧹 Remove Examples`**.)*
+*(Khōra starts with a few **guide examples** marked `🧪 Guide Example` so the app isn't blank on first launch; edit them anytime or clear them all at once with **`🧹 Remove Examples`**.)*
 
 ---
 
 ## Important Note
 
-Khora is a personal self-reflection and everyday practice tool inspired by Acceptance and Commitment Therapy (ACT). **It is not a medical service and does not replace professional mental health care or therapy.**
+Khōra is a personal self-reflection and everyday practice tool inspired by Acceptance and Commitment Therapy (ACT). **It is not a medical service and does not replace professional mental health care or therapy.**
 
 ---
 
@@ -67,7 +69,7 @@ Read the full technical documentation (architecture, `i18n`, `AES-256-GCM` encry
 
 ### How to contribute
 
-* 📖 **[CONTRIBUTING.md](CONTRIBUTING.md)** — how to run Khora locally, code conventions, and the PR workflow.
+* 📖 **[CONTRIBUTING.md](CONTRIBUTING.md)** — how to run Khōra locally, code conventions, and the PR workflow.
 * 🤝 **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)** — community standards.
 * 🔒 **[SECURITY.md](SECURITY.md)** — how to report vulnerabilities privately.
 
