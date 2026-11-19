@@ -67,6 +67,7 @@ class PazFalsaApp {
     this.currentStep = step;
     this.render();
     this.bindEvents();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   render() {
