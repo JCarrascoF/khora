@@ -149,4 +149,9 @@ test('server.js enforces auth, serves health, and persists state in SQLite', asy
     body: { data: 'not-an-array' }
   });
   assert.equal(badPutRes.status, 400);
+
+  // 6. Root HTML injects khora-api meta when SQLite is enabled
+  const htmlRes = await invokeServer(server, { method: 'GET', url: '/' });
+  assert.equal(htmlRes.status, 200);
+  assert.ok(htmlRes.body.includes('<meta name="khora-api" content="1">'), 'Expected khora-api meta tag in HTML');
 });

@@ -250,10 +250,28 @@ function serveStaticFile(res, pathname) {
     const ext = path.extname(fullPath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
     const noCacheExts = ext === '.html' || ext === '.js' || ext === '.css';
-    res.writeHead(200, {
+    const headers = {
       'Content-Type': contentType,
       'Cache-Control': noCacheExts ? 'no-store, no-cache, must-revalidate' : 'public, max-age=3600'
-    });
+    };
+
+    if (SQLITE_ENABLED && reqPath === '/index.html') {
+      fs.readFile(fullPath, 'utf8', (readErr, html) => {
+        if (readErr) {
+          res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+          res.end('Internal Server Error');
+          return;
+        }
+        const injected = html.includes('name="khora-api"')
+          ? html
+          : html.replace('</head>', '  <meta name="khora-api" content="1">\n</head>');
+        res.writeHead(200, headers);
+        res.end(injected);
+      });
+      return;
+    }
+
+    res.writeHead(200, headers);
     fs.createReadStream(fullPath).pipe(res);
   });
 }

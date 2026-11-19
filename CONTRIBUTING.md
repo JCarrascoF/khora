@@ -96,7 +96,13 @@ docker compose up --build
 
 ## Testing
 
-There is no automated test suite yet. Before submitting a PR:
+Run the test suite and syntax checks before submitting a PR:
+
+```sh
+npm test
+```
+
+Also verify:
 
 1. `node --check server/server.js` (and each `public/js/*.js` file you touched).
 2. Manually exercise the PWA in at least one modern browser, in
