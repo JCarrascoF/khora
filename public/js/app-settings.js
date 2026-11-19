@@ -234,6 +234,29 @@
     window.stateManager.saveSettings(settings);
   },
 
+  initExplanations() {
+    const settings = window.stateManager.getSettings();
+    let explanations = settings.explanations;
+    if (explanations !== 'hide' && explanations !== 'show') {
+      try {
+        const stored = localStorage.getItem('act_explanations_pref');
+        explanations = stored === 'hide' ? 'hide' : 'show';
+      } catch {
+        explanations = 'show';
+      }
+    }
+    document.documentElement.setAttribute('data-explanations', explanations);
+  },
+
+  setExplanations(newVal) {
+    const resolved = newVal === 'hide' ? 'hide' : 'show';
+    document.documentElement.setAttribute('data-explanations', resolved);
+
+    const settings = window.stateManager.getSettings();
+    settings.explanations = resolved;
+    window.stateManager.saveSettings(settings);
+  },
+
   toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -252,6 +275,118 @@
     }
   },
 
+  getSettingsSaveIndicator() {
+    let indicator = document.getElementById('settings-save-indicator');
+    if (indicator) return indicator;
+    const host = document.querySelector?.('#storage-mode-modal-root .settings-title-row')
+      || document.getElementById('storage-mode-modal-root');
+    if (!host || typeof document.createElement !== 'function') return null;
+    indicator = document.createElement('span');
+    indicator.id = 'settings-save-indicator';
+    indicator.className = 'settings-save-indicator';
+    indicator.setAttribute('data-state', 'idle');
+    indicator.setAttribute('data-no-i18n', 'true');
+    indicator.setAttribute('role', 'status');
+    indicator.setAttribute('aria-live', 'polite');
+    indicator.setAttribute('aria-atomic', 'true');
+    indicator.innerHTML = `
+      <span class="settings-save-spinner" aria-hidden="true"></span>
+      <svg class="settings-save-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      <span class="settings-save-label"></span>
+    `;
+    host.appendChild(indicator);
+    return indicator;
+  },
+
+  hideSettingsSaveIndicator() {
+    this._settingsSaveSeq = (this._settingsSaveSeq || 0) + 1;
+    if (this._settingsSaveHideTimer) {
+      clearTimeout(this._settingsSaveHideTimer);
+      this._settingsSaveHideTimer = null;
+    }
+    const indicator = document.getElementById('settings-save-indicator');
+    if (!indicator) return;
+    indicator.dataset.state = 'idle';
+    const labelEl = indicator.querySelector?.('.settings-save-label');
+    if (labelEl) labelEl.textContent = '';
+  },
+
+  async triggerSettingsSaveIndicator(asyncWork = null, options = {}) {
+    const {
+      minSpinnerMs = 260,
+      savedVisibleMs = 1500,
+      flushTimeoutMs = 2000
+    } = options;
+    const translate = (phrase) => (window.i18n?.translateText ? window.i18n.translateText(phrase) : phrase);
+    const indicator = this.getSettingsSaveIndicator();
+    if (!indicator) {
+      if (typeof asyncWork === 'function') await asyncWork();
+      return;
+    }
+
+    const seq = (this._settingsSaveSeq || 0) + 1;
+    this._settingsSaveSeq = seq;
+    if (this._settingsSaveHideTimer) {
+      clearTimeout(this._settingsSaveHideTimer);
+      this._settingsSaveHideTimer = null;
+    }
+
+    const labelEl = indicator.querySelector?.('.settings-save-label');
+    const savingText = translate('Guardando…');
+    if (indicator.dataset.state !== 'saving') {
+      indicator.dataset.state = 'saving';
+    }
+    if (labelEl && labelEl.textContent !== savingText) {
+      labelEl.textContent = savingText;
+    }
+
+    const minBeat = minSpinnerMs > 0
+      ? new Promise((resolve) => setTimeout(resolve, minSpinnerMs))
+      : Promise.resolve();
+
+    try {
+      if (typeof asyncWork === 'function') {
+        await asyncWork();
+      }
+      const flushPromise = window.stateManager?.flushPendingWrites
+        ? window.stateManager.flushPendingWrites(flushTimeoutMs)
+        : Promise.resolve();
+      await Promise.all([minBeat, flushPromise]);
+    } catch (err) {
+      if (seq === this._settingsSaveSeq) {
+        this.hideSettingsSaveIndicator();
+      }
+      throw err;
+    }
+
+    if (seq !== this._settingsSaveSeq) return;
+
+    const modal = document.getElementById('app-modal');
+    if (!modal?.classList?.contains('active') || !document.getElementById('storage-mode-modal-root')) {
+      this.hideSettingsSaveIndicator();
+      return;
+    }
+
+    const currentIndicator = this.getSettingsSaveIndicator();
+    if (!currentIndicator) return;
+    const currentLabelEl = currentIndicator.querySelector?.('.settings-save-label');
+    currentIndicator.dataset.state = 'saved';
+    if (currentLabelEl) {
+      currentLabelEl.textContent = translate('Guardado');
+    }
+
+    this._settingsSaveHideTimer = setTimeout(() => {
+      if (seq !== this._settingsSaveSeq) return;
+      const latestIndicator = document.getElementById('settings-save-indicator');
+      if (latestIndicator) {
+        latestIndicator.dataset.state = 'idle';
+      }
+      this._settingsSaveHideTimer = null;
+    }, savedVisibleMs);
+  },
+
   async openStorageModeModal() {
     return this.openSettingsModal();
   },
@@ -262,17 +397,60 @@
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody || !window.stateManager) return;
 
-    this.setModalSize('wide');
+    const openId = (this._settingsModalOpenId || 0) + 1;
+    this._settingsModalOpenId = openId;
 
     const refreshCurrentViewIfNeeded = () => {
       if (this.currentView) {
-        this.navigate(this.currentView);
+        this.navigate(this.currentView, { keepModal: true, updateHash: false });
       }
     };
 
     let activeSettingsTab = 'apariencia';
 
-    const renderModalContent = () => {
+    modalBody.innerHTML = `
+      <div id="storage-mode-modal-root">
+        <div class="flex-between" style="gap: 8px; align-items: flex-start;">
+          <div>
+            <div class="settings-title-row">
+              <h3 class="card-title">Configuración y Ajustes Técnicos</h3>
+              <span id="settings-save-indicator" class="settings-save-indicator" data-state="idle" data-no-i18n="true" role="status" aria-live="polite" aria-atomic="true">
+                <span class="settings-save-spinner" aria-hidden="true"></span>
+                <svg class="settings-save-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span class="settings-save-label"></span>
+              </span>
+            </div>
+            <p class="card-subtitle mt-1" style="line-height: 1.45;">
+              Privacidad AES-256, tema visual, almacenamiento SQLite/Navegador, copias de seguridad y app móvil.
+            </p>
+          </div>
+          <button type="button" class="btn-icon" id="btn-storage-modal-close" aria-label="Cerrar" style="width: 34px; height: 34px; flex-shrink: 0;">✕</button>
+        </div>
+
+        <div id="settings-modal-dynamic-content"></div>
+
+        <div class="btn-group" style="margin-top: 14px; justify-content: flex-end;">
+          <button type="button" class="btn-primary" id="btn-storage-modal-done" style="font-size: 0.82rem;">
+            Listo
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('btn-storage-modal-close')?.addEventListener('click', () => {
+      this.closeModal();
+    });
+    document.getElementById('btn-storage-modal-done')?.addEventListener('click', () => {
+      this.closeModal();
+    });
+
+    const dynamicContent = document.getElementById('settings-modal-dynamic-content');
+    if (!dynamicContent) return;
+
+    const renderModalContent = ({ resetScroll = false } = {}) => {
+      const prevScroll = (!resetScroll && modal.classList.contains('active')) ? modalBody.scrollTop : 0;
       const status = window.stateManager.getDbStatus();
       const settings = window.stateManager.getSettings() || {};
       const currentTheme = document.documentElement.getAttribute('data-theme') || settings.theme || 'light';
@@ -295,6 +473,7 @@
         : '—';
       const currentLang = window.i18n?.getLang?.() || 'es';
       const anchorsOn = settings.showAnchorsCard !== false;
+      const explanationsOn = (document.documentElement.getAttribute('data-explanations') || settings.explanations || 'show') !== 'hide';
 
       const serverBadge = serverAvailable
         ? (authRequired && !authenticated
@@ -312,18 +491,7 @@
         ?`<span class="badge" style="background: rgba(87, 139, 116, 0.18); color: var(--sage-700);">Cifrado AES-256-GCM Activo</span>`
         : `<span class="badge" style="background: var(--bg-surface); color: var(--text-muted);">Sin bloqueo / sin cifrar</span>`;
 
-      modalBody.innerHTML = `
-        <div id="storage-mode-modal-root">
-          <div class="flex-between" style="gap: 8px; align-items: flex-start;">
-            <div>
-<h3 class="card-title">Configuración y Ajustes Técnicos</h3>
-              <p class="card-subtitle mt-1" style="line-height: 1.45;">
-                Privacidad AES-256, tema visual, almacenamiento SQLite/Navegador, copias de seguridad y app móvil.
-              </p>
-            </div>
-            <button type="button" class="btn-icon" id="btn-storage-modal-close" aria-label="Cerrar" style="width: 34px; height: 34px; flex-shrink: 0;">✕</button>
-          </div>
-
+      dynamicContent.innerHTML = `
           <div class="internal-tabs-bar" role="tablist" style="margin-top: 12px; margin-bottom: 14px;">
             <button type="button" class="internal-tab-btn ${activeSettingsTab === 'apariencia' ? 'active' : ''}" data-settings-tab="apariencia" role="tab" aria-selected="${activeSettingsTab === 'apariencia'}">Apariencia</button>
             <button type="button" class="internal-tab-btn ${activeSettingsTab === 'privacidad' ? 'active' : ''}" data-settings-tab="privacidad" role="tab" aria-selected="${activeSettingsTab === 'privacidad'}">Privacidad</button>
@@ -547,6 +715,16 @@ ${currentPalette === 'custom' ? (() => {
 <span class="pref-switch-knob"></span>
               </button>
             </div>
+
+<div class="pref-row">
+<div class="pref-row-info">
+<span class="pref-row-label">Textos explicativos</span>
+<span class="pref-row-hint">Mostrar descripciones y guías breves en pantalla (no afecta a los botones ⓘ)</span>
+</div>
+<button type="button" class="pref-switch ${explanationsOn ?'on' :''}" id="btn-setting-toggle-explanations" role="switch" aria-checked="${explanationsOn ?'true' :'false'}" aria-label="Textos explicativos">
+<span class="pref-switch-knob"></span>
+              </button>
+            </div>
 </div>
           </div>
             ` : ''}
@@ -607,6 +785,25 @@ ${currentPalette === 'custom' ? (() => {
             </div>
           ` : ''}
 
+          ${(!showDbSection || mode === 'local') ? `
+            <!-- 2b. Información de Almacenamiento Local -->
+            <div class="settings-section-block">
+              <div class="flex-between" style="gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
+                <div class="settings-section-title">
+                  Cómo se guardan tus datos
+                </div>
+                <span class="badge" style="background: rgba(87, 139, 116, 0.14); color: var(--sage-700);">
+                  100% Privado · Solo este dispositivo
+                </span>
+              </div>
+              <ul style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; padding-left: 18px; margin: 0;">
+                <li>Tus registros se almacenan únicamente en la memoria de este navegador y dispositivo (sin servidores externos).</li>
+                <li>Si borras los datos del navegador o cambias de equipo sin exportar una copia JSON, tus registros se perderán.</li>
+                <li>Puedes proteger tus datos localmente con <strong>cifrado AES-256</strong> desde la pestaña <em>Privacidad</em>.</li>
+              </ul>
+            </div>
+          ` : ''}
+
           <!-- 3. Copias de Seguridad y Datos -->
 <div class="settings-section-block">
 <div class="flex-between" style="gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
@@ -658,7 +855,8 @@ ${currentPalette === 'custom' ? (() => {
             <ul style="font-size: 0.76rem; color: var(--text-secondary); line-height: 1.45; padding-left: 18px; margin: 0;">
               <li><strong>iPhone / iPad (Safari):</strong> <em>Compartir</em> → <strong>«Añadir a pantalla de inicio»</strong>.</li>
               <li><strong>Android (Chrome):</strong> Menú <strong>⋮</strong> → <strong>«Instalar aplicación»</strong>.</li>
-              <li><strong>Offline:</strong> Funciona sin conexión en modo <em>Navegador</em> tras la primera carga.</li>
+              <li><strong>Persistencia y Offline:</strong> Funciona sin conexión tras la primera carga. En iOS, ábrela siempre desde el icono instalado para evitar la limpieza de pestañas de Safari a los 7 días.</li>
+              <li><strong>Aviso normal de Chrome en Android:</strong> la notificación «Toca para copiar la URL de esta aplicación» aparece siempre al abrir cualquier app web (PWA). Puedes ocultarla manteniendo pulsada la notificación y desactivando solo ese canal.</li>
             </ul>
           </div>
 
@@ -684,69 +882,56 @@ ${currentPalette === 'custom' ? (() => {
             </div>
             ` : ''}
           </div>
-
-          <div class="btn-group" style="margin-top: 14px; justify-content: flex-end;">
-            <button type="button" class="btn-primary" id="btn-storage-modal-done" style="font-size: 0.82rem;">
-              Listo
-            </button>
-          </div>
-        </div>
       `;
 
-      document.getElementById('btn-storage-modal-close')?.addEventListener('click', () => {
-        modal.classList.remove('active');
-      });
-      document.getElementById('btn-storage-modal-done')?.addEventListener('click', () => {
-        modal.classList.remove('active');
-      });
-
-      modalBody.querySelectorAll('[data-settings-tab]').forEach((btn) => {
+      dynamicContent.querySelectorAll('[data-settings-tab]').forEach((btn) => {
         btn.addEventListener('click', () => {
           activeSettingsTab = btn.dataset.settingsTab || 'apariencia';
-          renderModalContent();
+          renderModalContent({ resetScroll: true });
+          this.resetModalScroll();
         });
       });
 
-      modalBody.querySelectorAll('[data-select-lang]').forEach((btn) => {
+      dynamicContent.querySelectorAll('[data-select-lang]').forEach((btn) => {
         btn.addEventListener('click', () => {
           const nextLang = btn.dataset.selectLang;
-          window.i18n?.setLang?.(nextLang);
-          this.showToast(nextLang === 'en' ? 'Language switched to English 🇬🇧' : 'Idioma cambiado a Español 🇪🇸');
-          renderModalContent();
+          if (!nextLang || nextLang === window.i18n?.getLang?.()) return;
+          if (window.i18n?.setLang) {
+            window.i18n.setLang(nextLang);
+          } else {
+            renderModalContent();
+          }
+          this.triggerSettingsSaveIndicator();
         });
       });
 
-      modalBody.querySelectorAll('[data-select-surface]').forEach((btn) => {
+      dynamicContent.querySelectorAll('[data-select-surface]').forEach((btn) => {
         btn.addEventListener('click', () => {
           const nextSurface = btn.dataset.selectSurface;
+          if (nextSurface === currentSurface) return;
           this.setSurface(nextSurface);
-          this.showToast(nextSurface ==='lino' ?'Superficie por bloques activada' :'Superficie continua activada');
           renderModalContent();
+          this.triggerSettingsSaveIndicator();
         });
       });
 
-      modalBody.querySelectorAll('[data-select-buttons]').forEach((btn) => {
+      dynamicContent.querySelectorAll('[data-select-buttons]').forEach((btn) => {
         btn.addEventListener('click', () => {
           const nextButtons = btn.dataset.selectButtons;
+          if (nextButtons === currentButtons) return;
           this.setButtons(nextButtons);
-          this.showToast(nextButtons === 'editorial' ? 'Botones con relleno activados' : 'Botones subrayados activados');
           renderModalContent();
+          this.triggerSettingsSaveIndicator();
         });
       });
 
-      modalBody.querySelectorAll('[data-select-palette]').forEach((btn) => {
+      dynamicContent.querySelectorAll('[data-select-palette]').forEach((btn) => {
         btn.addEventListener('click', () => {
           const nextPalette = btn.dataset.selectPalette;
+          if (nextPalette === currentPalette) return;
           this.setPalette(nextPalette);
-          const labels = {
-            arcilla: 'Paleta Avena y Arcilla activada',
-            musgo: 'Paleta Papel y Musgo activada',
-            sepia: 'Paleta Sepia y Pergamino activada',
-            niebla: 'Paleta Niebla y Pastel activada',
-            custom: 'Paleta Personalizada activada'
-          };
-          this.showToast(labels[nextPalette] || labels.arcilla);
           renderModalContent();
+          this.triggerSettingsSaveIndicator();
         });
       });
 
@@ -759,6 +944,7 @@ ${currentPalette === 'custom' ? (() => {
           const modeKey = (document.documentElement.getAttribute('data-theme') === 'dark') ? 'dark' : 'light';
           cp[modeKey][prop] = val;
           this.saveCustomPalette(cp);
+          this.triggerSettingsSaveIndicator();
         });
       };
       bindCustomColorInput('input-custom-bg', 'bg');
@@ -791,8 +977,8 @@ ${currentPalette === 'custom' ? (() => {
               }
             };
             this.saveCustomPalette(next);
-            this.showToast('Tema personal importado correctamente');
             renderModalContent();
+            this.triggerSettingsSaveIndicator();
           } catch {
             this.showToast('El archivo de tema no tiene un formato JSON válido');
           }
@@ -802,16 +988,17 @@ ${currentPalette === 'custom' ? (() => {
 
       document.getElementById('btn-reset-custom-theme')?.addEventListener('click', () => {
         this.saveCustomPalette(this.getDefaultCustomPalette());
-        this.showToast('Tema personal restablecido');
         renderModalContent();
+        this.triggerSettingsSaveIndicator();
       });
 
-      modalBody.querySelectorAll('[data-select-theme]').forEach((btn) => {
+      dynamicContent.querySelectorAll('[data-select-theme]').forEach((btn) => {
         btn.addEventListener('click', () => {
           const nextTheme = btn.dataset.selectTheme;
+          if (nextTheme === currentTheme) return;
           this.setTheme(nextTheme);
-          this.showToast(nextTheme === 'dark' ? 'Tema oscuro activado' : 'Tema claro activado');
           renderModalContent();
+          this.triggerSettingsSaveIndicator();
         });
       });
 
@@ -821,8 +1008,8 @@ ${currentPalette === 'custom' ? (() => {
         st.vibration = nextVal;
         window.stateManager.saveSettings(st);
         if (nextVal) this.triggerHaptic([40]);
-        this.showToast(nextVal ? 'Vibración guía activada' : 'Vibración guía desactivada');
         renderModalContent();
+        this.triggerSettingsSaveIndicator();
       });
 
       document.getElementById('btn-setting-toggle-anchors')?.addEventListener('click', () => {
@@ -834,8 +1021,16 @@ ${currentPalette === 'custom' ? (() => {
           window.pildorasAnclajesApp.render();
           window.pildorasAnclajesApp.bindEvents();
         }
-        this.showToast(nextVal ? 'Tarjetas de Anclaje activadas' : 'Tarjetas de Anclaje ocultas');
         renderModalContent();
+        this.triggerSettingsSaveIndicator();
+      });
+
+      document.getElementById('btn-setting-toggle-explanations')?.addEventListener('click', () => {
+        const currentlyOn = (document.documentElement.getAttribute('data-explanations') || 'show') !== 'hide';
+        const nextVal = currentlyOn ? 'hide' : 'show';
+        this.setExplanations(nextVal);
+        renderModalContent();
+        this.triggerSettingsSaveIndicator();
       });
 
       document.getElementById('btn-setting-toggle-sound')?.addEventListener('click', () => {
@@ -844,23 +1039,18 @@ ${currentPalette === 'custom' ? (() => {
         st.sound = nextVal;
         window.stateManager.saveSettings(st);
         if (nextVal) this.playGentleTone(432, 220);
-        this.showToast(nextVal ? 'Tonos suaves activados' : 'Tonos suaves desactivados');
         renderModalContent();
+        this.triggerSettingsSaveIndicator();
       });
 
-      modalBody.querySelectorAll('[data-select-storage-mode]').forEach((btn) => {
+      dynamicContent.querySelectorAll('[data-select-storage-mode]').forEach((btn) => {
         btn.addEventListener('click', async () => {
           const nextMode = btn.dataset.selectStorageMode;
-          await window.stateManager.setStorageMode(nextMode);
-          this.updateDbStatusBadge();
-          this.showToast(
-            nextMode === 'local'
-              ? 'Modo Navegador activado: datos guardados solo en este dispositivo'
-              : (window.stateManager.getDbStatus().connected
-                ? 'Modo BD SQLite activado y sincronizado'
-                : 'Modo BD SQLite activado (sin conexión ahora; se usará caché local hasta reconectar)')
-          );
-          renderModalContent();
+          await this.triggerSettingsSaveIndicator(async () => {
+            await window.stateManager.setStorageMode(nextMode);
+            this.updateDbStatusBadge();
+            renderModalContent();
+          });
         });
       });
 
@@ -888,6 +1078,7 @@ ${currentPalette === 'custom' ? (() => {
       });
 
       document.getElementById('btn-modal-open-login')?.addEventListener('click', () => {
+        this.hideSettingsSaveIndicator();
         this.openLoginModal();
       });
 
@@ -934,7 +1125,7 @@ ${currentPalette === 'custom' ? (() => {
       });
 
       document.getElementById('btn-vault-lock-now')?.addEventListener('click', () => {
-        modal.classList.remove('active');
+        this.closeModal();
         window.stateManager.lockVault();
         this.showToast('Khōra bloqueado');
       });
@@ -953,7 +1144,7 @@ ${currentPalette === 'custom' ? (() => {
 
       document.getElementById('select-vault-autolock')?.addEventListener('change', (e) => {
         window.stateManager.updateVaultAutoLock(Number(e.target.value));
-        this.showToast('Tiempo de auto-bloqueo actualizado');
+        this.triggerSettingsSaveIndicator();
       });
 
       document.getElementById('btn-vault-disable')?.addEventListener('click', async () => {
@@ -1014,8 +1205,9 @@ ${currentPalette === 'custom' ? (() => {
       });
 
       document.getElementById('btn-modal-seed-demo')?.addEventListener('click', () => {
-        if (confirm('¿Cargar datos de demostración para explorar los gráficos y analíticas?')) {
-          window.stateManager.seedDemoData();
+        if (confirm('¿Cargar datos de ejemplo en toda la app? Tus registros propios se conservarán intactos.')) {
+          const ok = window.stateManager.seedDemoData();
+          if (!ok) return;
           refreshCurrentViewIfNeeded();
           this.showToast('Datos de demostración cargados');
           renderModalContent();
@@ -1043,14 +1235,20 @@ ${currentPalette === 'custom' ? (() => {
       });
 
       document.getElementById('btn-settings-feedback')?.addEventListener('click', () => {
+        this.hideSettingsSaveIndicator();
         this.openFeedbackModal();
       });
+
+      if (modal.classList.contains('active') && prevScroll > 0) {
+        modalBody.scrollTop = prevScroll;
+      }
     };
 
     renderModalContent();
-    modal.classList.add('active');
+    this.openModal('wide');
 
     await window.stateManager.checkServerHealth();
+    if (openId !== this._settingsModalOpenId) return;
     this.updateDbStatusBadge();
     if (modal.classList.contains('active') && document.getElementById('storage-mode-modal-root')) {
       renderModalContent();

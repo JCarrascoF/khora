@@ -64,38 +64,6 @@ html, body {
   cursor: pointer;
 }
 
-.header-storage-warning {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  border: 1px solid rgba(201, 138, 88, 0.5);
-  background: rgba(201, 138, 88, 0.14);
-  color: var(--earth-700);
-  font-size: 0.72rem;
-  font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
-}
-
-[data-theme="dark"] .header-storage-warning {
-  color: #f0b886;
-  background: rgba(201, 138, 88, 0.2);
-}
-
-.header-storage-warning:hover {
-  background: rgba(201, 138, 88, 0.24);
-  border-color: rgba(201, 138, 88, 0.75);
-  transform: translateY(-1px);
-}
-
-.header-storage-warning.hidden {
-  display: none;
-}
-
 .brand-icon {
   width: 36px;
   height: 36px;
@@ -749,64 +717,49 @@ html, body {
   font-style: italic;
 }
 
-/* Interactive Stream / Leaf Animation for Defusion */
-.stream-container {
-  position: relative;
-  height: 140px;
-  background: linear-gradient(180deg, rgba(92, 132, 146, 0.15), rgba(74, 122, 102, 0.25));
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  margin-top: 16px;
-  border: 1px solid var(--border-subtle);
-}
-
-.stream-water-lines {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 200%;
-  height: 100%;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent,
-    transparent 40px,
-    rgba(255, 255, 255, 0.15) 40px,
-    rgba(255, 255, 255, 0.15) 80px
-  );
-  animation: waterFlow 6s linear infinite;
-}
-
-@keyframes waterFlow {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-.floating-leaf {
-  position: absolute;
-  top: 40px;
-  left: -240px;
-  background-color: var(--bg-surface);
-  border: 1px solid var(--sage-300);
-  padding: 8px 14px;
-  border-radius: var(--radius-full);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+.defusion-style-tabs {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
-  max-width: 260px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  animation: leafDrift 10s ease-in-out infinite;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
 }
 
-@keyframes leafDrift {
-  0% { left: -260px; transform: rotate(-4deg) translateY(0); }
-  25% { transform: rotate(3deg) translateY(8px); }
-  50% { transform: rotate(-2deg) translateY(-5px); }
-  75% { transform: rotate(4deg) translateY(6px); }
-  100% { left: 105%; transform: rotate(0) translateY(0); }
+.defusion-style-pill {
+  cursor: pointer;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-surface-elevated);
+  color: var(--text-secondary);
+  font-family: inherit;
+  transition: all var(--transition-fast);
+}
+
+.defusion-style-pill:hover {
+  border-color: var(--sage-400);
+  color: var(--text-primary);
+}
+
+.defusion-style-pill.active {
+  background-color: var(--sage-500);
+  border-color: var(--sage-500);
+  color: var(--text-on-accent);
+}
+
+.defusion-live-card {
+  margin-top: 0;
+}
+
+.defusion-live-card:hover {
+  transform: none;
+}
+
+.defusion-text.is-placeholder {
+  color: var(--text-muted);
+  font-style: normal;
+  font-size: 0.88rem;
 }
 
 /* Guided Breathing Pacer */
@@ -815,10 +768,10 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 30px 20px;
+  padding: 24px 20px;
   background-color: var(--bg-surface-elevated);
   border-radius: var(--radius-lg);
-  margin-bottom: 20px;
+  margin-bottom: 8px;
 }
 
 .breathing-circle-outer {
@@ -850,41 +803,156 @@ html, body {
   justify-content: center;
   color: #ffffff;
   font-weight: 700;
-  font-size: 1.3rem;
-  transition: transform 4s ease-in-out;
+  font-size: 0.96rem;
+  letter-spacing: 0.01em;
+  transition: transform 0.6s ease, background 0.8s ease, box-shadow 0.8s ease;
+}
+
+button.breathing-orb {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.breathing-orb.idle {
+  transform: scale(1);
+  transition: transform 0.6s ease, background 0.6s ease, box-shadow 0.6s ease;
 }
 
 .breathing-orb.inhale {
-  transform: scale(1.6);
+  transform: scale(1.55);
   background: radial-gradient(circle at 35% 35%, #a7c5b5, #578b74);
   box-shadow: 0 0 35px rgba(122, 167, 146, 0.6);
+  transition: transform 4s ease-in-out, background 0.8s ease, box-shadow 0.8s ease;
 }
 
 .breathing-orb.hold {
-  transform: scale(1.6);
+  transform: scale(1.55);
   background: radial-gradient(circle at 35% 35%, #c98a58, #886548);
   box-shadow: 0 0 35px rgba(201, 138, 88, 0.5);
+  transition: transform 0.6s ease, background 0.8s ease, box-shadow 0.8s ease;
 }
 
 .breathing-orb.exhale {
-  transform: scale(0.9);
+  transform: scale(0.88);
   background: radial-gradient(circle at 35% 35%, #607b8b, #355749);
   box-shadow: 0 0 20px rgba(96, 123, 139, 0.4);
+  transition: transform 6s ease-in-out, background 0.8s ease, box-shadow 0.8s ease;
+}
+
+.breathing-orb.rest {
+  transform: scale(0.92);
+  background: radial-gradient(circle at 35% 35%, #84a195, #476c5d);
+  box-shadow: 0 0 22px rgba(87, 139, 116, 0.35);
+  transition: transform 2s ease-in-out, background 0.8s ease, box-shadow 0.8s ease;
 }
 
 .breathing-phase-label {
-  margin-top: 20px;
-  font-size: 1.15rem;
+  margin-top: 18px;
+  font-size: 1.08rem;
   font-weight: 700;
   color: var(--text-primary);
   text-align: center;
 }
 
 .breathing-instruction {
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   color: var(--text-secondary);
   text-align: center;
   margin-top: 4px;
+  max-width: 360px;
+}
+
+.breathing-cycle-hint {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.breathing-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.breathing-sensory-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.breathing-cycle-hint[hidden],
+.breathing-sensory-controls[hidden] {
+  display: none !important;
+}
+
+.act-somatic-help-box {
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-surface-elevated);
+}
+
+/* Step 4 Choice Switch & Willingness Strip */
+.act-choice-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.act-choice-switch-btn {
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-subtle);
+  background-color: var(--bg-surface-elevated);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-align: center;
+  transition: all var(--transition-fast);
+}
+
+.act-choice-switch-btn:hover {
+  border-color: var(--sage-400);
+  color: var(--text-primary);
+}
+
+.act-choice-switch-btn.active.value {
+  background-color: color-mix(in srgb, var(--sage-500) 14%, var(--bg-surface));
+  border-color: var(--sage-500);
+  color: var(--sage-700);
+  font-weight: 700;
+}
+
+.act-choice-switch-btn.active.autopilot {
+  background-color: color-mix(in srgb, var(--accent-tension) 12%, var(--bg-surface));
+  border-color: var(--accent-tension);
+  color: var(--accent-tension);
+  font-weight: 700;
+}
+
+.act-choice-panel {
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-surface-elevated);
+}
+
+.act-willingness-strip {
+  border-left: 3px solid var(--sage-500);
+  padding: 10px 14px;
+  margin-top: 14px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background-color: var(--bg-surface-elevated);
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
 }
 
 /* Values vs Autopilot Showdown */
@@ -1147,13 +1215,23 @@ html, body {
   -webkit-backdrop-filter: blur(4px);
   z-index: 50;
   display: none;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 20px;
+  padding: calc(clamp(20px, 6dvh, 56px) + env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
+  overscroll-behavior: contain;
+}
+
+@keyframes modalOverlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .modal-overlay.active {
   display: flex;
+  animation: modalOverlayFadeIn 0.2s ease-out;
+}
+
+.modal-overlay.active .modal-card {
   animation: fadeIn 0.2s ease-out;
 }
 
@@ -1165,6 +1243,7 @@ html, body {
   max-width: 520px;
   max-height: 90vh;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 24px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
@@ -1717,7 +1796,7 @@ html, body {
 
 /* Maximized Emotion Wheel Modal */
 .modal-card.modal-wheel-maximized {
-  max-width: min(94vw, 760px);
+  max-width: min(92vw, 760px);
   padding: 20px;
 }
 
@@ -1905,21 +1984,6 @@ button:disabled {
   font-weight: 800;
   color: var(--text-primary);
   line-height: 1.35;
-}
-
-.triage-time-badge {
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 3px 9px;
-  border-radius: var(--radius-full);
-  background: rgba(87, 139, 116, 0.16);
-  color: var(--sage-700);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-[data-theme="dark"] .triage-time-badge {
-  color: var(--sage-300);
 }
 
 .triage-card-desc {
@@ -2186,6 +2250,11 @@ button:disabled {
   display: none;
 }
 
+.persistence-warning-banner--info {
+  border-color: var(--sage-300);
+  background: var(--bg-surface-subtle);
+}
+
 .persistence-warning-actions {
   display: flex;
   gap: 8px;
@@ -2279,14 +2348,15 @@ button:disabled {
 
 @media (max-width: 600px) {
   .modal-overlay {
-    padding: 10px;
-    align-items: flex-end;
+    padding: calc(clamp(20px, 6dvh, 56px) + env(safe-area-inset-top)) 12px max(16px, env(safe-area-inset-bottom));
+    align-items: flex-start;
   }
 
   .modal-card {
-    max-height: 92dvh;
-    padding: 18px 16px;
-    border-radius: 20px 20px 14px 14px;
+    max-height: 88dvh;
+    max-height: min(88dvh, calc(100dvh - clamp(20px, 6dvh, 56px) - 20px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
+    padding: 20px 18px 18px;
+    border-radius: var(--radius-lg);
   }
 }
 
@@ -2385,11 +2455,6 @@ button:disabled {
 @media (max-width: 600px) {
   .persistence-warning-banner {
     margin: 8px 12px 0;
-  }
-
-  .header-storage-warning {
-    padding: 3px 8px;
-    font-size: 0.68rem;
   }
 }
 

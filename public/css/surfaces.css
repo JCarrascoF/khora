@@ -12,6 +12,7 @@ html, body {
 .brand-title-group h1,
 .card-title,
 .triage-card-title,
+.toolkit-row-title,
 .cozy-greeting,
 .cozy-home-heading,
 .modal-card h2,
@@ -119,12 +120,6 @@ blockquote {
   border-color: transparent;
   transform: none;
   box-shadow: none;
-}
-
-.header-storage-warning {
-  border-radius: var(--radius-sm);
-  font-weight: 500;
-  padding: 4px 9px;
 }
 
 /* Calm Navigation Tabs */
@@ -555,28 +550,10 @@ blockquote {
   line-height: 1.5;
 }
 
-.triage-card-meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-  color: var(--text-muted);
-  font-size: 0.78rem;
-}
-
 .triage-card-arrow {
   color: var(--sage-500);
   font-size: 0.95rem;
-}
-
-.triage-time-badge {
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 0;
-  font-size: 0.76rem;
-  font-weight: 500;
-  color: var(--text-muted);
+  flex-shrink: 0;
 }
 
 .triage-calm-section {
@@ -1609,6 +1586,8 @@ body.crisis-immersive .app-container {
 :root .trick-step-card,
 :root .kpi-card,
 :root .choice-box,
+:root .act-choice-panel,
+:root .act-somatic-help-box,
 :root .defusion-card,
 :root .defusion-reframing-card,
 :root .body-map-container,
@@ -1622,6 +1601,7 @@ body.crisis-immersive .app-container {
 :root .pill-related-activity-btn,
 :root .storage-mode-card,
 :root .cozy-inline-callout,
+:root .act-willingness-strip,
 :root .personal-anchor-banner,
 :root .example-notice-bar,
 [data-surface="editorial"] .anchor-card,
@@ -1631,6 +1611,8 @@ body.crisis-immersive .app-container {
 [data-surface="editorial"] .trick-step-card,
 [data-surface="editorial"] .kpi-card,
 [data-surface="editorial"] .choice-box,
+[data-surface="editorial"] .act-choice-panel,
+[data-surface="editorial"] .act-somatic-help-box,
 [data-surface="editorial"] .defusion-card,
 [data-surface="editorial"] .defusion-reframing-card,
 [data-surface="editorial"] .body-map-container,
@@ -1644,6 +1626,7 @@ body.crisis-immersive .app-container {
 [data-surface="editorial"] .pill-related-activity-btn,
 [data-surface="editorial"] .storage-mode-card,
 [data-surface="editorial"] .cozy-inline-callout,
+[data-surface="editorial"] .act-willingness-strip,
 [data-surface="editorial"] .personal-anchor-banner,
 [data-surface="editorial"] .example-notice-bar {
   background-color: transparent !important;
@@ -1658,9 +1641,13 @@ body.crisis-immersive .app-container {
 :root .personal-anchor-banner,
 :root .example-notice-bar,
 :root .cozy-inline-callout,
+:root .act-willingness-strip,
+:root .defusion-live-card,
 [data-surface="editorial"] .personal-anchor-banner,
 [data-surface="editorial"] .example-notice-bar,
-[data-surface="editorial"] .cozy-inline-callout {
+[data-surface="editorial"] .cozy-inline-callout,
+[data-surface="editorial"] .act-willingness-strip,
+[data-surface="editorial"] .defusion-live-card {
   border-top: none;
   border-left: 2px solid var(--sage-500);
   padding: 6px 0 6px 14px;
@@ -1811,6 +1798,8 @@ body.crisis-immersive .app-container {
 [data-surface="lino"] .trick-step-card,
 [data-surface="lino"] .kpi-card,
 [data-surface="lino"] .choice-box,
+[data-surface="lino"] .act-choice-panel,
+[data-surface="lino"] .act-somatic-help-box,
 [data-surface="lino"] .defusion-card,
 [data-surface="lino"] .defusion-reframing-card,
 [data-surface="lino"] .body-map-container,
@@ -1823,6 +1812,7 @@ body.crisis-immersive .app-container {
 [data-surface="lino"] .pill-activities-box,
 [data-surface="lino"] .pill-related-activity-btn,
 [data-surface="lino"] .cozy-inline-callout,
+[data-surface="lino"] .act-willingness-strip,
 [data-surface="lino"] .personal-anchor-banner,
 [data-surface="lino"] .example-notice-bar {
   background-color: var(--bg-surface) !important;
@@ -1833,7 +1823,9 @@ body.crisis-immersive .app-container {
 
 [data-surface="lino"] .personal-anchor-banner,
 [data-surface="lino"] .example-notice-bar,
-[data-surface="lino"] .cozy-inline-callout {
+[data-surface="lino"] .cozy-inline-callout,
+[data-surface="lino"] .act-willingness-strip,
+[data-surface="lino"] .defusion-live-card {
   border-left: 2px solid var(--sage-500);
 }
 
@@ -1861,21 +1853,42 @@ body.crisis-immersive .app-container {
   line-height: 1.3;
 }
 
+/* Anchor all modals consistently to the top over the app */
+.modal-overlay {
+  align-items: flex-start;
+  justify-content: center;
+  padding: calc(clamp(20px, 6dvh, 56px) + env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
+  overscroll-behavior: contain;
+}
+
 .modal-card {
   max-width: min(92vw, 680px);
   max-height: 88dvh;
+  max-height: min(88dvh, calc(100dvh - clamp(20px, 6dvh, 56px) - 20px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 28px 30px 24px;
 }
 
-/* Anchor Settings modal to top and keep steady height across tab switches */
-.modal-overlay:has(#storage-mode-modal-root) {
-  align-items: flex-start;
-  padding-top: clamp(20px, 6dvh, 56px);
+@media (max-width: 600px) {
+  .modal-overlay {
+    padding: calc(clamp(20px, 6dvh, 56px) + env(safe-area-inset-top)) 12px max(16px, env(safe-area-inset-bottom));
+  }
+
+  .modal-card {
+    max-width: 100%;
+    padding: 20px 18px 18px;
+  }
+
+  .modal-card.modal-wheel-maximized {
+    max-width: 100%;
+    padding: 16px;
+  }
 }
 
+/* Keep Settings modal height steady across tab switches */
 .modal-card:has(#storage-mode-modal-root) {
-  min-height: min(620px, 80dvh);
+  min-height: min(620px, 80dvh, calc(100dvh - clamp(20px, 6dvh, 56px) - 20px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
   display: flex;
   flex-direction: column;
 }
@@ -1889,6 +1902,77 @@ body.crisis-immersive .app-container {
 #storage-mode-modal-root > .btn-group {
   margin-top: auto;
   padding-top: 16px;
+}
+
+.settings-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+.settings-save-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  color: var(--text-muted);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-fast), color var(--transition-fast), visibility var(--transition-fast);
+}
+
+.settings-save-indicator[data-state="saving"],
+.settings-save-indicator[data-state="saved"] {
+  opacity: 1;
+  visibility: visible;
+}
+
+.settings-save-indicator[data-state="saved"] {
+  color: var(--accent-calm);
+}
+
+.settings-save-spinner {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1.7px solid var(--border-subtle);
+  border-color: color-mix(in srgb, var(--sage-500) 26%, transparent);
+  border-top-color: var(--sage-500);
+  animation: khoraSpin 0.7s linear infinite;
+  flex-shrink: 0;
+  display: none;
+}
+
+.settings-save-check {
+  width: 13px;
+  height: 13px;
+  color: var(--accent-calm);
+  flex-shrink: 0;
+  display: none;
+}
+
+.settings-save-indicator[data-state="saving"] .settings-save-spinner {
+  display: inline-block;
+}
+
+.settings-save-indicator[data-state="saved"] .settings-save-check {
+  display: inline-block;
+  animation: khoraCheckPop 0.18s ease-out;
+}
+
+@keyframes khoraSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes khoraCheckPop {
+  0% { opacity: 0; transform: scale(0.72); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 @media (min-width: 768px) {
@@ -1945,6 +2029,187 @@ body.crisis-immersive .app-container {
 [data-surface="lino"] .sos-option-block.sos-option-primary {
   background: var(--bg-surface-elevated);
   border-left: 2px solid var(--sage-500);
+}
+
+/* ==========================================================================
+   BOTIQUÍN DE 1 MINUTO (3-Door Triage + Calm Exercise List)
+   ========================================================================== */
+
+.toolkit-header {
+  padding-bottom: 18px;
+}
+
+.toolkit-header-compact {
+  padding: 4px 0 14px;
+}
+
+.toolkit-door-card .triage-card-top {
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.toolkit-door-count {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.toolkit-all-footer {
+  margin-top: 18px;
+  padding-top: 4px;
+}
+
+.toolkit-tabs-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin-bottom: 16px;
+}
+
+.toolkit-group-lead {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0 0 14px;
+}
+
+.toolkit-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.toolkit-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.toolkit-row-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.toolkit-row-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+.toolkit-row-title {
+  font-size: 1.06rem;
+  color: var(--text-primary);
+  line-height: 1.32;
+}
+
+.toolkit-row-duration {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.toolkit-row-cta {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--sage-500);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.toolkit-all-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+:root .toolkit-list,
+[data-surface="editorial"] .toolkit-list {
+  gap: 0;
+}
+
+:root .toolkit-row,
+[data-surface="editorial"] .toolkit-row {
+  background-color: transparent;
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  border-radius: 0;
+  padding: 16px 0;
+}
+
+:root .toolkit-row:last-child,
+[data-surface="editorial"] .toolkit-row:last-child {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+:root .toolkit-row:hover,
+[data-surface="editorial"] .toolkit-row:hover {
+  background-color: transparent;
+}
+
+:root .toolkit-row:hover .toolkit-row-title,
+[data-surface="editorial"] .toolkit-row:hover .toolkit-row-title {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+:root .toolkit-row:hover .toolkit-row-cta,
+[data-surface="editorial"] .toolkit-row:hover .toolkit-row-cta {
+  color: var(--sage-600);
+}
+
+[data-surface="lino"] .toolkit-list {
+  gap: 10px;
+}
+
+[data-surface="lino"] .toolkit-row {
+  background-color: var(--bg-surface);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+}
+
+[data-surface="lino"] .toolkit-row:hover {
+  background-color: var(--bg-surface-elevated);
+  border-color: var(--border-subtle);
+}
+
+@media (max-width: 520px) {
+  .toolkit-row {
+    gap: 12px;
+  }
+
+  [data-surface="lino"] .toolkit-row {
+    padding: 14px 16px;
+  }
+
+  .toolkit-row-cta {
+    font-size: 0.78rem;
+  }
+}
+
+/* Explanations Visibility (data-explanations="hide") */
+[data-explanations="hide"] .cozy-home-sub,
+[data-explanations="hide"] .triage-card-desc,
+[data-explanations="hide"] .explanatory-subtext,
+[data-explanations="hide"] .card-subtitle:not([data-keep-explanation="true"]),
+[data-explanations="hide"] .form-hint:not([data-keep-explanation="true"]) {
+  display: none !important;
+}
+
+[data-explanations="hide"] #help-modal-root .card-subtitle,
+[data-explanations="hide"] #help-modal-root .form-hint,
+[data-explanations="hide"] #help-topic-modal-root .card-subtitle,
+[data-explanations="hide"] #help-topic-modal-root .form-hint {
+  display: block !important;
 }
 
 /* Respect Reduced Motion Accessibility Preference */

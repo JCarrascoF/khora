@@ -8,17 +8,17 @@
     return {
       screens: {
         'guia-inicio': {
-          title:'Guía de Inicio — ¿Qué necesitas ahora?',
-          time:'10 seg',
+          title: 'Guía de Inicio — ¿Cómo estás ahora mismo?',
+          time: '10 seg',
           does: 'Elegir cómo te encuentras ahora mismo (en caliente o en calma) para ir directo al ejercicio adecuado.',
           brings: 'Orientarte sin fricción según lo que necesites en este instante.',
           whenToUse: 'Es tu punto de entrada rápido según cómo te sientas en este momento: en medio de una ola emocional o con calma para entrenar.',
           steps: [
-            '1. Arriba ves tu Valor Faro actual para orientarte de un vistazo.',
-            '2. Elige una tarjeta de «Ahora Mismo (En Caliente)» si estás bloqueado/a, saturado/a o temes ceder.',
-            '3. Usa «Entrenar y Leer (En calma)» para fortalecer límites, desmontar etiquetas y guardar anclajes.'
+            '1. Elige una tarjeta de «Ahora mismo…» si notas un nudo, necesitas frenar, dudas qué hacer o acabas de ceder.',
+            '2. Usa la tarjeta de «En calma» cuando tengas un rato tranquilo para leer ideas cortas y practicar.',
+            '3. Si necesitas bajar revoluciones al instante, pulsa arriba «Necesito calma ahora».'
           ],
-          tip:'En Khōra no hace falta rellenarlo todo ni entrar cada día: abre solo la herramienta que encaja contigo ahora.'
+          tip: 'En Khōra no hace falta rellenarlo todo ni entrar cada día: abre solo la herramienta que encaja contigo ahora.'
         },
         'espacio-act': {
           title:'El Espacio ACT — Procesar en 4 Pasos',
@@ -27,9 +27,10 @@
           brings: 'Bajar la intensidad del malestar y responder desde tus valores.',
           whenToUse: 'Úsalo cuando notes una emoción intensa (ansiedad, miedo, enfado, culpa o bloqueo) para atravesarla sin dejarte arrastrar.',
           steps: [
-            '1. Rueda Emocional: nombra con precisión qué sientes (o salta directo al cuerpo si estás muy saturado/a).',
-            '2. Cuerpo y Fisicalización: ubica la sensación en tu silueta, obsérvala con curiosidad y hazle hueco respirando.',
-            '3. Defusión y Valores: desengancha la mente llamándola por su apodo y elige una micro-acción fiel a tus valores.'
+            '1. Nombrar Emoción: pon nombre exacto a lo que sientes (o salta directo al cuerpo si estás muy saturado/a).',
+            '2. Sentir en el Cuerpo: ubica la sensación, descríbela y respira si quieres hacerle espacio.',
+            '3. Tomar Distancia: observa el pensamiento que repite tu mente desde fuera, sin discutir con él.',
+            '4. Elegir Micro-Paso: decide un gesto pequeño hacia tus valores (o registra si ganó el piloto automático).'
           ],
           tip: 'El objetivo no es suprimir la emoción ni sentir cero miedo, sino bajar la lucha y recuperar tu margen de elección.'
         },
@@ -66,7 +67,7 @@
           brings: 'Frenar el piloto automático en vivo.',
           whenToUse: 'Cuando necesitas frenar un impulso urgente en vivo en menos de 60 segundos (decir no, soltar culpa o bajar ansiedad).',
           steps: [
-            '1. Filtra arriba por lo que quieres desatascar ahora mismo.',
+            '1. Elige la situación que más se parezca a este momento (cuerpo, mente o límites).',
             '2. Abre el ejercicio guiado paso a paso (Echar el Ancla, Silencio de 15s, Dos Flechas, Autobús ACT o Postura del SÍ).',
             '3. Síguelo en directo antes de contestar o decidir.'
           ],
@@ -192,17 +193,17 @@
       },
       topics: {
         'guia-inicio': {
-          title:'¿En qué momento estás ahora?',
-          time:'10 seg',
+          title: '¿Cómo estás ahora mismo?',
+          time: '10 seg',
           does: 'Elegir cómo te encuentras ahora mismo (en caliente o en calma) para ir directo al ejercicio adecuado.',
           brings: 'Orientarte sin fricción según lo que necesites en este instante.',
           summary: 'Es tu punto de entrada rápido según cómo te sientas en este momento: en medio de una ola emocional o con calma para entrenar.',
           bullets: [
-            '1. Arriba ves tu Valor Faro actual y tu foco activo para orientarte de un vistazo.',
-            '2. Elige una tarjeta de «Ahora Mismo (En Caliente)» si estás bloqueado/a, saturado/a o temes ceder.',
-            '3. Usa «Entrenar y Leer (En calma)» para fortalecer límites, desmontar etiquetas y guardar anclajes.'
+            '1. Elige una tarjeta de «Ahora mismo…» si notas un nudo, necesitas frenar, dudas qué hacer o acabas de ceder.',
+            '2. Usa la tarjeta de «En calma» cuando tengas un rato tranquilo para leer ideas cortas y practicar.',
+            '3. Si necesitas bajar revoluciones al instante, pulsa arriba «Necesito calma ahora».'
           ],
-          note:'En Khōra no hace falta rellenarlo todo ni entrar cada día: abre solo la herramienta que encaja contigo ahora.'
+          note: 'En Khōra no hace falta rellenarlo todo ni entrar cada día: abre solo la herramienta que encaja contigo ahora.'
         },
         'espacio-act': {
           title:'El Espacio ACT — Procesar en 4 Pasos',
@@ -211,9 +212,10 @@
           brings: 'Bajar la intensidad del malestar y responder desde tus valores.',
           summary: 'Úsalo cuando notes una emoción intensa (ansiedad, miedo, enfado, culpa o bloqueo) para atravesarla sin dejarte arrastrar.',
           bullets: [
-            '1. Rueda Emocional: nombra con precisión qué sientes (o salta directo al cuerpo si estás muy saturado/a).',
-            '2. Cuerpo y Fisicalización: ubica la sensación en tu silueta, obsérvala con curiosidad y hazle hueco respirando.',
-            '3. Defusión y Valores: desengancha la mente llamándola por su apodo y elige una micro-acción fiel a tus valores.'
+            '1. Nombrar Emoción: pon nombre exacto a lo que sientes (o salta directo al cuerpo si estás muy saturado/a).',
+            '2. Sentir en el Cuerpo: ubica la sensación, descríbela y respira si quieres hacerle espacio.',
+            '3. Tomar Distancia: observa el pensamiento que repite tu mente desde fuera, sin discutir con él.',
+            '4. Elegir Micro-Paso: decide un gesto pequeño hacia tus valores (o registra si ganó el piloto automático).'
           ],
           note: 'El objetivo no es suprimir la emoción ni sentir cero miedo, sino bajar la lucha y recuperar tu margen de elección.'
         },
@@ -233,13 +235,13 @@
         'defusion-act': {
           title:'Fórmulas de Distanciamiento (Defusión Cognitiva)',
           time:'1 min',
-          does: 'Anteponer una frase de perspectiva o soltar tus pensamientos en las Hojas en el Río.',
-          brings: 'Separarte del pensamiento automático para que no funcione como una orden.',
+          does: 'Anteponer una frase de perspectiva para ver el pensamiento como palabras, no como una orden.',
+          brings: 'Separarte del pensamiento automático para recuperar margen de elección.',
           summary: 'Cuando estamos fusionados con un pensamiento («soy egoísta»), lo vivimos como una verdad absoluta. La defusión restaura distancia.',
           bullets: [
-            '• Anteponer «Estoy teniendo el pensamiento de que…» convierte una verdad en un evento mental.',
-            '• Decir «Observo que George (mi mente) me cuenta la historia de que…» añade perspectiva y humor.',
-            '• Las Hojas en el Río ayudan a ver los pensamientos pasar sin tener que agarrarlos ni obedecerlos.'
+            '• Notar el pensamiento: anteponer «Estoy teniendo el pensamiento de que…» lo convierte en un evento mental pasajero.',
+            '• Historia de tu mente: ver «George me vuelve a contar la historia de que…» añade perspectiva y humor.',
+            '• Agradecer sin obedecer: «Gracias, George, por intentar protegerme…» baja la lucha sin seguir la orden.'
           ],
           note: 'No hace falta discutir si el pensamiento es verdadero o falso: basta preguntarse si seguirlo te acerca a tus valores.'
         },
@@ -300,7 +302,7 @@
           brings: 'Frenar el piloto automático en vivo.',
           summary: 'Cuando necesitas frenar un impulso urgente en vivo en menos de 60 segundos (decir no, soltar culpa o bajar ansiedad).',
           bullets: [
-            '1. Filtra arriba por lo que quieres desatascar ahora mismo.',
+            '1. Elige la situación que más se parezca a este momento (cuerpo, mente o límites).',
             '2. Abre el ejercicio guiado paso a paso (Echar el Ancla, Silencio de 15s, Dos Flechas, Autobús ACT o Postura del SÍ).',
             '3. Síguelo en directo antes de contestar o decidir.'
           ],
@@ -548,7 +550,6 @@
     const catalog = this.getHelpCatalog();
     const resolvedId = viewId || this.currentView || 'guia-inicio';
     const guide = catalog.screens[resolvedId] || catalog.screens['guia-inicio'];
-    this.setModalSize('medium');
 
     modalBody.innerHTML = `
       <div id="help-modal-root">
@@ -585,7 +586,7 @@
       </div>
     `;
 
-    modal.classList.add('active');
+    this.openModal('medium');
     document.getElementById('btn-help-close-x')?.addEventListener('click', () => this.closeModal());
     document.getElementById('btn-help-done')?.addEventListener('click', () => this.closeModal());
   },
@@ -607,7 +608,6 @@
       this.openScreenHelpModal(this.currentView);
       return;
     }
-    this.setModalSize('medium');
 
     modalBody.innerHTML = `
       <div id="help-topic-modal-root">
@@ -649,7 +649,7 @@
       </div>
     `;
 
-    modal.classList.add('active');
+    this.openModal('medium');
     document.getElementById('btn-help-topic-x')?.addEventListener('click', () => this.closeModal());
     document.getElementById('btn-help-topic-done')?.addEventListener('click', () => this.closeModal());
   }

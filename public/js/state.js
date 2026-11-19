@@ -23,6 +23,7 @@ const STORAGE_KEYS = {
   PALETTE_PREF:'act_palette_pref',
   SURFACE_PREF:'act_surface_pref',
   BUTTONS_PREF:'act_buttons_pref',
+  EXPLANATIONS_PREF:'act_explanations_pref',
   CUSTOM_PALETTE_PREF:'act_custom_palette_pref'
 };
 
@@ -241,6 +242,7 @@ class StateManager {
         let palettePref ='arcilla';
         let surfacePref ='editorial';
         let buttonsPref ='ultraligero';
+        let explanationsPref ='show';
         try {
           themePref = localStorage.getItem(STORAGE_KEYS.THEME_PREF) ||
             (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -250,13 +252,16 @@ class StateManager {
           if (storedSurf ==='lino' || storedSurf ==='editorial') surfacePref = storedSurf;
           const storedBtns = localStorage.getItem(STORAGE_KEYS.BUTTONS_PREF);
           if (storedBtns ==='editorial' || storedBtns ==='ultraligero') buttonsPref = storedBtns;
+          const storedEx = localStorage.getItem(STORAGE_KEYS.EXPLANATIONS_PREF);
+          if (storedEx ==='hide' || storedEx ==='show') explanationsPref = storedEx;
         } catch {
           themePref = 'light';
           palettePref ='arcilla';
           surfacePref ='editorial';
           buttonsPref ='ultraligero';
+          explanationsPref ='show';
         }
-        return { theme: themePref, palette: palettePref, surface: surfacePref, buttons: buttonsPref, sound: false, vibration: true, mindName:'George' };
+        return { theme: themePref, palette: palettePref, surface: surfacePref, buttons: buttonsPref, explanations: explanationsPref, sound: false, vibration: true, mindName: '', mindNameCustomized: false };
       }
       case STORAGE_KEYS.PROFILE:
         return {
@@ -651,6 +656,7 @@ class StateManager {
       let palettePref ='arcilla';
       let surfacePref ='editorial';
       let buttonsPref ='ultraligero';
+      let explanationsPref ='show';
       try {
         const storedPal = localStorage.getItem(STORAGE_KEYS.PALETTE_PREF);
         if (['arcilla','musgo','sepia','niebla','custom'].includes(storedPal)) palettePref = storedPal;
@@ -658,6 +664,8 @@ class StateManager {
         if (storedSurf ==='lino' || storedSurf ==='editorial') surfacePref = storedSurf;
         const storedBtns = localStorage.getItem(STORAGE_KEYS.BUTTONS_PREF);
         if (storedBtns ==='editorial' || storedBtns ==='ultraligero') buttonsPref = storedBtns;
+        const storedEx = localStorage.getItem(STORAGE_KEYS.EXPLANATIONS_PREF);
+        if (storedEx ==='hide' || storedEx ==='show') explanationsPref = storedEx;
       } catch {
         // Ignore
       }
@@ -666,9 +674,11 @@ class StateManager {
         palette: palettePref,
         surface: surfacePref,
         buttons: buttonsPref,
+        explanations: explanationsPref,
         sound: false,
         vibration: true,
-        mindName: 'George'
+        mindName: '',
+        mindNameCustomized: false
       });
     }
     if (!this.memStore.has(STORAGE_KEYS.THERAPY_NOTES)) {
@@ -796,6 +806,7 @@ class StateManager {
         if (value.palette) localStorage.setItem(STORAGE_KEYS.PALETTE_PREF, value.palette);
         if (value.surface) localStorage.setItem(STORAGE_KEYS.SURFACE_PREF, value.surface);
         if (value.buttons) localStorage.setItem(STORAGE_KEYS.BUTTONS_PREF, value.buttons);
+        if (value.explanations) localStorage.setItem(STORAGE_KEYS.EXPLANATIONS_PREF, value.explanations);
         if (value.customPalette) localStorage.setItem(STORAGE_KEYS.CUSTOM_PALETTE_PREF, JSON.stringify(value.customPalette));
       } catch {
         // Ignore
@@ -905,12 +916,21 @@ class StateManager {
       vaultMeta: this.getVaultMeta()
     };
 
+    const plainSnapshots = new Map();
+    if (this.cryptoKey && !this.vaultLocked) {
+      for (const [storageKey] of Object.entries(SERVER_KEY_MAP)) {
+        if (storageKey === STORAGE_KEYS.VAULT_META) continue;
+        const val = this.memStore.has(storageKey)
+          ? this.memStore.get(storageKey)
+          : this.getDefaultValueForKey(storageKey);
+        plainSnapshots.set(storageKey, JSON.parse(JSON.stringify(val)));
+      }
+    }
+
     for (const [storageKey, serverKey] of Object.entries(SERVER_KEY_MAP)) {
       if (storageKey === STORAGE_KEYS.VAULT_META) continue;
       if (this.cryptoKey && !this.vaultLocked) {
-        const plainVal = this.memStore.has(storageKey)
-          ? this.memStore.get(storageKey)
-          : this.getDefaultValueForKey(storageKey);
+        const plainVal = plainSnapshots.get(storageKey);
         const envelope = await this.encryptValue(plainVal, this.cryptoKey);
         payload[serverKey] = SERVER_ARRAY_KEYS.has(serverKey) ? [envelope] : envelope;
       } else {
@@ -1066,10 +1086,10 @@ class StateManager {
   getSettings() {
     try {
       const s = this.getStoreItem(STORAGE_KEYS.SETTINGS, this.getDefaultValueForKey(STORAGE_KEYS.SETTINGS)) || {};
-      if (!s.mindName) s.mindName = 'George';
+      if (typeof s.mindName !== 'string') s.mindName = '';
       return s;
     } catch {
-      return { mindName: 'George' };
+      return { mindName: '', mindNameCustomized: false };
     }
   }
 
@@ -1078,13 +1098,24 @@ class StateManager {
     this.notify('settings_updated', settings);
   }
 
+  // Legacy installs stored 'George' as an implicit default; only treat it as a nickname if the user chose it.
+  hasCustomMindName() {
+    const s = this.getSettings();
+    const raw = String(s.mindName || '').trim();
+    if (!raw) return false;
+    if (raw === 'George' && s.mindNameCustomized !== true) return false;
+    return true;
+  }
+
   getMindName() {
-    return this.getSettings().mindName || 'George';
+    return this.hasCustomMindName() ? String(this.getSettings().mindName).trim() : 'Mi mente';
   }
 
   setMindName(name) {
     const s = this.getSettings();
-    s.mindName = (name || '').trim() || 'George';
+    const clean = String(name || '').trim();
+    s.mindName = clean;
+    s.mindNameCustomized = Boolean(clean);
     this.saveSettings(s);
   }
 
@@ -1279,7 +1310,7 @@ class StateManager {
       id: 'comp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
       timestamp: Date.now(),
       situation: entryData.situation || '',
-      selectedValue: entryData.selectedValue || 'Dignidad',
+      selectedValue: entryData.selectedValue !== undefined ? String(entryData.selectedValue).trim() : '',
       answers: entryData.answers || {},
       keyAction: entryData.keyAction || ''
     };
@@ -1418,6 +1449,8 @@ class StateManager {
     const lists = [
       profile.coreValues || [],
       profile.busPassengers || [],
+      profile.progressLog || [],
+      this.getAnchors(),
       this.getPazFalsaEntries(),
       this.getActCrisisEntries(),
       this.getPatterns(),
@@ -1441,8 +1474,11 @@ class StateManager {
     const p = this.getProfile();
     p.coreValues = (p.coreValues || []).filter(v => !this.isExampleItem(v));
     p.busPassengers = (p.busPassengers || []).filter(pas => !this.isExampleItem(pas));
+    p.progressLog = (p.progressLog || []).filter(entry => !this.isExampleItem(entry));
     this.persistKey(STORAGE_KEYS.PROFILE, p, false);
 
+    this.persistKey(STORAGE_KEYS.ANCHORS, this.getAnchors().filter(x => !this.isExampleItem(x)), false);
+    this.persistKey(STORAGE_KEYS.PILL_FAVORITES, this.getPillFavorites().filter(id => !String(id || '').startsWith('demo_')), false);
     this.persistKey(STORAGE_KEYS.PAZ_FALSA, this.getPazFalsaEntries().filter(x => !this.isExampleItem(x)), false);
     this.persistKey(STORAGE_KEYS.ACT_CRISIS, this.getActCrisisEntries().filter(x => !this.isExampleItem(x)), false);
     this.persistKey(STORAGE_KEYS.PATTERNS, this.getPatterns().filter(x => !this.isExampleItem(x)), false);
@@ -1758,10 +1794,12 @@ class StateManager {
     return this.getStoreItem(STORAGE_KEYS.THERAPY_NOTES, []);
   }
 
-  analyzeReflectionForTherapist(text, context, category) {
+  analyzeReflectionForTherapist(text, context, category, langOverride = null) {
     const raw = (text || '').trim();
     const lower = raw.toLowerCase();
-    const isEn = typeof window !== 'undefined' && Boolean(window.i18n?.isEn?.());
+    const isEn = langOverride
+      ? langOverride === 'en'
+      : (typeof window !== 'undefined' && Boolean(window.i18n?.isEn?.()));
 
     const emotionLexicon = [
       { keys: ['culpa', 'culpable', 'remordimiento', 'guilt', 'remorse'], label: isEn ? 'Guilt' : 'Culpa' },
@@ -2122,8 +2160,136 @@ class StateManager {
   }
 
   seedDemoData() {
+    if (this.isVaultLocked()) return false;
+
     const now = Date.now();
     const day = 24 * 60 * 60 * 1000;
+    const mergeWithUserItems = (existingList, demoList) => {
+      const userItems = (Array.isArray(existingList) ? existingList : []).filter(
+        (item) => !this.isExampleItem(item)
+      );
+      return [...userItems, ...demoList];
+    };
+
+    const sampleValues = [
+      {
+        id: 'demo_val_1',
+        isExample: true,
+        domain: 'Pareja',
+        statement: 'Ser una pareja comprensiva y atenta que escucha con ternura pero expresa sus límites con honestidad',
+        microAction: 'Escuchar cómo se siente sin interrumpir y expresar con calma cuando necesite descanso',
+        willingness: 'Sostener la incomodidad si hay un desacuerdo sin ceder automáticamente por miedo',
+        lensUsed: 'Ejemplo guía (Hayes)',
+        practicedCount: 3,
+        lastPracticedAt: now - (1 * day),
+        createdAt: now - (12 * day)
+      },
+      {
+        id: 'demo_val_2',
+        isExample: true,
+        domain: 'Trabajo',
+        statement: 'Trabajar con rigor y honestidad protegiendo mi descanso y comunicando prioridades con claridad',
+        microAction: 'Pedir 15 minutos para revisar prioridades antes de aceptar un encargo fuera de horario',
+        willingness: 'Hacer hueco a la incomodidad de no estar disponible al instante sin dar mil excusas',
+        lensUsed: 'Ejemplo guía (Hayes)',
+        practicedCount: 2,
+        lastPracticedAt: now - (2 * day),
+        createdAt: now - (10 * day)
+      },
+      {
+        id: 'demo_val_3',
+        isExample: true,
+        domain: 'Conmigo Mismo',
+        statement: 'Tratarme con paciencia y respeto en los días difíciles cuidando mi energía física y emocional',
+        microAction: 'Hacer una pausa de 5 minutos sin pantallas para notar mi cuerpo antes de responder en automático',
+        willingness: 'Sostener el cosquilleo de culpa inicial cuando paro a descansar',
+        lensUsed: 'Ejemplo guía (Hayes)',
+        practicedCount: 4,
+        lastPracticedAt: now - (1 * day),
+        createdAt: now - (8 * day)
+      }
+    ];
+
+    const samplePassengers = [
+      {
+        id: 'demo_pas_1',
+        isExample: true,
+        icon: '',
+        name: 'El Vigilante del Enfado Ajeno',
+        shouts: 'Gira por el camino seguro y cede ahora mismo para evitar caras largas.',
+        protectsFrom: 'La tensión, el conflicto o la frialdad del otro',
+        detour: 'Callarme lo que pienso y sonreír para apaciguar',
+        driverReply: 'Gracias por avisarme del miedo al conflicto, pero mis manos siguen en el volante hacia mis valores. Puedes ir atrás.',
+        affectedValues: ['demo_val_1', 'demo_val_2'],
+        status: 'loud',
+        createdAt: now - (11 * day)
+      },
+      {
+        id: 'demo_pas_2',
+        isExample: true,
+        icon: '',
+        name: 'El Policía de la Culpa ("Eres egoísta")',
+        shouts: 'Si te priorizas o dices que no, harás daño y pensarán mal de ti.',
+        protectsFrom: 'Sentirme mala persona o que me rechacen',
+        detour: 'Ceder y cargar con todo aunque esté agotado/a',
+        driverReply: 'Sé que intentas protegerme del rechazo, pero ceder va contra mi valor. Toma asiento atrás; hoy conduzco yo.',
+        affectedValues: ['demo_val_1', 'demo_val_3'],
+        status: 'seated',
+        createdAt: now - (9 * day)
+      },
+      {
+        id: 'demo_pas_3',
+        isExample: true,
+        icon: '',
+        name: 'El Juez de la Autoexigencia',
+        shouts: 'Tienes que poder con todo sin quejarte ni bajar el ritmo nunca.',
+        protectsFrom: 'Sentirme insuficiente, vulnerable o decepcionar en el trabajo',
+        detour: 'Alargar la jornada hasta el agotamiento y decir sí a todo',
+        driverReply: 'Te escucho, pero cuidar mi descanso forma parte de hacer bien mi trabajo. Ya no decides mi horario.',
+        affectedValues: ['demo_val_2'],
+        status: 'integrated',
+        createdAt: now - (14 * day)
+      }
+    ];
+
+    const sampleProgressLog = [
+      {
+        id: 'demo_log_1',
+        isExample: true,
+        date: now - (1 * day),
+        type: 'values_updated',
+        note: 'Paso dado en Trabajo: "Pedir 15 minutos para revisar prioridades antes de aceptar un encargo fuera de horario"'
+      },
+      {
+        id: 'demo_log_2',
+        isExample: true,
+        date: now - (2 * day),
+        type: 'passenger_status',
+        note: '"El Policía de la Culpa ("Eres egoísta")": Sentado atrás (En trabajo)'
+      },
+      {
+        id: 'demo_log_3',
+        isExample: true,
+        date: now - (3 * day),
+        type: 'manual_note',
+        note: 'Pude decir que no a una tarea extra sin inventar excusas; la culpa bajó a las dos horas.'
+      },
+      {
+        id: 'demo_log_4',
+        isExample: true,
+        date: now - (5 * day),
+        type: 'values_updated',
+        note: 'Nuevo valor construido (Pareja): "Ser una pareja comprensiva y atenta que escucha con ternura pero expresa sus límites con honestidad"'
+      }
+    ];
+
+    const demoAnchor = {
+      id: 'demo_anc_1',
+      isExample: true,
+      text: 'Decir que hoy necesito descansar no rompe el vínculo; cuidarme me permite estar presente de verdad.',
+      author: 'Personal',
+      category: 'Límites'
+    };
 
     const samplePf = [
       {
@@ -2153,6 +2319,7 @@ class StateManager {
       },
       {
         id: 'demo_pf_2',
+        isExample: true,
         timestamp: now - (4 * day),
         context: 'Pareja',
         situation: 'Mi pareja eligió ir a cenar con sus amigos a un lugar ruidoso cuando yo necesitaba calma y descanso.',
@@ -2171,7 +2338,8 @@ class StateManager {
       },
       {
         id: 'demo_pf_3',
-        timestamp: now - (1 * day),
+        isExample: true,
+        timestamp: now - (2 * day),
         context: 'Familia',
         situation: 'Comentario invasivo sobre mis horarios personales durante una llamada familiar.',
         internalConflict: {
@@ -2186,14 +2354,35 @@ class StateManager {
         },
         note: 'Sigo intentando complacer la imagen que tienen de mí.',
         followUpNotes: []
+      },
+      {
+        id: 'demo_pf_4',
+        isExample: true,
+        timestamp: now - (1 * day),
+        context: 'Trabajo',
+        situation: 'Acepté quedarme a una reunión de última hora fuera de mi jornada aunque ya había terminado mis tareas.',
+        internalConflict: {
+          wanted: 'Avisar de que cerraba mi jornada y proponer revisarlo mañana a primera hora.',
+          did: 'Me conecté en silencio sintiendo enfado y cansancio.'
+        },
+        toll: {
+          resentment: 7,
+          physicalExhaustion: 8,
+          anxiety: 5,
+          emptiness: 6
+        },
+        note: 'Volví a priorizar evitar incomodidad ajena frente a mi descanso.',
+        followUpNotes: []
       }
     ];
 
     const sampleAct = [
       {
         id: 'demo_act_1',
+        isExample: true,
         timestamp: now - (5 * day),
         emotion: 'Resentimiento',
+        emotions: ['Resentimiento', 'Impotencia'],
         initialIntensity: 9,
         bodyZones: ['Mandíbula/Garganta', 'Pecho/Corazón', 'Hombros/Cuello'],
         thought: 'Nadie valora lo que hago, siempre tengo que resolverlo todo yo y se aprovechan de mi disposición.',
@@ -2202,6 +2391,7 @@ class StateManager {
         autopilotUrge: 'Enviar un mensaje incendiario al grupo de chat y desconectar el teléfono.',
         valueChosen: 'Dignidad',
         committedAction: 'Escribir un correo formal estableciendo los límites del entregable sin caer en la queja reactiva.',
+        carriedPassenger: 'El Vigilante del Enfado Ajeno',
         choiceType: 'value',
         followUpNotes: [
           {
@@ -2213,8 +2403,10 @@ class StateManager {
       },
       {
         id: 'demo_act_2',
-        timestamp: now - (2 * day),
+        isExample: true,
+        timestamp: now - (3 * day),
         emotion: 'Ansiedad',
+        emotions: ['Ansiedad', 'Inseguridad'],
         initialIntensity: 8,
         bodyZones: ['Estómago/Plexo', 'Mandíbula/Garganta'],
         thought: 'Si digo lo que realmente pienso me van a rechazar y me quedaré solo.',
@@ -2223,7 +2415,26 @@ class StateManager {
         autopilotUrge: 'Ceder de nuevo y disculparme preventivamente.',
         valueChosen: 'Autenticidad',
         committedAction: 'Pausar 10 minutos, respirar en el plexo y expresar mi postura con suavidad pero con firmeza.',
+        carriedPassenger: 'El Policía de la Culpa ("Eres egoísta")',
         choiceType: 'value',
+        followUpNotes: []
+      },
+      {
+        id: 'demo_act_3',
+        isExample: true,
+        timestamp: now - (1 * day),
+        emotion: 'Culpa',
+        emotions: ['Culpa', 'Agotamiento'],
+        initialIntensity: 7,
+        bodyZones: ['Pecho/Corazón', 'Estómago/Plexo'],
+        thought: 'Si cancelo esta cena pensarán que no me importan y que solo miro por mí.',
+        reframedThought: 'Observo que mi mente me cuenta la historia de que cuidarme me convierte en egoísta.',
+        postIntensity: 5,
+        autopilotUrge: 'Confirmar asistencia aunque esté sin fuerzas para evitar sentirme culpable.',
+        valueChosen: 'Autocuidado',
+        committedAction: 'Terminé yendo por inercia, pero identifiqué el bucle al llegar a casa y anoté qué haré distinto.',
+        carriedPassenger: 'El Policía de la Culpa ("Eres egoísta")',
+        choiceType: 'autopilot',
         followUpNotes: []
       }
     ];
@@ -2231,6 +2442,7 @@ class StateManager {
     const samplePatterns = [
       {
         id: 'demo_pat_1',
+        isExample: true,
         createdAt: now - (14 * day),
         title: 'Ceder en planes de ocio por miedo al enfado o la frialdad ajena',
         category: 'Pareja',
@@ -2254,12 +2466,40 @@ class StateManager {
             nextStep: 'Proponer una alternativa proactiva la próxima vez.'
           }
         ]
+      },
+      {
+        id: 'demo_pat_2',
+        isExample: true,
+        createdAt: now - (9 * day),
+        title: 'Asumir encargos urgentes fuera de horario por miedo a decepcionar',
+        category: 'Trabajo',
+        loop: {
+          trigger: 'Llega una petición urgente al final del día o fuera de mi alcance.',
+          autoResponse: 'Acepto al instante y alargo la jornada para cumplir sin negociar.',
+          shortTermGain: 'Evito parecer poco comprometido y calmo la alarma de rechazo.',
+          longTermCost: 'Fatiga acumulada, pérdida de vida personal y resentimiento hacia el trabajo.'
+        },
+        weeklyExperiment: {
+          text: 'Responder: «Puedo revisarlo mañana a primera hora o repriorizar lo que ya tengo en marcha».',
+          definedAt: now - (5 * day),
+          targetDate: now + (2 * day)
+        },
+        checkins: [
+          {
+            id: 'chk_2',
+            timestamp: now - (1 * day),
+            status: 'in_progress',
+            learned: 'Me costó sostener el silencio tras decir que lo vería al día siguiente, pero nadie se molestó.',
+            nextStep: 'Mantener el límite sin añadir explicaciones extra.'
+          }
+        ]
       }
     ];
 
     const sampleCompass = [
       {
         id: 'demo_comp_1',
+        isExample: true,
         timestamp: now - (3 * day),
         situation: 'Dudar sobre si cancelar una comida familiar para poder descansar tras una semana agotadora.',
         selectedValue: 'Autocuidado',
@@ -2269,12 +2509,26 @@ class StateManager {
           fear: 'Que piensen que no me importan.'
         },
         keyAction: 'Llamar a las 11:00 am, comunicar con cariño que necesito reposar y acordar vernos el siguiente fin de semana.'
+      },
+      {
+        id: 'demo_comp_2',
+        isExample: true,
+        timestamp: now - (1 * day),
+        situation: 'Me piden opinar sobre una propuesta del equipo con la que no estoy de acuerdo y temo generar tensión.',
+        selectedValue: 'Honestidad',
+        answers: {
+          motive: 'Miedo al conflicto y a parecer incómodo.',
+          shortVsLong: 'Si callo evito tensión hoy, pero luego cargaré con un plan inviable.',
+          fear: 'Que se molesten conmigo o me vean conflictivo.'
+        },
+        keyAction: 'Compartir mi punto de vista con tono sereno en dos frases concretas, sin disculparme por discrepar.'
       }
     ];
 
     const sampleHexaflex = [
       {
         id: 'demo_hex_1',
+        isExample: true,
         timestamp: now - (1 * day),
         scores: {
           acceptance: 6,
@@ -2284,69 +2538,124 @@ class StateManager {
           values: 8,
           action: 7
         }
+      },
+      {
+        id: 'demo_hex_2',
+        isExample: true,
+        timestamp: now - (10 * day),
+        scores: {
+          acceptance: 4,
+          defusion: 4,
+          present: 5,
+          context: 5,
+          values: 6,
+          action: 5
+        }
       }
     ];
 
     const sampleDeconstructed = [
       {
         id: 'dec_1',
+        isExample: true,
         timestamp: now - (2 * day),
         rigidLabel: 'Soy una persona débil que no sabe poner límites',
         softened: 'Tengo el pensamiento automático de que soy débil',
         contextualized: 'Cuando mi pareja se muestra decepcionada y yo bajo la mirada y pido disculpas, experimento una profunda sensación de vulnerabilidad.'
+      },
+      {
+        id: 'demo_dec_2',
+        isExample: true,
+        timestamp: now - (4 * day),
+        rigidLabel: 'Soy egoísta si miro por mí',
+        softened: 'Aparece el pensamiento de que soy egoísta cuando cuido mi descanso',
+        contextualized: 'Cuando priorizo descansar frente a un plan ajeno, noto culpa física en el estómago aunque mi límite sea sano.'
       }
     ];
 
     const samplePivots = [
       {
         id: 'piv_1',
+        isExample: true,
         timestamp: now - (3 * day),
         pain: 'Pánico a que mi pareja se distancie si digo que hoy no quiero salir.',
         yearning: 'Anhelo intimidad, comprensión recíproca y un espacio seguro para ser yo mismo.',
         pivotAction: 'Expresar mi necesidad de descanso desde el afecto: "Te quiero y deseo verte mañana descansado; hoy mi cuerpo necesita calma".'
+      },
+      {
+        id: 'demo_piv_2',
+        isExample: true,
+        timestamp: now - (5 * day),
+        pain: 'Me da culpa parar y decir que hoy no llego a todo en el trabajo.',
+        yearning: 'Anhelo tratarme con respeto y tener energía real para lo que de verdad importa.',
+        pivotAction: 'Cerrar a tiempo hoy sin pedir perdón en exceso, sosteniendo el cosquilleo de culpa.'
       }
     ];
-
-    const sampleFavorites = ['pill_1', 'pill_2', 'mantra_1'];
 
     const ref1Text = 'Me doy cuenta de que cuando alguien cercano se queda en silencio o cambia el tono, entro automáticamente en alerta y busco explicarme demasiado para recuperar su aprobación, aunque eso me deje agotamiento después.';
     const ref2Text = 'Esta semana pude decir que no a una tarea extra en el trabajo sin inventar excusas médicas; sentí un nudo fuerte en el estómago y culpa las dos primeras horas, pero luego sentí alivio y coherencia.';
     const sampleTherapyReflections = [
       {
         id: 'demo_ref_1',
+        isExample: true,
         timestamp: now - (2 * day),
         text: ref1Text,
         context: 'Pareja',
         category: 'Patrón o bucle que me cuesta',
         status: 'pending',
-        clinicalExtract: this.analyzeReflectionForTherapist(ref1Text, 'Pareja', 'Patrón o bucle que me cuesta')
+        clinicalExtract: this.analyzeReflectionForTherapist(ref1Text, 'Pareja', 'Patrón o bucle que me cuesta', 'es')
       },
       {
         id: 'demo_ref_2',
+        isExample: true,
         timestamp: now - (4 * day),
         text: ref2Text,
         context: 'Trabajo',
         category: 'Logro o cambio observado',
         status: 'discussed',
-        clinicalExtract: this.analyzeReflectionForTherapist(ref2Text, 'Trabajo', 'Logro o cambio observado')
+        clinicalExtract: this.analyzeReflectionForTherapist(ref2Text, 'Trabajo', 'Logro o cambio observado', 'es')
       }
     ];
 
-    if (this.isVaultLocked()) return;
-    this.persistKey(STORAGE_KEYS.PAZ_FALSA, samplePf, false);
-    this.persistKey(STORAGE_KEYS.ACT_CRISIS, sampleAct, false);
-    this.persistKey(STORAGE_KEYS.PATTERNS, samplePatterns, false);
-    this.persistKey(STORAGE_KEYS.COMPASS, sampleCompass, false);
-    this.persistKey(STORAGE_KEYS.PILL_FAVORITES, sampleFavorites, false);
-    this.persistKey(STORAGE_KEYS.HEXAFLEX, sampleHexaflex, false);
-    this.persistKey(STORAGE_KEYS.DECONSTRUCT, sampleDeconstructed, false);
-    this.persistKey(STORAGE_KEYS.PIVOTS, samplePivots, false);
-    this.persistKey(STORAGE_KEYS.THERAPY_NOTES, sampleTherapyReflections, false);
+    const existingProfile = this.getProfile();
+    const mergedProfile = {
+      ...existingProfile,
+      coreValues: mergeWithUserItems(existingProfile.coreValues, sampleValues),
+      busPassengers: mergeWithUserItems(existingProfile.busPassengers, samplePassengers),
+      progressLog: mergeWithUserItems(existingProfile.progressLog, sampleProgressLog)
+    };
+
+    const defaultAnchorIds = new Set(DEFAULT_ANCHORS.map(a => a.id));
+    const nonExampleAnchors = this.getAnchors().filter(a => !this.isExampleItem(a));
+    const customUserAnchors = nonExampleAnchors.filter(a => !defaultAnchorIds.has(a.id));
+    const existingDefaultAnchors = nonExampleAnchors.filter(a => defaultAnchorIds.has(a.id));
+    const baseDefaultAnchors = existingDefaultAnchors.length > 0
+      ? existingDefaultAnchors
+      : JSON.parse(JSON.stringify(DEFAULT_ANCHORS));
+    const mergedAnchors = [...customUserAnchors, demoAnchor, ...baseDefaultAnchors];
+
+    const mergedFavorites = Array.from(
+      new Set([...this.getPillFavorites(), 'pill_1', 'pill_2', 'a1', 'demo_anc_1'])
+    );
+
+    this.persistKey(STORAGE_KEYS.PROFILE, mergedProfile, false);
+    this.persistKey(STORAGE_KEYS.ANCHORS, mergedAnchors, false);
+    this.persistKey(STORAGE_KEYS.PAZ_FALSA, mergeWithUserItems(this.getPazFalsaEntries(), samplePf), false);
+    this.persistKey(STORAGE_KEYS.ACT_CRISIS, mergeWithUserItems(this.getActCrisisEntries(), sampleAct), false);
+    this.persistKey(STORAGE_KEYS.PATTERNS, mergeWithUserItems(this.getPatterns(), samplePatterns), false);
+    this.persistKey(STORAGE_KEYS.COMPASS, mergeWithUserItems(this.getCompassEntries(), sampleCompass), false);
+    this.persistKey(STORAGE_KEYS.PILL_FAVORITES, mergedFavorites, false);
+    this.persistKey(STORAGE_KEYS.HEXAFLEX, mergeWithUserItems(this.getHexaflexHistory(), sampleHexaflex), false);
+    this.persistKey(STORAGE_KEYS.DECONSTRUCT, mergeWithUserItems(this.getDeconstructedStatements(), sampleDeconstructed), false);
+    this.persistKey(STORAGE_KEYS.PIVOTS, mergeWithUserItems(this.getPivots(), samplePivots), false);
+    this.persistKey(STORAGE_KEYS.THERAPY_NOTES, mergeWithUserItems(this.getTherapyReflections(), sampleTherapyReflections), false);
+
+    this.pushFullStateToServer();
     if (typeof window !== 'undefined' && window.i18n?.isEn?.()) {
       window.i18n.localizeExampleDataInState?.();
     }
-    this.pushFullStateToServer();
     this.notify('demo_seeded', null);
+    return true;
   }
 }
 
