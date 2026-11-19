@@ -178,6 +178,7 @@ class InsightApp {
   renderRecentActivitySection() {
     const profile = window.stateManager.getProfile?.() || {};
     const log = (profile.progressLog || []).slice(0, 8);
+    const hasExampleActivity = log.some(entry => window.stateManager?.isExampleItem?.(entry));
     const typeIcons = {
       challenge_added:'',
       challenge_status:'',
@@ -198,16 +199,27 @@ class InsightApp {
           </div>
         </div>
 
+        ${hasExampleActivity ? `
+          <div class="example-notice-bar">
+            <span>Hay actividad de ejemplo en este historial. Puedes quitar los ejemplos cuando quieras.</span>
+            <button type="button" class="btn-secondary" data-clear-examples="true" style="font-size: 0.75rem; padding: 4px 10px;">
+              Quitar ejemplos
+            </button>
+          </div>
+        ` : ''}
+
         ${log.length > 0 ? `
           <div style="border-left: 2px solid var(--border-subtle); padding-left: 14px; margin-left: 6px; margin-bottom: 14px;">
             ${log.map(entry => {
               const date = new Date(entry.date);
               const dateStr = date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
               const icon = typeIcons[entry.type] || '•';
+              const isExample = window.stateManager?.isExampleItem?.(entry);
               return `
                 <div style="position: relative; padding-bottom: 8px;">
                   <span style="position: absolute; left: -21px; top: 4px; width: 10px; height: 10px; background: var(--sage-400); border-radius: 50%;"></span>
                   <span style="font-size: 0.68rem; color: var(--text-muted);">${dateStr}</span>
+                  ${isExample ? '<span class="badge example-item-badge" style="margin-left: 6px;">Ejemplo guía</span>' : ''}
                   <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 1px 0 0;"><span>${icon}</span> <span>${this.escapeHtml(entry.note)}</span></p>
                 </div>
               `;
@@ -456,7 +468,7 @@ class InsightApp {
             ?'¡Todo al día! No tienes registros pendientes de valorar en frío.'
             : (this.emotionFilter !== 'all' || this.contextFilter !== 'all' || (this.historySearchQuery || '').trim()
               ? 'No hay episodios guardados que coincidan con este filtro.'
-              : 'No hay registros aún. Completa una sesión en "Paz Falsa" o en "Espacio ACT", o pulsa "Cargar Datos de Demostración" para probar.')}
+              : 'No hay registros aún. Completa una sesión en "Paz Falsa" o en "Espacio ACT", o carga "Cargar Datos Demo" desde Configuración para probar.')}
         </div>
       `;
     }
@@ -1049,7 +1061,6 @@ class InsightApp {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('medium');
 
     const reflections = window.stateManager.getTherapyReflections();
     const pendingRefs = reflections.filter(r => r.status === 'pending');
@@ -1148,10 +1159,15 @@ class InsightApp {
       </div>
     `;
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('medium');
+    } else {
+      modal.classList.add('active');
+    }
 
     document.getElementById('btn-close-therapy-brief')?.addEventListener('click', () => {
-      modal.classList.remove('active');
+      if (window.app?.closeModal) window.app.closeModal();
+      else modal.classList.remove('active');
     });
 
     document.getElementById('btn-copy-therapy-brief')?.addEventListener('click', async () => {
@@ -1416,7 +1432,6 @@ class InsightApp {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('wide');
 
     const hexHistory = window.stateManager.getHexaflexHistory();
     const curr = hexHistory.length > 0 ? hexHistory[0].scores : {
@@ -1483,7 +1498,11 @@ class InsightApp {
       </div>
     `;
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('wide');
+    } else {
+      modal.classList.add('active');
+    }
 
     const bindSlider = (slId, badgeId) => {
       const sl = document.getElementById(slId);
@@ -1502,9 +1521,12 @@ class InsightApp {
     bindSlider('sl-hex-val', 'val-hex-val');
     bindSlider('sl-hex-act', 'val-hex-act');
 
-    document.getElementById('btn-modal-cancel')?.addEventListener('click', () => {
-      modal.classList.remove('active');
-    });
+    const closeModal = () => {
+      if (window.app?.closeModal) window.app.closeModal();
+      else modal.classList.remove('active');
+    };
+
+    document.getElementById('btn-modal-cancel')?.addEventListener('click', closeModal);
 
     document.getElementById('btn-save-hexaflex')?.addEventListener('click', () => {
       const scores = {
@@ -1517,7 +1539,7 @@ class InsightApp {
       };
 
       window.stateManager.addHexaflexScore(scores);
-      modal.classList.remove('active');
+      closeModal();
       window.app?.showToast('Hexaflex evaluado y actualizado');
       this.render();
       this.bindEvents();
@@ -1528,7 +1550,6 @@ class InsightApp {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('default');
 
     modalBody.innerHTML = `
       <h3 class="card-title">Crear Tarjeta de Anclaje</h3>
@@ -1550,11 +1571,18 @@ class InsightApp {
       </div>
     `;
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('default');
+    } else {
+      modal.classList.add('active');
+    }
 
-    document.getElementById('btn-modal-cancel')?.addEventListener('click', () => {
-      modal.classList.remove('active');
-    });
+    const closeModal = () => {
+      if (window.app?.closeModal) window.app.closeModal();
+      else modal.classList.remove('active');
+    };
+
+    document.getElementById('btn-modal-cancel')?.addEventListener('click', closeModal);
 
     document.getElementById('btn-modal-save-anchor')?.addEventListener('click', () => {
       const text = document.getElementById('new-anchor-text')?.value?.trim();
@@ -1564,7 +1592,7 @@ class InsightApp {
         return;
       }
       window.stateManager.addAnchor(text, 'Personal', cat);
-      modal.classList.remove('active');
+      closeModal();
       window.app?.showToast('Anclaje guardado');
       this.render();
       this.bindEvents();
@@ -1575,7 +1603,6 @@ class InsightApp {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('medium');
 
     const retroOptions = [
 'Mantuve el volante en mis valores aunque el pasajero hizo ruido',
@@ -1613,7 +1640,11 @@ class InsightApp {
       </div>
     `;
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('medium');
+    } else {
+      modal.classList.add('active');
+    }
 
     modalBody.querySelectorAll('.retro-bus-chip[data-retro-bus]').forEach(chip => {
       chip.addEventListener('click', () => {
@@ -1636,9 +1667,12 @@ class InsightApp {
       });
     });
 
-    document.getElementById('btn-modal-cancel')?.addEventListener('click', () => {
-      modal.classList.remove('active');
-    });
+    const closeModal = () => {
+      if (window.app?.closeModal) window.app.closeModal();
+      else modal.classList.remove('active');
+    };
+
+    document.getElementById('btn-modal-cancel')?.addEventListener('click', closeModal);
 
     document.getElementById('btn-modal-save-followup')?.addEventListener('click', () => {
       const text = document.getElementById('followup-text')?.value?.trim();
@@ -1653,7 +1687,7 @@ class InsightApp {
         window.stateManager.addActCrisisFollowUp(entryId, text);
       }
 
-      modal.classList.remove('active');
+      closeModal();
       window.app?.showToast('Reflexión de consolidación guardada');
       this.render();
       this.bindEvents();

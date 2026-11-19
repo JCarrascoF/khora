@@ -57,10 +57,14 @@
     [/^Seleccionadas \((\d+)\):$/, (_, n) => `Selected (${n}):`],
     [/^(\d+) seleccionada$/, (_, n) => `${n} selected`],
     [/^(\d+) seleccionadas$/, (_, n) => `${n} selected`],
-    [/^🧹 Quitar Ejemplos \((\d+)\)$/, (_, n) => `🧹 Remove Examples (${n})`],
+    [/^(?:🧹\s*)?Quitar Ejemplos \((\d+)\)$/, (_, n) => `Remove Examples (${n})`],
     [/^📌 Pendientes de sesión \((\d+)\)$/, (_, n) => `📌 Pending session (${n})`],
     [/^✅ Tratadas \((\d+)\)$/, (_, n) => `✅ Discussed (${n})`],
     [/^Todas \((\d+)\)$/, (_, n) => `All (${n})`],
+    [/^Todos \((\d+)\)$/, (_, n) => `All (${n})`],
+    [/^(\d+) ejercicios?$/, (_, n) => `${n} ${n === '1' ? 'exercise' : 'exercises'}`],
+    [/^Ver los (\d+) ejercicios en lista →$/, (_, n) => `View all ${n} exercises →`],
+    [/^Los (\d+) ejercicios breves ordenados por situación\.$/, (_, n) => `All ${n} short exercises grouped by situation.`],
     [/^❤️ Favoritas \((\d+)\)$/, (_, n) => `❤️ Favorites (${n})`],
     [/^⚓ Mis Tarjetas de Anclaje ACT \((\d+)\)$/, (_, n) => `⚓ My ACT Anchor Cards (${n})`],
     [/^Etiquetas Desmontadas \((\d+)\)$/, (_, n) => `Deconstructed Labels (${n})`],
@@ -107,10 +111,22 @@
     [/^Quitar (.+)$/, (_, em) => `Remove ${EXACT_MAP[em] || em}`],
     [/^3\. ¿Qué pensamiento te repite «(.+)»\?$/, (_, m) => `3. What thought is "${m}" repeating to you?`],
     [/^📻 Apodo: «(.+)»$/, (_, m) => `📻 Nickname: "${m}"`],
+    [/^Apodo de tu mente: «(.+)»$/, (_, m) => `Mind nickname: "${m}"`],
+    [/^Historia de (.+)$/, (_, m) => `${m}'s story`],
     [/^Fórmulas de Distanciamiento ACT \(Yo Observador vs\. (.+)\)$/, (_, m) => `ACT Defusion Formulas (Observing Self vs. ${m})`],
     [/^2\. La Historia de (.+)$/, (_, m) => `2. ${m}'s Story`],
     [/^¿Cómo está la intensidad ahora\? \(antes: (\d+)\/10\)$/, (_, n) => `How is the intensity now? (before: ${n}/10)`],
+    [/^¿Cuánto pesa la ola ahora\? \(antes: (\d+)\/10\)$/, (_, n) => `How heavy is the wave now? (before: ${n}/10)`],
+    [/^Ciclos completados: (\d+)$/, (_, n) => `Cycles completed: ${n}`],
+    [/^Reflejo: "(.+)"$/, (_, r) => `Reflex: "${EXACT_MAP[r] || r}"`],
+    [/^Pasajero a bordo: "(.+)"$/, (_, p) => `Passenger aboard: "${EXACT_MAP[p] || p}"`],
     [/^"Estoy teniendo el pensamiento de que (.+)\."$/, (_, t) => `"I am having the thought that ${EXACT_MAP[t] || t}."`],
+    [/^Estoy teniendo el pensamiento de que (.+)\.$/, (_, t) => `I am having the thought that ${EXACT_MAP[t] || t}.`],
+    [/^"(.+?) me vuelve a contar la historia de que (.+)\."$/, (_, m, t) => `"${m} is telling me the story again that ${EXACT_MAP[t] || t}."`],
+    [/^(.+?) me vuelve a contar la historia de que (.+)\.$/, (_, m, t) => `${m} is telling me the story again that ${EXACT_MAP[t] || t}.`],
+    [/^"Gracias, (.+?), por intentar protegerme con la idea de que (.+)\."$/, (_, m, t) => `"Thank you, ${m}, for trying to protect me with the idea that ${EXACT_MAP[t] || t}."`],
+    [/^Gracias, (.+?), por intentar protegerme con la idea de que (.+)\.$/, (_, m, t) => `Thank you, ${m}, for trying to protect me with the idea that ${EXACT_MAP[t] || t}.`],
+    [/^Gracias, ([^,]+)$/, (_, m) => `Thanks, ${m}`],
     [/^"Observo con curiosidad que (.+?) \(mi mente\) me está contando la historia de que (.+)\."$/, (_, m, t) => `"I notice with curiosity that ${m} (my mind) is telling me the story that ${EXACT_MAP[t] || t}."`],
     [/^"Agradezco a (.+?) por intentar protegerme creyendo que (.+)\."$/, (_, m, t) => `"Thank you, ${m}, for trying to protect me by thinking that ${EXACT_MAP[t] || t}."`],
     [/^1\. "Estoy teniendo el pensamiento de que (.+)\."$/, (_, t) => `1. "I am having the thought that ${EXACT_MAP[t] || t}."`],
@@ -588,7 +604,8 @@
         pildoras: gl.pildorasAnclajesApp ? {
           mantras: clone(gl.pildorasAnclajesApp.mantras),
           pills: clone(gl.pildorasAnclajesApp.pills),
-          tricksCatalog: clone(gl.pildorasAnclajesApp.tricksCatalog)
+          tricksCatalog: clone(gl.pildorasAnclajesApp.tricksCatalog),
+          trickGroups: clone(gl.pildorasAnclajesApp.trickGroups)
         } : null
       };
     }
@@ -736,6 +753,15 @@
           tr.duration = src.duration;
           tr.desc = src.desc;
         });
+        if (Array.isArray(pa.trickGroups) && Array.isArray(b.pildoras.trickGroups)) {
+          pa.trickGroups.forEach((g, idx) => {
+            const src = isEn && epa.trickGroups?.[g.id] ? epa.trickGroups[g.id] : b.pildoras.trickGroups[idx];
+            if (!src) return;
+            g.tabLabel = src.tabLabel;
+            g.title = src.title;
+            g.subtitle = src.subtitle;
+          });
+        }
       }
     }
 
@@ -753,7 +779,7 @@
         }
       };
 
-      // Capture Spanish defaults from DEFAULT_ANCHORS if present
+      // Capture Spanish defaults from DEFAULT_ANCHORS & demo anchors if present
       if (typeof DEFAULT_ANCHORS !== 'undefined' && Array.isArray(DEFAULT_ANCHORS)) {
         const anchors = sm.getAnchors?.();
         if (Array.isArray(anchors) && anchors.length > 0) {
@@ -761,18 +787,33 @@
           anchors.forEach((anc) => {
             const esDef = DEFAULT_ANCHORS.find((a) => a.id === anc.id);
             const enDef = DEFAULT_ANCHORS_EN.find((a) => a.id === anc.id);
-            if (!esDef || !enDef) return;
-            ['text', 'author', 'category'].forEach((f) => {
-              const before = anc[f];
-              applyField(anc, f, esDef[f], enDef[f]);
-              if (anc[f] !== before) changed = true;
-            });
+            if (esDef && enDef) {
+              ['text', 'author', 'category'].forEach((f) => {
+                const before = anc[f];
+                applyField(anc, f, esDef[f], enDef[f]);
+                if (anc[f] !== before) changed = true;
+              });
+              return;
+            }
+            const enDemoAnc = DEMO_ITEMS_EN[anc.id];
+            if (enDemoAnc) {
+              if (!this.seedEsBackup.has(anc.id) && anc.text !== enDemoAnc.text) {
+                this.seedEsBackup.set(anc.id, JSON.parse(JSON.stringify(anc)));
+              }
+              const esSnap = this.seedEsBackup.get(anc.id);
+              if (!esSnap) return;
+              ['text', 'author', 'category'].forEach((f) => {
+                const before = anc[f];
+                applyField(anc, f, esSnap[f], enDemoAnc[f]);
+                if (anc[f] !== before) changed = true;
+              });
+            }
           });
           if (changed) sm.memStore?.set?.(STORAGE_KEYS.ANCHORS, anchors);
         }
       }
 
-      // Profile seeds (coreValues & busPassengers)
+      // Profile seeds & demos (coreValues, busPassengers, progressLog)
       const profile = sm.getProfile?.();
       if (profile) {
         let profChanged = false;
@@ -781,12 +822,27 @@
           profile.busPassengers.forEach((pas) => {
             const esP = esPassengers.find((x) => x.id === pas.id);
             const enP = DEFAULT_PASSENGERS_EN.find((x) => x.id === pas.id);
-            if (!esP || !enP) return;
-            ['name', 'shouts', 'protectsFrom', 'detour', 'driverReply'].forEach((f) => {
-              const before = pas[f];
-              applyField(pas, f, esP[f], enP[f]);
-              if (pas[f] !== before) profChanged = true;
-            });
+            if (esP && enP) {
+              ['name', 'shouts', 'protectsFrom', 'detour', 'driverReply'].forEach((f) => {
+                const before = pas[f];
+                applyField(pas, f, esP[f], enP[f]);
+                if (pas[f] !== before) profChanged = true;
+              });
+              return;
+            }
+            const enDemoPas = DEMO_ITEMS_EN[pas.id];
+            if (enDemoPas) {
+              if (!this.seedEsBackup.has(pas.id) && pas.name !== enDemoPas.name) {
+                this.seedEsBackup.set(pas.id, JSON.parse(JSON.stringify(pas)));
+              }
+              const esSnap = this.seedEsBackup.get(pas.id);
+              if (!esSnap) return;
+              ['name', 'shouts', 'protectsFrom', 'detour', 'driverReply'].forEach((f) => {
+                const before = pas[f];
+                applyField(pas, f, esSnap[f], enDemoPas[f]);
+                if (pas[f] !== before) profChanged = true;
+              });
+            }
           });
         }
         if (Array.isArray(profile.coreValues)) {
@@ -804,6 +860,35 @@
               if (valSeed[f] !== before) profChanged = true;
             });
           }
+          profile.coreValues.forEach((val) => {
+            if (val.id === 'val_seed_1') return;
+            const enDemoVal = DEMO_ITEMS_EN[val.id];
+            if (!enDemoVal) return;
+            if (!this.seedEsBackup.has(val.id) && val.statement !== enDemoVal.statement) {
+              this.seedEsBackup.set(val.id, JSON.parse(JSON.stringify(val)));
+            }
+            const esSnap = this.seedEsBackup.get(val.id);
+            if (!esSnap) return;
+            ['statement', 'microAction', 'willingness', 'lensUsed'].forEach((f) => {
+              const before = val[f];
+              applyField(val, f, esSnap[f], enDemoVal[f]);
+              if (val[f] !== before) profChanged = true;
+            });
+          });
+        }
+        if (Array.isArray(profile.progressLog)) {
+          profile.progressLog.forEach((entry) => {
+            const enDemoLog = DEMO_ITEMS_EN[entry.id];
+            if (!enDemoLog) return;
+            if (!this.seedEsBackup.has(entry.id) && entry.note !== enDemoLog.note) {
+              this.seedEsBackup.set(entry.id, JSON.parse(JSON.stringify(entry)));
+            }
+            const esSnap = this.seedEsBackup.get(entry.id);
+            if (!esSnap) return;
+            const before = entry.note;
+            applyField(entry, 'note', esSnap.note, enDemoLog.note);
+            if (entry.note !== before) profChanged = true;
+          });
         }
         if (profChanged) sm.memStore?.set?.(STORAGE_KEYS.PROFILE, profile);
       }
@@ -837,7 +922,7 @@
             } else if (!isEn && this.seedEsBackup.has(n.id)) {
               n.clinicalExtract = JSON.parse(JSON.stringify(this.seedEsBackup.get(n.id).clinicalExtract));
             } else if (!isEn && sm.analyzeReflectionForTherapist) {
-              n.clinicalExtract = sm.analyzeReflectionForTherapist(n.text, n.context, n.category);
+              n.clinicalExtract = sm.analyzeReflectionForTherapist(n.text, n.context, n.category, 'es');
             }
             notesChanged = true;
           }
@@ -854,9 +939,12 @@
           const enItem = DEMO_ITEMS_EN[item.id];
           if (!enItem) return;
           if (!this.seedEsBackup.has(item.id)) {
-            // Only snapshot if it still looks Spanish
-            const snap = JSON.parse(JSON.stringify(item));
-            this.seedEsBackup.set(item.id, snap);
+            const hasSpanishDiff = Object.keys(enItem).some(
+              (k) => typeof enItem[k] === 'string' && item[k] !== enItem[k]
+            );
+            if (hasSpanishDiff) {
+              this.seedEsBackup.set(item.id, JSON.parse(JSON.stringify(item)));
+            }
           }
           const esSnap = this.seedEsBackup.get(item.id);
           if (!esSnap) return;
@@ -886,6 +974,9 @@
           it.reframedThought = enMode ? en.reframedThought : es.reframedThought;
           it.autopilotUrge = enMode ? en.autopilotUrge : es.autopilotUrge;
           it.committedAction = enMode ? en.committedAction : es.committedAction;
+          if (es.carriedPassenger && en.carriedPassenger) {
+            it.carriedPassenger = enMode ? en.carriedPassenger : es.carriedPassenger;
+          }
           if (Array.isArray(it.followUpNotes) && it.followUpNotes[0] && es.followUpNotes?.[0] && en.followUpNotes?.[0]) {
             it.followUpNotes[0].text = enMode ? en.followUpNotes[0].text : es.followUpNotes[0].text;
           }

@@ -674,14 +674,14 @@ class PerfilApp {
       microAction: existingVal ? (existingVal.microAction || '') : '',
       willingness: existingVal ? (existingVal.willingness || '') : ''
     };
-    this.renderWizardModal();
+    this.renderWizardModal({ resetScroll: true });
   }
 
-  renderWizardModal() {
+  renderWizardModal({ resetScroll = false } = {}) {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('medium');
+    const prevScroll = resetScroll ? 0 : modalBody.scrollTop;
 
     const w = this.wizardState;
     const seeds = this.domainSeeds[w.domain] || this.domainSeeds['Otro'] || this.domainSeeds['Conmigo Mismo'];
@@ -849,7 +849,14 @@ class PerfilApp {
     }
 
     modalBody.innerHTML = stepHtml;
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('medium', { resetScroll });
+    } else {
+      modal.classList.add('active');
+    }
+    if (!resetScroll) {
+      modalBody.scrollTop = prevScroll;
+    }
     this.bindWizardEvents();
   }
 
@@ -857,9 +864,12 @@ class PerfilApp {
     const modal = document.getElementById('app-modal');
     const w = this.wizardState;
 
-    document.getElementById('btn-wiz-cancel')?.addEventListener('click', () => {
-      modal?.classList.remove('active');
-    });
+    const closeModal = () => {
+      if (window.app?.closeModal) window.app.closeModal();
+      else modal?.classList.remove('active');
+    };
+
+    document.getElementById('btn-wiz-cancel')?.addEventListener('click', closeModal);
 
     // Step 1 events
     document.querySelectorAll('.wizard-domain-btn').forEach(btn => {
@@ -933,7 +943,7 @@ class PerfilApp {
       }
       w.statement = currentText;
       w.step = 2;
-      this.renderWizardModal();
+      this.renderWizardModal({ resetScroll: true });
     });
 
     // Step 2 events
@@ -965,7 +975,7 @@ class PerfilApp {
 
     document.getElementById('btn-wiz-prev-2')?.addEventListener('click', () => {
       w.step = 1;
-      this.renderWizardModal();
+      this.renderWizardModal({ resetScroll: true });
     });
 
     document.getElementById('btn-wiz-save')?.addEventListener('click', () => {
@@ -990,7 +1000,7 @@ class PerfilApp {
         });
       }
 
-      modal?.classList.remove('active');
+      closeModal();
       this.activeProfileTab = 'valores';
       this.render();
       this.bindEvents();
@@ -1005,7 +1015,6 @@ class PerfilApp {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('wide');
     const profileValues = window.stateManager.getProfile().coreValues || [];
     const selectedAffectedValues = new Set(Array.isArray(editPassenger?.affectedValues) ? editPassenger.affectedValues : []);
 
@@ -1185,7 +1194,11 @@ class PerfilApp {
       </div>
     `;
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('wide');
+    } else {
+      modal.classList.add('active');
+    }
 
     const nameEl = document.getElementById('input-pas-name');
     const shoutsEl = document.getElementById('input-pas-shouts');
@@ -1297,7 +1310,10 @@ class PerfilApp {
       });
     });
 
-    const closeModal = () => modal.classList.remove('active');
+    const closeModal = () => {
+      if (window.app?.closeModal) window.app.closeModal();
+      else modal.classList.remove('active');
+    };
     document.getElementById('btn-pas-modal-x')?.addEventListener('click', closeModal);
     document.getElementById('btn-modal-cancel')?.addEventListener('click', closeModal);
 
@@ -1353,7 +1369,6 @@ class PerfilApp {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
-    window.app?.setModalSize?.('default');
 
     modalBody.innerHTML = `
 <h3 class="card-title">Añadir Reto Concreto</h3>
@@ -1389,7 +1404,16 @@ class PerfilApp {
       </div>
     `;
 
-    modal.classList.add('active');
+    if (window.app?.openModal) {
+      window.app.openModal('default');
+    } else {
+      modal.classList.add('active');
+    }
+
+    const closeModal = () => {
+      if (window.app?.closeModal) window.app.closeModal();
+      else modal.classList.remove('active');
+    };
 
     modalBody.querySelectorAll('.challenge-cat-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1406,9 +1430,7 @@ class PerfilApp {
       });
     });
 
-    document.getElementById('btn-modal-cancel')?.addEventListener('click', () => {
-      modal.classList.remove('active');
-    });
+    document.getElementById('btn-modal-cancel')?.addEventListener('click', closeModal);
 
     document.getElementById('btn-modal-save-challenge')?.addEventListener('click', () => {
       const label = document.getElementById('input-challenge-label')?.value?.trim();
@@ -1421,7 +1443,7 @@ class PerfilApp {
       }
 
       window.stateManager.addChallenge({ label, category });
-      modal.classList.remove('active');
+      closeModal();
       this.render();
       this.bindEvents();
       window.app?.showToast(`Reto añadido: "${label}"`);
