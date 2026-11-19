@@ -369,12 +369,39 @@ class StateManager {
     return true;
   }
 
+  hasApiServer() {
+    if (typeof document === 'undefined') return true;
+    return Boolean(document.querySelector('meta[name="khora-api"][content="1"]'));
+  }
+
+  _setServerUnavailable(explicitMode) {
+    if (!explicitMode) {
+      localStorage.setItem(STORAGE_KEYS.STORAGE_MODE, 'local');
+    }
+    const mode = this.getStorageMode();
+    this.dbStatus = {
+      ...this.dbStatus,
+      mode,
+      engine: mode === 'local' ? 'local' : this.dbStatus.engine,
+      serverChecked: true,
+      serverAvailable: false,
+      authRequired: false,
+      authenticated: false,
+      serverCounts: null
+    };
+    this.notify('db_status_changed', this.dbStatus);
+    return false;
+  }
+
   async checkServerHealth() {
     if (typeof fetch !== 'function') {
       this.dbStatus = { ...this.dbStatus, serverChecked: true, serverAvailable: false };
       return false;
     }
     const explicitMode = localStorage.getItem(STORAGE_KEYS.STORAGE_MODE);
+    if (!this.hasApiServer()) {
+      return this._setServerUnavailable(explicitMode);
+    }
     try {
       const res = await fetch('/api/health', { cache: 'no-store', credentials: 'same-origin' });
       if (!res.ok) {
@@ -407,22 +434,7 @@ class StateManager {
       }
       return true;
     } catch {
-      if (!explicitMode) {
-        localStorage.setItem(STORAGE_KEYS.STORAGE_MODE, 'local');
-      }
-      const mode = this.getStorageMode();
-      this.dbStatus = {
-        ...this.dbStatus,
-        mode,
-        engine: mode === 'local' ? 'local' : this.dbStatus.engine,
-        serverChecked: true,
-        serverAvailable: false,
-        authRequired: false,
-        authenticated: false,
-        serverCounts: null
-      };
-      this.notify('db_status_changed', this.dbStatus);
-      return false;
+      return this._setServerUnavailable(explicitMode);
     }
   }
 
