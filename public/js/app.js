@@ -4,9 +4,7 @@
  */
 
 const KHORA_CREDITS = {
-  githubUser: (typeof window !== 'undefined' && window.location?.hostname?.endsWith('.github.io'))
-    ? window.location.hostname.split('.')[0]
-    : 'JCarrascoF',
+  githubUser: 'JCarrascoF',
   repoName: 'khora',
   kofiUrl: 'https://ko-fi.com/jcarrascof'
 };
