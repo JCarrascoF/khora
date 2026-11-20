@@ -3,7 +3,7 @@
 
 🇪🇸 [Español](./README.md) | 🇬🇧 **English**
 
-> 💻 **Try it now:** [https://jcarrascof.github.io/khora/](https://jcarrascof.github.io/khora/)
+> 💻 **Try it now:** [https://khora-act.pages.dev/](https://khora-act.pages.dev/)
 
 # Khōra — Your ACT space
 
