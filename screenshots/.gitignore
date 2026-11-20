@@ -1,0 +1,5 @@
+# Screenshots are generated locally via `npm run ui:capture`.
+# Do not commit binary artifacts.
+*
+!README.md
+!.gitignore
