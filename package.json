@@ -3,7 +3,7 @@
   "version": "1.1.0",
   "description": "Khora — Tu espacio ACT (PWA local-first con cifrado AES-256 y SQLite opcional)",
   "license": "MIT",
-  "homepage": "https://jcarrascof.github.io/khora/",
+  "homepage": "https://khora-act.pages.dev/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JCarrascoF/khora.git"
