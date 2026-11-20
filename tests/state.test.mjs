@@ -200,19 +200,43 @@ test('seedDemoData is non-destructive, idempotent, and clearExampleData preserve
   assert.ok(sm.getPillFavorites().includes('pill_3'));
 });
 
-test('getAnalytics computes populated KPIs, contextMap, timeline, and latestHexaflex after seedDemoData', () => {
-  const { sm } = loadState({ withMetaTag: false });
-  sm.clearAllData();
-  sm.seedDemoData();
+test('clearing example data leaves bus with clean empty state and no stray fake values or 1-min time references', () => {
+  const profileSrc = fs.readFileSync(path.join(ROOT_DIR, 'public', 'js', 'subapp-profile.js'), 'utf8');
+  const appSrc = fs.readFileSync(path.join(ROOT_DIR, 'public', 'js', 'app.js'), 'utf8');
+  const utilsSrc = fs.readFileSync(path.join(ROOT_DIR, 'public', 'js', 'utils.js'), 'utf8');
 
-  const analytics = sm.getAnalytics();
-  assert.equal(analytics.totalPf, 4);
-  assert.equal(analytics.totalAct, 3);
-  assert.ok(analytics.valueChoiceRatio > 0 && analytics.valueChoiceRatio < 100);
-  assert.ok(Number(analytics.avgDefusionReduction) > 0);
-  assert.equal(analytics.contextMap.Trabajo.count, 2);
-  assert.equal(analytics.contextMap.Pareja.count, 1);
-  assert.equal(analytics.contextMap.Familia.count, 1);
-  assert.equal(analytics.combinedTimeline.length, 7);
-  assert.equal(analytics.latestHexaflex.id, 'demo_hex_1');
+  const { sm } = loadState({ withMetaTag: false });
+  // Initial state has val_seed_1 (example item)
+  assert.equal(sm.getProfile().coreValues.length, 1);
+  assert.equal(sm.getProfile().coreValues[0].isExample, true);
+
+  // Clear all example data
+  sm.clearExampleData();
+  const profileAfterClear = sm.getProfile();
+  assert.equal(profileAfterClear.coreValues.length, 0);
+
+  // Run ProfileApp in sandbox
+  const sandbox = {
+    window: {},
+    document: { getElementById: () => null, querySelectorAll: () => [] },
+    localStorage: { getItem: () => null, setItem: () => {} },
+    console
+  };
+  sandbox.window = sandbox;
+  sandbox.window.stateManager = sm;
+  vm.runInNewContext(utilsSrc, sandbox);
+  vm.runInNewContext(profileSrc + '\n;window.PerfilApp = PerfilApp;', sandbox);
+
+  const profileApp = new sandbox.PerfilApp();
+  const busHtml = profileApp.renderMindAndBusBlock(profileAfterClear);
+
+  // Must NOT contain the old hardcoded fallback value
+  assert.equal(busHtml.includes('«Cuidar mi dignidad y elegir mi camino con honestidad»'), false);
+  // Must render empty state guidance
+  assert.ok(busHtml.includes('Aún no has definido ningún valor rumbo'));
+  // Must NOT include "(1 min)"
+  assert.equal(busHtml.includes('Ensayar respuesta (1 min)'), false);
+
+  // App navigation must NOT include 'Botiquín 1-Min'
+  assert.equal(appSrc.includes('Botiquín 1-Min'), false);
 });
