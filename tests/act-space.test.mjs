@@ -234,35 +234,38 @@ function loadI18nEn() {
   return sandbox.i18n;
 }
 
-test('Espacio ACT keeps a clear 4-step progress bar across simplified labels', () => {
+test('Espacio ACT keeps a 7-step Typeform micro-flow with one question per screen', () => {
   const { app, container } = loadActSpaceHarness();
   app.render();
 
-  assert.equal(app.totalSteps, 4);
-  for (const label of [
-    '1. Nombrar Emoción',
-    '2. Sentir en el Cuerpo',
-    '3. Tomar Distancia',
-    '4. Elegir Micro-Paso'
-  ]) {
-    assert.ok(container.innerHTML.includes(label), `Missing step label: ${label}`);
-  }
+  assert.equal(app.totalSteps, 7);
+  assert.ok(container.innerHTML.includes('act-typeform-shell'));
+  assert.ok(container.innerHTML.includes('act-progress-track'));
+  assert.ok(container.innerHTML.includes('1 / 7'));
+  assert.ok(container.innerHTML.includes('¿Qué estás sintiendo?'));
+  assert.equal(container.innerHTML.includes('slider-act-intensity'), false);
+
+  app.setStep(2);
+  assert.ok(container.innerHTML.includes('slider-act-intensity'));
 });
 
-test('Step 2 keeps breathing in an optional modal, word-guided without countdown, and stops cleanly', () => {
+test('Step 3 (Body) keeps breathing in an optional modal, word-guided without countdown, and stops cleanly', () => {
   const { app, container, modal, modalBody, openModalCalls, elements, pendingTimers, runNextTimer } = loadActSpaceHarness();
-  app.setStep(2);
+  app.setStep(3);
 
-  // Inline Step 2 stays clean: shows optional trigger button, no inline breathing pacer
+  // Inline Step 3 stays clean: single-column Typeform focus, optional trigger button, no inline breathing pacer
   assert.equal(app.breathingActive, false);
   assert.equal(app.breathingPhase, 'idle');
   assert.equal(pendingTimers.size, 0);
   assert.equal(container.innerHTML.includes('breathing-pacer-container'), false);
   assert.equal(container.innerHTML.includes('breathing-orb'), false);
   assert.equal(container.innerHTML.includes('breathing-countdown'), false);
+  assert.equal(container.innerHTML.includes('desktop-two-col'), false);
   assert.ok(container.innerHTML.includes('id="btn-open-breathing-modal"'));
-  assert.ok(container.innerHTML.includes('No lo tengo claro · Hacerle hueco en el cuerpo'));
+  assert.ok(container.innerHTML.includes('Pausa para respirar'));
   assert.ok(container.innerHTML.includes('id="btn-open-somatic-posture"'));
+  assert.ok(container.innerHTML.includes('Postura de apertura'));
+  assert.ok(container.innerHTML.includes('id="btn-toggle-body-details"'));
 
   // Opening the modal puts the breathing exercise inside #modal-body in idle state (no auto-start)
   app.openBreathingModal();
@@ -301,17 +304,17 @@ test('Step 2 keeps breathing in an optional modal, word-guided without countdown
   assert.equal(elements.get('breathing-cycle-hint').hidden, false);
   assert.equal(elements.get('breathing-cycle-hint').textContent, 'Ciclos completados: 1');
 
-  // Leaving Step 2 stops breathing and clears pending timer
-  app.setStep(3);
+  // Leaving Step 3 stops breathing and clears pending timer
+  app.setStep(4);
   assert.equal(app.breathingActive, false);
   assert.equal(app.breathingPhase, 'idle');
   assert.equal(pendingTimers.size, 0);
 });
 
-test('Step 3 renders single-gesture defusion without anchor banner, leaves on a stream, or intensity slider', () => {
+test('Step 5 renders single-gesture defusion without anchor banner, leaves on a stream, or intensity slider', () => {
   const { app, container } = loadActSpaceHarness({ mindName: 'Radio Catástrofe' });
   app.entryData.thought = 'Se van a enfadar si digo que no.';
-  app.setStep(3);
+  app.setStep(5);
 
   assert.equal(container.innerHTML.includes('personal-anchor-banner'), false);
   assert.equal(container.innerHTML.includes('stream-container'), false);
@@ -323,7 +326,7 @@ test('Step 3 renders single-gesture defusion without anchor banner, leaves on a 
   assert.ok(container.innerHTML.includes('data-defusion-style="story"'));
   assert.ok(container.innerHTML.includes('data-defusion-style="thanks"'));
   assert.ok(
-    container.innerHTML.includes('"Estoy teniendo el pensamiento de que Se van a enfadar si digo que no."')
+    container.innerHTML.includes('"Estoy pensando que Se van a enfadar si digo que no."')
   );
 
   assert.equal(app.buildReframedThought('notice', '   ', 'George'), '');
@@ -337,7 +340,7 @@ test('Step 3 renders single-gesture defusion without anchor banner, leaves on a 
   );
 });
 
-test('Step 4 syncs closing intensity, derives passenger automatically, and persists without extra passenger input', () => {
+test('Step 6 & 7 keep choice focused, sync closing intensity, derive passenger automatically, and persist cleanly', () => {
   const { app, container, savedEntries, addedPassengers } = loadActSpaceHarness({
     coreValues: [{ id: 'v1', domain: 'Límites', statement: 'Decir que no con calma y respeto' }]
   });
@@ -347,18 +350,18 @@ test('Step 4 syncs closing intensity, derives passenger automatically, and persi
   app.entryData.initialIntensity = 9;
   app.entryData.bodyZones = ['Pecho/Corazón'];
 
-  // Before Step 3 thought, derived passenger falls back to emotion + body zone
+  // Before Step 4 thought, derived passenger falls back to emotion + body zone
   assert.equal(app.getDerivedPassenger(), 'Ansiedad en Pecho/Corazón');
 
-  // Entering Step 4 syncs postIntensity to initialIntensity until touched
-  app.setStep(4);
-  assert.equal(app.entryData.postIntensity, 9);
+  // Step 6 focuses purely on choice & next step without willingness text or closing slider
+  app.setStep(6);
   assert.equal(container.innerHTML.includes('personal-anchor-banner'), false);
   assert.equal(container.innerHTML.includes('act-passenger-input'), false);
+  assert.equal(container.innerHTML.includes('act-willingness-strip'), false);
+  assert.equal(container.innerHTML.includes('slider-act-post-intensity'), false);
   assert.ok(container.innerHTML.includes('id="btn-select-value"'));
   assert.ok(container.innerHTML.includes('id="btn-select-autopilot"'));
-  assert.ok(container.innerHTML.includes('id="slider-act-post-intensity"'));
-  assert.ok(container.innerHTML.includes('«Ansiedad en Pecho/Corazón»'));
+  assert.ok(container.innerHTML.includes('id="btn-toggle-action-examples"'));
 
   // Switch to autopilot mode cleanly
   app.entryData.choiceType = 'autopilot';
@@ -366,12 +369,18 @@ test('Step 4 syncs closing intensity, derives passenger automatically, and persi
   assert.ok(container.innerHTML.includes('id="act-autopilot-urge"'));
   assert.equal(container.innerHTML.includes('id="act-committed-action"'), false);
 
-  // Switch back to values mode with a Step 3 thought and touched postIntensity
+  // Entering Step 7 syncs postIntensity to initialIntensity until touched
+  app.setStep(7);
+  assert.equal(app.entryData.postIntensity, 9);
+  assert.ok(container.innerHTML.includes('id="slider-act-post-intensity"'));
+  assert.ok(container.innerHTML.includes('id="chk-save-passenger-to-bus"'));
+
+  // Switch back to Step 4 thought and preserve touched postIntensity on Step 7
   app.postIntensityTouched = true;
   app.entryData.postIntensity = 4;
-  app.setStep(3);
-  app.entryData.thought = 'Soy egoísta por priorizarme';
   app.setStep(4);
+  app.entryData.thought = 'Soy egoísta por priorizarme';
+  app.setStep(7);
   assert.equal(app.entryData.postIntensity, 4, 'User-adjusted postIntensity should be preserved');
   assert.equal(app.getDerivedPassenger(), 'Soy egoísta por priorizarme');
 
@@ -383,7 +392,7 @@ test('Step 4 syncs closing intensity, derives passenger automatically, and persi
 
   assert.equal(savedEntries.length, 1);
   assert.equal(savedEntries[0].carriedPassenger, 'Soy egoísta por priorizarme');
-  assert.equal(savedEntries[0].reframedThought, 'Estoy teniendo el pensamiento de que Soy egoísta por priorizarme.');
+  assert.equal(savedEntries[0].reframedThought, 'Estoy pensando que Soy egoísta por priorizarme.');
   assert.equal(addedPassengers.length, 1);
   assert.equal(addedPassengers[0].name, 'Soy egoísta por priorizarme');
 
@@ -455,13 +464,45 @@ test('EN i18n translates all streamlined Espacio ACT labels, help strings, and d
     '1. Nombrar Emoción: pon nombre exacto a lo que sientes (o salta directo al cuerpo si estás muy saturado/a).',
     '2. Sentir en el Cuerpo: ubica la sensación, descríbela y respira si quieres hacerle espacio.',
     '3. Tomar Distancia: observa el pensamiento que repite tu mente desde fuera, sin discutir con él.',
-    '4. Elegir Micro-Paso: decide un gesto pequeño hacia tus valores (o registra si ganó el piloto automático).'
+    '4. Elegir Micro-Paso: decide un gesto pequeño hacia tus valores (o registra si ganó el piloto automático).',
+    '1. Qué sientes',
+    '2. En el cuerpo',
+    '3. Qué piensas',
+    '4. Tu paso',
+    '¿Qué estás sintiendo ahora?',
+    '¿Qué tan fuerte es ahora?',
+    'Pausa para respirar',
+    'Postura de apertura',
+    '¿Qué te está diciendo tu mente?',
+    'Es solo un pensamiento',
+    '¿Qué quieres hacer ahora?',
+    '1. Emoción',
+    '2. Intensidad',
+    '3. Cuerpo',
+    '4. Mente',
+    '5. Distancia',
+    '6. Elección',
+    '7. Cierre',
+    'Hacia lo que me importa',
+    'En piloto automático',
+    'Guardar y terminar'
   ];
 
   for (const key of exactKeys) {
     const tr = i18n.t(key);
     assert.ok(tr && tr !== key, `Expected EN translation for "${key}", got "${tr}"`);
   }
+
+  assert.equal(i18n.t('Nombre de tu mente: «George»'), 'Mind name: "George"');
+  assert.equal(i18n.t('¿Dónde notas «Ansiedad» en tu cuerpo?'), 'Where do you notice "Anxiety" in your body?');
+  assert.equal(
+    i18n.t('"Estoy pensando que Se van a enfadar si digo que no."'),
+    '"I am thinking that They will get angry if I say no."'
+  );
+  assert.equal(
+    i18n.t('¿Qué tan fuerte lo sientes ahora? (antes: 8/10)'),
+    'How strong is it now? (before: 8/10)'
+  );
 
   assert.equal(i18n.t('Apodo de tu mente: «George»'), 'Mind nickname: "George"');
   assert.equal(i18n.t('Historia de George'), "George's story");
@@ -484,4 +525,17 @@ test('EN i18n translates all streamlined Espacio ACT labels, help strings, and d
     i18n.t('Pasajero a bordo: "Se van a enfadar si digo que no"'),
     'Passenger aboard: "They will get angry if I say no"'
   );
+});
+
+test('Espacio ACT renders clickable step pills to jump directly to previous steps', () => {
+  const { app, container } = loadActSpaceHarness();
+
+  app.setStep(5);
+  assert.ok(container.innerHTML.includes('act-typeform-steps-nav'));
+  assert.ok(container.innerHTML.includes('class="act-step-pill completed" data-goto-step="2"'));
+  assert.ok(container.innerHTML.includes('class="act-step-pill active" data-goto-step="5"'));
+
+  app.setStep(2);
+  assert.equal(app.currentStep, 2, 'Jumping to step 2 should update currentStep to 2');
+  assert.ok(container.innerHTML.includes('class="act-step-pill active" data-goto-step="2"'));
 });

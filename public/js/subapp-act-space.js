@@ -8,10 +8,11 @@
 class EspacioActApp {
   constructor() {
     this.currentStep = 1;
-    this.totalSteps = 4;
+    this.totalSteps = 7;
     this.emotionViewMode = 'wheel'; // 'wheel' (Rueda Circular Estándar) | 'chips' (Fichas / Lista)
     this.activeEmotionFamily = 'Ira';
     this.emotionSearchQuery = '';
+    this.zoomedWheelFamily = null;
 
     // Taxonomía Terapéutica Formal Completa (42 Emociones en 6 Familias de Ekman, Plutchik y Willcox/Roberts)
     this.emotionFamilies = [
@@ -134,6 +135,9 @@ class EspacioActApp {
 
     this.defusionStyle = 'notice'; // 'notice' | 'story' | 'thanks'
     this.showMoreValues = false;
+    this.showBodyDetails = false;
+    this.showThoughtExamples = false;
+    this.showActionExamples = false;
     this.postIntensityTouched = false;
 
     this.breathingPhaseTimeout = null;
@@ -164,11 +168,15 @@ class EspacioActApp {
     this.currentStep = 1;
     this.defusionStyle = 'notice';
     this.showMoreValues = false;
+    this.showBodyDetails = false;
+    this.showThoughtExamples = false;
+    this.showActionExamples = false;
     this.postIntensityTouched = false;
     this.breathingCyclesDone = 0;
     this.emotionViewMode = 'wheel';
     this.activeEmotionFamily = 'Ira';
     this.emotionSearchQuery = '';
+    this.zoomedWheelFamily = null;
     this.entryData = {
       emotions: [],
       emotion: '',
@@ -194,10 +202,10 @@ class EspacioActApp {
 
   setStep(step) {
     if (step < 1 || step > this.totalSteps) return;
-    if (this.currentStep === 2 && step !== 2) {
+    if (this.currentStep === 3 && step !== 3) {
       this.stopBreathing();
     }
-    if (step === 4 && !this.postIntensityTouched) {
+    if (step === 7 && !this.postIntensityTouched) {
       this.entryData.postIntensity = this.entryData.initialIntensity;
     }
     this.currentStep = step;
@@ -209,7 +217,7 @@ class EspacioActApp {
     const container = document.getElementById('espacio-act-view');
     if (!container) return;
 
-    const progressPercent = ((this.currentStep - 1) / (this.totalSteps - 1)) * 100;
+    const progressPercent = (this.currentStep / this.totalSteps) * 100;
 
     let stepHtml = '';
     switch (this.currentStep) {
@@ -225,39 +233,50 @@ class EspacioActApp {
       case 4:
         stepHtml = this.renderStep4();
         break;
+      case 5:
+        stepHtml = this.renderStep5();
+        break;
+      case 6:
+        stepHtml = this.renderStep6();
+        break;
+      case 7:
+        stepHtml = this.renderStep7();
+        break;
     }
 
+    const stepLabels = [
+      { step: 1, label: '1. Emoción' },
+      { step: 2, label: '2. Intensidad' },
+      { step: 3, label: '3. Cuerpo' },
+      { step: 4, label: '4. Mente' },
+      { step: 5, label: '5. Distancia' },
+      { step: 6, label: '6. Elección' },
+      { step: 7, label: '7. Cierre' }
+    ];
+
     container.innerHTML = `
-      <div class="view-plain-shell">
-        <div class="card-header flex-between" style="margin-bottom: 12px;">
-          <div class="title-with-help">
-<h2 class="card-title" style="margin: 0;">El Espacio ACT</h2>
+      <div class="act-typeform-shell">
+        <div class="act-typeform-topbar">
+          <div class="act-typeform-topbar-row">
+            <span class="badge" style="background-color: rgba(87, 139, 116, 0.16); color: var(--sage-700)">
+              ${this.currentStep} / ${this.totalSteps}
+            </span>
             <button type="button" class="help-info-trigger" data-help-topic="espacio-act" aria-label="Información de esta herramienta">ⓘ</button>
           </div>
-          <span class="badge" style="background-color: rgba(87, 139, 116, 0.2); color: var(--sage-700)">
-            Paso ${this.currentStep} de ${this.totalSteps}
-          </span>
-        </div>
 
-        <!-- Step Indicator Bar -->
-        <div class="step-bar-container with-labels">
-          <div class="step-bar-track">
-            <div class="step-bar-fill" style="width: ${progressPercent}%;"></div>
+          <div class="act-progress-track" role="progressbar" aria-valuenow="${this.currentStep}" aria-valuemin="1" aria-valuemax="${this.totalSteps}">
+            <div class="act-progress-fill" style="width: ${progressPercent}%;"></div>
           </div>
-          ${[
-            { n: 1, label: '1. Nombrar Emoción' },
-            { n: 2, label: '2. Sentir en el Cuerpo' },
-            { n: 3, label: '3. Tomar Distancia' },
-            { n: 4, label: '4. Elegir Micro-Paso' }
-          ].map(st => `
-            <div class="step-item">
-              <div class="step-node ${this.currentStep >= st.n ? (this.currentStep === st.n ? 'active' : 'completed') : ''}" title="${st.label}">${st.n}</div>
-              <span class="step-item-label ${this.currentStep === st.n ? 'active' : ''}">${st.label}</span>
-            </div>
-          `).join('')}
+
+          <nav class="act-typeform-steps-nav" aria-label="Pasos de Espacio ACT">
+            ${stepLabels.map(s => {
+              const cls = s.step === this.currentStep ? 'active' : (s.step < this.currentStep ? 'completed' : '');
+              return `<button type="button" class="act-step-pill ${cls}" data-goto-step="${s.step}" ${s.step === this.currentStep ? 'aria-current="step"' : ''}>${s.label}</button>`;
+            }).join('')}
+          </nav>
         </div>
 
-        <div id="act-step-body">
+        <div id="act-step-body" class="act-typeform-stage">
           ${stepHtml}
         </div>
       </div>
@@ -292,10 +311,10 @@ class EspacioActApp {
     const selected = Array.isArray(this.entryData.emotions) ? this.entryData.emotions : [];
     if (selected.length === 0) {
       return `
-        <div class="selected-emotions-bar" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 10px;">
-          <span style="font-style: italic;">Aún no has seleccionado ninguna emoción — puedes marcar una o varias abajo o usar un acceso rápido.</span>
-          <button type="button" class="badge" id="btn-act-skip-unnamed" style="cursor: pointer; padding: 5px 10px; font-size: 0.74rem; border: 1px solid var(--sage-400); background: var(--bg-surface-elevated); color: var(--sage-700);">
-            No sé nombrarla aún (Avanzar)
+        <div class="selected-emotions-bar" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">
+          <span>Aún no has marcado ninguna emoción.</span>
+          <button type="button" class="btn-inline-link" id="btn-act-skip-unnamed" style="font-size: 0.78rem;">
+            No sé nombrarla aún →
           </button>
         </div>
       `;
@@ -320,97 +339,75 @@ class EspacioActApp {
 
     return `
       <div class="selected-emotions-bar" style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 12px;">
-        <span style="font-size: 0.76rem; color: var(--text-muted); font-weight: 600;">Seleccionadas (${selected.length}):</span>
+        <span style="font-size: 0.76rem; color: var(--text-muted); font-weight: 600;">Marcadas (${selected.length}):</span>
         ${chips}
       </div>
     `;
   }
 
   // -------------------------------------------------------------
-  // STEP 1: La Rueda de las Emociones (Vista Primaria) + Intensidad Inicial
+  // STEP 1: ¿Qué estás sintiendo?
   // -------------------------------------------------------------
   renderStep1() {
     const selected = Array.isArray(this.entryData.emotions) ? this.entryData.emotions : [];
     const focusedEmotion = this.entryData.lastFocusedEmotion || selected[selected.length - 1] || '';
     let activeNuanceDesc = '';
-    let activeNuanceExample = '';
     if (focusedEmotion) {
       this.emotionFamilies.forEach(fam => {
         const found = fam.nuances.find(n => n.id === focusedEmotion);
         if (found) {
           activeNuanceDesc = found.desc;
-          activeNuanceExample = found.example || '';
         }
       });
     }
 
     return `
-      <!-- Acceso Rápido de Baja Fricción (Para picos de saturación) -->
-      <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-left: 3.5px solid var(--sage-500); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 16px;">
-        <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: space-between;">
-          <div style="display: flex; flex-wrap: wrap; gap: 5px; align-items: center;">
-            <span style="font-size: 0.74rem; font-weight: 700; color: var(--text-muted); margin-right: 2px;">Atajo rápido:</span>
-            ${this.emotionFamilies.map(fam => {
-              const isSel = selected.includes(fam.id);
-              return `
-                <button type="button" class="badge quick-family-chip ${isSel ? 'active' : ''}" data-quick-family="${fam.id}"
-                        style="cursor: pointer; padding: 4px 9px; font-size: 0.74rem; border: 1px solid ${isSel ? 'var(--sage-500)' : 'var(--border-subtle)'}; background: ${isSel ? 'var(--sage-500)' : 'var(--bg-surface)'}; color: ${isSel ? '#fff' : 'var(--text-secondary)'};">
-                  ${fam.icon} ${fam.id}
-                </button>
-              `;
-            }).join('')}
-          </div>
-          <button type="button" class="btn-secondary" id="btn-act-overload-skip" style="font-size: 0.76rem; padding: 6px 12px; border-radius: var(--radius-full); border-color: var(--sage-400);">
-            Saltar directo al Cuerpo (si estás muy saturado/a)
+      <div class="act-step-header">
+        <h3 class="act-step-question">¿Qué estás sintiendo?</h3>
+        ${activeNuanceDesc ? `
+          <p class="act-step-lead" data-keep-explanation="true"><em>"${focusedEmotion}: ${activeNuanceDesc}"</em></p>
+        ` : ''}
+      </div>
+
+      <div class="act-typeform-toolbar">
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+          ${this.emotionFamilies.map(fam => {
+            const isSel = selected.includes(fam.id);
+            return `
+              <button type="button" class="badge quick-family-chip ${isSel ? 'active' : ''}" data-quick-family="${fam.id}"
+                      style="cursor: pointer; padding: 5px 10px; font-size: 0.76rem; border: 1px solid ${isSel ? 'var(--sage-500)' : 'var(--border-subtle)'}; background: ${isSel ? 'var(--sage-500)' : 'var(--bg-surface)'}; color: ${isSel ? '#fff' : 'var(--text-secondary)'};">
+                ${fam.icon} ${fam.id}
+              </button>
+            `;
+          }).join('')}
+        </div>
+
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+          <button type="button" class="btn-secondary" id="btn-maximize-wheel" style="font-size: 0.76rem; padding: 5px 12px; border-radius: var(--radius-full);">
+            Ampliar
           </button>
-        </div>
-      </div>
-
-      <!-- Emotion Wheel Header & Secondary View Action -->
-      <div class="form-group">
-        <div class="flex-between" style="margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
-          <div>
-            <label class="form-label" style="margin-bottom: 0;">1. Nombra lo que sientes (toca 1 o varias emociones)</label>
-            <p class="form-hint" ${activeNuanceDesc ? 'data-keep-explanation="true"' : ''} style="margin-top: 2px;">
-              ${activeNuanceDesc ? `<em>"${focusedEmotion}: ${activeNuanceDesc}"</em>` : 'Poner nombre exacto ayuda a tomar distancia de la ola.'}
-              ${activeNuanceExample ?`<br/><span style="color: var(--sage-600); font-size: 0.78rem;">${activeNuanceExample}</span>` :''}
-            </p>
-          </div>
-
-          <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-            <button type="button" class="btn-secondary" id="btn-maximize-wheel" style="font-size: 0.78rem; padding: 6px 13px; border-radius: var(--radius-full);">
-              Ampliar Rueda
+          ${this.emotionViewMode === 'wheel' ? `
+            <button type="button" class="btn-secondary mode-toggle-btn" data-emotion-mode="chips" style="font-size: 0.76rem; padding: 5px 12px; border-radius: var(--radius-full);">
+              Ver lista
             </button>
-            ${this.emotionViewMode === 'wheel' ? `
-              <button type="button" class="btn-secondary mode-toggle-btn" data-emotion-mode="chips" style="font-size: 0.78rem; padding: 6px 13px; border-radius: var(--radius-full);">
-                Ver en Lista / Buscar
-              </button>
-            ` : `
-              <button type="button" class="btn-primary mode-toggle-btn" data-emotion-mode="wheel" style="font-size: 0.78rem; padding: 6px 14px; border-radius: var(--radius-full);">
-                Volver a Rueda
-              </button>
-            `}
-          </div>
+          ` : `
+            <button type="button" class="btn-primary mode-toggle-btn" data-emotion-mode="wheel" style="font-size: 0.76rem; padding: 5px 12px; border-radius: var(--radius-full);">
+              Ver rueda
+            </button>
+          `}
         </div>
-
-        ${this.renderSelectedEmotionsBar()}
-
-        <!-- Render Primary Wheel or Secondary Chips View -->
-        ${this.emotionViewMode === 'wheel' ? this.renderCircularEmotionWheel(false) : this.renderChipsEmotionWheel()}
       </div>
 
-      <!-- Initial Intensity Slider -->
-      <div class="slider-group mt-4">
-        <div class="slider-header">
-          <label class="form-label" style="margin-bottom: 0;">Intensidad del malestar presente</label>
-          <span class="slider-val-badge" id="val-act-intensity">${this.entryData.initialIntensity}/10</span>
-        </div>
-        <input type="range" class="range-slider" id="slider-act-intensity" min="1" max="10" value="${this.entryData.initialIntensity}">
-      </div>
+      ${this.renderSelectedEmotionsBar()}
 
-      <div class="btn-group">
+      ${this.emotionViewMode === 'wheel' ? this.renderCircularEmotionWheel(false) : this.renderChipsEmotionWheel()}
+
+      <div class="act-typeform-footer">
+        <button type="button" class="btn-inline-link" id="btn-act-overload-skip" style="font-size: 0.82rem;">
+          Ir directo al cuerpo →
+        </button>
         <button type="button" class="btn-primary" id="btn-act-next-1">
-          Paso 2: Sentir en el Cuerpo
+          Siguiente
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </div>
@@ -420,13 +417,43 @@ class EspacioActApp {
   // -------------------------------------------------------------
   // CIRCULAR RADIAL EMOTION WHEEL GENERATOR (SVG)
   // -------------------------------------------------------------
-  renderCircularEmotionWheel(isMaximized = false) {
-    const selectedList = Array.isArray(this.entryData.emotions) ? this.entryData.emotions : [];
+  getWheelZoomTransform(familyId) {
+    if (!familyId) return '';
+    const idx = this.emotionFamilies.findIndex(f => f.id === familyId);
+    if (idx < 0) return '';
     const cx = 260;
     const cy = 260;
-    const rIn = 58;
-    const rMid = 114;
-    const rOut = 232;
+    const rFocus = 160;
+    const scale = 1.92;
+    const midAngle = idx * 60 + 30;
+    const rad = (midAngle - 90) * Math.PI / 180.0;
+    const fx = cx + rFocus * Math.cos(rad);
+    const fy = cy + rFocus * Math.sin(rad);
+    const tx = (-scale * (fx - cx)).toFixed(2);
+    const ty = (-scale * (fy - cy)).toFixed(2);
+    return `translate(${tx}px, ${ty}px) scale(${scale})`;
+  }
+
+  getWheelDefaultHint(isCompact = false, zoomedFamily = null) {
+    if (zoomedFamily) {
+      return 'Toca una emoción para elegirla, o toca fuera para volver a toda la rueda.';
+    }
+    if (isCompact) {
+      return 'Desliza el dedo para ver ejemplos. Toca una zona para ampliarla y elegir.';
+    }
+    return 'Pasa el ratón por el anillo exterior para ampliar y ver un ejemplo. Haz clic para elegir.';
+  }
+
+  renderCircularEmotionWheel(isMaximized = false) {
+    const selectedList = Array.isArray(this.entryData.emotions) ? this.entryData.emotions : [];
+    const zoomedFam = this.zoomedWheelFamily
+      ? this.emotionFamilies.find(f => f.id === this.zoomedWheelFamily) || null
+      : null;
+    const cx = 260;
+    const cy = 260;
+    const rIn = 48;
+    const rMid = 86;
+    const rOut = 244;
 
     // Helper polar to cartesian
     const p2c = (radius, angleInDeg) => {
@@ -473,8 +500,10 @@ class EspacioActApp {
       Paz: '#264d3e'
     };
 
+    let innerDefsHtml = '';
     let innerSlicesHtml = '';
     let outerSlicesHtml = '';
+    const arcPrefix = isMaximized ? 'wheel-fam-arc-modal' : 'wheel-fam-arc';
 
     this.emotionFamilies.forEach((fam, i) => {
       const famStart = i * 60;
@@ -482,23 +511,22 @@ class EspacioActApp {
 
       // Inner Family Slice (Nivel 1: No seleccionable, solo orientativo para concretar)
       const innerD = arcPath(rIn, rMid, famStart + 0.5, famEnd - 0.5);
-      const innerMidA = famStart + 30;
-      const innerPos = p2c(86, innerMidA);
+      const isBottomHalf = i >= 2 && i <= 4;
+      const arcR = isBottomHalf ? 69 : 65;
+      const arcStartPt = p2c(arcR, isBottomHalf ? famEnd - 3 : famStart + 3);
+      const arcEndPt = p2c(arcR, isBottomHalf ? famStart + 3 : famEnd - 3);
+      const arcSweep = isBottomHalf ? 0 : 1;
+      const famArcId = `${arcPrefix}-${i}`;
+      innerDefsHtml += `<path id="${famArcId}" d="M ${arcStartPt.x} ${arcStartPt.y} A ${arcR} ${arcR} 0 0 ${arcSweep} ${arcEndPt.x} ${arcEndPt.y}" />`;
 
-      let innerLabelHtml = fam.id;
-      let innerFontSize = '9.2';
-      let innerY = innerPos.y + 10;
-      if (fam.id.includes(' / ')) {
-        const parts = fam.id.split(' / ');
-        innerFontSize = '8.2';
-        innerY = innerPos.y + 8;
-        innerLabelHtml = `<tspan x="${innerPos.x}" dy="0">${parts[0]}</tspan><tspan x="${innerPos.x}" dy="1.05em">/ ${parts[1]}</tspan>`;
-      }
+      const isDimmedFam = zoomedFam && zoomedFam.id !== fam.id;
+      const famFontSize = fam.id.length > 10 ? '7.8' : '8.8';
 
       innerSlicesHtml += `
-        <path d="${innerD}" fill="${innerFamilyColors[fam.id] || fam.color}" opacity="0.94" class="wheel-family-sector" data-wheel-family="${fam.id}" />
-        <text x="${innerPos.x}" y="${innerPos.y - 7}" text-anchor="middle" font-size="13.5" style="pointer-events: none;">${fam.icon}</text>
-        <text x="${innerPos.x}" y="${innerY}" text-anchor="middle" font-size="${innerFontSize}" class="wheel-family-label">${innerLabelHtml}</text>
+        <path d="${innerD}" fill="${innerFamilyColors[fam.id] || fam.color}" opacity="${isDimmedFam ? '0.28' : '0.94'}" class="wheel-family-sector ${isDimmedFam ? 'dimmed' : ''}" data-wheel-family="${fam.id}" />
+        <text font-size="${famFontSize}" class="wheel-family-label" style="opacity: ${isDimmedFam ? '0.28' : '1'};">
+          <textPath href="#${famArcId}" startOffset="50%" text-anchor="middle">${fam.id}</textPath>
+        </text>
       `;
 
       // Outer Nuance Slices (Nivel 2: Emociones concretas seleccionables con efecto lupa)
@@ -514,7 +542,7 @@ class EspacioActApp {
 
         // Label rotation & position: mathematically guaranteed upright text (rot in [-90, +90])
         const nMidA = nStart + delta / 2;
-        const textPos = p2c(174.5, nMidA);
+        const textPos = p2c(173, nMidA);
         let rot = (nMidA - 90) % 360;
         if (rot > 180) rot -= 360;
         if (rot < -180) rot += 360;
@@ -525,15 +553,15 @@ class EspacioActApp {
         const safeExample = (nuance.example || '').replace(/"/g, '&quot;');
 
         // Una sola línea radial erguida adaptada al ancho del sector (42 emociones: 7 por familia)
-        let labelFontSize = '8.1';
+        let labelFontSize = '10.6';
         if (nuance.id.length >= 15) {
-          labelFontSize = '7.3';
-        } else if (nuance.id.length > 13) {
-          labelFontSize = '7.5';
+          labelFontSize = '9.2';
+        } else if (nuance.id.length > 12) {
+          labelFontSize = '9.8';
         }
 
         outerSlicesHtml += `
-          <g class="wheel-nuance-group ${isSel ? 'selected' : ''}" 
+          <g class="wheel-nuance-group ${isSel ? 'selected' : ''} ${isDimmedFam ? 'dimmed' : ''}" 
              data-act-emotion="${nuance.id}" 
              data-emotion-family="${fam.id}" 
              data-emotion-desc="${safeDesc}" 
@@ -567,7 +595,7 @@ class EspacioActApp {
 
     const hasSplitCenter = selCount > 0 && emotionLabel.length > 12 && (emotionLabel.includes(' / ') || emotionLabel.includes(' '));
     let centerTextHtml = `
-      <text x="260" y="261" text-anchor="middle" font-size="${selCount === 0 ? '11.4' : '12.2'}" font-weight="800" fill="var(--text-primary)">
+      <text x="260" y="261" text-anchor="middle" font-size="${selCount === 0 ? '9.8' : '10.6'}" font-weight="800" fill="var(--text-primary)">
         ${emotionLabel}
       </text>
     `;
@@ -584,40 +612,56 @@ class EspacioActApp {
         part2 = parts.slice(1).join(' ');
       }
       centerTextHtml = `
-        <text x="260" y="255" text-anchor="middle" font-size="10.4" font-weight="800" fill="var(--text-primary)">
+        <text x="260" y="255" text-anchor="middle" font-size="9.2" font-weight="800" fill="var(--text-primary)">
           <tspan x="260" dy="0">${part1}</tspan>
           <tspan x="260" dy="1.15em">${part2}</tspan>
         </text>
       `;
     }
 
+    const zoomTransform = this.getWheelZoomTransform(zoomedFam?.id);
+    const isInitialCompact = typeof window !== 'undefined' && window.innerWidth < 460;
+    const defaultHint = this.getWheelDefaultHint(isInitialCompact, zoomedFam?.id);
+
     return `
-      <div class="emotion-wheel-container">
-        <svg class="emotion-wheel-svg" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg">
-          <!-- Outer Nuance Ring (Nivel 2: Seleccionable con zoom lupa) -->
-          <g class="wheel-outer-ring">
-            ${outerSlicesHtml}
-          </g>
+      <div class="emotion-wheel-container ${zoomedFam ? 'is-zoomed' : ''}">
+        <div class="wheel-zoom-banner ${zoomedFam ? '' : 'hidden'}" role="status">
+          <span class="wheel-zoom-banner-text">
+            ${zoomedFam ? `🔍 <strong>${zoomedFam.icon} ${zoomedFam.id}</strong> · Toca una emoción para elegir` : ''}
+          </span>
+          <button type="button" class="btn-secondary wheel-zoom-reset-btn">← Toda la rueda</button>
+        </div>
 
-          <!-- Inner Family Ring (Nivel 1: Solo orientativo, fuerza a concretar afuera) -->
-          <g class="wheel-inner-ring">
-            ${innerSlicesHtml}
-          </g>
+        <div class="emotion-wheel-viewport">
+          <svg class="emotion-wheel-svg" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg">
+            <defs>${innerDefsHtml}</defs>
+            <g class="wheel-zoom-layer" style="${zoomTransform ? `transform: ${zoomTransform};` : ''}">
+              <!-- Outer Nuance Ring (Nivel 2: Seleccionable con zoom lupa) -->
+              <g class="wheel-outer-ring">
+                ${outerSlicesHtml}
+              </g>
 
-          <!-- Center Hub Indicator -->
-          <g class="wheel-center-hub">
-            <circle cx="260" cy="260" r="54" fill="var(--bg-surface)" stroke="var(--sage-500)" stroke-width="2.5" />
-            <text x="260" y="241" text-anchor="middle" font-size="19">${activeFamilyIcon}</text>
-            ${centerTextHtml}
-            <text x="260" y="284" text-anchor="middle" font-size="8.6" font-weight="600" fill="var(--border-focus)">
-              ${subHubLabel}
-            </text>
-          </g>
-        </svg>
+              <!-- Inner Family Ring (Nivel 1: Solo orientativo, fuerza a concretar afuera) -->
+              <g class="wheel-inner-ring">
+                ${innerSlicesHtml}
+              </g>
 
-        <!-- Hover Example Tooltip (desktop: populated on hover, mobile: populated on tap) -->
-        <div ${isMaximized ? '' : 'id="wheel-hover-example"'} class="wheel-hover-example" style="min-height: 36px; text-align: center; font-size: 0.82rem; color: var(--text-tertiary); font-style: italic; padding: 8px 14px; transition: all 0.25s ease;">
-          Pasa el ratón por el anillo exterior para ampliar y ver un ejemplo identificador.
+              <!-- Center Hub Indicator -->
+              <g class="wheel-center-hub">
+                <circle cx="260" cy="260" r="45" fill="var(--bg-surface)" stroke="var(--sage-500)" stroke-width="2.5" />
+                <text x="260" y="243" text-anchor="middle" font-size="16">${activeFamilyIcon}</text>
+                ${centerTextHtml}
+                <text x="260" y="279" text-anchor="middle" font-size="7.8" font-weight="600" fill="var(--border-focus)">
+                  ${subHubLabel}
+                </text>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Hover Example Tooltip (desktop: populated on hover, mobile: populated on scrub/tap) -->
+        <div ${isMaximized ? '' : 'id="wheel-hover-example"'} class="wheel-hover-example" style="min-height: 36px; text-align: center; font-size: 0.82rem; color: var(--text-tertiary); font-style: italic; padding: 8px 12px; transition: all 0.25s ease;">
+          ${defaultHint}
         </div>
       </div>
     `;
@@ -648,8 +692,8 @@ class EspacioActApp {
         ${this.getFilteredNuances().map(n => `
           <button type="button" class="chip-btn ${(this.entryData.emotions || []).includes(n.id) ? 'selected' : ''}" data-act-emotion="${n.id}" title="${(n.example || '').replace(/"/g, '&quot;')}" style="padding: 10px 8px;">
             <span style="font-weight: 700; font-size: 0.88rem;">${n.id}</span>
-            <small style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.2;">${n.desc}</small>
-            ${n.example ? `<small style="font-size: 0.66rem; color: var(--sage-600); font-style: italic; line-height: 1.2; margin-top: 3px;">${n.example}</small>` : ''}
+            <small class="explanatory-subtext" style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.2;">${n.desc}</small>
+            ${n.example ? `<small class="explanatory-subtext" style="font-size: 0.66rem; color: var(--sage-600); font-style: italic; line-height: 1.2; margin-top: 3px;">${n.example}</small>` : ''}
           </button>
         `).join('')}
       </div>
@@ -674,110 +718,118 @@ class EspacioActApp {
   }
 
   // -------------------------------------------------------------
-  // STEP 2: Identificación Física de la Emoción y Apertura Somática
+  // STEP 2: ¿Qué tan fuerte es?
   // -------------------------------------------------------------
   renderStep2() {
+    return `
+      <div class="act-step-header">
+        <h3 class="act-step-question">¿Qué tan fuerte sientes «${this.getSelectedEmotionsLabel()}»?</h3>
+      </div>
+
+      <div class="slider-group act-typeform-block" style="padding: 20px 18px; background: var(--bg-surface-elevated); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <div class="slider-header" style="margin-bottom: 14px;">
+          <span style="font-size: 0.85rem; color: var(--text-muted);">1 = Suave · 10 = Muy fuerte</span>
+          <span class="slider-val-badge" id="val-act-intensity" style="font-size: 1.05rem; padding: 4px 12px;">${this.entryData.initialIntensity}/10</span>
+        </div>
+        <input type="range" class="range-slider" id="slider-act-intensity" min="1" max="10" value="${this.entryData.initialIntensity}">
+      </div>
+
+      <div class="act-typeform-footer">
+        <button type="button" class="btn-secondary" id="btn-act-prev-2">← Atrás</button>
+        <button type="button" class="btn-primary" id="btn-act-next-2">
+          Siguiente
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    `;
+  }
+
+  // -------------------------------------------------------------
+  // STEP 3: ¿Dónde lo notas en el cuerpo?
+  // -------------------------------------------------------------
+  renderStep3() {
     const allZones = ['Cabeza', 'Mandíbula/Garganta', 'Hombros/Cuello', 'Pecho/Corazón', 'Estómago/Plexo', 'Espalda', 'Brazos/Manos', 'Piernas/Pies'];
 
     return `
-      <div class="desktop-two-col">
-        <div class="form-group">
-          <label class="form-label" style="font-size: 1.02rem; margin-bottom: 4px;">
-            2. Identificación Física de «${this.getSelectedEmotionsLabel()}» en tu Cuerpo
-          </label>
+      <div class="act-step-header">
+        <h3 class="act-step-question">¿Dónde lo notas en el cuerpo?</h3>
+      </div>
 
-          <!-- Somatic Body Map -->
-          <div class="body-map-container mt-3">
-            <svg class="body-silhouette-svg" viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg">
-              <path id="zone-Cabeza" class="body-zone ${this.entryData.bodyZones.includes('Cabeza') ? 'active' : ''}"
-                    d="M 100 20 C 85 20, 80 35, 80 50 C 80 65, 88 75, 100 75 C 112 75, 120 65, 120 50 C 120 35, 115 20, 100 20 Z" />
-              <path id="zone-Mandibula" class="body-zone ${this.entryData.bodyZones.includes('Mandíbula/Garganta') ? 'active' : ''}"
-                    d="M 92 75 L 108 75 L 108 90 L 92 90 Z" />
-              <path id="zone-Hombros" class="body-zone ${this.entryData.bodyZones.includes('Hombros/Cuello') ? 'active' : ''}"
-                    d="M 65 90 Q 100 85, 135 90 L 145 110 L 55 110 Z" />
-              <path id="zone-Pecho" class="body-zone ${this.entryData.bodyZones.includes('Pecho/Corazón') ? 'active' : ''}"
-                    d="M 70 110 L 130 110 L 125 150 L 75 150 Z" />
-              <path id="zone-Estomago" class="body-zone ${this.entryData.bodyZones.includes('Estómago/Plexo') ? 'active' : ''}"
-                    d="M 75 150 L 125 150 L 120 190 L 80 190 Z" />
-              <path id="zone-Brazos" class="body-zone ${this.entryData.bodyZones.includes('Brazos/Manos') ? 'active' : ''}"
-                    d="M 55 110 L 40 180 L 48 185 L 68 120 Z M 145 110 L 160 180 L 152 185 L 132 120 Z" />
-              <path id="zone-Espalda" class="body-zone ${this.entryData.bodyZones.includes('Espalda') ? 'active' : ''}"
-                    d="M 80 190 L 120 190 L 125 215 L 75 215 Z" />
-              <path id="zone-Piernas" class="body-zone ${this.entryData.bodyZones.includes('Piernas/Pies') ? 'active' : ''}"
-                    d="M 78 215 L 94 215 L 90 295 L 75 295 Z M 106 215 L 122 215 L 125 295 L 110 295 Z" />
-            </svg>
+      <div class="body-map-container">
+        <svg class="body-silhouette-svg" viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg">
+          <path id="zone-Cabeza" class="body-zone ${this.entryData.bodyZones.includes('Cabeza') ? 'active' : ''}"
+                d="M 100 20 C 85 20, 80 35, 80 50 C 80 65, 88 75, 100 75 C 112 75, 120 65, 120 50 C 120 35, 115 20, 100 20 Z" />
+          <path id="zone-Mandibula" class="body-zone ${this.entryData.bodyZones.includes('Mandíbula/Garganta') ? 'active' : ''}"
+                d="M 92 75 L 108 75 L 108 90 L 92 90 Z" />
+          <path id="zone-Hombros" class="body-zone ${this.entryData.bodyZones.includes('Hombros/Cuello') ? 'active' : ''}"
+                d="M 65 90 Q 100 85, 135 90 L 145 110 L 55 110 Z" />
+          <path id="zone-Pecho" class="body-zone ${this.entryData.bodyZones.includes('Pecho/Corazón') ? 'active' : ''}"
+                d="M 70 110 L 130 110 L 125 150 L 75 150 Z" />
+          <path id="zone-Estomago" class="body-zone ${this.entryData.bodyZones.includes('Estómago/Plexo') ? 'active' : ''}"
+                d="M 75 150 L 125 150 L 120 190 L 80 190 Z" />
+          <path id="zone-Brazos" class="body-zone ${this.entryData.bodyZones.includes('Brazos/Manos') ? 'active' : ''}"
+                d="M 55 110 L 40 180 L 48 185 L 68 120 Z M 145 110 L 160 180 L 152 185 L 132 120 Z" />
+          <path id="zone-Espalda" class="body-zone ${this.entryData.bodyZones.includes('Espalda') ? 'active' : ''}"
+                d="M 80 190 L 120 190 L 125 215 L 75 215 Z" />
+          <path id="zone-Piernas" class="body-zone ${this.entryData.bodyZones.includes('Piernas/Pies') ? 'active' : ''}"
+                d="M 78 215 L 94 215 L 90 295 L 75 295 Z M 106 215 L 122 215 L 125 295 L 110 295 Z" />
+        </svg>
 
-            <div class="selected-zones-list">
-              ${allZones.map(z => `
-                <span class="zone-tag" style="cursor: pointer; opacity: ${this.entryData.bodyZones.includes(z) ? '1' : '0.5'}" data-zone-chip="${z}">
-                  ${this.entryData.bodyZones.includes(z) ? '✓ ' : '+ '} ${z}
-                </span>
+        <div class="selected-zones-list">
+          ${allZones.map(z => `
+            <span class="zone-tag" style="cursor: pointer; opacity: ${this.entryData.bodyZones.includes(z) ? '1' : '0.5'}" data-zone-chip="${z}">
+              ${this.entryData.bodyZones.includes(z) ? '✓ ' : '+ '} ${z}
+            </span>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="act-typeform-block" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+        <button type="button" class="btn-secondary" id="btn-open-breathing-modal" style="font-size: 0.8rem; border-color: var(--sage-400); padding: 6px 12px;">
+          Pausa para respirar
+        </button>
+        <button type="button" class="btn-secondary" id="btn-open-somatic-posture" style="font-size: 0.8rem; padding: 6px 12px;">
+          Postura de apertura
+        </button>
+        <button type="button" class="btn-inline-link" id="btn-toggle-body-details" style="font-size: 0.8rem; margin-left: auto;">
+          ${this.showBodyDetails ? 'Ocultar detalles' : '+ Cómo se siente'}
+        </button>
+      </div>
+
+      ${this.showBodyDetails ? `
+        <div class="act-typeform-block" style="background: var(--bg-surface-elevated); padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          <div style="margin-bottom: 10px;">
+            <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 5px;">Se siente como:</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              ${['Bloque pesado','Nudo apretado','Presión ardiente','Hueco / Vacío','Corriente eléctrica'].map(shape =>`
+                <button type="button" class="badge phys-chip-btn ${this.entryData.physicalShape === shape ? 'active' : ''}"
+                        data-phys-shape="${shape}"
+                        style="cursor: pointer; padding: 5px 11px; font-size: 0.78rem; border: 1px solid ${this.entryData.physicalShape === shape ? 'var(--sage-500)' : 'var(--border-subtle)'}; background: ${this.entryData.physicalShape === shape ? 'var(--sage-500)' : 'var(--bg-surface)'}; color: ${this.entryData.physicalShape === shape ? '#fff' : 'var(--text-secondary)'};">
+                  ${shape}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <div>
+            <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 5px;">Ritmo o temperatura:</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              ${['Caliente / Hirviendo','Fría / Helada','Girando / Pulsante','Rígida / Inmóvil'].map(temp =>`
+                <button type="button" class="badge phys-chip-btn ${this.entryData.physicalTemp === temp ? 'active' : ''}"
+                        data-phys-temp="${temp}"
+                        style="cursor: pointer; padding: 5px 11px; font-size: 0.78rem; border: 1px solid ${this.entryData.physicalTemp === temp ? 'var(--sage-500)' : 'var(--border-subtle)'}; background: ${this.entryData.physicalTemp === temp ? 'var(--sage-500)' : 'var(--bg-surface)'}; color: ${this.entryData.physicalTemp === temp ? '#fff' : 'var(--text-secondary)'};">
+                  ${temp}
+                </button>
               `).join('')}
             </div>
           </div>
         </div>
+      ` : ''}
 
-        <div>
-          <!-- Exercise #1: Physicalizing Emotions (Steven C. Hayes) -->
-          <div class="form-group" style="background: var(--bg-surface-elevated); padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
-            <div class="title-with-help" style="margin-bottom: 8px;">
-              <label class="form-label" style="font-size: 0.92rem; margin-bottom: 0;">
-                Fisicalizar la Sensación (Técnica de Steven C. Hayes)
-              </label>
-              <button type="button" class="help-info-trigger" data-help-topic="fisicalizar" aria-label="Información de esta herramienta">ⓘ</button>
-            </div>
-
-            <div style="margin-bottom: 8px;">
-              <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 5px;">Forma / Textura:</span>
-              <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                ${['Bloque pesado','Nudo apretado','Presión ardiente','Hueco / Vacío','Corriente eléctrica'].map(shape =>`
-                  <button type="button" class="badge phys-chip-btn ${this.entryData.physicalShape === shape ? 'active' : ''}"
-                          data-phys-shape="${shape}"
-                          style="cursor: pointer; padding: 5px 11px; font-size: 0.78rem; border: 1px solid ${this.entryData.physicalShape === shape ? 'var(--sage-500)' : 'var(--border-subtle)'}; background: ${this.entryData.physicalShape === shape ? 'var(--sage-500)' : 'var(--bg-surface)'}; color: ${this.entryData.physicalShape === shape ? '#fff' : 'var(--text-secondary)'};">
-                    ${shape}
-                  </button>
-                `).join('')}
-              </div>
-            </div>
-
-            <div>
-              <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 5px;">Temperatura / Dinamismo:</span>
-              <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                ${['Caliente / Hirviendo','Fría / Helada','Girando / Pulsante','Rígida / Inmóvil'].map(temp =>`
-                  <button type="button" class="badge phys-chip-btn ${this.entryData.physicalTemp === temp ? 'active' : ''}"
-                          data-phys-temp="${temp}"
-                          style="cursor: pointer; padding: 5px 11px; font-size: 0.78rem; border: 1px solid ${this.entryData.physicalTemp === temp ? 'var(--sage-500)' : 'var(--border-subtle)'}; background: ${this.entryData.physicalTemp === temp ? 'var(--sage-500)' : 'var(--bg-surface)'}; color: ${this.entryData.physicalTemp === temp ? '#fff' : 'var(--text-secondary)'};">
-                    ${temp}
-                  </button>
-                `).join('')}
-              </div>
-            </div>
-          </div>
-
-          <!-- Ayuda somática opcional (Modal de Respiración o Postura del SÍ) -->
-          <div class="form-group mt-4 act-somatic-help-box">
-            <label class="form-label" style="font-size: 0.92rem; margin-bottom: 4px;">
-              ¿Te cuesta notarlo o la sensación aprieta demasiado?
-            </label>
-            <p class="form-hint" style="margin-bottom: 12px; line-height: 1.4;">
-              Si no lo tienes claro, puedes parar un momento a respirar o abrir la postura corporal.
-            </p>
-            <div class="breathing-actions-row" style="justify-content: flex-start;">
-              <button type="button" class="btn-secondary" id="btn-open-breathing-modal" style="font-size: 0.84rem; border-color: var(--sage-400); padding: 8px 14px;">
-                No lo tengo claro · Hacerle hueco en el cuerpo
-              </button>
-              <button type="button" class="btn-secondary" id="btn-open-somatic-posture" style="font-size: 0.82rem; padding: 8px 14px;">
-                Practicar la Postura Somática del "SÍ" (Steven Hayes)
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="btn-group">
-        <button type="button" class="btn-secondary" id="btn-act-prev-2">← Volver a la Rueda</button>
-        <button type="button" class="btn-primary" id="btn-act-next-2">
-          Paso 3: Tomar Distancia
+      <div class="act-typeform-footer">
+        <button type="button" class="btn-secondary" id="btn-act-prev-3">← Atrás</button>
+        <button type="button" class="btn-primary" id="btn-act-next-3">
+          Siguiente
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </div>
@@ -794,19 +846,15 @@ class EspacioActApp {
     if (style === 'thanks') {
       return `Gracias, ${mind}, por intentar protegerme con la idea de que ${clean}.`;
     }
-    return `Estoy teniendo el pensamiento de que ${clean}.`;
+    return `Estoy pensando que ${clean}.`;
   }
 
   // -------------------------------------------------------------
-  // STEP 3: Defusión Cognitiva (Un Solo Gesto de Distancia)
+  // STEP 4: ¿Qué te dice tu mente?
   // -------------------------------------------------------------
-  renderStep3() {
+  renderStep4() {
     const esc = (s) => this.escapeHtml(s);
     const rawThought = this.entryData.thought || '';
-    const mindName = window.stateManager.getMindName() || 'George';
-    const reframed = this.buildReframedThought(this.defusionStyle, rawThought, mindName);
-    this.entryData.reframedThought = reframed;
-
     const quickThoughts = [
       'Se van a enfadar si digo que no',
       'Soy egoísta por priorizarme',
@@ -815,69 +863,94 @@ class EspacioActApp {
       'Si no cedo, me rechazarán'
     ];
 
+    return `
+      <div class="act-step-header">
+        <h3 class="act-step-question">¿Qué te dice tu mente?</h3>
+      </div>
+
+      <div class="form-group">
+        <textarea id="act-thought-input" class="form-textarea" rows="3" style="min-height: 82px; font-size: 0.98rem;" placeholder="Ej: Se van a enfadar si digo que no…">${esc(rawThought)}</textarea>
+
+        <div style="margin-top: 10px;">
+          <button type="button" class="btn-inline-link" id="btn-toggle-thought-examples" style="font-size: 0.8rem;">
+            ${this.showThoughtExamples ? 'Ocultar ideas' : 'Ver ideas frecuentes'}
+          </button>
+        </div>
+
+        ${this.showThoughtExamples ? `
+          <div class="quick-chips-row" style="margin-top: 8px;">
+            ${quickThoughts.map(qt => `
+              <button type="button" class="quick-fill-chip ${rawThought.trim() === qt ? 'active' : ''}" data-quick-thought="${esc(qt)}">
+                "${esc(qt)}"
+              </button>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>
+
+      <div class="act-typeform-footer">
+        <button type="button" class="btn-secondary" id="btn-act-prev-4">← Atrás</button>
+        <button type="button" class="btn-primary" id="btn-act-next-4">
+          Siguiente
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    `;
+  }
+
+  // -------------------------------------------------------------
+  // STEP 5: Míralo desde fuera
+  // -------------------------------------------------------------
+  renderStep5() {
+    const esc = (s) => this.escapeHtml(s);
+    const rawThought = this.entryData.thought || '';
+    const mindName = window.stateManager.getMindName() || 'George';
+    const reframed = this.buildReframedThought(this.defusionStyle, rawThought, mindName);
+    this.entryData.reframedThought = reframed;
+
     const styleTabs = [
-      { id: 'notice', label: 'Notar el pensamiento' },
+      { id: 'notice', label: 'Es solo un pensamiento' },
       { id: 'story', label: `Historia de ${mindName}` },
       { id: 'thanks', label: `Gracias, ${mindName}` }
     ];
 
     return `
-      <div class="form-group">
-        <div class="flex-between" style="flex-wrap: wrap; gap: 8px;">
-          <div class="title-with-help">
-            <label class="form-label" for="act-thought-input" style="margin-bottom: 0;">3. Tomar distancia del pensamiento</label>
-            <button type="button" class="help-info-trigger" data-help-topic="defusion-act" aria-label="Información de esta herramienta">ⓘ</button>
-          </div>
-          <button type="button" class="btn-secondary" id="btn-edit-mind-name" style="font-size: 0.75rem; padding: 4px 10px;">
-            Apodo de tu mente: «${esc(mindName)}»
+      <div class="act-step-header">
+        <div class="flex-between" style="flex-wrap: wrap; gap: 8px; align-items: center;">
+          <h3 class="act-step-question" style="margin-bottom: 0;">Míralo desde fuera</h3>
+          <button type="button" class="btn-secondary" id="btn-edit-mind-name" style="font-size: 0.74rem; padding: 4px 10px;">
+            Nombre de tu mente: «${esc(mindName)}»
           </button>
         </div>
-        <p class="form-hint" style="margin-top: 4px;">
-          Pon en una frase lo que te repite la mente para verlo como un pensamiento, no como una orden.
-        </p>
+      </div>
 
-        <textarea id="act-thought-input" class="form-textarea mt-2" rows="2" style="min-height: 60px;" placeholder="Ej: Se van a enfadar si digo que no…">${esc(rawThought)}</textarea>
-
-        <div class="quick-chips-row" style="margin-top: 8px;">
-          ${quickThoughts.map(qt => `
-            <button type="button" class="quick-fill-chip ${rawThought.trim() === qt ? 'active' : ''}" data-quick-thought="${esc(qt)}">
-              "${esc(qt)}"
+      <div class="defusion-style-tabs" role="tablist" aria-label="Míralo desde fuera">
+        ${styleTabs.map(tab => {
+          const active = this.defusionStyle === tab.id;
+          return `
+            <button type="button"
+                    role="tab"
+                    aria-selected="${active}"
+                    class="defusion-style-pill ${active ? 'active' : ''}"
+                    data-defusion-style="${tab.id}">
+              ${esc(tab.label)}
             </button>
-          `).join('')}
-        </div>
+          `;
+        }).join('')}
       </div>
 
-      <div class="form-group mt-4">
-        <label class="form-label" style="margin-bottom: 8px;">Míralo con distancia</label>
-
-        <div class="defusion-style-tabs" role="tablist" aria-label="Míralo con distancia">
-          ${styleTabs.map(tab => {
-            const active = this.defusionStyle === tab.id;
-            return `
-              <button type="button"
-                      role="tab"
-                      aria-selected="${active}"
-                      class="defusion-style-pill ${active ? 'active' : ''}"
-                      data-defusion-style="${tab.id}">
-                ${esc(tab.label)}
-              </button>
-            `;
-          }).join('')}
-        </div>
-
-        <div class="defusion-reframing-card defusion-live-card" id="act-defusion-live-card">
-          ${reframed ? `
-            <div class="defusion-text" id="act-defusion-live-text">"${esc(reframed)}"</div>
-          ` : `
-            <div class="defusion-text is-placeholder" id="act-defusion-live-text">Escribe o toca una frase arriba para verla con distancia.</div>
-          `}
-        </div>
+      <div class="defusion-reframing-card defusion-live-card" id="act-defusion-live-card">
+        ${reframed ? `
+          <div class="defusion-text" id="act-defusion-live-text">"${esc(reframed)}"</div>
+        ` : `
+          <div class="defusion-text is-placeholder" id="act-defusion-live-text">Si quieres, vuelve atrás y escribe una frase breve.</div>
+        `}
       </div>
 
-      <div class="btn-group">
-        <button type="button" class="btn-secondary" id="btn-act-prev-3">← Atrás</button>
-        <button type="button" class="btn-primary" id="btn-act-next-3">
-          Paso 4: Elegir Micro-Paso
+      <div class="act-typeform-footer">
+        <button type="button" class="btn-secondary" id="btn-act-prev-5">← Atrás</button>
+        <button type="button" class="btn-primary" id="btn-act-next-5">
+          Siguiente
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </div>
@@ -898,9 +971,9 @@ class EspacioActApp {
   }
 
   // -------------------------------------------------------------
-  // STEP 4: Punto de Elección + Disposición Heredada + Cierre
+  // STEP 6: ¿Qué quieres hacer ahora?
   // -------------------------------------------------------------
-  renderStep4() {
+  renderStep6() {
     const esc = (s) => this.escapeHtml(s);
     const profile = window.stateManager.getProfile();
     const profileValues = (profile.coreValues || []).map(
@@ -908,12 +981,9 @@ class EspacioActApp {
     );
     const baseValues = ['Dignidad', 'Autocuidado', 'Honestidad', 'Límites Sanos', 'Calma', 'Compasión'];
     const isValue = this.entryData.choiceType !== 'autopilot';
-    const derivedPassenger = this.getDerivedPassenger();
-    const passengerLabel = derivedPassenger || 'esta incomodidad';
-    const valueLabel = (this.entryData.valueChosen || '').trim() || 'lo que me importa';
 
     const quickCommitted = [
-      'Respirar y responder en 15 min',
+      'Pausar y responder con calma',
       'Decir que no en 1 frase sin excusas',
       'Priorizar mi descanso',
       'Expresar mi postura con calma'
@@ -926,70 +996,75 @@ class EspacioActApp {
     ];
 
     return `
-      <div class="form-group">
-        <label class="form-label" style="margin-bottom: 2px;">4. Elegir tu siguiente paso</label>
-        <p class="form-hint" style="margin-bottom: 12px;">
-          Elige un gesto pequeño hacia lo que te importa, o registra sin reproche si esta vez ganó el piloto automático.
-        </p>
+      <div class="act-step-header">
+        <h3 class="act-step-question">¿Qué quieres hacer ahora?</h3>
+      </div>
 
-        <div class="act-choice-switch" role="tablist" aria-label="Elegir tu siguiente paso">
-          <button type="button"
-                  role="tab"
-                  aria-selected="${isValue}"
-                  class="act-choice-switch-btn ${isValue ? 'active value' : ''}"
-                  id="btn-select-value">
-            Hacia mis valores
-          </button>
-          <button type="button"
-                  role="tab"
-                  aria-selected="${!isValue}"
-                  class="act-choice-switch-btn ${!isValue ? 'active autopilot' : ''}"
-                  id="btn-select-autopilot">
-            Caí en piloto automático
-          </button>
-        </div>
+      <div class="act-choice-switch" role="tablist" aria-label="¿Qué quieres hacer ahora?">
+        <button type="button"
+                role="tab"
+                aria-selected="${isValue}"
+                class="act-choice-switch-btn ${isValue ? 'active value' : ''}"
+                id="btn-select-value">
+          Hacia lo que me importa
+        </button>
+        <button type="button"
+                role="tab"
+                aria-selected="${!isValue}"
+                class="act-choice-switch-btn ${!isValue ? 'active autopilot' : ''}"
+                id="btn-select-autopilot">
+          En piloto automático
+        </button>
+      </div>
 
-        <div class="act-choice-panel">
-          ${isValue ? `
-            <div>
-              <label class="form-label" for="act-custom-value" style="font-size: 0.9rem; margin-bottom: 6px;">
-                ¿Qué valor quieres cuidar aquí?
-              </label>
+      <div class="act-choice-panel">
+        ${isValue ? `
+          <div>
+            <label class="form-label" for="act-custom-value" style="font-size: 0.9rem; margin-bottom: 6px;">
+              ¿Qué es importante para ti?
+            </label>
 
-              ${profileValues.length > 0 ? `
-                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
-                  ${profileValues.map(val => `
-                    <button type="button" class="quick-fill-chip ${this.entryData.valueChosen === val ? 'active' : ''}" data-val-chip="${esc(val)}">
-                      ${esc(val)}
-                    </button>
-                  `).join('')}
-                </div>
-                <div style="margin-bottom: 8px;">
-                  <button type="button" class="btn-inline-link" id="btn-toggle-more-values" style="font-size: 0.78rem;">
-                    ${this.showMoreValues ? 'Ocultar otros valores' : 'Ver otros valores'}
+            ${profileValues.length > 0 ? `
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
+                ${profileValues.map(val => `
+                  <button type="button" class="quick-fill-chip ${this.entryData.valueChosen === val ? 'active' : ''}" data-val-chip="${esc(val)}">
+                    ${esc(val)}
                   </button>
-                </div>
-              ` : ''}
+                `).join('')}
+              </div>
+              <div style="margin-bottom: 8px;">
+                <button type="button" class="btn-inline-link" id="btn-toggle-more-values" style="font-size: 0.78rem;">
+                  ${this.showMoreValues ? 'Ocultar otros valores' : 'Ver otros valores'}
+                </button>
+              </div>
+            ` : ''}
 
-              ${(profileValues.length === 0 || this.showMoreValues) ? `
-                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
-                  ${baseValues.map(val => `
-                    <button type="button" class="quick-fill-chip ${this.entryData.valueChosen === val ? 'active' : ''}" data-val-chip="${esc(val)}">
-                      ${esc(val)}
-                    </button>
-                  `).join('')}
-                </div>
-              ` : ''}
+            ${(profileValues.length === 0 || this.showMoreValues) ? `
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
+                ${baseValues.map(val => `
+                  <button type="button" class="quick-fill-chip ${this.entryData.valueChosen === val ? 'active' : ''}" data-val-chip="${esc(val)}">
+                    ${esc(val)}
+                  </button>
+                `).join('')}
+              </div>
+            ` : ''}
 
-              <input type="text" id="act-custom-value" class="form-input" style="font-size: 0.86rem; padding: 8px 11px;"
-                     value="${esc(this.entryData.valueChosen)}"
-                     placeholder="O escribe tu valor guía…">
+            <input type="text" id="act-custom-value" class="form-input" style="font-size: 0.86rem; padding: 8px 11px;"
+                   value="${esc(this.entryData.valueChosen)}"
+                   placeholder="O escríbelo con tus palabras…">
 
-              <label class="form-label mt-3" for="act-committed-action" style="font-size: 0.9rem; margin-bottom: 4px;">
-                Tu micro-paso ahora (aunque sea pequeño)
-              </label>
-              <textarea id="act-committed-action" class="form-textarea" rows="2" style="min-height: 54px;" placeholder="Ej: Pedir 15 minutos antes de responder…">${esc(this.entryData.committedAction)}</textarea>
+            <label class="form-label mt-3" for="act-committed-action" style="font-size: 0.9rem; margin-bottom: 4px;">
+              Tu siguiente paso
+            </label>
+            <textarea id="act-committed-action" class="form-textarea" rows="2" style="min-height: 54px;" placeholder="Ej: Tomar una pausa antes de responder…">${esc(this.entryData.committedAction)}</textarea>
 
+            <div style="margin-top: 8px;">
+              <button type="button" class="btn-inline-link" id="btn-toggle-action-examples" style="font-size: 0.8rem;">
+                ${this.showActionExamples ? 'Ocultar ideas' : 'Ver ideas'}
+              </button>
+            </div>
+
+            ${this.showActionExamples ? `
               <div class="quick-chips-row" style="margin-top: 8px; margin-bottom: 0;">
                 ${quickCommitted.map(ca => `
                   <button type="button" class="quick-fill-chip ${this.entryData.committedAction === ca ? 'active' : ''}" data-quick-committed="${esc(ca)}">
@@ -997,17 +1072,22 @@ class EspacioActApp {
                   </button>
                 `).join('')}
               </div>
-            </div>
-          ` : `
-            <div>
-              <label class="form-label" for="act-autopilot-urge" style="font-size: 0.9rem; margin-bottom: 4px;">
-                ¿Qué reflejo automático tomó el volante?
-              </label>
-              <p class="form-hint" style="margin-bottom: 8px;">
-                Nombrarlo sin culpa te ayuda a detectarlo antes la próxima vez.
-              </p>
-              <textarea id="act-autopilot-urge" class="form-textarea" rows="2" style="min-height: 56px;" placeholder="Ej: Callarme y ceder para evitar tensión…">${esc(this.entryData.autopilotUrge)}</textarea>
+            ` : ''}
+          </div>
+        ` : `
+          <div>
+            <label class="form-label" for="act-autopilot-urge" style="font-size: 0.9rem; margin-bottom: 4px;">
+              ¿Qué te sale hacer por inercia?
+            </label>
+            <textarea id="act-autopilot-urge" class="form-textarea" rows="2" style="min-height: 56px;" placeholder="Ej: Callarme y ceder para evitar tensión…">${esc(this.entryData.autopilotUrge)}</textarea>
 
+            <div style="margin-top: 8px;">
+              <button type="button" class="btn-inline-link" id="btn-toggle-action-examples" style="font-size: 0.8rem;">
+                ${this.showActionExamples ? 'Ocultar ideas' : 'Ver ideas'}
+              </button>
+            </div>
+
+            ${this.showActionExamples ? `
               <div class="quick-chips-row" style="margin-top: 8px; margin-bottom: 0;">
                 ${quickAutopilot.map(ap => `
                   <button type="button" class="quick-fill-chip ${this.entryData.autopilotUrge === ap ? 'active' : ''}" data-quick-autopilot="${esc(ap)}">
@@ -1015,42 +1095,52 @@ class EspacioActApp {
                   </button>
                 `).join('')}
               </div>
-            </div>
-          `}
-        </div>
-
-        <div class="act-willingness-strip" id="act-willingness-strip">
-          ${isValue ? `
-            <div>
-              <span>Con disposición ACT: avanzo hacia </span><strong id="act-willingness-value-text">«${esc(valueLabel)}»</strong><span> llevando a bordo </span><em id="act-willingness-passenger-text">«${esc(passengerLabel)}»</em><span>, sin esperar a que desaparezca.</span>
-            </div>
-          ` : `
-            <div>
-              <span>Observo con amabilidad que hoy me arrastró </span><em id="act-willingness-passenger-text">«${esc(passengerLabel)}»</em><span>. Registrarlo ya es entrenar presencia.</span>
-            </div>
-          `}
-          ${derivedPassenger ? `
-            <label style="display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 0.78rem; color: var(--text-secondary); cursor: pointer;">
-              <input type="checkbox" id="chk-save-passenger-to-bus" ${this.entryData.savePassengerToBus ? 'checked' : ''} style="width: 16px; height: 16px;">
-              <span>Fichar en «Mi Autobús» para trabajarlo en calma</span>
-            </label>
-          ` : ''}
-        </div>
+            ` : ''}
+          </div>
+        `}
       </div>
 
-      <div class="slider-group mt-4" style="background: var(--bg-surface-elevated); padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
-        <div class="slider-header">
-          <label class="form-label" style="margin-bottom: 0;">¿Cuánto pesa la ola ahora? (antes: ${this.entryData.initialIntensity}/10)</label>
-          <span class="slider-val-badge" id="val-act-post-intensity">${this.entryData.postIntensity}/10</span>
+      <div class="act-typeform-footer">
+        <button type="button" class="btn-secondary" id="btn-act-prev-6">← Atrás</button>
+        <button type="button" class="btn-primary" id="btn-act-next-6">
+          Siguiente
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    `;
+  }
+
+  // -------------------------------------------------------------
+  // STEP 7: Cierre (Intensidad final + Guardar)
+  // -------------------------------------------------------------
+  renderStep7() {
+    const derivedPassenger = this.getDerivedPassenger();
+
+    return `
+      <div class="act-step-header">
+        <h3 class="act-step-question">¿Qué tan fuerte lo sientes ahora?</h3>
+      </div>
+
+      <div class="slider-group act-typeform-block" style="padding: 20px 18px; background: var(--bg-surface-elevated); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <div class="slider-header" style="margin-bottom: 14px;">
+          <span style="font-size: 0.85rem; color: var(--text-muted);">Antes: ${this.entryData.initialIntensity}/10</span>
+          <span class="slider-val-badge" id="val-act-post-intensity" style="font-size: 1.05rem; padding: 4px 12px;">${this.entryData.postIntensity}/10</span>
         </div>
         <input type="range" class="range-slider" id="slider-act-post-intensity" min="1" max="10" value="${this.entryData.postIntensity}">
       </div>
 
-      <div class="btn-group">
-        <button type="button" class="btn-secondary" id="btn-act-prev-4">← Atrás</button>
+      ${derivedPassenger ? `
+        <label style="display: flex; align-items: center; gap: 8px; margin-top: 16px; font-size: 0.84rem; color: var(--text-secondary); cursor: pointer;">
+          <input type="checkbox" id="chk-save-passenger-to-bus" ${this.entryData.savePassengerToBus ? 'checked' : ''} style="width: 16px; height: 16px;">
+          <span>Guardar en «Mi Autobús»</span>
+        </label>
+      ` : ''}
+
+      <div class="act-typeform-footer">
+        <button type="button" class="btn-secondary" id="btn-act-prev-7">← Atrás</button>
         <button type="button" class="btn-primary" id="btn-act-save">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          Guardar y cerrar
+          Guardar y terminar
         </button>
       </div>
     `;
@@ -1206,6 +1296,16 @@ class EspacioActApp {
   bindEvents() {
     const viewRoot = document.getElementById('espacio-act-view') || document;
 
+    // Top step pills navigation
+    viewRoot.querySelectorAll('[data-goto-step]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const targetStep = parseInt(e.currentTarget.dataset.gotoStep, 10);
+        if (targetStep && targetStep !== this.currentStep) {
+          this.setStep(targetStep);
+        }
+      });
+    });
+
     // Maximize Wheel modal trigger
     document.getElementById('btn-maximize-wheel')?.addEventListener('click', () => {
       this.openMaximizedWheelModal();
@@ -1230,8 +1330,8 @@ class EspacioActApp {
           nuancesContainer.innerHTML = this.getFilteredNuances().map(n => `
             <button type="button" class="chip-btn ${(this.entryData.emotions || []).includes(n.id) ? 'selected' : ''}" data-act-emotion="${n.id}" title="${(n.example || '').replace(/"/g, '&quot;')}" style="padding: 10px 8px;">
               <span style="font-weight: 700; font-size: 0.88rem;">${n.id}</span>
-              <small style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.2;">${n.desc}</small>
-              ${n.example ? `<small style="font-size: 0.66rem; color: var(--sage-600); font-style: italic; line-height: 1.2; margin-top: 3px;">${n.example}</small>` : ''}
+              <small class="explanatory-subtext" style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.2;">${n.desc}</small>
+              ${n.example ? `<small class="explanatory-subtext" style="font-size: 0.66rem; color: var(--sage-600); font-style: italic; line-height: 1.2; margin-top: 3px;">${n.example}</small>` : ''}
             </button>
           `).join('');
           this.bindWheelInteraction(viewRoot, {
@@ -1309,8 +1409,8 @@ class EspacioActApp {
         this.entryData.lastFocusedEmotion = 'Desbordamiento';
         this.entryData.emotion = 'Desbordamiento';
       }
-      this.setStep(2);
-      window.app?.showToast('Pasando directo a hacer espacio en el cuerpo');
+      this.setStep(3);
+      window.app?.showToast('Pasando directo al cuerpo');
     });
 
     document.getElementById('btn-act-skip-unnamed')?.addEventListener('click', () => {
@@ -1320,7 +1420,6 @@ class EspacioActApp {
         this.entryData.emotion = 'Malestar / Activación en curso';
       }
       this.setStep(2);
-      window.app?.showToast('Avanzando al cuerpo sin forzar etiqueta');
     });
 
     document.querySelectorAll('.quick-family-chip[data-quick-family]').forEach(btn => {
@@ -1336,13 +1435,16 @@ class EspacioActApp {
         this.entryData.emotions = ['Malestar / Activación en curso'];
         this.entryData.lastFocusedEmotion = 'Malestar / Activación en curso';
         this.entryData.emotion = 'Malestar / Activación en curso';
-        window.app?.showToast('Continuando sin etiqueta específica; puedes hacerle hueco en el cuerpo');
       }
       this.setStep(2);
     });
 
-    // Step 2 Events (Body Map, Physicalizing, Optional Breathing Modal & Somatic Posture)
-    if (this.currentStep === 2) {
+    // Step 2 Events (Initial Intensity)
+    document.getElementById('btn-act-prev-2')?.addEventListener('click', () => this.setStep(1));
+    document.getElementById('btn-act-next-2')?.addEventListener('click', () => this.setStep(3));
+
+    // Step 3 Events (Body Map, Optional Details, Breathing Modal & Somatic Posture)
+    if (this.currentStep === 3) {
       document.getElementById('btn-open-breathing-modal')?.addEventListener('click', () => {
         this.openBreathingModal();
       });
@@ -1350,12 +1452,18 @@ class EspacioActApp {
       document.getElementById('btn-open-somatic-posture')?.addEventListener('click', () => {
         this.openSomaticPostureModal();
       });
+
+      document.getElementById('btn-toggle-body-details')?.addEventListener('click', () => {
+        this.showBodyDetails = !this.showBodyDetails;
+        this.render();
+        this.bindEvents();
+      });
     }
 
-    document.getElementById('btn-act-prev-2')?.addEventListener('click', () => this.setStep(1));
-    document.getElementById('btn-act-next-2')?.addEventListener('click', () => this.setStep(3));
+    document.getElementById('btn-act-prev-3')?.addEventListener('click', () => this.setStep(2));
+    document.getElementById('btn-act-next-3')?.addEventListener('click', () => this.setStep(4));
 
-    // Step 3 Events (Single-Gesture Defusion)
+    // Step 4 & 5 Events (Thought Input + Perspective Defusion)
     const syncDefusionCard = () => {
       const mindName = window.stateManager.getMindName() || 'George';
       const reframed = this.buildReframedThought(this.defusionStyle, this.entryData.thought, mindName);
@@ -1366,7 +1474,7 @@ class EspacioActApp {
           liveTextEl.textContent = `"${reframed}"`;
           liveTextEl.classList.remove('is-placeholder');
         } else {
-          liveTextEl.textContent = 'Escribe o toca una frase arriba para verla con distancia.';
+          liveTextEl.textContent = 'Si quieres, vuelve atrás y escribe una frase breve.';
           liveTextEl.classList.add('is-placeholder');
         }
       }
@@ -1383,6 +1491,12 @@ class EspacioActApp {
         syncDefusionCard();
       });
     }
+
+    document.getElementById('btn-toggle-thought-examples')?.addEventListener('click', () => {
+      this.showThoughtExamples = !this.showThoughtExamples;
+      this.render();
+      this.bindEvents();
+    });
 
     document.querySelectorAll('[data-quick-thought]').forEach(chip => {
       chip.addEventListener('click', (e) => {
@@ -1412,12 +1526,20 @@ class EspacioActApp {
       this.openMindNameModal();
     });
 
-    document.getElementById('btn-act-prev-3')?.addEventListener('click', () => {
-      this.setStep(2);
+    document.getElementById('btn-act-prev-4')?.addEventListener('click', () => {
+      this.setStep(3);
     });
-    document.getElementById('btn-act-next-3')?.addEventListener('click', () => {
+    document.getElementById('btn-act-next-4')?.addEventListener('click', () => {
       syncDefusionCard();
+      this.setStep(5);
+    });
+
+    document.getElementById('btn-act-prev-5')?.addEventListener('click', () => {
       this.setStep(4);
+    });
+    document.getElementById('btn-act-next-5')?.addEventListener('click', () => {
+      syncDefusionCard();
+      this.setStep(6);
     });
 
     // Step 4 Events (Choice Point + Derived Willingness + Closing Intensity)
@@ -1555,12 +1677,64 @@ class EspacioActApp {
       });
     }
 
-    document.getElementById('btn-act-prev-4')?.addEventListener('click', () => this.setStep(3));
+    document.getElementById('btn-toggle-action-examples')?.addEventListener('click', () => {
+      this.showActionExamples = !this.showActionExamples;
+      this.render();
+      this.bindEvents();
+    });
+
+    document.getElementById('btn-act-prev-6')?.addEventListener('click', () => this.setStep(5));
+    document.getElementById('btn-act-next-6')?.addEventListener('click', () => this.setStep(7));
+    document.getElementById('btn-act-prev-7')?.addEventListener('click', () => this.setStep(6));
     document.getElementById('btn-act-save')?.addEventListener('click', () => this.saveEntry());
   }
 
   bindWheelInteraction(scopeEl, { isChipsView = false, bindFamilies = true, onMutate } = {}) {
     if (!scopeEl) return;
+
+    const isCompactWheel = (wheelSvg) => {
+      if (!wheelSvg) return false;
+      const rect = wheelSvg.getBoundingClientRect();
+      if (rect && rect.width > 0) return rect.width < 390;
+      return typeof window !== 'undefined' && window.innerWidth < 460;
+    };
+
+    const applyWheelZoom = (wheelContainer, famId) => {
+      const wheelSvg = wheelContainer?.querySelector('.emotion-wheel-svg');
+      const zoomLayer = wheelContainer?.querySelector('.wheel-zoom-layer');
+      const zoomBanner = wheelContainer?.querySelector('.wheel-zoom-banner');
+      const zoomBannerText = wheelContainer?.querySelector('.wheel-zoom-banner-text');
+      const hoverBox = wheelContainer?.querySelector('.wheel-hover-example');
+      if (!wheelSvg || !zoomLayer) return;
+
+      this.zoomedWheelFamily = famId || null;
+      const transform = famId ? this.getWheelZoomTransform(famId) : '';
+      zoomLayer.style.transform = transform;
+      wheelContainer.classList.toggle('is-zoomed', Boolean(famId));
+
+      wheelSvg.querySelectorAll('.wheel-nuance-group[data-emotion-family]').forEach(g => {
+        g.classList.toggle('dimmed', Boolean(famId && g.dataset.emotionFamily !== famId));
+        g.classList.remove('hovered');
+      });
+      wheelSvg.querySelectorAll('.wheel-family-sector[data-wheel-family]').forEach(s => {
+        const dim = Boolean(famId && s.dataset.wheelFamily !== famId);
+        s.classList.toggle('dimmed', dim);
+        s.style.opacity = dim ? '0.28' : '0.94';
+      });
+
+      if (zoomBanner) {
+        zoomBanner.classList.toggle('hidden', !famId);
+        if (famId && zoomBannerText) {
+          const fam = this.emotionFamilies.find(f => f.id === famId);
+          zoomBannerText.innerHTML = `🔍 <strong>${fam?.icon || ''} ${famId}</strong> · Toca una emoción para elegir`;
+        }
+      }
+
+      if (hoverBox) {
+        hoverBox.innerHTML = this.getWheelDefaultHint(isCompactWheel(wheelSvg), famId);
+        hoverBox.style.opacity = '0.85';
+      }
+    };
 
     if (bindFamilies) {
       scopeEl.querySelectorAll('[data-wheel-family]').forEach(btn => {
@@ -1571,17 +1745,27 @@ class EspacioActApp {
             this.emotionSearchQuery = '';
             if (onMutate) onMutate();
           } else {
-            const wheelContainer = btn.closest('.emotion-wheel-container') || scopeEl;
-            const outerGroups = wheelContainer.querySelectorAll(`.wheel-nuance-group[data-emotion-family="${famId}"]`);
+            const wheelContainer = btn.closest('.emotion-wheel-container') || scopeEl.querySelector('.emotion-wheel-container');
+            const wheelSvg = wheelContainer?.querySelector('.emotion-wheel-svg');
+            if (wheelContainer && isCompactWheel(wheelSvg)) {
+              e.stopPropagation();
+              if (this.zoomedWheelFamily && this.zoomedWheelFamily !== famId && btn.classList.contains('dimmed')) {
+                applyWheelZoom(wheelContainer, null);
+              } else {
+                applyWheelZoom(wheelContainer, famId);
+              }
+              return;
+            }
+            const outerGroups = (wheelContainer || scopeEl).querySelectorAll(`.wheel-nuance-group[data-emotion-family="${famId}"]`);
             outerGroups.forEach(g => {
               g.classList.remove('family-pulse');
               void g.offsetWidth;
               g.classList.add('family-pulse');
               setTimeout(() => g.classList.remove('family-pulse'), 1200);
             });
-            const hoverBox = wheelContainer.querySelector('.wheel-hover-example');
+            const hoverBox = (wheelContainer || scopeEl).querySelector('.wheel-hover-example');
             if (hoverBox) {
-              hoverBox.innerHTML =`<strong>${famId}</strong> es una categoría general. Concreta tocando uno de sus matices resaltados en el anillo exterior.`;
+              hoverBox.innerHTML = `<strong>${famId}</strong> es una categoría general. Concreta tocando uno de sus matices resaltados en el anillo exterior.`;
               hoverBox.style.opacity = '1';
             }
             window.app?.showToast(`Concreta qué matiz de ${famId} sientes en el anillo exterior`);
@@ -1590,7 +1774,7 @@ class EspacioActApp {
       });
     }
 
-    scopeEl.querySelectorAll('[data-act-emotion]').forEach(chip => {
+    scopeEl.querySelectorAll('[data-act-emotion]:not(.wheel-nuance-group)').forEach(chip => {
       chip.addEventListener('click', (e) => {
         this.toggleEmotion(e.currentTarget.dataset.actEmotion);
         if (onMutate) onMutate();
@@ -1611,6 +1795,8 @@ class EspacioActApp {
       if (!wheelSvg) return;
 
       let activeHoveredGroup = null;
+      let pointerDown = null;
+      let suppressNextClick = false;
 
       const clearAllHover = (resetText = true) => {
         wheelSvg.querySelectorAll('.wheel-nuance-group.hovered').forEach(g => {
@@ -1618,8 +1804,8 @@ class EspacioActApp {
         });
         activeHoveredGroup = null;
         if (resetText && hoverBox) {
-          hoverBox.innerHTML = 'Pasa el ratón por el anillo exterior para ampliar y ver un ejemplo identificador.';
-          hoverBox.style.opacity = '0.7';
+          hoverBox.innerHTML = this.getWheelDefaultHint(isCompactWheel(wheelSvg), this.zoomedWheelFamily);
+          hoverBox.style.opacity = '0.78';
         }
       };
 
@@ -1631,8 +1817,7 @@ class EspacioActApp {
         });
       };
 
-      const handlePointer = (e) => {
-        const group = e.target.closest('.wheel-nuance-group[data-act-emotion]');
+      const highlightGroup = (group) => {
         if (!group) {
           if (activeHoveredGroup) {
             clearAllHover(true);
@@ -1659,10 +1844,94 @@ class EspacioActApp {
         }
       };
 
-      wheelSvg.addEventListener('pointerover', handlePointer);
-      wheelSvg.addEventListener('pointermove', handlePointer);
+      // Sync initial hint after layout measurement
+      if (hoverBox && !activeHoveredGroup) {
+        hoverBox.innerHTML = this.getWheelDefaultHint(isCompactWheel(wheelSvg), this.zoomedWheelFamily);
+      }
 
-      const handleLeaveWheel = () => {
+      wheelContainer.querySelector('.wheel-zoom-reset-btn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        applyWheelZoom(wheelContainer, null);
+      });
+
+      wheelSvg.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+          pointerDown = { x: e.clientX, y: e.clientY, moved: false, pointerType: e.pointerType };
+          const target = document.elementFromPoint(e.clientX, e.clientY);
+          const group = target?.closest?.('.wheel-nuance-group[data-act-emotion]:not(.dimmed)');
+          if (group) highlightGroup(group);
+        }
+      });
+
+      wheelSvg.addEventListener('pointerover', (e) => {
+        if (e.pointerType === 'touch') return;
+        const group = e.target.closest('.wheel-nuance-group[data-act-emotion]:not(.dimmed)');
+        highlightGroup(group);
+      });
+
+      wheelSvg.addEventListener('pointermove', (e) => {
+        if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+          if (!pointerDown) return;
+          if (!pointerDown.moved && Math.hypot(e.clientX - pointerDown.x, e.clientY - pointerDown.y) > 8) {
+            pointerDown.moved = true;
+          }
+          const target = document.elementFromPoint(e.clientX, e.clientY);
+          const group = target?.closest?.('.wheel-nuance-group[data-act-emotion]:not(.dimmed)');
+          highlightGroup(group);
+          return;
+        }
+        const group = e.target.closest('.wheel-nuance-group[data-act-emotion]:not(.dimmed)');
+        highlightGroup(group);
+      });
+
+      const handlePointerEnd = (e) => {
+        if ((e.pointerType === 'touch' || e.pointerType === 'pen') && pointerDown) {
+          if (pointerDown.moved) {
+            suppressNextClick = true;
+            setTimeout(() => { suppressNextClick = false; }, 150);
+          }
+          pointerDown = null;
+        }
+      };
+
+      wheelSvg.addEventListener('pointerup', handlePointerEnd);
+      wheelSvg.addEventListener('pointercancel', handlePointerEnd);
+
+      wheelSvg.addEventListener('click', (e) => {
+        if (suppressNextClick) {
+          suppressNextClick = false;
+          return;
+        }
+
+        const group = e.target.closest('.wheel-nuance-group[data-act-emotion]');
+        const compact = isCompactWheel(wheelSvg);
+
+        if (this.zoomedWheelFamily) {
+          if (!group || group.classList.contains('dimmed')) {
+            applyWheelZoom(wheelContainer, null);
+            return;
+          }
+          this.toggleEmotion(group.dataset.actEmotion);
+          if (onMutate) onMutate();
+          return;
+        }
+
+        if (!group) return;
+
+        if (compact) {
+          const famId = group.dataset.emotionFamily;
+          if (famId) {
+            applyWheelZoom(wheelContainer, famId);
+            return;
+          }
+        }
+
+        this.toggleEmotion(group.dataset.actEmotion);
+        if (onMutate) onMutate();
+      });
+
+      const handleLeaveWheel = (e) => {
+        if (e.pointerType === 'touch') return;
         clearAllHover(true);
         raiseSelectedGroups();
       };
@@ -1679,6 +1948,7 @@ class EspacioActApp {
     if (!modal || !modalBody) return;
 
     const closeModal = () => {
+      this.zoomedWheelFamily = null;
       if (window.app?.closeModal) {
         window.app.closeModal();
       } else {
@@ -1703,7 +1973,7 @@ class EspacioActApp {
         <div class="flex-between" style="margin-bottom: 10px; gap: 10px; flex-wrap: wrap;">
           <div>
 <h3 class="card-title" style="margin-bottom: 2px;">Rueda de las Emociones (Vista Maximizada)</h3>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Toca una o varias emociones concretas en el anillo exterior para nombrar lo que sientes.</p>
+            <p class="explanatory-subtext" style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Toca una o varias emociones concretas en el anillo exterior para nombrar lo que sientes.</p>
           </div>
           <button type="button" class="btn-secondary" id="btn-modal-wheel-x" aria-label="Cerrar" style="font-size: 0.85rem; padding: 6px 11px;">✕</button>
         </div>
@@ -1943,7 +2213,7 @@ class EspacioActApp {
         </div>
       </div>
 
-      <div style="text-align: center; margin-top: 18px; font-style: italic; color: var(--sage-700); font-size: 0.9rem;">
+      <div class="explanatory-subtext" style="text-align: center; margin-top: 18px; font-style: italic; color: var(--sage-700); font-size: 0.9rem;">
         "Tu postura le informa a tu sistema nervioso de que estás a salvo incluso en medio de la incomodidad."
       </div>
 
