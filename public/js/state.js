@@ -662,6 +662,7 @@ class StateManager {
       let surfacePref ='editorial';
       let buttonsPref ='ultraligero';
       let explanationsPref ='show';
+      let actConceptsPref = 'show';
       try {
         const storedPal = localStorage.getItem(STORAGE_KEYS.PALETTE_PREF);
         if (['arcilla','musgo','sepia','niebla','custom'].includes(storedPal)) palettePref = storedPal;
@@ -671,7 +672,6 @@ class StateManager {
         if (storedBtns ==='editorial' || storedBtns ==='ultraligero') buttonsPref = storedBtns;
         const storedEx = localStorage.getItem(STORAGE_KEYS.EXPLANATIONS_PREF);
         if (storedEx ==='hide' || storedEx ==='show') explanationsPref = storedEx;
-        let actConceptsPref = 'show';
         const storedConcepts = localStorage.getItem(STORAGE_KEYS.ACT_CONCEPTS_PREF);
         if (storedConcepts === 'hide' || storedConcepts === 'show') actConceptsPref = storedConcepts;
       } catch {
