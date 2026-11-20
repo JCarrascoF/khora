@@ -248,6 +248,33 @@
     document.documentElement.setAttribute('data-explanations', explanations);
   },
 
+  initActConcepts() {
+    const settings = window.stateManager.getSettings();
+    let concepts = settings.actConcepts;
+    if (concepts !== 'hide' && concepts !== 'show') {
+      try {
+        const stored = localStorage.getItem('act_concepts_pref');
+        concepts = stored === 'hide' ? 'hide' : 'show';
+      } catch {
+        concepts = 'show';
+      }
+    }
+    document.documentElement.setAttribute('data-act-concepts', concepts);
+  },
+
+  setActConcepts(newVal) {
+    const resolved = newVal === 'hide' ? 'hide' : 'show';
+    document.documentElement.setAttribute('data-act-concepts', resolved);
+
+    try {
+      localStorage.setItem('act_concepts_pref', resolved);
+    } catch {}
+
+    const settings = window.stateManager.getSettings();
+    settings.actConcepts = resolved;
+    window.stateManager.saveSettings(settings);
+  },
+
   setExplanations(newVal) {
     const resolved = newVal === 'hide' ? 'hide' : 'show';
     document.documentElement.setAttribute('data-explanations', resolved);
@@ -430,19 +457,10 @@
         </div>
 
         <div id="settings-modal-dynamic-content"></div>
-
-        <div class="btn-group" style="margin-top: 14px; justify-content: flex-end;">
-          <button type="button" class="btn-primary" id="btn-storage-modal-done" style="font-size: 0.82rem;">
-            Listo
-          </button>
-        </div>
       </div>
     `;
 
     document.getElementById('btn-storage-modal-close')?.addEventListener('click', () => {
-      this.closeModal();
-    });
-    document.getElementById('btn-storage-modal-done')?.addEventListener('click', () => {
       this.closeModal();
     });
 
@@ -474,6 +492,7 @@
       const currentLang = window.i18n?.getLang?.() || 'es';
       const anchorsOn = settings.showAnchorsCard !== false;
       const explanationsOn = (document.documentElement.getAttribute('data-explanations') || settings.explanations || 'show') !== 'hide';
+      const actConceptsOn = (document.documentElement.getAttribute('data-act-concepts') || settings.actConcepts || 'show') !== 'hide';
 
       const serverBadge = serverAvailable
         ? (authRequired && !authenticated
@@ -725,6 +744,16 @@ ${currentPalette === 'custom' ? (() => {
 <span class="pref-switch-knob"></span>
               </button>
             </div>
+
+<div class="pref-row">
+<div class="pref-row-info">
+<span class="pref-row-label">Conceptos de ACT</span>
+<span class="pref-row-hint">Subrayar expresiones clave para ver al pasar el ratón qué principio de ACT representan</span>
+</div>
+<button type="button" class="pref-switch ${actConceptsOn ?'on' :''}" id="btn-setting-toggle-act-concepts" role="switch" aria-checked="${actConceptsOn ?'true' :'false'}" aria-label="Conceptos de ACT">
+<span class="pref-switch-knob"></span>
+              </button>
+            </div>
 </div>
           </div>
             ` : ''}
@@ -879,6 +908,27 @@ ${currentPalette === 'custom' ? (() => {
                   Enviar Feedback
                 </button>
               </div>
+              <div class="flex-between" style="gap: 8px 12px; align-items: center; flex-wrap: wrap; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border-subtle); font-size: 0.72rem; color: var(--text-muted);">
+                <div>
+                  <span>${(() => {
+                    const htmlV = window.__KHORA_APP_VERSION__ || '';
+                    const swUrl = this.swRegistration?.active?.scriptURL || '';
+                    const swV = swUrl ? (swUrl.match(/v([0-9]+(?:\.[0-9]+)+)/) || [])[1] || '' : '';
+                    if (!htmlV && !swV) return 'v— (service worker no activo)';
+                    const parts = [htmlV ? `v${htmlV}` : '', swV ? `SW v${swV}` : ''];
+                    return parts.filter(Boolean).join(' · ');
+                  })()}</span>
+                  <span aria-hidden="true"> · </span>
+                  <span>${matchMedia?.('(display-mode: standalone)')?.matches ? 'App instalada' : 'Pestaña del navegador'}</span>
+                </div>
+                ${(() => {
+                  const hasWaiting = Boolean(this.swRegistration?.waiting);
+                  if (hasWaiting) {
+                    return `<button type="button" class="btn-primary" id="btn-pwa-check-updates" style="font-size: 0.75rem; padding: 5px 10px;">Actualizar y recargar</button>`;
+                  }
+                  return `<button type="button" id="btn-pwa-check-updates" style="background: none; border: none; padding: 0; font: inherit; color: var(--text-muted); text-decoration: underline; text-underline-offset: 2px; cursor: pointer;">Revisar actualizaciones</button>`;
+                })()}
+              </div>
             </div>
             ` : ''}
           </div>
@@ -1030,6 +1080,15 @@ ${currentPalette === 'custom' ? (() => {
         const nextVal = currentlyOn ? 'hide' : 'show';
         this.setExplanations(nextVal);
         renderModalContent();
+        this.triggerSettingsSaveIndicator();
+      });
+
+      document.getElementById('btn-setting-toggle-act-concepts')?.addEventListener('click', () => {
+        const currentlyOn = (document.documentElement.getAttribute('data-act-concepts') || 'show') !== 'hide';
+        const nextVal = currentlyOn ? 'hide' : 'show';
+        this.setActConcepts(nextVal);
+        renderModalContent();
+        window.app?.renderGuiaInicio?.();
         this.triggerSettingsSaveIndicator();
       });
 
@@ -1237,6 +1296,28 @@ ${currentPalette === 'custom' ? (() => {
       document.getElementById('btn-settings-feedback')?.addEventListener('click', () => {
         this.hideSettingsSaveIndicator();
         this.openFeedbackModal();
+      });
+
+      document.getElementById('btn-pwa-check-updates')?.addEventListener('click', async (e) => {
+        const btn = e.currentTarget;
+        const reg = this.swRegistration;
+        if (!reg) return;
+        btn.disabled = true;
+        const origText = btn.textContent;
+        btn.textContent = 'Revisando…';
+        try {
+          await reg.update();
+        } catch {
+          // update() rejects offline; just re-render
+        }
+        if (reg.waiting) {
+          this.showToast('Nueva versión disponible');
+          this.applyPwaUpdate(reg, btn, null);
+          return;
+        }
+        btn.disabled = false;
+        btn.textContent = origText;
+        this.showToast('La app está al día');
       });
 
       if (modal.classList.contains('active') && prevScroll > 0) {

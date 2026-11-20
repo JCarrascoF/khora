@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="light" data-palette="arcilla" data-surface="editorial" data-buttons="ultraligero" data-explanations="show">
+<!-- khora:version:1.1.0 -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -66,6 +67,7 @@
         window.__KHORA_PALETTE_COLORS__ = colors;
         window.__KHORA_DEFAULT_CUSTOM_PALETTE__ = defaultCustom;
         window.__KHORA_GET_ON_ACCENT__ = getOnAccent;
+        window.__KHORA_APP_VERSION__ = '1.1.0';
         var themeCol = (colors[p] && colors[p][t]) ? colors[p][t] : '#F3EDE4';
         if (p === 'custom') {
           var rawCp = localStorage.getItem('act_custom_palette_pref');
@@ -106,11 +108,6 @@
       </div>
 
       <div class="header-actions">
-        <!-- SOS Quick Crisis Processing Button -->
-        <button type="button" class="btn-sos" id="btn-sos-crisis" title="Procesar momento de saturación emocional" data-i18n-title="Procesar momento de saturación emocional">
-          <span data-i18n="Necesito calma ahora">Necesito calma ahora</span>
-        </button>
-
         <!-- Quick Lock Button (Visible only when Privacy Vault is enabled) -->
         <button type="button" class="btn-icon" id="btn-quick-lock" title="Bloquear pantalla ahora" aria-label="Bloquear aplicación" data-i18n-title="Bloquear pantalla ahora" data-i18n-aria-label="Bloquear aplicación" style="display: none;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -139,8 +136,8 @@
     </header>
 
     <!-- Immersive Calm Exit Bar (only shown in Crisis ACT immersive mode) -->
-    <div id="crisis-immersive-bar" class="crisis-immersive-bar" aria-label="Modo calma">
-      <button type="button" id="btn-exit-crisis-immersive" class="btn-inline-link" data-i18n="← Salir del modo calma">← Salir del modo calma</button>
+    <div id="crisis-immersive-bar" class="crisis-immersive-bar" aria-label="Volver al inicio">
+      <button type="button" id="btn-exit-crisis-immersive" class="btn-inline-link" data-i18n="← Volver al inicio">← Volver al inicio</button>
       <span class="crisis-immersive-label" data-i18n="Anclaje suave · sin prisa">Anclaje suave · sin prisa</span>
     </div>
 
@@ -197,7 +194,7 @@
       <!-- Sub-App 5: La Brújula de Valores (Micro-Clarificación) -->
       <section id="brujula-valores-view" class="subapp-section" aria-label="La Brújula de Valores"></section>
 
-      <!-- Sub-App 6: Píldoras y Anclajes (Lecturas de 1 minuto) -->
+      <!-- Sub-App 6: Píldoras y Anclajes -->
       <section id="pildoras-anclajes-view" class="subapp-section" aria-label="Píldoras y Anclajes"></section>
 
       <!-- Sub-App 3: El Panel de Insight (Analítica y Evolución) -->

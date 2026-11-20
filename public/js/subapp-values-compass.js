@@ -5,7 +5,8 @@
 
 class BrujulaValoresApp {
   constructor() {
-    this.currentStep = 1; // 1: Situación y Bloqueo, 2: Valor Faro y Micro-Acción
+    this.currentStep = 1; // 1: Situación, 2: Bloqueo, 3: Valor, 4: Micro-acción
+    this.totalSteps = 4;
     this.valuesCatalog = [
       { id:'Dignidad', icon:'', desc:'Autorrespeto sin ceder por miedo' },
       { id:'Autocuidado', icon:'', desc:'Proteger mi energía y descanso' },
@@ -58,7 +59,7 @@ class BrujulaValoresApp {
     ];
 
     this.actionChips = [
-      'Pedir 15 minutos antes de dar una respuesta definitiva',
+      'Tomar una pausa antes de dar una respuesta definitiva',
       'Decir con amabilidad que hoy no puedo, en 1 sola frase sin justificarme',
       'Expresar con calma lo que sí necesito o prefiero hacer',
       'Sostener mi decisión aunque al otro no le encante al principio'
@@ -107,32 +108,47 @@ class BrujulaValoresApp {
     this.bindEvents();
   }
 
+  setStep(step) {
+    if (step < 1 || step > this.totalSteps) return;
+    this.currentStep = step;
+    this.render();
+    this.bindEvents();
+    window.KhoraUtils.scrollToTop();
+  }
+
   render() {
     const container = document.getElementById('brujula-valores-view');
     if (!container) return;
 
-    const bodyContent = this.currentStep === 1 ? this.renderStep1() : this.renderStep2();
+    let stepHtml = '';
+    switch (this.currentStep) {
+      case 1:
+        stepHtml = this.renderStep1();
+        break;
+      case 2:
+        stepHtml = this.renderStep2();
+        break;
+      case 3:
+        stepHtml = this.renderStep3();
+        break;
+      case 4:
+        stepHtml = this.renderStep4();
+        break;
+    }
+
     const historyEntries = window.stateManager.getCompassEntries();
 
     container.innerHTML = `
-      <div class="view-plain-shell">
-        <div class="card-header flex-between" style="margin-bottom: 12px;">
-          <div class="title-with-help">
-<h2 class="card-title" style="margin: 0;">La Brújula de Valores</h2>
-            <button type="button" class="help-info-trigger" data-help-topic="brujula-valores" aria-label="Información de esta herramienta">ⓘ</button>
-          </div>
-          <span class="badge" style="background: var(--sage-100); color: var(--sage-700);">
-            Paso ${this.currentStep} de 2
-          </span>
-        </div>
+      ${window.KhoraUI.renderTypeformShell({
+        currentStep: this.currentStep,
+        totalSteps: this.totalSteps,
+        helpTopic: 'brujula-valores',
+        bodyId: 'compass-body',
+        stepHtml
+      })}
 
-        <div id="compass-body">
-          ${bodyContent}
-        </div>
-      </div>
-
-      ${historyEntries.length > 0 ? `
-        <div class="card mt-4">
+      ${this.currentStep === 1 && historyEntries.length > 0 ? `
+        <div class="card mt-4" style="max-width: 660px; margin-left: auto; margin-right: auto;">
           <div class="card-header" style="margin-bottom: 12px;">
             <div class="title-with-help">
               <h3 class="card-title" style="font-size: 1.05rem; margin: 0;">Nortes Fijados Recientemente</h3>
@@ -167,18 +183,21 @@ class BrujulaValoresApp {
   renderStep1() {
     const esc = window.KhoraUtils.escapeHtml;
     return `
+      <div class="act-step-header">
+        <h3 class="act-step-question">¿En qué situación dudas o sientes presión?</h3>
+      </div>
+
       <div class="form-group">
-        <label class="form-label" for="compass-situation">1. ¿En qué situación dudas o sientes presión?</label>
-        <textarea id="compass-situation" class="form-textarea" rows="2" style="min-height: 68px;" placeholder="Describe con tus palabras la situación en 1 línea...">${esc(this.formData.situation)}</textarea>
+        <textarea id="compass-situation" class="form-textarea" rows="3" style="min-height: 84px;" placeholder="Descríbelo en una línea…">${esc(this.formData.situation)}</textarea>
         <div style="margin-top: 8px;">
-          <button type="button" class="btn-inline-link" id="btn-compass-toggle-sit" style="font-size: 0.78rem;">
-            ${this.showSitExamples ?'▴ Ocultar ejemplos' :'¿Bloqueado? Ver ejemplos de situaciones'}
+          <button type="button" class="btn-inline-link" id="btn-compass-toggle-sit" style="font-size: 0.8rem;">
+            ${this.showSitExamples ? 'Ocultar ideas' : 'Ver ideas'}
           </button>
           ${this.showSitExamples ? `
             <div class="quick-chips-row" style="margin-top: 8px;">
               ${this.situationChips.map(sit => `
                 <button type="button" class="quick-fill-chip ${this.formData.situation === sit ? 'active' : ''}" data-compass-sit-chip="${esc(sit)}">
-                  ${sit}
+                  ${esc(sit)}
                 </button>
               `).join('')}
             </div>
@@ -186,26 +205,9 @@ class BrujulaValoresApp {
         </div>
       </div>
 
-      <div class="form-group mt-4">
-        <label class="form-label">2. ¿Qué te está frenando ahora mismo? (opcional)</label>
-        <div class="chip-grid mt-2" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
-          ${this.barrierOptions.map(b => `
-            <button type="button" class="chip-btn ${this.selectedBarrierId === b.id ? 'selected' : ''}" data-compass-barrier="${b.id}" style="padding: 12px 14px; text-align: left; align-items: flex-start;">
-              <span style="font-weight: 700; font-size: 0.86rem;">${b.label}</span>
-            </button>
-          `).join('')}
-          <button type="button" class="chip-btn ${this.selectedBarrierId === 'otro' ? 'selected' : ''}" data-compass-barrier="otro" style="padding: 12px 14px; text-align: left; align-items: flex-start;">
-<span style="font-weight: 700; font-size: 0.86rem;">Otro bloqueo / Escribirlo yo</span>
-          </button>
-        </div>
-        ${this.selectedBarrierId === 'otro' ? `
-          <input type="text" id="compass-custom-barrier" class="form-input mt-2" value="${esc(this.customBarrierText)}" placeholder="Escribe qué sientes que te frena...">
-        ` : ''}
-      </div>
-
-      <div class="btn-group">
+      <div class="act-typeform-footer">
         <button type="button" class="btn-primary" id="btn-compass-next-1">
-          Elegir Valor y Acción
+          Siguiente
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </div>
@@ -213,50 +215,75 @@ class BrujulaValoresApp {
   }
 
   renderStep2() {
+    const esc = window.KhoraUtils.escapeHtml;
+    return `
+      <div class="act-step-header">
+        <h3 class="act-step-question">¿Qué te está frenando ahora?</h3>
+      </div>
+
+      <div class="form-group">
+        <div class="chip-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+          ${this.barrierOptions.map(b => `
+            <button type="button" class="chip-btn ${this.selectedBarrierId === b.id ? 'selected' : ''}" data-compass-barrier="${b.id}" style="padding: 12px 14px; text-align: left; align-items: flex-start;">
+              <span style="font-weight: 700; font-size: 0.88rem;">${b.label}</span>
+            </button>
+          `).join('')}
+          <button type="button" class="chip-btn ${this.selectedBarrierId === 'otro' ? 'selected' : ''}" data-compass-barrier="otro" style="padding: 12px 14px; text-align: left; align-items: flex-start;">
+            <span style="font-weight: 700; font-size: 0.88rem;">Otro bloqueo / Escribirlo yo</span>
+          </button>
+        </div>
+        ${this.selectedBarrierId === 'otro' ? `
+          <input type="text" id="compass-custom-barrier" class="form-input mt-3" value="${esc(this.customBarrierText)}" placeholder="Escribe qué sientes que te frena…">
+        ` : ''}
+      </div>
+
+      <div class="act-typeform-footer">
+        <button type="button" class="btn-secondary" id="btn-compass-prev-2">← Atrás</button>
+        <button type="button" class="btn-primary" id="btn-compass-next-2">
+          Siguiente
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    `;
+  }
+
+  renderStep3() {
     const profileValues = window.stateManager.getProfile()?.coreValues || [];
     const esc = window.KhoraUtils.escapeHtml;
-    const valObj = this.valuesCatalog.find(v => v.id === this.formData.selectedValue) || {
-      id: this.formData.selectedValue || 'este valor',
-      icon:''
-    };
 
     return `
-      <div class="form-group">
-        <label class="form-label" for="compass-custom-value">1. ¿Qué Valor guía tu respuesta hoy?</label>
+      <div class="act-step-header">
+        <h3 class="act-step-question">¿Qué valor guía tu respuesta hoy?</h3>
+      </div>
 
+      <div class="form-group">
         ${profileValues.length > 0 ? `
-          <div style="margin-top: 6px; margin-bottom: 10px;">
-            <span style="font-size: 0.76rem; font-weight: 700; color: var(--sage-700); display: block; margin-bottom: 6px;">
-              Tus Valores («Yo»):
-            </span>
-            <div class="quick-chips-row" style="margin-top: 0;">
-              ${profileValues.map(pv => {
-                const labelVal = `${pv.domain}: ${pv.statement.slice(0, 38)}${pv.statement.length > 38 ? '…' : ''}`;
-                const isSel = this.formData.selectedValue === labelVal;
-                return `
-                  <button type="button" class="quick-fill-chip ${isSel ? 'active' : ''}" data-compass-val="${esc(labelVal)}" data-compass-micro="${esc(pv.microAction || '')}">
-<strong>${esc(pv.domain)}:</strong> ${esc(pv.statement.slice(0, 34))}${pv.statement.length > 34 ?'…' :''}
-                  </button>
-                `;
-              }).join('')}
-            </div>
+          <div class="quick-chips-row" style="margin-top: 0; margin-bottom: 10px;">
+            ${profileValues.map(pv => {
+              const labelVal = `${pv.domain}: ${pv.statement.slice(0, 38)}${pv.statement.length > 38 ? '…' : ''}`;
+              const isSel = this.formData.selectedValue === labelVal;
+              return `
+                <button type="button" class="quick-fill-chip ${isSel ? 'active' : ''}" data-compass-val="${esc(labelVal)}" data-compass-micro="${esc(pv.microAction || '')}">
+                  <strong>${esc(pv.domain)}:</strong> ${esc(pv.statement.slice(0, 34))}${pv.statement.length > 34 ? '…' : ''}
+                </button>
+              `;
+            }).join('')}
           </div>
         ` : ''}
 
         <input type="text" id="compass-custom-value" class="form-input" value="${esc(this.formData.selectedValue)}"
-               placeholder="Escribe tu valor (ej: Presencia, Honestidad, Cuidado, Curiosidad...)">
+               placeholder="Escribe tu valor (ej: Honestidad, Calma, Cuidado…)">
 
         <div style="margin-top: 8px;">
-          <button type="button" class="btn-inline-link" id="btn-compass-toggle-val-examples" style="font-size: 0.78rem;">
-            ${this.showValueExamples ?'▴ Ocultar ejemplos de valores' :'¿Bloqueado? Ver ejemplos de valores'}
+          <button type="button" class="btn-inline-link" id="btn-compass-toggle-val-examples" style="font-size: 0.8rem;">
+            ${this.showValueExamples ? 'Ocultar ideas' : 'Ver ideas'}
           </button>
           ${this.showValueExamples ? `
             <div class="chip-grid mt-2" style="grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));">
               ${this.valuesCatalog.map(val => `
                 <button type="button" class="chip-btn ${this.formData.selectedValue === val.id ? 'selected' : ''}" data-compass-val="${val.id}" style="padding: 10px 8px;">
-                  <span style="font-size: 1.35rem;">${val.icon}</span>
                   <span style="font-weight: 700; font-size: 0.84rem;">${val.id}</span>
-                  <small style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.25;">${val.desc}</small>
+                  <small class="explanatory-subtext" style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.25;">${val.desc}</small>
                 </button>
               `).join('')}
             </div>
@@ -264,36 +291,49 @@ class BrujulaValoresApp {
         </div>
       </div>
 
-      <div class="form-group mt-4">
-        <div style="background: linear-gradient(135deg, var(--bg-surface-elevated), var(--bg-surface)); border: 1.5px solid var(--sage-400); border-radius: var(--radius-lg); padding: 18px;">
-          <h3 style="font-size: 1.08rem; font-weight: 800; color: var(--text-primary); line-height: 1.4; margin-bottom: 10px;">
-            ${valObj.icon} Si fueras fiel a «${esc(valObj.id)}», ¿qué harías concretamente?
-          </h3>
+      <div class="act-typeform-footer">
+        <button type="button" class="btn-secondary" id="btn-compass-prev-3">← Atrás</button>
+        <button type="button" class="btn-primary" id="btn-compass-next-3">
+          Siguiente
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    `;
+  }
 
-          <textarea id="compass-key-action" class="form-textarea" rows="2" style="min-height: 78px; font-size: 0.94rem;" placeholder="Escribe con tus palabras una micro-acción concreta para hoy...">${this.formData.keyAction}</textarea>
+  renderStep4() {
+    const esc = window.KhoraUtils.escapeHtml;
+    const valLabel = (this.formData.selectedValue || '').trim() || 'este valor';
 
-          <div style="margin-top: 8px;">
-            <button type="button" class="btn-inline-link" id="btn-compass-toggle-action-examples" style="font-size: 0.78rem;">
-              ${this.showActionExamples ?'▴ Ocultar ejemplos' :'¿Necesitas ideas? Ver ejemplos de micro-acciones'}
-            </button>
-            ${this.showActionExamples ? `
-              <div class="quick-chips-row" style="margin-top: 8px;">
-                ${this.actionChips.map(act => `
-                  <button type="button" class="quick-fill-chip ${this.formData.keyAction === act ? 'active' : ''}" data-compass-action-chip="${esc(act)}">
-                    + ${act}
-                  </button>
-                `).join('')}
-              </div>
-            ` : ''}
-          </div>
+    return `
+      <div class="act-step-header">
+        <h3 class="act-step-question">Si fueras fiel a «${esc(valLabel)}», ¿qué harías hoy?</h3>
+      </div>
+
+      <div class="form-group">
+        <textarea id="compass-key-action" class="form-textarea" rows="3" style="min-height: 84px; font-size: 0.95rem;" placeholder="Escribe un paso concreto y pequeño para hoy…">${esc(this.formData.keyAction)}</textarea>
+
+        <div style="margin-top: 8px;">
+          <button type="button" class="btn-inline-link" id="btn-compass-toggle-action-examples" style="font-size: 0.8rem;">
+            ${this.showActionExamples ? 'Ocultar ideas' : 'Ver ideas'}
+          </button>
+          ${this.showActionExamples ? `
+            <div class="quick-chips-row" style="margin-top: 8px;">
+              ${this.actionChips.map(act => `
+                <button type="button" class="quick-fill-chip ${this.formData.keyAction === act ? 'active' : ''}" data-compass-action-chip="${esc(act)}">
+                  + ${esc(act)}
+                </button>
+              `).join('')}
+            </div>
+          ` : ''}
         </div>
       </div>
 
-      <div class="btn-group" style="justify-content: space-between; margin-top: 20px;">
-        <button type="button" class="btn-secondary" id="btn-compass-prev-2">← Atrás</button>
+      <div class="act-typeform-footer">
+        <button type="button" class="btn-secondary" id="btn-compass-prev-4">← Atrás</button>
         <button type="button" class="btn-primary" id="btn-compass-save">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          Fijar Mi Micro-Acción
+          Guardar y terminar
         </button>
       </div>
     `;
@@ -362,14 +402,11 @@ class BrujulaValoresApp {
       };
     });
 
-    document.getElementById('btn-compass-next-1')?.addEventListener('click', () => {
-      this.currentStep = 2;
-      this.render();
-      this.bindEvents();
-      window.KhoraUtils.scrollToTop();
-    });
+    document.getElementById('btn-compass-next-1')?.addEventListener('click', () => this.setStep(2));
+    document.getElementById('btn-compass-prev-2')?.addEventListener('click', () => this.setStep(1));
+    document.getElementById('btn-compass-next-2')?.addEventListener('click', () => this.setStep(3));
 
-    // Step 2 Events
+    // Step 3 Events
     document.getElementById('compass-custom-value')?.addEventListener('input', (e) => {
       this.formData.selectedValue = e.target.value;
     });
@@ -380,6 +417,18 @@ class BrujulaValoresApp {
       this.bindEvents();
     });
 
+    document.getElementById('btn-compass-prev-3')?.addEventListener('click', () => this.setStep(2));
+    document.getElementById('btn-compass-next-3')?.addEventListener('click', () => {
+      const valText = this.formData.selectedValue?.trim();
+      if (!valText) {
+        window.app?.showToast('Escribe o elige el valor que guía tu respuesta');
+        document.getElementById('compass-custom-value')?.focus?.();
+        return;
+      }
+      this.setStep(4);
+    });
+
+    // Step 4 Events
     document.getElementById('btn-compass-toggle-action-examples')?.addEventListener('click', () => {
       this.showActionExamples = !this.showActionExamples;
       this.render();
@@ -415,12 +464,7 @@ class BrujulaValoresApp {
       });
     });
 
-    document.getElementById('btn-compass-prev-2')?.addEventListener('click', () => {
-      this.currentStep = 1;
-      this.render();
-      this.bindEvents();
-      window.KhoraUtils.scrollToTop();
-    });
+    document.getElementById('btn-compass-prev-4')?.addEventListener('click', () => this.setStep(3));
 
     document.getElementById('btn-compass-save')?.addEventListener('click', () => {
       const valText = this.formData.selectedValue?.trim();

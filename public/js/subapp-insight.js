@@ -95,7 +95,7 @@ class InsightApp {
               <button type="button" class="help-info-trigger" data-help-topic="hexaflex-perfil" aria-label="Información de esta herramienta">ⓘ</button>
             </div>
             <button type="button" class="btn-primary" id="btn-open-hexaflex-modal" style="font-size: 0.82rem; padding: 6px 14px;">
-              Evaluar mi Hexaflex (1 min)
+              Evaluar mi Hexaflex
             </button>
           </div>
 
@@ -446,7 +446,7 @@ class InsightApp {
 
       <!-- Discreet Settings Link -->
 <div style="margin-top: 14px; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); background: var(--bg-surface-elevated); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
-        <span style="font-size: 0.82rem; color: var(--text-secondary);">
+        <span class="explanatory-subtext" style="font-size: 0.82rem; color: var(--text-secondary);">
           Los ajustes de base de datos SQLite, copias de seguridad (.db / JSON) y tema están en el icono de Configuración superior.
         </span>
         <button type="button" class="btn-secondary" id="btn-open-storage-modal" style="font-size: 0.8rem; padding: 7px 12px;">

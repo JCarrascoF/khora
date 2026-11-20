@@ -8,13 +8,22 @@
     "type": "git",
     "url": "git+https://github.com/JCarrascoF/khora.git"
   },
-  "keywords": ["pwa", "act", "mental-health", "journal", "local-first", "sqlite"],
+  "keywords": [
+    "pwa",
+    "act",
+    "mental-health",
+    "journal",
+    "local-first",
+    "sqlite"
+  ],
   "scripts": {
     "start": "node --no-warnings server/server.js",
     "serve:static": "npx serve public",
     "sync:version": "node scripts/sync-version.mjs",
     "test": "node --test tests/*.test.mjs",
-    "check": "node --check server/server.js && node --check public/sw.js && node --check scripts/sync-version.mjs && for f in public/js/*.js; do node --check \"$f\"; done && node scripts/sync-version.mjs --check && node --test tests/*.test.mjs"
+    "ui:check": "node scripts/check-ui-catalog.mjs",
+    "ui:capture": "node scripts/capture-ui.mjs",
+    "check": "node --check server/server.js && node --check public/sw.js && node --check scripts/sync-version.mjs && node scripts/check-ui-catalog.mjs && for f in public/js/*.js; do node --check \"$f\"; done && node scripts/sync-version.mjs --check && node --test tests/*.test.mjs"
   },
   "engines": {
     "node": ">=22.5.0"

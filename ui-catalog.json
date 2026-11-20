@@ -1,0 +1,345 @@
+{
+  "$schema": "./ui-catalog.schema.json",
+  "version": "1.0.0",
+  "description": "Catálogo semántico de UI de Khōra para inspección, alineación y refactorización guiada por LLMs.",
+  "llm_instructions": {
+    "querying": "Para aplicar un cambio de diseño transversal, filtra los flujos por 'characteristics' o 'archetype'. Localiza los archivos en 'file' y los métodos en 'render_method'.",
+    "verification": "Tras editar los componentes, ejecuta 'npm run ui:check' para validar la integridad del catálogo y las reglas de diseño.",
+    "updating": "Si añades, eliminas o renombras una pantalla, paso o modal, actualiza este archivo en el mismo commit.",
+    "shared_primitives": "Utiliza siempre window.KhoraUI (definido en public/js/utils.js) para cabeceras, steppers, barras de acciones, pestañas y estados vacíos en vez de reimplementar HTML duplicado."
+  },
+  "shared_primitives": {
+    "module": "window.KhoraUI",
+    "file": "public/js/utils.js",
+    "methods": {
+      "renderHeader": "renderHeader({ title, currentStep, totalSteps, helpTopic, badgeStyle }) -> HTML canónico de cabecera con botón de ayuda (?) y badge de paso.",
+      "renderStepper": "renderStepper({ currentStep, totalSteps, steps, variant: 'nodes'|'pills'|'text'|'hairline' }) -> Stepper de avance unificado.",
+      "renderActionBar": "renderActionBar({ prevId, prevLabel, nextId, nextLabel, nextIcon, extraHtml }) -> Barra inferior de acciones (Atrás / Continuar / Guardar).",
+      "renderEmptyState": "renderEmptyState({ title, description, actionHtml }) -> Tarjeta de estado vacío accesible y uniforme.",
+      "renderInternalTabs": "renderInternalTabs({ tabs: [{id, label}], activeId, dataAttr }) -> Pestañas y selectores segmentados."
+    }
+  },
+  "archetypes": {
+    "hero-hub": {
+      "name": "Selector / Hub de Entrada",
+      "description": "Pantalla inicial con opciones contextuales y enlaces directos a las herramientas según el estado del usuario."
+    },
+    "multi-step-form": {
+      "name": "Formulario Guiado Paso a Paso",
+      "description": "Flujo secuencial reflexivo con indicador de avance, navegación anterior/siguiente y guardado final."
+    },
+    "split-dashboard": {
+      "name": "Panel / Tablero de Estado",
+      "description": "Vista con métricas, gráficos interactivos (Hexaflex, Canvas) o zonas de trabajo divididas."
+    },
+    "list-detail-feed": {
+      "name": "Feed de Registros o Catálogo",
+      "description": "Listado de tarjetas filtrables con acciones rápidas, detalles expandibles o lectura modal."
+    },
+    "modal-dialog": {
+      "name": "Ventana Modal Contextual",
+      "description": "Superficie emergente sobre overlay para configuración, ayudas, creación guiada o ruedas de selección."
+    }
+  },
+  "characteristics_glossary": {
+    "stepper-pills": "Indicador de pasos con botones tipo píldora interactivos (ej. Espacio ACT)",
+    "stepper-nodes": "Indicador de pasos con nodos circulares y barra de progreso continua (ej. Paz Falsa)",
+    "stepper-text": "Indicador de pasos de texto minimalista 'Paso X de Y' (ej. Brújula)",
+    "progress-track": "Barra de progreso visual con porcentaje de avance",
+    "chip-grid": "Cuadrícula de etiquetas o chips seleccionables (emociones, áreas, detonantes)",
+    "slider-scale": "Control deslizante continuo o discreto para escalas numéricas (intensidad 1-10)",
+    "cozy-loop": "Secuencia sutil de 4 fases (detonante, respuesta, paz falsa, coste)",
+    "canvas-radar": "Gráfico de radar interactivo dibujado en Canvas HTML5",
+    "bottom-actions-bar": "Barra inferior fija o relativa con acciones primarias/secundarias",
+    "help-trigger": "Botón de ayuda contextual ⓘ que abre guía asociada",
+    "modal-overlay": "Ventana emergente que bloquea el fondo con app-modal"
+  },
+  "screens": [
+    {
+      "id": "guia-inicio",
+      "name": "Inicio (Ahora mismo)",
+      "group": "ahora-mismo",
+      "route": "#guia-inicio",
+      "file": "public/js/app.js",
+      "render_method": "renderGuiaInicio",
+      "parent": null,
+      "trigger": "Acceso inicial o click en pestaña 'Ahora mismo'",
+      "archetype": "hero-hub",
+      "characteristics": ["chip-grid", "help-trigger"],
+      "css_selectors": [".guia-hero", ".guia-card", ".guia-header"],
+      "screenshot": "screenshots/01-screens/01-guia-inicio.png"
+    },
+    {
+      "id": "espacio-act",
+      "name": "Espacio ACT (Procesar Emoción)",
+      "group": "ahora-mismo",
+      "route": "#espacio-act",
+      "file": "public/js/subapp-act-space.js",
+      "render_method": "render",
+      "parent": "guia-inicio",
+      "trigger": "Click en opción 'Siento abrumamiento, atasco o nudo' de Inicio",
+      "archetype": "multi-step-form",
+      "characteristics": ["stepper-pills", "progress-track", "bottom-actions-bar", "help-trigger"],
+      "css_selectors": [".act-typeform-container", ".act-typeform-steps-nav", ".act-step-pill", ".act-typeform-stage"],
+      "steps": [
+        { "step": 1, "id": "espacio-act-step1", "name": "Emoción", "render_method": "renderStep1", "pattern": "chip-grid", "screenshot": "screenshots/01-screens/02-espacio-act-step1.png" },
+        { "step": 2, "id": "espacio-act-step2", "name": "Intensidad", "render_method": "renderStep2", "pattern": "slider-scale", "screenshot": "screenshots/01-screens/02-espacio-act-step2.png" },
+        { "step": 3, "id": "espacio-act-step3", "name": "Cuerpo", "render_method": "renderStep3", "pattern": "chip-grid", "screenshot": "screenshots/01-screens/02-espacio-act-step3.png" },
+        { "step": 4, "id": "espacio-act-step4", "name": "Mente", "render_method": "renderStep4", "pattern": "textarea-defusion", "screenshot": "screenshots/01-screens/02-espacio-act-step4.png" },
+        { "step": 5, "id": "espacio-act-step5", "name": "Distancia", "render_method": "renderStep5", "pattern": "mindfulness-pause", "screenshot": "screenshots/01-screens/02-espacio-act-step5.png" },
+        { "step": 6, "id": "espacio-act-step6", "name": "Elección", "render_method": "renderStep6", "pattern": "values-choice", "screenshot": "screenshots/01-screens/02-espacio-act-step6.png" },
+        { "step": 7, "id": "espacio-act-step7", "name": "Cierre", "render_method": "renderStep7", "pattern": "slider-scale", "screenshot": "screenshots/01-screens/02-espacio-act-step7.png" }
+      ]
+    },
+    {
+      "id": "brujula-valores",
+      "name": "Brújula de Valores (Elegir qué Hacer)",
+      "group": "ahora-mismo",
+      "route": "#brujula-valores",
+      "file": "public/js/subapp-values-compass.js",
+      "render_method": "render",
+      "parent": "guia-inicio",
+      "trigger": "Click en opción 'Dudo qué hacer o me cuesta decir no' de Inicio",
+      "archetype": "multi-step-form",
+      "characteristics": ["stepper-text", "bottom-actions-bar", "help-trigger"],
+      "css_selectors": [".bv-container", ".bv-step-body", ".step-info-badge"],
+      "steps": [
+        { "step": 1, "id": "brujula-step1", "name": "Situación y Bloqueo", "render_method": "renderStep1", "pattern": "split-input-cards", "screenshot": "screenshots/01-screens/03-brujula-valores-step1.png" },
+        { "step": 2, "id": "brujula-step2", "name": "Valor Faro y Micro-Acción", "render_method": "renderStep2", "pattern": "value-choice-action", "screenshot": "screenshots/01-screens/03-brujula-valores-step2.png" }
+      ]
+    },
+    {
+      "id": "paz-falsa",
+      "name": "Espejo de la Paz Falsa (Acabo de Ceder)",
+      "group": "ahora-mismo",
+      "route": "#paz-falsa",
+      "file": "public/js/subapp-false-peace.js",
+      "render_method": "render",
+      "parent": "guia-inicio",
+      "trigger": "Click en opción 'Acabo de ceder o decir sí queriendo decir no' de Inicio",
+      "archetype": "multi-step-form",
+      "characteristics": ["stepper-nodes", "progress-track", "bottom-actions-bar", "help-trigger"],
+      "css_selectors": [".pf-container", ".step-bar-container", ".step-node", ".step-bar-fill"],
+      "steps": [
+        { "step": 1, "id": "paz-falsa-step1", "name": "Detonante", "render_method": "renderStep1", "pattern": "situation-input", "screenshot": "screenshots/01-screens/04-paz-falsa-step1.png" },
+        { "step": 2, "id": "paz-falsa-step2", "name": "Alivio Inmediato", "render_method": "renderStep2", "pattern": "chip-grid", "screenshot": "screenshots/01-screens/04-paz-falsa-step2.png" },
+        { "step": 3, "id": "paz-falsa-step3", "name": "Coste a Largo Plazo", "render_method": "renderStep3", "pattern": "reflection-cost", "screenshot": "screenshots/01-screens/04-paz-falsa-step3.png" },
+        { "step": 4, "id": "paz-falsa-step4", "name": "Brújula Alternativa", "render_method": "renderStep4", "pattern": "value-reconnect", "screenshot": "screenshots/01-screens/04-paz-falsa-step4.png" }
+      ]
+    },
+    {
+      "id": "pildoras-trucos",
+      "name": "Píldoras y Anclajes · Trucos Rápidos",
+      "group": "ahora-mismo",
+      "route": "#pildoras-trucos",
+      "file": "public/js/subapp-pills-anchors.js",
+      "render_method": "renderTricksHubView",
+      "parent": "guia-inicio",
+      "trigger": "Click en opción 'Necesito parar y anclarme ahora mismo' de Inicio",
+      "archetype": "list-detail-feed",
+      "characteristics": ["chip-grid", "help-trigger"],
+      "css_selectors": [".tricks-hub", ".trick-card", ".internal-tab-btn"],
+      "screenshot": "screenshots/01-screens/12-pildoras-trucos.png"
+    },
+    {
+      "id": "pildoras-estudio",
+      "name": "Píldoras y Anclajes · Estudio ACT",
+      "group": "ahora-mismo",
+      "route": "#pildoras-estudio",
+      "file": "public/js/subapp-pills-anchors.js",
+      "render_method": "renderPillListView",
+      "parent": "guia-inicio",
+      "trigger": "Click en opción 'Tengo un momento de calma para leer o practicar' de Inicio",
+      "archetype": "list-detail-feed",
+      "characteristics": ["chip-grid", "help-trigger"],
+      "css_selectors": [".pills-container", ".pill-card", ".internal-tab-btn"],
+      "screenshot": "screenshots/01-screens/13-pildoras-estudio.png"
+    },
+    {
+      "id": "perfil-valores",
+      "name": "Yo · Mis Valores",
+      "group": "yo",
+      "route": "#perfil-valores",
+      "file": "public/js/subapp-profile.js",
+      "render_method": "renderValuesBlock",
+      "parent": "app-nav",
+      "trigger": "Click en pestaña 'Yo' del nav superior",
+      "archetype": "split-dashboard",
+      "characteristics": ["chip-grid", "help-trigger"],
+      "css_selectors": [".values-grid", ".value-card", ".context-subnav"],
+      "screenshot": "screenshots/01-screens/05-perfil-valores.png"
+    },
+    {
+      "id": "perfil-autobus",
+      "name": "Yo · Mi Autobús",
+      "group": "yo",
+      "route": "#perfil-autobus",
+      "file": "public/js/subapp-profile.js",
+      "render_method": "renderMindAndBusBlock",
+      "parent": "perfil-valores",
+      "trigger": "Click en subnav 'Mi Autobús'",
+      "archetype": "split-dashboard",
+      "characteristics": ["help-trigger"],
+      "css_selectors": [".bus-view-container", ".bus-section-title", ".passenger-card"],
+      "screenshot": "screenshots/01-screens/06-perfil-autobus.png"
+    },
+    {
+      "id": "radar-patrones",
+      "name": "Yo · Mis Patrones",
+      "group": "yo",
+      "route": "#radar-patrones",
+      "file": "public/js/subapp-pattern-radar.js",
+      "render_method": "render",
+      "parent": "perfil-valores",
+      "trigger": "Click en subnav 'Mis Patrones'",
+      "archetype": "list-detail-feed",
+      "characteristics": ["cozy-loop", "help-trigger"],
+      "css_selectors": [".pattern-radar-container", ".cozy-loop-box", ".cozy-loop-step", ".pattern-card"],
+      "screenshot": "screenshots/01-screens/07-radar-patrones.png"
+    },
+    {
+      "id": "insight-terapia",
+      "name": "Evolución · Cuaderno de Terapia",
+      "group": "insight",
+      "route": "#insight-terapia",
+      "file": "public/js/subapp-insight.js",
+      "render_method": "renderTherapyReflectionsSection",
+      "parent": "app-nav",
+      "trigger": "Click en pestaña 'Evolución' (icono reloj) del nav superior",
+      "archetype": "list-detail-feed",
+      "characteristics": ["help-trigger"],
+      "css_selectors": [".therapy-notebook-container", ".therapy-card"],
+      "screenshot": "screenshots/01-screens/08-insight-terapia.png"
+    },
+    {
+      "id": "insight-historial",
+      "name": "Evolución · Historial en Frío",
+      "group": "insight",
+      "route": "#insight-historial",
+      "file": "public/js/subapp-insight.js",
+      "render_method": "renderHistorialTab",
+      "parent": "insight-terapia",
+      "trigger": "Click en subnav 'Historial en Frío'",
+      "archetype": "list-detail-feed",
+      "characteristics": ["chip-grid", "help-trigger"],
+      "css_selectors": [".history-filter-bar", ".history-feed", ".history-card"],
+      "screenshot": "screenshots/01-screens/09-insight-historial.png"
+    },
+    {
+      "id": "insight-graficos",
+      "name": "Evolución · Gráficos y Hexaflex",
+      "group": "insight",
+      "route": "#insight-graficos",
+      "file": "public/js/subapp-insight.js",
+      "render_method": "renderGraficosTab",
+      "parent": "insight-terapia",
+      "trigger": "Click en subnav 'Gráficos y Hexaflex'",
+      "archetype": "split-dashboard",
+      "characteristics": ["canvas-radar", "help-trigger"],
+      "css_selectors": [".graficos-tab-container", ".hexaflex-canvas-wrap", ".trends-chart-wrap"],
+      "screenshot": "screenshots/01-screens/10-insight-graficos.png"
+    },
+    {
+      "id": "insight-actividad",
+      "name": "Evolución · Actividad Reciente",
+      "group": "insight",
+      "route": "#insight-actividad",
+      "file": "public/js/subapp-insight.js",
+      "render_method": "renderRecentActivitySection",
+      "parent": "insight-terapia",
+      "trigger": "Click en subnav 'Actividad Reciente'",
+      "archetype": "list-detail-feed",
+      "characteristics": ["help-trigger"],
+      "css_selectors": [".recent-activity-container", ".activity-timeline-item"],
+      "screenshot": "screenshots/01-screens/11-insight-actividad.png"
+    }
+  ],
+  "modals": [
+    {
+      "id": "modal-settings-apariencia",
+      "name": "Configuración · Apariencia",
+      "file": "public/js/app-settings.js",
+      "render_method": "openSettingsModal",
+      "trigger": "Click en botón ⚙️ del encabezado global",
+      "archetype": "modal-dialog",
+      "characteristics": ["modal-overlay", "chip-grid"],
+      "css_selectors": ["#storage-mode-modal-root", ".palette-option-btn"],
+      "screenshot": "screenshots/02-modals/01-settings-apariencia.png"
+    },
+    {
+      "id": "modal-settings-privacidad",
+      "name": "Configuración · Privacidad",
+      "file": "public/js/app-settings.js",
+      "render_method": "openSettingsModal",
+      "trigger": "Click en pestaña 'Privacidad' de Configuración",
+      "archetype": "modal-dialog",
+      "characteristics": ["modal-overlay"],
+      "css_selectors": ["#storage-mode-modal-root", ".settings-card"],
+      "screenshot": "screenshots/02-modals/02-settings-privacidad.png"
+    },
+    {
+      "id": "modal-settings-datos",
+      "name": "Configuración · Datos y App",
+      "file": "public/js/app-settings.js",
+      "render_method": "openSettingsModal",
+      "trigger": "Click en pestaña 'Datos y App' de Configuración",
+      "archetype": "modal-dialog",
+      "characteristics": ["modal-overlay"],
+      "css_selectors": ["#storage-mode-modal-root", ".settings-card"],
+      "screenshot": "screenshots/02-modals/03-settings-datos.png"
+    },
+    {
+      "id": "modal-context-help",
+      "name": "Ayuda Contextual",
+      "file": "public/js/app-help.js",
+      "render_method": "openScreenHelpModal",
+      "trigger": "Click en botón ? del encabezado o en ⓘ de cualquier pantalla",
+      "archetype": "modal-dialog",
+      "characteristics": ["modal-overlay"],
+      "css_selectors": [".help-modal-content"],
+      "screenshot": "screenshots/02-modals/04-help-context.png"
+    },
+    {
+      "id": "modal-feedback",
+      "name": "Enviar Feedback",
+      "file": "public/js/app.js",
+      "render_method": "openFeedbackModal",
+      "trigger": "Click en botón 'Enviar feedback' del pie de página",
+      "archetype": "modal-dialog",
+      "characteristics": ["modal-overlay"],
+      "css_selectors": [".feedback-modal-content"],
+      "screenshot": "screenshots/02-modals/05-feedback.png"
+    },
+    {
+      "id": "modal-pattern-create",
+      "name": "Nuevo Patrón de Evitación",
+      "file": "public/js/subapp-pattern-radar.js",
+      "render_method": "openCreatePatternModal",
+      "trigger": "Click en botón '+ Nuevo Patrón' en Mis Patrones",
+      "archetype": "modal-dialog",
+      "characteristics": ["modal-overlay", "cozy-loop"],
+      "css_selectors": [".pattern-create-modal", ".opposites-generator"],
+      "screenshot": "screenshots/02-modals/08-pattern-modal.png"
+    },
+    {
+      "id": "modal-value-wizard",
+      "name": "Asistente de Nuevo Valor Faro",
+      "file": "public/js/subapp-profile.js",
+      "render_method": "openValueWizardModal",
+      "trigger": "Click en botón '+ Añadir Valor' o dominio vacío en Mis Valores",
+      "archetype": "modal-dialog",
+      "characteristics": ["modal-overlay", "chip-grid"],
+      "css_selectors": [".wizard-modal-content", ".domain-chip"]
+    },
+    {
+      "id": "modal-hexaflex-eval",
+      "name": "Evaluación Rápida de Flexibilidad (Hexaflex)",
+      "file": "public/js/subapp-insight.js",
+      "render_method": "openHexaflexModal",
+      "trigger": "Click en botón 'Evaluar mi Hexaflex (1 min)' en Gráficos y Hexaflex",
+      "archetype": "modal-dialog",
+      "characteristics": ["modal-overlay", "slider-scale"],
+      "css_selectors": [".hexaflex-eval-modal"]
+    }
+  ]
+}

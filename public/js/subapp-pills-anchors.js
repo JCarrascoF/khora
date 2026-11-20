@@ -9,6 +9,9 @@ class PildorasAnclajesApp {
     this.currentTab = 'trucos'; // 'trucos' | 'pildoras' | 'deconstruct' | 'pivot'
     this.activeFilter = 'all'; // For pills
     this.activeTrickGroup = null; // null | 'calm' | 'mind' | 'limits' | 'all'
+    this.activeStudyArea = null; // null | 'defusion' | 'limites' | 'aceptacion' | 'presente' | 'all'
+    this.activeReadingId = null;
+    this.activeWorkshopId = null;
     this.currentMantraIndex = 0;
     this.expandedPillIds = new Set();
     this.showAnchorsList = false;
@@ -53,6 +56,34 @@ class PildorasAnclajesApp {
 
     this.pills = [
       {
+        id: 'pill_guia_act',
+        category: 'fundamentos',
+        categoryLabel: 'Fundamentos',
+        title: 'Fundamentos de Khōra y ACT',
+        trickId: 'trick_cold_breath',
+        summary: 'Por qué aquí no intentamos borrar las emociones difíciles, qué significa hacerles espacio y cómo usar tus valores como brújula.',
+        content: `
+          <p style="margin-bottom: 12px; line-height: 1.6;">
+            Si has entrado en Khōra buscando «trucos para dejar de sentir ansiedad» o «pensar en positivo», esta breve guía te ahorrará mucha frustración.
+          </p>
+          <p style="margin-bottom: 12px; line-height: 1.6;">
+            Esta aplicación se basa en la <strong>Terapia de Aceptación y Compromiso (ACT)</strong>, una corriente psicológica con amplia evidencia científica que propone algo radicalmente distinto al control mental tradicional.
+          </p>
+          <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin-top: 14px; margin-bottom: 6px;">1. Tu mente no tiene botón de borrar</div>
+          <p style="margin-bottom: 12px; line-height: 1.6;">
+            Intentar <em>no</em> sentir miedo, culpa o tristeza casi siempre los multiplica. Si intentas con todas tus fuerzas no pensar en un oso blanco durante un minuto, lo único en lo que pensarás es en el oso. Aquí no venimos a luchar contra lo que sientes ni a discutir con tu cabeza.
+          </p>
+          <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin-top: 14px; margin-bottom: 6px;">2. Hacer espacio (en lugar de pelear)</div>
+          <p style="margin-bottom: 12px; line-height: 1.6;">
+            El malestar emocional es incómodo, pero no es peligroso ni significa que estés roto/a. Cuando aprendes a ubicarlo en el cuerpo, ponerle nombre y dejarle un hueco sin salir corriendo a calmarlo, deja de acaparar toda tu energía.
+          </p>
+          <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin-top: 14px; margin-bottom: 6px;">3. Tus valores conducen el autobús</div>
+          <p style="margin-bottom: 12px; line-height: 1.6;">
+            Tus dudas y miedos viajarán contigo en los asientos traseros, a veces gritando. Pero no tienen manos para girar el volante. La meta no es no tener miedo, sino dar pasos hacia lo que de verdad te importa <em>incluso con el miedo a cuestas</em>.
+          </p>
+        `
+      },
+      {
         id: 'pill_1',
         category: 'defusion',
         categoryLabel: 'Defusión',
@@ -61,15 +92,14 @@ class PildorasAnclajesApp {
         trickId: 'trick_comic_voice',
         summary: 'Aprende a mirar tus pensamientos como palabras que pasan, en lugar de verdades absolutas que debes obedecer.',
         content: `
-          <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--sage-700); margin-bottom: 8px;">La trampa de la fusión mental</h4>
           <p style="margin-bottom: 12px; line-height: 1.6;">
             Cuando estamos "fusionados" con la mente, el pensamiento <em>"Si digo que no, me van a rechazar"</em> se siente como una verdad indiscutible. Creemos que el pensamiento y nosotros somos la misma cosa.
           </p>
           <p style="margin-bottom: 12px; line-height: 1.6;">
             <strong>La defusión cognitiva</strong> consiste en dar un paso atrás y observar el pensamiento como lo que verdaderamente es: una serie de sonidos, palabras e imágenes producidas por un órgano evolutivo diseñado para evitar peligros, no para hacerte feliz.
           </p>
-          <h4 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-top: 14px; margin-bottom: 6px;">El truco de los tres prefijos:</h4>
-          <ul style="padding-left: 20px; line-height: 1.6; margin-bottom: 14px;">
+          <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-top: 12px; margin-bottom: 6px;">El truco de los tres prefijos:</div>
+          <ul style="padding-left: 20px; line-height: 1.6; margin-bottom: 4px;">
             <li>En lugar de <em>"Soy un cobarde"</em>, di: <strong>"Estoy teniendo el pensamiento de que soy un cobarde"</strong>.</li>
             <li>O mejor aún: <strong>"Me doy cuenta de que mi mente me está contando la historia de que soy un cobarde"</strong>.</li>
             <li>O con compasión: <strong>"Gracias mente por intentar protegerme recordándome ese miedo"</strong>.</li>
@@ -85,15 +115,14 @@ class PildorasAnclajesApp {
         trickId: 'trick_serene_silence',
         summary: 'El hábito de hablar de más cuando ponemos un límite es el síntoma de una culpa aprendida.',
         content: `
-          <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--sage-700); margin-bottom: 8px;">La sobre-justificación como sumisión encubierta</h4>
           <p style="margin-bottom: 12px; line-height: 1.6;">
             ¿Te has descubierto dando 5 minutos de explicaciones médicas, laborales o familiares cuando simplemente no querías ir a un compromiso?
           </p>
           <p style="margin-bottom: 12px; line-height: 1.6;">
             La sobre-explicación nace de la creencia inconsciente de que <strong>tu deseo por sí solo no tiene validez legal</strong>; necesitas que la otra persona "te conceda el permiso" o "te indulte" para poder descansar sin culpa.
           </p>
-          <h4 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-top: 14px; margin-bottom: 6px;">La regla de la sencillez serena:</h4>
-          <p style="margin-bottom: 12px; line-height: 1.6;">
+          <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-top: 12px; margin-bottom: 6px;">La regla de la sencillez serena:</div>
+          <p style="margin-bottom: 4px; line-height: 1.6;">
             Un adulto no pide permiso para sus límites. Un adulto comunica su disponibilidad con cortesía:
             <br><em>"Agradezco la invitación, pero hoy no me es posible. Que lo paséis muy bien."</em>
           </p>
@@ -108,11 +137,10 @@ class PildorasAnclajesApp {
         trickId: 'trick_cold_breath',
         summary: 'La mala cara del otro no es una emergencia que tengas que resolver de inmediato.',
         content: `
-          <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--sage-700); margin-bottom: 8px;">El impulso de apagar el fuego ajeno</h4>
           <p style="margin-bottom: 12px; line-height: 1.6;">
             Cuando dices 'no' o marcas un límite y el otro suspira, se muestra frío o pone mala cara, tu sistema nervioso entra en alerta roja: <em>"¡Peligro! Hay que arreglar esto ya"</em>. Y casi siempre lo arreglas cediendo o pidiendo perdón.
           </p>
-          <p style="margin-bottom: 12px; line-height: 1.6;">
+          <p style="margin-bottom: 4px; line-height: 1.6;">
             En ACT, tolerar la reacción ajena significa <strong>hacer espacio a la incomodidad somática</strong>: sentir el nudo en la garganta o el estómago sin correr a complacer para apagarlo.
           </p>
         `
@@ -126,11 +154,10 @@ class PildorasAnclajesApp {
         trickId: 'trick_pause_rescue',
         summary: 'Ceder para mantener la paz no elimina el conflicto: solo lo guarda en tu cuerpo con intereses.',
         content: `
-          <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--sage-700); margin-bottom: 8px;">La factura siempre llega</h4>
           <p style="margin-bottom: 12px; line-height: 1.6;">
             Cuando acallas lo que piensas para que el otro no se moleste, crees que has evitado un problema. Pero el ser humano no olvida las traiciones contra sí mismo.
           </p>
-          <p style="margin-bottom: 12px; line-height: 1.6;">
+          <p style="margin-bottom: 4px; line-height: 1.6;">
             Ese malestar no expresado se transmuta en <strong>resentimiento sordo</strong>. Semanas después te descubres frío, distante, sarcástico o perdiendo los estribos por una pequeñez.
           </p>
         `
@@ -144,11 +171,10 @@ class PildorasAnclajesApp {
         trickId: 'trick_two_arrows',
         summary: 'Aprende a distinguir entre el dolor inevitable de vivir y el sufrimiento que añades al luchar contra él.',
         content: `
-          <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--sage-700); margin-bottom: 8px;">Las dos flechas del sufrimiento</h4>
           <p style="margin-bottom: 12px; line-height: 1.6;">
             <strong>Dolor limpio:</strong> Es la tristeza natural por una pérdida, la culpa refleja momentánea al poner un límite, o el miedo normal ante un reto. Es la vida sucediendo en tu cuerpo.
           </p>
-          <p style="margin-bottom: 12px; line-height: 1.6;">
+          <p style="margin-bottom: 4px; line-height: 1.6;">
             <strong>Dolor sucio:</strong> Es la rumiación que fabricas para no sentir el dolor limpio: <em>"¿Por qué soy tan débil? ¿Por qué siempre me pasa a mí? No debería sentirme así. Voy a ceder para que se me pase esta angustia."</em>
           </p>
         `
@@ -162,14 +188,13 @@ class PildorasAnclajesApp {
         trickId: 'trick_drop_anchor',
         summary: 'Por qué intentar suprimir la ansiedad echa gasolina al fuego (evitación experiencial) y cómo estabilizar el barco con Russ Harris.',
         content: `
-          <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--sage-700); margin-bottom: 8px;">No esperes a que pase la tormenta para sujetar el barco</h4>
           <p style="margin-bottom: 12px; line-height: 1.6;">
             En la Terapia de Aceptación y Compromiso (ACT), luchar contra el miedo o intentar borrar la angustia a la fuerza se llama <strong>evitación experiencial</strong>: cuanto más peleas por no sentirla, más alarma dispara tu mente.
           </p>
           <p style="margin-bottom: 12px; line-height: 1.6;">
             El protocolo <strong>ACE</strong> de Russ Harris no busca apagar tus emociones, sino <em>echar el ancla</em> en medio de la tormenta para no ser arrastrado por el piloto automático:
           </p>
-          <ul style="padding-left: 20px; line-height: 1.6; margin-bottom: 14px;">
+          <ul style="padding-left: 20px; line-height: 1.6; margin-bottom: 4px;">
             <li><strong>A — Acknowledge (Reconocer):</strong> Nombra con curiosidad lo que está ocurriendo dentro (<em>"Aquí hay agobio y pensamientos acelerados"</em>).</li>
             <li><strong>C — Come back into your body (Volver al cuerpo):</strong> Empuja los pies contra el suelo, estira suavemente los hombros y exhala lento haciendo espacio alrededor de la sensación.</li>
             <li><strong>E — Engage in the present (Conectar):</strong> Mira 3 cosas y escucha 2 sonidos reales de tu entorno; luego elige un primer paso mínimo con sentido.</li>
@@ -249,7 +274,7 @@ class PildorasAnclajesApp {
       {
         id: 'trick_pause_rescue',
         group: 'limits',
-        title: 'La Pausa de los 2 Minutos',
+        title: 'Pausa de Contención',
         intent: 'rescue',
         intentLabel: 'Impulso de Rescate',
         badge: 'Auto-contención',
@@ -275,7 +300,7 @@ class PildorasAnclajesApp {
         id: 'calm',
         tabLabel: 'Cuerpo y calma',
         title: 'Agobio, miedo o tensión física',
-        subtitle: 'Bajar revoluciones, aterrizar en el cuerpo y estabilizarte en 1 minuto.',
+        subtitle: 'Bajar revoluciones, aterrizar en el cuerpo y estabilizarte.',
         trickIds: ['trick_drop_anchor', 'trick_somatic_yes']
       },
       {
@@ -299,17 +324,21 @@ class PildorasAnclajesApp {
         id: 'defusion',
         icon:'',
         title: 'Defusión Cognitiva',
+        tabLabel: 'Defusión',
         subtitle: 'Tomar distancia de pensamientos rígidos y etiquetas («soy…»).',
+        actDefinition: 'En ACT, la defusión cognitiva es la habilidad de observar tus pensamientos como eventos mentales pasajeros —palabras o imágenes que genera la mente— en lugar de verdades literales u órdenes que tengas que obedecer.',
         trickIds: ['trick_comic_voice', 'trick_bus_driver'],
         workshops: [
-          { id:'deconstruct', icon:'', title:'El Deconstructor del"Yo Soy"', duration:'1 min', badge:'Taller interactivo' }
+          { id:'deconstruct', icon:'', title:'El Deconstructor del "Yo Soy"', duration:'1 min', badge:'Taller interactivo' }
         ]
       },
       {
         id: 'limites',
         icon:'',
         title: 'Límites y Soberanía',
+        tabLabel: 'Límites',
         subtitle: 'Decir «no» sin sobre-explicarte y frenar el impulso de rescate.',
+        actDefinition: 'En ACT, poner límites nace de la acción comprometida con tus valores: elegir cómo quieres actuar por dignidad y cuidado, aceptando la incomodidad que pueda generar en el otro sin intentar controlarla.',
         trickIds: ['trick_serene_silence', 'trick_pause_rescue'],
         workshops: [
           { id:'pivot', icon:'', title:'El Pivote: Del Dolor al Anhelo', duration:'1 min', badge:'Taller interactivo' }
@@ -319,7 +348,9 @@ class PildorasAnclajesApp {
         id: 'aceptacion',
         icon:'',
         title: 'Aceptación y Compasión',
+        tabLabel: 'Aceptación',
         subtitle: 'Sostener la incomodidad ajena y soltar el dolor sucio de culpa.',
+        actDefinition: 'En ACT, la aceptación no es resignación ni pasividad: es abrir espacio intencionadamente a las emociones o sensaciones difíciles sin luchar contra ellas, para no añadir sufrimiento innecesario.',
         trickIds: ['trick_cold_breath', 'trick_two_arrows', 'trick_somatic_yes'],
         workshops: [
           { id:'pivot', icon:'', title:'El Pivote: Del Dolor al Anhelo', duration:'1 min', badge:'Taller interactivo' }
@@ -329,7 +360,9 @@ class PildorasAnclajesApp {
         id: 'presente',
         icon:'',
         title: 'Momento Presente y Regulación',
+        tabLabel: 'Presente',
         subtitle: 'Echar el ancla en medio de la tormenta y regular la postura corporal.',
+        actDefinition: 'En ACT, el contacto con el momento presente consiste en traer la atención con flexibilidad al aquí y ahora —tu respiración, tu cuerpo y tu entorno— como ancla estable antes de responder.',
         trickIds: ['trick_drop_anchor', 'trick_somatic_yes'],
         workshops: []
       }
@@ -403,7 +436,6 @@ class PildorasAnclajesApp {
         <div class="toolkit-row-body">
           <div class="toolkit-row-head">
             <span class="toolkit-row-title">${trick.title}</span>
-            <span class="toolkit-row-duration">${trick.duration}</span>
           </div>
           <p class="triage-card-desc">${trick.desc}</p>
         </div>
@@ -416,10 +448,10 @@ class PildorasAnclajesApp {
         <div class="view-plain-shell">
           <div class="cozy-home-header toolkit-header">
             <div class="title-with-help">
-              <h2 class="card-title" style="margin: 0;">Botiquín de 1 Minuto</h2>
+              <h2 class="card-title" style="margin: 0;">Botiquín</h2>
               <button type="button" class="help-info-trigger" data-help-topic="pildoras-trucos" aria-label="Información de esta herramienta">ⓘ</button>
             </div>
-            <p class="cozy-home-sub">Elige lo que más se parezca a este momento para ver 2 o 3 ejercicios de un minuto.</p>
+            <p class="cozy-home-sub">Elige lo que más se parezca a este momento para ver 2 o 3 ejercicios breves.</p>
           </div>
 
           <div>
@@ -459,7 +491,7 @@ class PildorasAnclajesApp {
         <div class="toolkit-header toolkit-header-compact">
           <div class="flex-between" style="flex-wrap: wrap; gap: 8px 16px;">
             <div class="title-with-help">
-              <h2 class="card-title" style="margin: 0;">Botiquín de 1 Minuto</h2>
+              <h2 class="card-title" style="margin: 0;">Botiquín</h2>
               <button type="button" class="help-info-trigger" data-help-topic="pildoras-trucos" aria-label="Información de esta herramienta">ⓘ</button>
             </div>
             <button type="button" class="btn-inline-link toolkit-back-btn" data-trick-group="">
@@ -506,135 +538,171 @@ class PildorasAnclajesApp {
   }
 
   // -------------------------------------------------------------
-  // TAB: PÍLDORAS Y MANTRAS
+  // TAB: LECTURAS Y CONCEPTOS ACT (ÍNDICE EDITORIAL + SUPERFICIE)
   // -------------------------------------------------------------
   renderPillListView() {
-    const showAnchorsCard = window.stateManager.getSettings?.().showAnchorsCard !== false;
+    if (this.activeReadingId) {
+      return this.renderReadingSurfaceView(this.activeReadingId);
+    }
+    if (this.activeWorkshopId) {
+      return this.renderWorkshopSurfaceView(this.activeWorkshopId);
+    }
+
     const favorites = window.stateManager.getPillFavorites();
-    const anchors = window.stateManager.getAnchors();
-    const safeIdx = anchors.length > 0 ? (this.currentMantraIndex % anchors.length) : 0;
-    const featuredAnchor = anchors[safeIdx] || null;
-    const isFeaturedFav = featuredAnchor ? favorites.includes(featuredAnchor.id) : false;
-    const esc = window.KhoraUtils.escapeHtml;
+    const foundationsPill = this.pills.find(p => p.id === 'pill_guia_act');
+    const seenWorkshops = new Set();
+
+    const renderIndexReading = (p) => {
+      const isFav = favorites.includes(p.id);
+      return `
+        <button type="button" class="study-index-item" data-open-reading="${p.id}">
+          <span class="study-index-item-title">
+            ${p.title}${isFav ? ' <span style="color: #b86b59; font-size: 0.82rem;" title="Guardado en favoritos">♥</span>' : ''}
+          </span>
+          <span class="study-index-arrow" aria-hidden="true">→</span>
+        </button>
+      `;
+    };
+
+    const renderIndexWorkshop = (w) => `
+      <button type="button" class="study-index-item" data-open-workshop="${w.id}">
+        <span class="study-index-item-title">
+          ${w.title}<span class="study-index-badge">Taller</span>
+        </span>
+        <span class="study-index-arrow" aria-hidden="true">→</span>
+      </button>
+    `;
 
     return `
-      ${showAnchorsCard ? `
-      <!-- Tarjetas de Anclaje / Mantras ACT unificadas -->
-      <div class="card" id="anchors-unified-card" style="margin-bottom: 24px;">
-        <div class="card-header flex-between" style="flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
-          <div>
-            <div class="title-with-help">
-<h3 class="card-title" style="font-size: 1.08rem; margin: 0;">Mis Tarjetas de Anclaje ACT (${anchors.length})</h3>
-              <button type="button" class="help-info-trigger" data-help-topic="tarjetas-anclaje" aria-label="Información de esta herramienta">ⓘ</button>
-            </div>
-            <p class="card-subtitle">Frases personales y de referentes ACT que también ves como faro en momentos de crisis</p>
-          </div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-            <button type="button" class="btn-secondary" id="btn-toggle-anchors-list" style="font-size: 0.8rem; padding: 6px 12px;">
-              ${this.showAnchorsList ?'▴ Ocultar listado' :`Listar anclajes (${anchors.length})`}
-            </button>
-            <button type="button" class="btn-secondary" id="btn-create-custom-anchor-card" style="font-size: 0.8rem; padding: 6px 12px;">
-              + Nuevo Anclaje
-            </button>
-          </div>
-        </div>
-
-        ${featuredAnchor ? `
-          <div style="background: linear-gradient(135deg, rgba(87, 139, 116, 0.16), rgba(66, 111, 92, 0.08)); border: 1px solid var(--sage-400); border-radius: var(--radius-md); padding: 14px 16px; position: relative; overflow: hidden;">
-            <div class="flex-between" style="margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
-              <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                <span style="font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--sage-700);">
-                  Anclaje en Foco
-                </span>
-                ${window.stateManager?.isExampleItem?.(featuredAnchor) ? '<span class="badge example-item-badge">Ejemplo guía</span>' : ''}
-              </div>
-              <div style="display: flex; gap: 6px; align-items: center;">
-                <button type="button" class="btn-icon" data-toggle-fav="${featuredAnchor.id}" title="${isFeaturedFav ? 'Quitar de favoritos' : 'Guardar en favoritos'}" style="width: 30px; height: 30px; color: ${isFeaturedFav ? '#b86b59' : 'var(--text-muted)'};">
-                  ${isFeaturedFav ?'' :''}
-                </button>
-                ${anchors.length > 1 ? `
-                  <button type="button" class="btn-secondary" id="btn-next-mantra" style="font-size: 0.76rem; padding: 4px 10px;">
-                    Siguiente
-                  </button>
-                ` : ''}
-              </div>
-            </div>
-            <div style="font-size: 1.12rem; font-weight: 700; color: var(--text-primary); line-height: 1.48; font-style: italic; margin-bottom: 6px;">
-              "${esc(featuredAnchor.text)}"
-            </div>
-            <div style="font-size: 0.76rem; color: var(--sage-700); font-weight: 600;">
-              — ${esc(featuredAnchor.author)} · ${esc(featuredAnchor.category)}
-            </div>
-          </div>
-        ` : `
-<div style="padding: 14px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); text-align: center; font-size: 0.84rem; color: var(--text-muted);">
-            Aún no tienes tarjetas de anclaje guardadas. Crea la primera para verla aquí y en tu botón SOS.
-          </div>
-        `}
-
-        ${this.showAnchorsList ? `
-<div class="anchor-manage-list" style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 8px;">
-            ${anchors.map((anc, idx) => `
-              <div class="history-item" style="margin-bottom: 0; padding: 11px 13px; background: var(--bg-surface-elevated); ${idx === safeIdx ? 'border-color: var(--sage-500);' : ''}">
-                <div class="flex-between" style="gap: 10px; align-items: flex-start; flex-wrap: wrap;">
-                  <div data-focus-anchor-idx="${idx}" style="flex: 1; min-width: 200px; cursor: pointer;">
-                    <div style="font-size: 0.9rem; font-weight: 600; font-style: italic; color: var(--text-primary); line-height: 1.45;">
-                      "${esc(anc.text)}"
-                    </div>
-                    <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                      <span>— ${esc(anc.author)}</span>
-                      <span class="badge" style="background-color: var(--sage-100); color: var(--sage-700); font-size: 0.7rem;">${esc(anc.category)}</span>
-                      ${window.stateManager?.isExampleItem?.(anc) ? '<span class="badge example-item-badge">Ejemplo guía</span>' : ''}
-                    </div>
-                  </div>
-                  <div style="display: flex; gap: 6px; align-items: center;">
-                    <button type="button" class="btn-secondary" data-edit-anchor-id="${anc.id}" style="font-size: 0.74rem; padding: 4px 9px;">
-                      Editar
-                    </button>
-                    <button type="button" class="btn-secondary" data-delete-anchor-id="${anc.id}" style="font-size: 0.74rem; padding: 4px 9px; color: var(--accent-tension); border-color: rgba(184, 107, 89, 0.35);">
-                      Borrar
-                    </button>
-                  </div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        ` : ''}
-      </div>
-      ` : ''}
-
-      <!-- Conceptos ACT: Cards limpias que abren Lecturas y Actividades en Modal -->
       <div class="view-plain-shell">
-        <div class="card-header flex-between" style="margin-bottom: 14px;">
+        <div class="card-header flex-between" style="margin-bottom: 18px;">
           <div>
             <div class="title-with-help">
-<h2 class="card-title" style="margin: 0;">Lecturas y Conceptos ACT</h2>
+              <h2 class="card-title" style="margin: 0;">Lecturas y Conceptos ACT</h2>
               <button type="button" class="help-info-trigger" data-help-topic="miniguias-bolsillo" aria-label="Información de esta herramienta">ⓘ</button>
             </div>
-            <p class="card-subtitle">Elige un concepto para leer su explicación breve y practicar sus dinámicas guiadas.</p>
+            <p class="card-subtitle">Índice de lecturas breves y talleres para momentos de calma.</p>
           </div>
         </div>
 
-        <div class="desktop-two-col-equal">
+        <div class="study-index-groups">
+          ${foundationsPill ? `
+            <section class="study-index-group">
+              <div class="cozy-section-label">Inicio</div>
+              <div class="study-index-list">
+                ${renderIndexReading(foundationsPill)}
+              </div>
+            </section>
+          ` : ''}
+
           ${this.studyAreas.map(area => {
             const areaPills = this.pills.filter(p => p.category === area.id);
-            const workshopsCount = area.workshops.length;
+            const workshops = (area.workshops || []).filter(w => {
+              if (seenWorkshops.has(w.id)) return false;
+              seenWorkshops.add(w.id);
+              return true;
+            });
+            if (areaPills.length === 0 && workshops.length === 0) return '';
             return `
-              <button type="button" class="triage-card study-concept-card" data-open-study-area="${area.id}" style="text-align: left;">
-                <div>
-                  <div class="triage-card-top">
-                    <span class="triage-card-title">${area.icon} ${area.title}</span>
-                  </div>
-                  <p class="triage-card-desc" style="margin-top: 6px;">${area.subtitle}</p>
+              <section class="study-index-group">
+                <div class="cozy-section-label">${area.title}</div>
+                <p class="study-index-sub explanatory-subtext">${area.subtitle}</p>
+                <div class="study-index-list">
+                  ${areaPills.map(renderIndexReading).join('')}
+                  ${workshops.map(renderIndexWorkshop).join('')}
                 </div>
-                <div class="triage-card-value flex-between" style="gap: 8px; flex-wrap: wrap;">
-<span>${areaPills.length} ${areaPills.length === 1 ?'lectura' :'lecturas'}${workshopsCount > 0 ?` · ${workshopsCount} ${workshopsCount === 1 ?'taller' :'talleres'}` :''}</span>
-                  <span style="font-weight: 800; color: var(--sage-600);">Explorar →</span>
-                </div>
-              </button>
+              </section>
             `;
           }).join('')}
         </div>
+
+        <div class="toolkit-all-footer" style="margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end;">
+          <button type="button" class="btn-inline-link" id="btn-study-go-botiquin" style="font-size: 0.84rem;">
+            Practicar trucos rápidos en el Botiquín →
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  renderReadingSurfaceView(pillId) {
+    const pill = this.pills.find(p => p.id === pillId);
+    if (!pill) {
+      this.activeReadingId = null;
+      return this.renderPillListView();
+    }
+
+    const favorites = window.stateManager.getPillFavorites();
+    const isFav = favorites.includes(pill.id);
+    const area = this.studyAreas.find(a => a.id === pill.category) || null;
+    const relatedWorkshop = area?.workshops?.[0] || null;
+
+    return `
+      <div class="view-plain-shell">
+        <div class="toolkit-header toolkit-header-compact" style="margin-bottom: 18px;">
+          <div class="flex-between" style="flex-wrap: wrap; gap: 10px 16px;">
+            <button type="button" class="btn-inline-link toolkit-back-btn" id="btn-reading-back">
+              ← Volver a Lecturas y Ejercicios
+            </button>
+            <button type="button" class="btn-secondary" data-toggle-fav="${pill.id}" style="font-size: 0.8rem; padding: 6px 12px; color: ${isFav ? '#b86b59' : 'var(--text-secondary)'};">
+              ${isFav ? '♥ Guardado' : '♡ Guardar lectura'}
+            </button>
+          </div>
+        </div>
+
+        <article>
+          <div style="margin-bottom: 10px;">
+            <span class="cozy-meta-tag">${pill.categoryLabel}</span>
+          </div>
+          <h2 style="font-size: 1.45rem; font-weight: 800; color: var(--text-primary); margin: 0 0 18px; line-height: 1.3;">
+            ${pill.title}
+          </h2>
+
+          <div class="study-reading-body" style="color: var(--text-primary); font-size: 0.96rem; line-height: 1.7;">
+            ${pill.content}
+          </div>
+        </article>
+
+        ${(relatedWorkshop || pill.trickId) ? `
+          <div style="margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--border-subtle);">
+            <div class="cozy-section-label" style="margin-bottom: 10px;">Llevarlo a la práctica</div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              ${relatedWorkshop ? `
+                <button type="button" class="btn-secondary" data-open-workshop="${relatedWorkshop.id}" style="font-size: 0.84rem;">
+                  Abrir taller: ${relatedWorkshop.title} →
+                </button>
+              ` : ''}
+              ${pill.trickId ? `
+                <button type="button" class="btn-secondary" data-launch-trick-id="${pill.trickId}" style="font-size: 0.84rem;">
+                  Practicar en el Botiquín →
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        ` : ''}
+
+        <div class="toolkit-all-footer" style="margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+          <button type="button" class="btn-inline-link" id="btn-reading-back-bottom">
+            ← Volver a Lecturas y Ejercicios
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  renderWorkshopSurfaceView(workshopId) {
+    const innerHtml = workshopId === 'deconstruct'
+      ? this.renderDeconstructView()
+      : this.renderPivotView();
+
+    return `
+      <div class="view-plain-shell">
+        <div class="toolkit-header toolkit-header-compact" style="margin-bottom: 16px;">
+          <button type="button" class="btn-inline-link toolkit-back-btn" id="btn-workshop-back">
+            ← Volver a Lecturas y Ejercicios
+          </button>
+        </div>
+        ${innerHtml}
       </div>
     `;
   }
@@ -671,7 +739,7 @@ class PildorasAnclajesApp {
       <div class="view-plain-shell">
         <div class="card-header" style="margin-bottom: 12px;">
           <div class="title-with-help">
-<h2 class="card-title" style="margin: 0;">El Deconstructor del"Yo Soy"</h2>
+<h2 class="card-title" style="margin: 0;">El Deconstructor del "Yo Soy"</h2>
             <button type="button" class="help-info-trigger" data-help-topic="deconstructor-pivote" aria-label="Información de esta herramienta">ⓘ</button>
           </div>
           <p class="card-subtitle">Desmonta una etiqueta fija en una conducta concreta y modificable.</p>
@@ -959,7 +1027,7 @@ class PildorasAnclajesApp {
             <input type="text" id="ace-hear-2" class="form-input" style="font-size: 0.84rem; padding: 8px 12px;"
                    placeholder="2 sonidos o texturas que noto ahora (el aire, la ropa, un ruido lejano)...">
             <input type="text" id="ace-action-1" class="form-input" style="font-size: 0.84rem; padding: 8px 12px;"
-                   placeholder="1 acción pequeña y valiosa que elijo hacer en el próximo minuto...">
+                   placeholder="1 acción pequeña y valiosa que elijo hacer ahora...">
           </div>
         </div>
 
@@ -1279,7 +1347,7 @@ class PildorasAnclajesApp {
             <div style="font-weight: 700; color: var(--sage-700); margin-bottom: 4px;">
               1ª Flecha: Dolor Limpio (Inevitable)
             </div>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px;">Lo que ocurrió objetivamente en la realidad:</p>
+            <p class="form-hint" style="margin-bottom: 6px;">Lo que ocurrió objetivamente en la realidad:</p>
             <input type="text" id="arrow-clean" class="form-input" value="He dicho que no a ir a la cena y sentí un pellizco de culpa refleja.">
           </div>
 
@@ -1288,7 +1356,7 @@ class PildorasAnclajesApp {
             <div style="font-weight: 700; color: var(--accent-tension); margin-bottom: 4px;">
               2ª Flecha: Dolor Sucio (Opcional - La historia que te clavas tú)
             </div>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px;">El juicio moral con el que te flagelas:</p>
+            <p class="form-hint" style="margin-bottom: 6px;">El juicio moral con el que te flagelas:</p>
             <textarea id="arrow-dirty" class="form-textarea" style="min-height: 70px;">"Soy una persona egoísta, no sé cuidar a mis relaciones, se van a cansar de mí y me quedaré solo."</textarea>
           </div>
         </div>
@@ -1331,7 +1399,7 @@ class PildorasAnclajesApp {
           <button type="button" class="btn-icon" id="btn-close-runner" style="border: none; background: transparent;">✕</button>
         </div>
 
-        <h3 class="card-title mt-2">La Pausa de los 2 Minutos</h3>
+        <h3 class="card-title mt-2">Pausa de Contención</h3>
         <p class="card-subtitle">Frena el impulso impulsivo de ofrecerte voluntario o resolverle la incomodidad al otro.</p>
 
         <div class="silence-timer-wrap mt-4" style="width: 150px; height: 150px;">
@@ -1346,7 +1414,7 @@ class PildorasAnclajesApp {
 
         <div class="btn-group" style="justify-content: center; margin-top: 14px;">
           <button type="button" class="btn-primary" id="btn-start-pause-timer">
-            Iniciar Pausa de 2 Minutos
+            Iniciar Pausa
           </button>
         </div>
       </div>
@@ -1377,7 +1445,7 @@ class PildorasAnclajesApp {
         updateDisplay();
 
         if (totalSec === 60 && inst) {
-          inst.textContent = '"1 minuto cumplido. Siente cómo la urgencia fisiológica empieza a perder intensidad. Respira hondo."';
+          inst.textContent = '"Medio camino completado. Siente cómo la urgencia fisiológica empieza a perder intensidad. Respira hondo."';
         }
 
         if (totalSec <= 0) {
@@ -1400,7 +1468,7 @@ class PildorasAnclajesApp {
     const affectedIds = Array.isArray(targetPas?.affectedValues) ? targetPas.affectedValues : [];
     const matchedInitialVal = profileValues.find(v => affectedIds.includes(v.id) || affectedIds.includes(v.domain));
     let activeRouteValue = matchedInitialVal || profileValues[0] || null;
-    const formatRouteValue = (v) => v ? `${v.domain}: ${v.statement}` : 'Cuidar mi dignidad y actuar con honestidad y calma';
+    const formatRouteValue = (v) => v ? `${v.domain}: ${v.statement}` : 'Sin rumbo definido aún';
     const primaryValue = formatRouteValue(activeRouteValue);
 
     const esc = window.KhoraUtils.escapeHtml;
@@ -1498,7 +1566,7 @@ class PildorasAnclajesApp {
               </div>
             ` : ''}
             <p id="bus-runner-route-quote" style="font-size: 0.88rem; font-weight: 700; color: var(--text-primary); margin: 3px 0 4px;">«${esc(primaryValue)}»</p>
-            <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0;">
+            <p class="explanatory-subtext" style="font-size: 0.8rem; color: var(--text-secondary); margin: 0;">
               Ni obedecer el desvío ni parar a discutir: reconócelo, siéntalo atrás y sigue conduciendo.
             </p>
           </div>
@@ -1784,37 +1852,65 @@ class PildorasAnclajesApp {
         });
       });
 
-      document.querySelectorAll('[data-open-study-area]').forEach(card => {
-        card.addEventListener('click', () => {
-          this.openAreaStudyModal(card.dataset.openStudyArea);
+      document.querySelectorAll('[data-open-reading]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const pillId = btn.dataset.openReading;
+          if (!pillId) return;
+          this.activeReadingId = pillId;
+          this.activeWorkshopId = null;
+          if (typeof location !== 'undefined' && window.app && location.hash !== `#pildoras-estudio/lectura/${pillId}`) {
+            location.hash = `pildoras-estudio/lectura/${pillId}`;
+          }
+          this.render();
+          this.bindEvents();
+          window.scrollTo?.({ top: 0, behavior: 'smooth' });
         });
       });
 
-      document.querySelectorAll('[data-toggle-pill-id]').forEach(card => {
-        card.addEventListener('click', (e) => {
-          if (
-            e.target.closest('[data-toggle-fav]') ||
-            e.target.closest('[data-launch-trick-id]') ||
-            e.target.closest('[data-open-workshop]') ||
-            e.target.closest('.pill-activities-box')
-          ) {
-            return;
-          }
-          const pillId = card.dataset.togglePillId;
-          if (!pillId) return;
-          if (this.expandedPillIds.has(pillId)) this.expandedPillIds.delete(pillId);
-          else this.expandedPillIds.add(pillId);
-          this.render();
-          this.bindEvents();
-        });
+      const returnToStudyIndex = () => {
+        this.activeReadingId = null;
+        this.activeWorkshopId = null;
+        if (typeof location !== 'undefined' && window.app && location.hash !== '#pildoras-estudio') {
+          location.hash = 'pildoras-estudio';
+        }
+        this.render();
+        this.bindEvents();
+      };
+
+      document.getElementById('btn-reading-back')?.addEventListener('click', returnToStudyIndex);
+      document.getElementById('btn-reading-back-bottom')?.addEventListener('click', returnToStudyIndex);
+      document.getElementById('btn-workshop-back')?.addEventListener('click', returnToStudyIndex);
+
+      document.getElementById('btn-study-go-botiquin')?.addEventListener('click', () => {
+        window.app?.navigate?.('pildoras-trucos');
       });
 
       document.querySelectorAll('[data-open-workshop]').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
-          this.openWorkshopModal(btn.dataset.openWorkshop);
+          const workshopId = btn.dataset.openWorkshop;
+          this.activeWorkshopId = workshopId;
+          this.activeReadingId = null;
+          if (typeof location !== 'undefined' && window.app && location.hash !== `#pildoras-estudio/taller/${workshopId}`) {
+            location.hash = `pildoras-estudio/taller/${workshopId}`;
+          }
+          this.render();
+          this.bindEvents();
+          window.scrollTo?.({ top: 0, behavior: 'smooth' });
         });
       });
+
+      if (this.activeWorkshopId === 'deconstruct') {
+        this.bindDeconstructEvents(() => {
+          this.render();
+          this.bindEvents();
+        });
+      } else if (this.activeWorkshopId === 'pivot') {
+        this.bindPivotEvents(() => {
+          this.render();
+          this.bindEvents();
+        });
+      }
     }
 
     if (this.currentTab === 'deconstruct') {
@@ -2008,11 +2104,11 @@ class PildorasAnclajesApp {
                       ${isFav ?'' :''}
                     </button>
                   </div>
-                  <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 4px 0 6px; line-height: 1.45;">
+                  <p class="explanatory-subtext" style="font-size: 0.82rem; color: var(--text-secondary); margin: 4px 0 6px; line-height: 1.45;">
                     ${p.summary}
                   </p>
                   <span style="font-size: 0.76rem; font-weight: 700; color: var(--sage-600);">
-                    ${isExpanded ? '▴ Ocultar lectura' : '▾ Leer explicación completa (1 min)'}
+                    ${isExpanded ? '▴ Ocultar lectura' : '▾ Leer explicación completa'}
                   </span>
                   ${isExpanded ? `
                     <div class="pill-accordion-body" style="margin-top: 10px; padding-top: 10px;">
@@ -2037,7 +2133,7 @@ class PildorasAnclajesApp {
                     <span style="font-size: 1.2rem; flex-shrink: 0;">${w.icon}</span>
                     <div style="min-width: 0;">
                       <div style="font-size: 0.86rem; font-weight: 700; color: var(--text-primary);">${w.title}</div>
-<div style="font-size: 0.75rem; color: var(--text-muted);">${w.badge} • ${w.duration}</div>
+                      <div style="font-size: 0.75rem; color: var(--text-muted);">${w.badge}</div>
                     </div>
                   </div>
                   <span style="font-size: 0.78rem; font-weight: 700; color: var(--sage-600); white-space: nowrap;">Abrir taller →</span>
@@ -2207,7 +2303,23 @@ class PildorasAnclajesApp {
       this.closeAppModal();
       this.render();
       this.bindEvents();
+      if (window.perfilApp) {
+        window.perfilApp.render();
+        window.perfilApp.bindEvents();
+      }
     });
+  }
+
+  openPill(pillId) {
+    this.mode = 'estudio';
+    this.currentTab = 'pildoras';
+    this.activeReadingId = pillId;
+    this.activeWorkshopId = null;
+    if (typeof location !== 'undefined' && window.app && location.hash !== `#pildoras-estudio/lectura/${pillId}`) {
+      location.hash = `pildoras-estudio/lectura/${pillId}`;
+    }
+    this.render();
+    this.bindEvents();
   }
 
   openReaderModal(pillId) {
@@ -2224,7 +2336,7 @@ class PildorasAnclajesApp {
     modalBody.innerHTML = `
       <div class="flex-between" style="margin-bottom: 12px;">
         <span class="badge" style="background: var(--sage-100); color: var(--sage-800);">
-          ${pill.categoryLabel} • Lectura de 1 minuto
+          ${pill.categoryLabel} • Lectura breve
         </span>
         <button type="button" class="btn-icon" id="btn-reader-toggle-fav" style="border: none; background: transparent; font-size: 1.2rem;">
           ${isFav ?'' :''}
