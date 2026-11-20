@@ -237,8 +237,8 @@ class PerfilApp {
       },
       'Conmigo Mismo': {
         microActions: [
-          'Hacer una pausa de 5 minutos sin pantallas para respirar y notar cómo estoy',
-          'Dedicar 20 minutos a algo que me nutra o me dé calma'
+          'Hacer una pausa sin pantallas para respirar y notar cómo estoy',
+          'Dedicar un rato a algo que me nutra o me dé calma'
         ],
         willingnessOptions: [
           'Hacer espacio a la sensación de culpa o prisa cuando paro a cuidarme'
@@ -246,7 +246,7 @@ class PerfilApp {
       },
       'Otro': {
         microActions: [
-          'Dar un primer paso de 10 minutos coherente con este valor hoy'
+          'Dar un primer paso coherente con este valor hoy'
         ],
         willingnessOptions: [
           'Sostener la incomodidad o incertidumbre inicial al empezar'
@@ -279,9 +279,13 @@ class PerfilApp {
     if (!container) return;
 
     const profile = window.stateManager.getProfile();
-    container.innerHTML = this.activeProfileTab === 'autobus'
-      ? this.renderMindAndBusBlock(profile)
-      : this.renderValuesBlock(profile);
+    if (this.activeProfileTab === 'autobus') {
+      container.innerHTML = this.renderMindAndBusBlock(profile);
+    } else if (this.activeProfileTab === 'anclajes') {
+      container.innerHTML = this.renderAnchorsBlock();
+    } else {
+      container.innerHTML = this.renderValuesBlock(profile);
+    }
   }
 
   renderMindAndBusBlock(profile) {
@@ -311,239 +315,233 @@ class PerfilApp {
       });
       const matchesSelected = selectedVal && affectedList.some(a => a.id === selectedVal.id || a.label === selectedVal.domain);
 
+      const hasDistinctShout = pas.shouts && pas.shouts.trim().toLowerCase() !== pas.name.trim().toLowerCase();
+
       return `
-<article class="cozy-value-layer ${isLoud ? 'cozy-passenger-loud' : 'cozy-passenger-seated'}" ${matchesSelected ? 'style="border-color: var(--sage-500);"' : ''}>
-  <div class="flex-between" style="gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-    <div style="display: flex; align-items: baseline; gap: 10px; min-width: 0; flex-wrap: wrap;">
-      <span aria-hidden="true" style="font-size: 0.68rem; color: ${isLoud ? 'var(--accent-tension)' : 'var(--sage-500)'}; flex-shrink: 0;">${isLoud ? '●' : '○'}</span>
-      <strong style="font-family: var(--font-serif); font-size: 1.08rem; font-weight: 500; color: var(--text-primary);">${esc(pas.name)}</strong>
-      <span class="${isLoud ? 'cozy-meta-tension' : 'cozy-meta-tag'}">
-        ${isLoud ? 'Intentando desviar' : isQuiet ? 'En silencio' : 'Asiento trasero'}
-      </span>
-      ${isExample ? '<span class="cozy-meta-muted">Ejemplo guía</span>' : ''}
-            </div>
-    <div style="display: flex; gap: 12px; align-items: center;">
+<article class="cozy-bus-passenger-card ${isLoud ? 'is-loud' : isQuiet ? 'is-quiet' : 'is-seated'}" ${matchesSelected ? 'style="border-color: var(--sage-500);"' : ''}>
+  <div class="cozy-bus-passenger-header">
+    <div class="cozy-bus-passenger-title-group">
+      <span aria-hidden="true" class="cozy-bus-status-indicator ${isLoud ? 'loud' : isQuiet ? 'quiet' : 'seated'}">${isLoud ? '●' : '○'}</span>
+      <h4 class="cozy-bus-passenger-name">${esc(pas.name)}</h4>
+      ${isLoud ? '<span class="cozy-meta-tension" style="font-size: 0.68rem;">🚨 Al volante</span>' : ''}
+      ${isQuiet ? '<span class="cozy-meta-tag" style="font-size: 0.68rem;">En silencio</span>' : ''}
+      ${isExample ? '<span class="cozy-meta-muted" style="font-size: 0.68rem;">Ejemplo</span>' : ''}
+    </div>
+    <div class="cozy-bus-passenger-quick-actions">
       <button type="button" class="btn-inline-link bus-pas-edit-btn" data-pas-edit-id="${pas.id}" title="Editar pasajero" style="font-size: 0.76rem;">
         Editar
-              </button>
+      </button>
       <button type="button" class="btn-inline-link bus-pas-remove-btn" data-pas-remove-id="${pas.id}" title="Quitar pasajero" style="font-size: 0.78rem; color: var(--text-muted);">
-                ✕
-              </button>
-            </div>
-          </div>
+        ✕
+      </button>
+    </div>
+  </div>
 
-          ${pas.shouts ? `
-    <blockquote class="act-passenger-shout">
+  ${hasDistinctShout ? `
+    <blockquote class="act-passenger-shout" style="margin: 4px 0 8px; font-size: 0.92rem;">
       «${esc(pas.shouts)}»
     </blockquote>
-          ` : ''}
+  ` : ''}
 
-  ${(pas.protectsFrom || pas.detour || pas.driverReply) ? `
-    <div class="cozy-value-notes">
+  ${pas.driverReply ? `
+    <div class="cozy-bus-driver-reply-block">
+      <span class="cozy-bus-driver-reply-label">Tu respuesta al volante</span>
+      <p class="cozy-bus-driver-reply-quote">«${esc(pas.driverReply)}»</p>
+    </div>
+  ` : ''}
+
+  ${(pas.protectsFrom || pas.detour) ? `
+    <div class="cozy-bus-meta-notes">
       ${pas.protectsFrom ? `
-        <div class="cozy-value-note">
-          <span class="cozy-note-label">Intenta protegerme de</span>
-          <p>${esc(pas.protectsFrom)}</p>
+        <div class="cozy-bus-meta-note">
+          <span class="cozy-bus-meta-label">Intenta proteger de:</span>
+          <span class="cozy-bus-meta-val">${esc(pas.protectsFrom)}</span>
         </div>
       ` : ''}
       ${pas.detour ? `
-        <div class="cozy-value-note">
-          <span class="cozy-note-label" style="color: var(--accent-warmth);">Desvío que me pide</span>
-          <p>${esc(pas.detour)}</p>
-            </div>
-          ` : ''}
-          ${pas.driverReply ? `
-        <div class="cozy-value-note" style="grid-column: 1 / -1;">
-          <span class="cozy-note-label">Tu respuesta al volante</span>
-          <p style="font-family: var(--font-serif); font-style: italic; color: var(--text-primary);">«${esc(pas.driverReply)}»</p>
+        <div class="cozy-bus-meta-note">
+          <span class="cozy-bus-meta-label">Desvío que pide:</span>
+          <span class="cozy-bus-meta-val" style="color: var(--accent-warmth);">${esc(pas.detour)}</span>
         </div>
       ` : ''}
-            </div>
-          ` : ''}
+    </div>
+  ` : ''}
 
-          ${affectedList.length > 0 ? `
-    <div style="margin-top: 12px; font-size: 0.76rem; color: var(--text-muted);">
-      <span class="cozy-meta-tag" style="margin-right: 6px;">Valores que perturba:</span>
-      ${affectedList.map(a => esc(a.label)).join(' · ')}
-            </div>
-          ` : ''}
+  ${affectedList.length > 0 ? `
+    <div class="cozy-bus-affected-values">
+      <span class="cozy-meta-muted">Valores que perturba:</span>
+      <span class="cozy-bus-affected-list">${affectedList.map(a => esc(a.label)).join(' · ')}</span>
+    </div>
+  ` : ''}
 
-  <div class="cozy-value-actions">
-            ${isLoud ? `
+  <div class="cozy-bus-actions-bar">
+    ${isLoud ? `
       <button type="button" class="btn-primary bus-pas-status-btn" data-pas-id="${pas.id}" data-pas-status="seated" style="font-size: 0.78rem; padding: 6px 14px;">
         Mandar al asiento trasero
       </button>
-      <button type="button" class="btn-inline-link bus-pas-practice-btn" data-pas-practice-id="${pas.id}" style="font-size: 0.78rem;">
-        Ensayar respuesta (1 min)
-              </button>
-            ` : isQuiet ? `
-      <button type="button" class="btn-secondary bus-pas-status-btn" data-pas-id="${pas.id}" data-pas-status="seated" style="font-size: 0.78rem; padding: 6px 13px;">
-        Volver a asientos traseros
-              </button>
-            ` : `
-      <button type="button" class="btn-secondary bus-pas-status-btn" data-pas-id="${pas.id}" data-pas-status="loud" style="font-size: 0.78rem; padding: 6px 13px;">
-        Se ha levantado a gritar
-              </button>
-      <button type="button" class="btn-inline-link bus-pas-status-btn" data-pas-id="${pas.id}" data-pas-status="integrated" style="font-size: 0.78rem;">
-        Ya no me desvía
-              </button>
-            `}
-        </div>
+      <button type="button" class="cozy-bus-btn-action bus-pas-practice-btn" data-pas-practice-id="${pas.id}">
+        Ensayar respuesta
+      </button>
+    ` : isQuiet ? `
+      <button type="button" class="cozy-bus-btn-action bus-pas-status-btn" data-pas-id="${pas.id}" data-pas-status="seated">
+        ↩ Volver a asientos traseros
+      </button>
+    ` : `
+      <button type="button" class="cozy-bus-btn-action warning bus-pas-status-btn" data-pas-id="${pas.id}" data-pas-status="loud" title="Marcar que se ha levantado a gritar">
+        ⚠️ Se ha levantado a gritar
+      </button>
+      <button type="button" class="cozy-bus-btn-link bus-pas-status-btn" data-pas-id="${pas.id}" data-pas-status="integrated" title="Marcar que ya no te desvía">
+        ✓ Ya no me desvía
+      </button>
+    `}
+  </div>
 </article>
       `;
     };
 
     return `
 <div class="cozy-bus-layout">
-  <!-- 1. Rumbo del Autobús -->
-  <section class="cozy-value-layer cozy-value-primary">
-    <div class="flex-between" style="gap: 12px; align-items: baseline; flex-wrap: wrap; margin-bottom: 8px;">
-      <span class="cozy-meta-accent">Rumbo del autobús</span>
-      <button type="button" class="btn-inline-link" id="btn-bus-change-faro" style="font-size: 0.78rem;">
-        Editar valores →
-      </button>
-              </div>
-              ${coreValues.length === 0 ? `
-      <blockquote class="cozy-value-quote">
-                  «Cuidar mi dignidad y elegir mi camino con honestidad»
-      </blockquote>
-              ` : selectedVal ? `
-      <blockquote class="cozy-value-quote">
-        <span class="cozy-meta-tag" style="margin-right: 8px;">${esc(selectedVal.domain)}</span>
-        «${esc(selectedVal.statement)}»
-      </blockquote>
-              ` : `
-      <div style="display: flex; flex-direction: column; gap: 6px;">
-                  ${coreValues.map(val => `
-          <div style="font-family: var(--font-serif); font-size: 1.02rem; line-height: 1.45; color: var(--text-primary);">
-            <span class="cozy-meta-tag" style="margin-right: 8px;">${esc(val.domain)}</span>
-            «${esc(val.statement)}»
-                    </div>
-                  `).join('')}
-                </div>
-              `}
+  <!-- 1. Cabina Unificada del Conductor (Rumbo + Mandos) -->
+  <section class="cozy-bus-cabin">
+    <div class="cozy-bus-cabin-top">
+      <div>
+        <div class="cozy-bus-driver-title">
+          Al volante: <strong>Tú (Yo Observador)</strong>
+        </div>
+        <p class="explanatory-subtext" style="font-size: 0.8rem; color: var(--text-muted); margin: 3px 0 0;">
+          Los pasajeros pueden gritar, pero solo tú tienes manos para girar el volante.
+        </p>
+      </div>
+      <div class="cozy-bus-cabin-actions">
+        <button type="button" class="btn-inline-link" id="btn-toggle-bus-mind-editor" style="font-size: 0.8rem;">
+          Radio mental: <strong>«${esc(mindName)}»</strong>
+        </button>
+        <button type="button" class="btn-primary" id="btn-add-bus-passenger" style="font-size: 0.82rem; padding: 7px 14px; white-space: nowrap;">
+          + Añadir pasajero
+        </button>
+      </div>
+    </div>
 
-          ${coreValues.length > 1 ? `
-      <div class="cozy-bus-filter-bar">
-        <button type="button" class="cozy-bus-filter-btn bus-value-sign-chip ${!selectedVal ? 'active' : ''}" data-bus-value-id="all">
-                Todos los valores
+    <div class="cozy-bus-faro-row">
+      <div class="flex-between" style="gap: 12px; align-items: baseline; flex-wrap: wrap; margin-bottom: 6px;">
+        <span class="cozy-meta-accent" style="font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;">
+          🧭 Rumbo del autobús
+        </span>
+        <button type="button" class="btn-inline-link" id="btn-bus-change-faro" style="font-size: 0.78rem;">
+          Editar valores →
+        </button>
+      </div>
+      ${coreValues.length === 0 ? `
+        <p class="cozy-empty-note" style="margin: 0; font-size: 0.92rem; color: var(--text-muted); font-style: italic;">
+          Aún no has definido ningún valor rumbo. Pulsa «Editar valores →» para definir hacia dónde quieres orientar tu camino.
+        </p>
+      ` : selectedVal ? `
+        <blockquote class="cozy-value-quote" style="margin: 0; font-size: 1.05rem;">
+          <span class="cozy-meta-tag" style="margin-right: 8px;">${esc(selectedVal.domain)}</span>
+          «${esc(selectedVal.statement)}»
+        </blockquote>
+      ` : `
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          ${coreValues.map(val => `
+            <div style="font-family: var(--font-serif); font-size: 1.02rem; line-height: 1.45; color: var(--text-primary);">
+              <span class="cozy-meta-tag" style="margin-right: 8px;">${esc(val.domain)}</span>
+              «${esc(val.statement)}»
+            </div>
+          `).join('')}
+        </div>
+      `}
+
+      ${coreValues.length > 1 ? `
+        <div class="cozy-bus-filter-bar" style="margin-top: 10px; padding-top: 8px;">
+          <button type="button" class="cozy-bus-filter-btn bus-value-sign-chip ${!selectedVal ? 'active' : ''}" data-bus-value-id="all">
+            Todos los valores
+          </button>
+          ${coreValues.map(val => {
+            const isSel = selectedVal && selectedVal.id === val.id;
+            return `
+              <button type="button" class="cozy-bus-filter-btn bus-value-sign-chip ${isSel ? 'active' : ''}" data-bus-value-id="${val.id}">
+                ${esc(val.domain)}
               </button>
-              ${coreValues.map(val => {
-                const isSel = selectedVal && selectedVal.id === val.id;
-                return `
-            <button type="button" class="cozy-bus-filter-btn bus-value-sign-chip ${isSel ? 'active' : ''}" data-bus-value-id="${val.id}">
-              ${esc(val.domain)}
-                  </button>
-                `;
-              }).join('')}
-            </div>
-          ` : ''}
+            `;
+          }).join('')}
+        </div>
+      ` : ''}
+    </div>
   </section>
 
-  <!-- 2. Cabina del Conductor y Radio Mental -->
-  <section class="cozy-bus-cabin-strip">
-    <div style="flex: 1; min-width: 220px;">
-      <div style="font-family: var(--font-serif); font-size: 1.06rem; color: var(--text-primary);">
-        Al volante: Tú (Yo Observador)
-            </div>
-      <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 3px 0 0;">
-              Los pasajeros pueden gritar, pero solo tú tienes manos para girar el volante.
-      </p>
-            </div>
-    <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center;">
-      <button type="button" class="btn-inline-link" id="btn-toggle-bus-mind-editor" style="font-size: 0.8rem;">
-        Radio mental: <strong>«${esc(mindName)}»</strong>
-            </button>
-      <button type="button" class="btn-primary" id="btn-add-bus-passenger" style="font-size: 0.82rem; padding: 8px 15px; white-space: nowrap;">
-        + Añadir pasajero
-            </button>
-          </div>
-  </section>
-
-        ${this.showMindEditorInline ? `
+  ${this.showMindEditorInline ? `
     <div class="cozy-value-layer" style="margin-top: 12px;">
-            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-              <input type="text" id="input-profile-mind-name" class="form-input" value="${esc(mindName)}"
-                     placeholder="Apodo para tu radio mental (ej. George, Radio Catástrofe)..."
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+        <input type="text" id="input-profile-mind-name" class="form-input" value="${esc(mindName)}"
+               placeholder="Apodo para tu radio mental (ej. George, Radio Catástrofe)..."
                style="flex: 1; min-width: 180px; padding: 8px 12px; font-size: 0.85rem;">
         <button type="button" class="btn-secondary" id="btn-save-profile-mind-name" style="font-size: 0.8rem; padding: 8px 14px;">
-                Guardar apodo
-              </button>
-            </div>
+          Guardar apodo
+        </button>
+      </div>
       <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; align-items: center;">
         <span style="font-size: 0.74rem; color: var(--text-muted);">Ideas:</span>
-              ${['George', 'Radio Catástrofe', 'El Juez Interior', 'Doña Culpa', 'El Alarmista'].map(preset => `
+        ${['George', 'Radio Catástrofe', 'El Juez Interior', 'Doña Culpa', 'El Alarmista'].map(preset => `
           <button type="button" class="quick-fill-chip mind-preset-chip ${mindName === preset ? 'active' : ''}" data-mind-preset="${preset}">
-                  ${preset}
-                </button>
-              `).join('')}
-            </div>
-          </div>
-        ` : ''}
+            ${preset}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  ` : ''}
 
-          ${passengers.some(p => window.stateManager?.isExampleItem?.(p)) ? `
-    <div class="example-notice-bar" style="margin-top: 16px;">
+  ${passengers.some(p => window.stateManager?.isExampleItem?.(p)) ? `
+    <div class="example-notice-bar" style="margin-top: 6px;">
       <span>Hay pasajeros de ejemplo en tu autobús. Edítalos para adaptarlos a ti o quítalos cuando quieras.</span>
       <button type="button" class="btn-secondary" data-clear-examples="true" style="font-size: 0.76rem; padding: 5px 11px;">
         Quitar ejemplos
-              </button>
-            </div>
-          ` : ''}
-
-  <!-- 3. Zona Delantera: Junto al Volante -->
-  <section class="cozy-bus-zone">
-    <div class="cozy-bus-zone-head">
-      <span class="cozy-meta-tension">Junto al volante (${loudPassengers.length})</span>
-      <span class="cozy-bus-zone-sub">Miedos activos que intentan hacerte girar</span>
+      </button>
     </div>
-          ${loudPassengers.length === 0 ? `
-      <div class="cozy-empty-box" style="padding: 20px;">
-        <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">
-          Despejado junto al volante: todos tus pasajeros viajan en los asientos traseros.
-        </p>
-            </div>
-          ` : `
-      <div class="cozy-values-stack">
-              ${loudPassengers.map(pas => renderPassengerCard(pas, 'loud')).join('')}
-            </div>
-          `}
-  </section>
+  ` : ''}
 
-        <!-- 4. Zona Trasera: Asientos Traseros -->
-  <section class="cozy-bus-zone">
-    <div class="cozy-bus-zone-head">
-      <span class="cozy-meta-tag">Asientos traseros (${seatedPassengers.length})</span>
-      <span class="cozy-bus-zone-sub">Viajan contigo, pero no mandan en el rumbo</span>
-          </div>
-          ${seatedPassengers.length === 0 ? `
-      <div class="cozy-empty-box" style="padding: 20px;">
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
-              Aún no hay pasajeros sentados atrás. Cuando reconozcas uno del pasillo, mándalo atrás sin echarlo.
-        </p>
-            </div>
-          ` : `
-      <div class="cozy-values-stack">
-              ${seatedPassengers.map(pas => renderPassengerCard(pas, 'seated')).join('')}
-            </div>
-          `}
-  </section>
-
-        ${quietPassengers.length > 0 ? `
-          <div style="padding: 4px 0;">
-            <button type="button" class="btn-inline-link" id="btn-toggle-quiet-passengers" style="font-size: 0.82rem; font-weight: 700;">
-              ${this.showQuietPassengers ? '▴ Ocultar' : '▾ Ver'} pasajeros en silencio (${quietPassengers.length})
-            </button>
-            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
-              Siguen en tu historia, pero ya no te hacen girar el volante.
-            </div>
-            ${this.showQuietPassengers ? `
-              <div class="act-seats-grid">
-                ${quietPassengers.map(pas => renderPassengerCard(pas, 'quiet')).join('')}
-              </div>
-            ` : ''}
-          </div>
-        ` : ''}
+  <!-- 2. Zona Delantera: Solo si hay miedos activos que intentan desviar el volante -->
+  ${loudPassengers.length > 0 ? `
+    <section class="cozy-bus-zone">
+      <div class="cozy-bus-zone-head">
+        <span class="cozy-meta-tension">Junto al volante (${loudPassengers.length})</span>
+        <span class="cozy-bus-zone-sub">Miedos activos que intentan hacerte girar</span>
       </div>
+      <div class="cozy-bus-cards-stack">
+        ${loudPassengers.map(pas => renderPassengerCard(pas, 'loud')).join('')}
+      </div>
+    </section>
+  ` : ''}
+
+  <!-- 3. Zona Trasera: Solo si hay pasajeros en los asientos traseros -->
+  ${seatedPassengers.length > 0 ? `
+    <section class="cozy-bus-zone">
+      <div class="cozy-bus-zone-head">
+        <span class="cozy-meta-tag">Asientos traseros (${seatedPassengers.length})</span>
+        <span class="cozy-bus-zone-sub">Viajan contigo, pero no mandan en el rumbo</span>
+      </div>
+      <div class="cozy-bus-cards-stack">
+        ${seatedPassengers.map(pas => renderPassengerCard(pas, 'seated')).join('')}
+      </div>
+    </section>
+  ` : ''}
+
+  <!-- 4. Pasajeros en silencio (si existen) -->
+  ${quietPassengers.length > 0 ? `
+    <div style="padding: 4px 0;">
+      <button type="button" class="btn-inline-link" id="btn-toggle-quiet-passengers" style="font-size: 0.82rem; font-weight: 700;">
+        ${this.showQuietPassengers ? '▴ Ocultar' : '▾ Ver'} pasajeros en silencio (${quietPassengers.length})
+      </button>
+      <div class="explanatory-subtext" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
+        Siguen en tu historia, pero ya no te hacen girar el volante.
+      </div>
+      ${this.showQuietPassengers ? `
+        <div class="cozy-bus-cards-stack" style="margin-top: 10px;">
+          ${quietPassengers.map(pas => renderPassengerCard(pas, 'quiet')).join('')}
+        </div>
+      ` : ''}
+    </div>
+  ` : ''}
+</div>
     `;
   }
 
@@ -613,7 +611,7 @@ class PerfilApp {
   </blockquote>
 
   ${isPrimary ? `
-    <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 6px;">
+    <p class="explanatory-subtext" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 6px;">
       Activo como guía en tu inicio, tu autobús y momentos de calma.
                   </p>
   ` : ''}
@@ -647,6 +645,82 @@ class PerfilApp {
                       </button>
                 </div>
 </article>
+              `;
+            }).join('')}
+          </div>
+        `}
+      </div>
+    `;
+  }
+
+  // ---------------------------------------------------------------
+  // BLOQUE 4: Mis Tarjetas de Anclaje ACT (Frases Faro)
+  // ---------------------------------------------------------------
+  renderAnchorsBlock() {
+    const anchors = window.stateManager.getAnchors ? window.stateManager.getAnchors() : [];
+    const esc = window.KhoraUtils.escapeHtml;
+    const hasExamples = anchors.some(a => window.stateManager?.isExampleItem?.(a));
+
+    return `
+      <div class="view-plain-shell">
+        <div class="flex-between" style="flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+          <p class="form-hint" style="margin: 0; flex: 1; min-width: 220px;">Frases personales y de referentes ACT que te sirven como faro en momentos de ruido mental o crisis.</p>
+          <button type="button" class="btn-primary" id="btn-profile-new-anchor" style="font-size: 0.84rem; padding: 8px 16px; white-space: nowrap;">
+            + Nuevo Anclaje
+          </button>
+        </div>
+
+        ${hasExamples ? `
+          <div class="example-notice-bar">
+            <span>Estás viendo tarjetas de ejemplo para inspirarte. Puedes editarlas para hacerlas tuyas o quitar los ejemplos.</span>
+            <button type="button" class="btn-secondary" data-clear-examples="true" style="font-size: 0.75rem; padding: 4px 10px;">
+              Quitar ejemplos
+            </button>
+          </div>
+        ` : ''}
+
+        ${anchors.length === 0 ? `
+          <div class="cozy-empty-box">
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 14px;">
+              Aún no tienes tarjetas de anclaje guardadas. Crea la primera para tenerla a mano en tu perfil y en tu botón SOS.
+            </p>
+            <button type="button" class="btn-secondary" id="btn-profile-new-anchor-empty" style="font-size: 0.84rem;">
+              Crear mi Primer Anclaje
+            </button>
+          </div>
+        ` : `
+          <div class="cozy-values-stack">
+            ${anchors.map((anc, idx) => {
+              const isPrimary = idx === 0;
+              const isExample = window.stateManager?.isExampleItem?.(anc);
+              return `
+                <article class="cozy-value-layer ${isPrimary ? 'cozy-value-primary' : ''}">
+                  <div class="flex-between" style="margin-bottom: 10px; gap: 10px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+                      <span class="cozy-meta-tag">${esc(anc.category || 'Aceptación')}</span>
+                      ${isPrimary ? `<span class="cozy-meta-accent">Anclaje Principal</span>` : ''}
+                      ${isExample ? '<span class="cozy-meta-muted">Ejemplo guía</span>' : ''}
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <button type="button" class="btn-inline-link profile-anchor-edit-btn" data-anchor-edit-id="${anc.id}" style="font-size: 0.78rem;">
+                        Editar
+                      </button>
+                      <button type="button" class="btn-inline-link profile-anchor-delete-btn" data-anchor-delete-id="${anc.id}" title="Borrar anclaje" style="font-size: 0.78rem; color: var(--text-muted);">
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+
+                  <blockquote class="cozy-value-quote">
+                    «${esc(anc.text)}»
+                  </blockquote>
+
+                  ${anc.author ? `
+                    <p class="explanatory-subtext" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 6px;">
+                      — ${esc(anc.author)}
+                    </p>
+                  ` : ''}
+                </article>
               `;
             }).join('')}
           </div>
@@ -692,131 +766,117 @@ class PerfilApp {
 
     if (w.step === 1) {
       stepHtml = `
-        <div class="flex-between" style="gap: 8px; align-items: flex-start;">
-          <div>
-<h3 class="card-title">${w.editingValueId ?'Editar Valor' :'Paso 1 de 2: Ámbito y Declaración de Valor'}</h3>
-            <p class="card-subtitle mt-1">¿Quién eliges ser en este ámbito aunque haya incomodidad?</p>
-          </div>
-          <span class="badge" style="background: var(--sage-100); color: var(--sage-700);">Paso 1/2</span>
+        <div class="act-step-header">
+          <h3 class="act-step-question">${w.editingValueId ? '¿En qué ámbito está este valor?' : '¿En qué ámbito quieres trabajar?'}</h3>
         </div>
 
-        <!-- Selector compacto de Ámbitos + opción libre -->
-        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px;">
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
           ${this.domains.map(dom => {
             const active = !w.isCustomDomain && w.domain === dom.id;
             return `
               <button type="button" class="quick-fill-chip wizard-domain-btn ${active ? 'active' : ''}" data-wiz-domain="${dom.id}"
-                      style="display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; font-size: 0.8rem;">
+                      style="display: inline-flex; align-items: center; gap: 5px; padding: 7px 13px; font-size: 0.84rem;">
                 <span>${dom.icon}</span>
                 <span>${dom.label}</span>
               </button>
             `;
           }).join('')}
           <button type="button" class="quick-fill-chip ${w.isCustomDomain ? 'active' : ''}" id="btn-wiz-custom-domain"
-                  style="display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; font-size: 0.8rem;">
-<span></span>
+                  style="display: inline-flex; align-items: center; gap: 5px; padding: 7px 13px; font-size: 0.84rem;">
             <span>Otro ámbito</span>
           </button>
         </div>
 
         ${w.isCustomDomain ? `
-          <div class="form-group mt-2" style="margin-bottom: 4px;">
-            <input type="text" id="input-wiz-custom-domain" class="form-input" style="font-size: 0.85rem;"
+          <div class="form-group mt-3" style="margin-bottom: 4px;">
+            <input type="text" id="input-wiz-custom-domain" class="form-input" style="font-size: 0.88rem;"
                    value="${escAttr(this.domains.some(d => d.id === w.domain) ? '' : w.domain)}"
-                   placeholder="Escribe tu ámbito (ej: Salud, Crianza, Creatividad, Estudios...)">
+                   placeholder="Escribe tu ámbito (ej: Salud, Crianza, Creatividad…)">
           </div>
         ` : ''}
 
-        <!-- Preguntas guía en texto limpio (sin botones ni cajas extra) -->
-        <div style="margin-top: 14px;">
-          <div class="title-with-help">
-<label class="form-label" style="font-size: 0.82rem; margin-bottom: 0;">Preguntas guía para inspirarte</label>
-            <button type="button" class="help-info-trigger" data-help-topic="preguntas-guia-valores" aria-label="Información de esta herramienta">ⓘ</button>
-          </div>
-          <ul style="margin: 6px 0 0; padding-left: 16px; font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5;">
-            <li><strong>Donde duele:</strong> Detrás de lo que te frustra aquí, ¿qué cualidad humana te gustaría encarnar?</li>
-            <li><strong>Sin miedo ni culpa:</strong> Si hoy no mandaran el miedo ni la culpa, ¿cómo actuarías?</li>
-            <li><strong>Tu huella:</strong> ¿Qué te gustaría que recordaran quienes te importan de cómo te comportaste?</li>
-            <li><strong>Tu dignidad:</strong> ¿Qué forma de actuar aquí te haría sentir en paz contigo al mirarte al espejo?</li>
-          </ul>
+        <div class="act-typeform-footer">
+          <button type="button" class="btn-secondary" id="btn-wiz-cancel">Cancelar</button>
+          <button type="button" class="btn-primary" id="btn-wiz-next-1">
+            Siguiente
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+      `;
+    } else if (w.step === 2) {
+      stepHtml = `
+        <div class="act-step-header">
+          <h3 class="act-step-question">¿Qué valor quieres cuidar en «${escAttr(w.domain || 'este ámbito')}»?</h3>
         </div>
 
-        <!-- Campo libre como eje principal -->
-        <div class="form-group mt-3" style="margin-bottom: 10px;">
-          <label class="form-label" for="input-wiz-statement" style="font-size: 0.84rem;">Tu declaración en «${w.domain || 'tu ámbito'}»:</label>
-          <textarea id="input-wiz-statement" class="form-input" rows="2" style="font-size: 0.88rem; min-height: 62px;"
-                    placeholder="Escribe con tus propias palabras cómo quieres actuar en este ámbito...">${w.statement}</textarea>
+        <div class="form-group">
+          <textarea id="input-wiz-statement" class="form-textarea" rows="3" style="font-size: 0.92rem; min-height: 80px;"
+                    placeholder="Escribe con tus palabras cómo quieres actuar aquí…">${w.statement}</textarea>
         </div>
 
-        <!-- Desplegable opcional si está bloqueado -->
-        <div style="margin-bottom: 12px;">
-          <button type="button" class="btn-inline-link" id="btn-wiz-toggle-examples" style="font-size: 0.78rem;">
-            ${w.showExamples ?'▴ Ocultar ejemplos' :'¿Bloqueado con la hoja en blanco? Ver ejemplos'}
+        <div style="margin-top: 8px;">
+          <button type="button" class="btn-inline-link" id="btn-wiz-toggle-examples" style="font-size: 0.8rem;">
+            ${w.showExamples ? 'Ocultar ideas' : 'Ver ideas y preguntas guía'}
           </button>
           ${w.showExamples ? `
-            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
-              ${seeds.map(seed => {
-                const chosen = w.selectedSeeds.includes(seed);
-                const label = seed.charAt(0).toUpperCase() + seed.slice(1);
-                return `
-                  <button type="button" class="wizard-seed-btn badge" data-wiz-seed="${escAttr(seed)}"
-                          style="cursor: pointer; padding: 6px 11px; font-size: 0.78rem; text-align: left; white-space: normal;
-                                 background: ${chosen ? 'var(--sage-500)' : 'var(--bg-surface-elevated)'};
-                                 color: ${chosen ? '#fff' : 'var(--text-primary)'};
-                                 border: 1px solid ${chosen ? 'var(--sage-600)' : 'var(--border-subtle)'};">
-                    ${chosen ? '✓ ' : '+ '}${label}
-                  </button>
-                `;
-              }).join('')}
+            <div style="margin-top: 10px;">
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">
+                ${seeds.map(seed => {
+                  const chosen = w.selectedSeeds.includes(seed);
+                  const label = seed.charAt(0).toUpperCase() + seed.slice(1);
+                  return `
+                    <button type="button" class="wizard-seed-btn badge" data-wiz-seed="${escAttr(seed)}"
+                            style="cursor: pointer; padding: 6px 11px; font-size: 0.78rem; text-align: left; white-space: normal;
+                                   background: ${chosen ? 'var(--sage-500)' : 'var(--bg-surface-elevated)'};
+                                   color: ${chosen ? '#fff' : 'var(--text-primary)'};
+                                   border: 1px solid ${chosen ? 'var(--sage-600)' : 'var(--border-subtle)'};">
+                      ${chosen ? '✓ ' : '+ '}${label}
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+              <ul class="explanatory-subtext" style="margin: 0; padding-left: 16px; font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5;">
+                <li><strong>Sin miedo ni culpa:</strong> Si hoy no mandaran el miedo ni la culpa, ¿cómo actuarías?</li>
+                <li><strong>Tu huella:</strong> ¿Cómo te gustaría comportarte aquí?</li>
+              </ul>
             </div>
           ` : ''}
         </div>
 
-        <div style="font-size: 0.77rem; color: var(--sage-700); background: rgba(87, 139, 116, 0.1); padding: 8px 11px; border-radius: var(--radius-sm); line-height: 1.4;">
-<strong>Clave ACT:</strong> Exprésalo como una cualidad tuya continua (ej."comunicar con calma"), no como una reacción ajena ("que no se enfaden").
-        </div>
-
-        <div class="btn-group mt-4">
-          <button type="button" class="btn-secondary" id="btn-wiz-cancel">Cancelar</button>
-          <button type="button" class="btn-primary" id="btn-wiz-next-1">Siguiente: Bajarlo a Tierra →</button>
+        <div class="act-typeform-footer">
+          <button type="button" class="btn-secondary" id="btn-wiz-prev-2">← Atrás</button>
+          <button type="button" class="btn-primary" id="btn-wiz-next-2">
+            Siguiente
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
         </div>
       `;
     } else {
       stepHtml = `
-        <div class="flex-between" style="gap: 8px; align-items: flex-start;">
-          <div>
-<h3 class="card-title">Paso 2 de 2: Bajarlo a Tierra</h3>
-            <p class="card-subtitle mt-1">Convierte tu valor en un gesto concreto y en disposición ante la incomodidad.</p>
-          </div>
-          <span class="badge" style="background: var(--sage-100); color: var(--sage-700);">Paso 2/2</span>
+        <div class="act-step-header">
+          <h3 class="act-step-question">¿Qué primer paso darás hoy?</h3>
         </div>
 
-        <div style="margin-top: 12px; padding: 10px 13px; background: rgba(87, 139, 116, 0.11); border-left: 3.5px solid var(--sage-500); border-radius: var(--radius-sm); font-size: 0.86rem; font-weight: 700; color: var(--text-primary);">
-          «${w.statement}» <span style="font-weight: 500; font-size: 0.76rem; color: var(--text-muted);">(${w.domain})</span>
+        <div class="form-group">
+          <label class="form-label" for="input-wiz-micro" style="font-size: 0.86rem;">Un gesto concreto (opcional)</label>
+          <input type="text" id="input-wiz-micro" class="form-input" style="font-size: 0.88rem;" value="${escAttr(w.microAction)}"
+                 placeholder="Ej: Hablar con calma 5 minutos…">
         </div>
 
-        <div class="modal-grid-2col mt-3">
-          <div class="form-group">
-<label class="form-label" for="input-wiz-micro" style="font-size: 0.84rem;">¿En qué gesto pequeño se nota este valor? (opcional)</label>
-            <input type="text" id="input-wiz-micro" class="form-input" style="font-size: 0.86rem;" value="${escAttr(w.microAction)}"
-                   placeholder="Escribe un micro-gesto concreto y realizable...">
-          </div>
-
-          <div class="form-group">
-<label class="form-label" for="input-wiz-will" style="font-size: 0.84rem;">¿Qué incomodidad estás dispuesto/a a sostener por él? (opcional)</label>
-            <input type="text" id="input-wiz-will" class="form-input" style="font-size: 0.86rem;" value="${escAttr(w.willingness)}"
-                   placeholder="Escribe qué emoción o duda aceptarías sentir...">
-          </div>
+        <div class="form-group mt-3">
+          <label class="form-label" for="input-wiz-will" style="font-size: 0.86rem;">¿Qué incomodidad aceptas sentir? (opcional)</label>
+          <input type="text" id="input-wiz-will" class="form-input" style="font-size: 0.88rem;" value="${escAttr(w.willingness)}"
+                 placeholder="Ej: Miedo a incomodar o dudas…">
         </div>
 
         <div style="margin-top: 8px;">
-          <button type="button" class="btn-inline-link" id="btn-wiz-toggle-step2-examples" style="font-size: 0.78rem;">
-            ${w.showStep2Examples ?'▴ Ocultar ejemplos' :'¿Necesitas ideas? Ver ejemplos'}
+          <button type="button" class="btn-inline-link" id="btn-wiz-toggle-step2-examples" style="font-size: 0.8rem;">
+            ${w.showStep2Examples ? 'Ocultar ideas' : 'Ver ideas'}
           </button>
           ${w.showStep2Examples ? `
             <div class="modal-grid-2col mt-2" style="gap: 10px;">
               <div>
-                <div style="font-size: 0.73rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">Ejemplos de micro-gesto:</div>
+                <div style="font-size: 0.73rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">Ejemplos de gesto:</div>
                 <div style="display: flex; flex-direction: column; gap: 5px;">
                   ${helpers.microActions.map(ma => `
                     <button type="button" class="badge wiz-micro-preset" data-wiz-micro="${escAttr(ma)}"
@@ -841,14 +901,20 @@ class PerfilApp {
           ` : ''}
         </div>
 
-        <div class="btn-group mt-4">
-          <button type="button" class="btn-secondary" id="btn-wiz-prev-2">← Ajustar Frase</button>
-<button type="button" class="btn-primary" id="btn-wiz-save">Guardar Valor en mi Brújula</button>
+        <div class="act-typeform-footer">
+          <button type="button" class="btn-secondary" id="btn-wiz-prev-3">← Atrás</button>
+          <button type="button" class="btn-primary" id="btn-wiz-save">Guardar Valor</button>
         </div>
       `;
     }
 
-    modalBody.innerHTML = stepHtml;
+    modalBody.innerHTML = window.KhoraUI.renderTypeformShell({
+      currentStep: w.step,
+      totalSteps: 3,
+      bodyId: 'wiz-step-body',
+      stepHtml,
+      compact: true
+    });
     if (window.app?.openModal) {
       window.app.openModal('medium', { resetScroll });
     } else {
@@ -936,17 +1002,29 @@ class PerfilApp {
         }
         w.domain = customDomainInput;
       }
-      const currentText = document.getElementById('input-wiz-statement')?.value?.trim() || '';
-      if (!currentText) {
-        window.app?.showToast('Escribe cómo quieres actuar en este ámbito (o abre un ejemplo)');
-        return;
-      }
-      w.statement = currentText;
       w.step = 2;
       this.renderWizardModal({ resetScroll: true });
     });
 
     // Step 2 events
+    document.getElementById('btn-wiz-prev-2')?.addEventListener('click', () => {
+      w.step = 1;
+      this.renderWizardModal({ resetScroll: true });
+    });
+
+    document.getElementById('btn-wiz-next-2')?.addEventListener('click', () => {
+      const currentText = document.getElementById('input-wiz-statement')?.value?.trim() || '';
+      if (!currentText) {
+        window.app?.showToast('Escribe cómo quieres actuar en este ámbito (o abre un ejemplo)');
+        document.getElementById('input-wiz-statement')?.focus?.();
+        return;
+      }
+      w.statement = currentText;
+      w.step = 3;
+      this.renderWizardModal({ resetScroll: true });
+    });
+
+    // Step 3 events
     document.getElementById('btn-wiz-toggle-step2-examples')?.addEventListener('click', () => {
       w.showStep2Examples = !w.showStep2Examples;
       this.renderWizardModal();
@@ -973,8 +1051,8 @@ class PerfilApp {
       w.willingness = e.target.value;
     });
 
-    document.getElementById('btn-wiz-prev-2')?.addEventListener('click', () => {
-      w.step = 1;
+    document.getElementById('btn-wiz-prev-3')?.addEventListener('click', () => {
+      w.step = 2;
       this.renderWizardModal({ resetScroll: true });
     });
 
@@ -1039,8 +1117,17 @@ class PerfilApp {
       'Calla y cede ahora para que haya paz.'
     ];
 
-    let selectedIcon = editPassenger?.icon ||'';
-    let selectedStatus = editPassenger?.status || 'loud';
+    let pasStep = 1;
+    let showPasExamples = false;
+    let pasData = {
+      name: editPassenger?.name || '',
+      shouts: editPassenger?.shouts || '',
+      protectsFrom: editPassenger?.protectsFrom || '',
+      detour: editPassenger?.detour || '',
+      driverReply: editPassenger?.driverReply || '',
+      icon: editPassenger?.icon || '',
+      status: editPassenger?.status || 'loud'
+    };
     let replyEditedManually = Boolean(editPassenger && editPassenger.driverReply);
 
     const buildSuggestedReply = (protects, detour) => {
@@ -1049,317 +1136,335 @@ class PerfilApp {
       return `Sé que gritas porque intentas protegerme de ${p.charAt(0).toLowerCase() + p.slice(1)}, pero ${d.charAt(0).toLowerCase() + d.slice(1)} me aleja de mis valores. Puedes viajar atrás; al volante voy yo.`;
     };
 
-    const initialReply = editPassenger?.driverReply || '';
-
-    modalBody.innerHTML = `
-      <div class="flex-between" style="gap: 8px; align-items: flex-start;">
-        <div>
-<h3 class="card-title">${editPassenger ?'Editar Pasajero de tu Autobús' :'Fichar un Pasajero Recurrente'}</h3>
-          <p class="card-subtitle mt-1">
-            Escribe con tus palabras qué dice ese pensamiento/miedo, de qué intenta protegerte y cómo le respondes.
-          </p>
-        </div>
-        <button type="button" class="btn-icon" id="btn-pas-modal-x" aria-label="Cerrar" style="width: 32px; height: 32px; flex-shrink: 0;">✕</button>
-      </div>
-
-      <div style="margin-top: 10px;">
-        <button type="button" class="btn-inline-link" id="btn-pas-toggle-examples" style="font-size: 0.78rem;">
-          ¿Bloqueado? Ver ejemplos de pasajeros y frases
-        </button>
-      </div>
-
-      ${!editPassenger ? `
-        <div class="pas-examples-block hidden" style="margin-top: 8px; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle);">
-          <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 5px;">
-            Ejemplos de arquetipos (opcional — puedes editar cualquier campo):
-          </span>
-          <div class="quick-chips-row" style="margin-top: 0;">
-            ${this.passengerArchetypes.map((arch, idx) => `
-              <button type="button" class="quick-fill-chip pas-arch-btn" data-pas-arch-idx="${idx}">
-                ${arch.icon} ${arch.name}
-              </button>
-            `).join('')}
-          </div>
-        </div>
-      ` : ''}
-
-      <div class="modal-grid-2col mt-3">
-        <!-- Paso 1: Icono + Nombre + Grito -->
-        <div>
-          <div class="form-group">
-            <label class="form-label" style="font-size: 0.84rem;">1. Identidad del pasajero</label>
-            <input type="text" id="input-pas-name" class="form-input" value="${esc(editPassenger?.name || '')}"
-                   placeholder="Nombre del pasajero (ej: La Duda, El Miedo al Qué Dirán...)">
-          </div>
-
-          <div class="form-group mt-3">
-<label class="form-label" for="input-pas-shouts" style="font-size: 0.84rem;">¿Qué frase exacta te grita?</label>
-            <div class="quick-chips-row pas-examples-block hidden" style="margin-top: 2px;">
-              ${shoutChips.map(s => `
-                <button type="button" class="quick-fill-chip pas-shout-preset" data-pas-shout="${esc(s)}">
-                  + "${s}"
-                </button>
-              `).join('')}
-            </div>
-            <textarea id="input-pas-shouts" class="form-textarea" rows="2" style="font-size: 0.85rem; min-height: 54px;"
-                      placeholder="Escribe con tus palabras lo que te dice esa voz...">${esc(editPassenger?.shouts || '')}</textarea>
-          </div>
-        </div>
-
-        <!-- Paso 2: Radiografía ACT -->
-        <div>
-          <div class="form-group">
-<label class="form-label" for="input-pas-protects" style="font-size: 0.84rem; margin-bottom: 2px;">¿De qué intenta protegerte en el fondo?</label>
-            <p class="form-hint" style="margin-bottom: 6px;">En ACT todo pasajero intenta protegerte de algo, aunque lo haga metiendo miedo.</p>
-            <div class="quick-chips-row pas-examples-block hidden" style="margin-top: 0;">
-              ${protectsChips.map(p => `
-                <button type="button" class="quick-fill-chip pas-protects-chip" data-pas-protects="${esc(p)}">
-                  ${p}
-                </button>
-              `).join('')}
-            </div>
-            <input type="text" id="input-pas-protects" class="form-input" value="${esc(editPassenger?.protectsFrom || '')}"
-                   placeholder="Ej: De quedar mal, de sufrir rechazo o fallar...">
-          </div>
-
-          <div class="form-group mt-3">
-<label class="form-label" for="input-pas-detour" style="font-size: 0.84rem;">¿Qué desvío te pide tomar cuando aparece?</label>
-            <div class="quick-chips-row pas-examples-block hidden" style="margin-top: 2px;">
-              ${detourChips.map(d => `
-                <button type="button" class="quick-fill-chip pas-detour-chip" data-pas-detour="${esc(d)}">
-                  ${d}
-                </button>
-              `).join('')}
-            </div>
-            <input type="text" id="input-pas-detour" class="form-input" value="${esc(editPassenger?.detour || '')}"
-                   placeholder="Ej: Callarme, posponer, evitar la escena...">
-          </div>
-        </div>
-      </div>
-
-      <!-- Paso 3: Respuesta del Conductor -->
-      <div class="form-group mt-3">
-        <div class="flex-between" style="gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
-<label class="form-label" for="input-pas-reply" style="font-size: 0.84rem; margin-bottom: 0;">Respuesta de tu conductor (100% editable)</label>
-          <button type="button" class="badge" id="btn-generate-driver-reply"
-                  style="cursor: pointer; padding: 4px 10px; font-size: 0.74rem; border: 1px solid var(--sage-400); background: rgba(87, 139, 116, 0.12); color: var(--sage-700); font-weight: 700;">
-            Generar respuesta ACT con mis datos
-          </button>
-        </div>
-        <textarea id="input-pas-reply" class="form-textarea" rows="2" style="font-size: 0.85rem; min-height: 64px;"
-                  placeholder="Cómo reconoces su miedo sin darle el volante...">${esc(initialReply)}</textarea>
-      </div>
-
-      ${profileValues.length > 0 ? `
-        <div class="form-group mt-3">
-          <label class="form-label" style="font-size: 0.82rem; margin-bottom: 2px;">
-            ¿Qué valor(es) intenta perturbar o desviar este pasajero? (opcional)
-          </label>
-          <p class="form-hint" style="margin-bottom: 6px;">
-            Puedes marcar 1 o varios valores hacia los que este pasajero intenta hacerte girar.
-          </p>
-          <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-            ${profileValues.map(val => {
-              const isSel = selectedAffectedValues.has(val.id) || selectedAffectedValues.has(val.domain);
-              const domIcon = (this.domains.find(d => d.id === val.domain)?.icon) ||'';
-              const shortStmt = val.statement.length > 42 ? val.statement.slice(0, 42) + '…' : val.statement;
-              return `
-                <button type="button" class="quick-fill-chip pas-value-toggle-btn ${isSel ? 'active' : ''}" data-pas-value-id="${val.id}" style="font-size: 0.76rem; padding: 6px 10px;">
-                  ${domIcon} <strong>${esc(val.domain)}:</strong> «${esc(shortStmt)}»
-                </button>
-              `;
-            }).join('')}
-          </div>
-        </div>
-      ` : ''}
-
-      <!-- Dónde viaja ahora -->
-      <div class="form-group mt-3">
-        <label class="form-label" style="font-size: 0.82rem;">¿Dónde viaja ahora mismo?</label>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <button type="button" class="quick-fill-chip pas-status-choice ${selectedStatus === 'loud' ? 'active' : ''}" data-pas-choice-status="loud" style="text-align: center; padding: 8px 10px;">
-            Junto al volante (activo ahora)
-          </button>
-          <button type="button" class="quick-fill-chip pas-status-choice ${selectedStatus !== 'loud' ? 'active' : ''}" data-pas-choice-status="seated" style="text-align: center; padding: 8px 10px;">
-            En los asientos traseros
-          </button>
-        </div>
-      </div>
-
-      <div class="btn-group mt-4">
-        <button type="button" class="btn-secondary" id="btn-modal-cancel">Cancelar</button>
-        <button type="button" class="btn-primary" id="btn-modal-save-passenger">
-          ${editPassenger ?'Guardar Cambios' :'Subir Pasajero al Autobús'}
-        </button>
-      </div>
-    `;
-
-    if (window.app?.openModal) {
-      window.app.openModal('wide');
-    } else {
-      modal.classList.add('active');
-    }
-
-    const nameEl = document.getElementById('input-pas-name');
-    const shoutsEl = document.getElementById('input-pas-shouts');
-    const protectsEl = document.getElementById('input-pas-protects');
-    const detourEl = document.getElementById('input-pas-detour');
-    const replyEl = document.getElementById('input-pas-reply');
-
-    const refreshReplyIfAuto = () => {
-      if (!replyEditedManually && replyEl) {
-        replyEl.value = buildSuggestedReply(protectsEl?.value, detourEl?.value);
-      }
-    };
-
-    const selectIconUI = (icon) => {
-      selectedIcon = icon;
-      modalBody.querySelectorAll('.pas-icon-btn').forEach(b => {
-        const active = b.dataset.pasIcon === icon;
-        b.style.borderColor = active ? 'var(--sage-500)' : 'var(--border-subtle)';
-        b.style.background = active ? 'rgba(87, 139, 116, 0.16)' : 'var(--bg-surface-elevated)';
-      });
-    };
-
-    modalBody.querySelectorAll('.pas-value-toggle-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const vid = btn.dataset.pasValueId;
-        if (!vid) return;
-        if (selectedAffectedValues.has(vid)) {
-          selectedAffectedValues.delete(vid);
-          btn.classList.remove('active');
-        } else {
-          selectedAffectedValues.add(vid);
-          btn.classList.add('active');
-        }
-      });
-    });
-
-    let showPasExamples = false;
-    document.getElementById('btn-pas-toggle-examples')?.addEventListener('click', (e) => {
-      showPasExamples = !showPasExamples;
-      modalBody.querySelectorAll('.pas-examples-block').forEach(el => {
-        el.classList.toggle('hidden', !showPasExamples);
-      });
-      e.currentTarget.textContent = showPasExamples
-        ? '▴ Ocultar ejemplos'
-        :'¿Bloqueado? Ver ejemplos de pasajeros y frases';
-    });
-
-    modalBody.querySelectorAll('.pas-icon-btn').forEach(btn => {
-      btn.addEventListener('click', () => selectIconUI(btn.dataset.pasIcon));
-    });
-
-    modalBody.querySelectorAll('.pas-arch-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const arch = this.passengerArchetypes[parseInt(btn.dataset.pasArchIdx, 10)];
-        if (!arch) return;
-        selectIconUI(arch.icon);
-        if (nameEl) nameEl.value = arch.name;
-        if (shoutsEl) shoutsEl.value = arch.shouts;
-        if (protectsEl) protectsEl.value = arch.protectsFrom;
-        if (detourEl) detourEl.value = arch.detour;
-        replyEditedManually = false;
-        refreshReplyIfAuto();
-        modalBody.querySelectorAll('.pas-arch-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      });
-    });
-
-    modalBody.querySelectorAll('.pas-shout-preset').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (shoutsEl) shoutsEl.value = btn.dataset.pasShout;
-      });
-    });
-
-    modalBody.querySelectorAll('.pas-protects-chip').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (protectsEl) protectsEl.value = btn.dataset.pasProtects;
-        modalBody.querySelectorAll('.pas-protects-chip').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        refreshReplyIfAuto();
-      });
-    });
-
-    modalBody.querySelectorAll('.pas-detour-chip').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (detourEl) detourEl.value = btn.dataset.pasDetour;
-        modalBody.querySelectorAll('.pas-detour-chip').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        refreshReplyIfAuto();
-      });
-    });
-
-    replyEl?.addEventListener('input', () => {
-      replyEditedManually = true;
-    });
-
-    document.getElementById('btn-generate-driver-reply')?.addEventListener('click', () => {
-      if (replyEl) {
-        replyEl.value = buildSuggestedReply(protectsEl?.value, detourEl?.value);
-        replyEditedManually = false;
-      }
-      window.app?.showToast('Respuesta ACT sugerida (puedes retocarla)');
-    });
-
-    modalBody.querySelectorAll('.pas-status-choice').forEach(btn => {
-      btn.addEventListener('click', () => {
-        selectedStatus = btn.dataset.pasChoiceStatus;
-        modalBody.querySelectorAll('.pas-status-choice').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      });
-    });
-
     const closeModal = () => {
       if (window.app?.closeModal) window.app.closeModal();
       else modal.classList.remove('active');
     };
-    document.getElementById('btn-pas-modal-x')?.addEventListener('click', closeModal);
-    document.getElementById('btn-modal-cancel')?.addEventListener('click', closeModal);
 
-    document.getElementById('btn-modal-save-passenger')?.addEventListener('click', () => {
-      const name = nameEl?.value?.trim();
-      const shouts = shoutsEl?.value?.trim();
-      const protectsFrom = protectsEl?.value?.trim();
-      const detour = detourEl?.value?.trim();
-      const driverReply = replyEl?.value?.trim();
+    const renderPassengerStep = ({ resetScroll = false } = {}) => {
+      let stepHtml = '';
 
-      if (!name) {
-        window.app?.showToast('Ponle un nombre breve al pasajero');
-        return;
-      }
+      if (pasStep === 1) {
+        stepHtml = `
+          <div class="act-step-header">
+            <h3 class="act-step-question">${editPassenger ? '¿Qué dice este pasajero?' : '¿Cómo se llama este pensamiento o miedo?'}</h3>
+          </div>
 
-      if (editPassenger) {
-        window.stateManager.updateBusPassenger(editPassenger.id, {
-          icon: selectedIcon,
-          name,
-          shouts,
-          protectsFrom,
-          detour,
-          driverReply,
-          affectedValues: [...selectedAffectedValues],
-          status: selectedStatus
-        });
-        window.app?.showToast(`Pasajero actualizado:"${name}"`);
+          <div class="form-group">
+            <label class="form-label" for="input-pas-name" style="font-size: 0.86rem;">Nombre breve</label>
+            <input type="text" id="input-pas-name" class="form-input" value="${esc(pasData.name)}"
+                   placeholder="Ej: La Duda, El Miedo al Qué Dirán…">
+          </div>
+
+          <div class="form-group mt-3">
+            <label class="form-label" for="input-pas-shouts" style="font-size: 0.86rem;">¿Qué frase te repite?</label>
+            <textarea id="input-pas-shouts" class="form-textarea" rows="2" style="font-size: 0.88rem; min-height: 64px;"
+                      placeholder="Escribe lo que te dice esa voz…">${esc(pasData.shouts)}</textarea>
+          </div>
+
+          <div style="margin-top: 8px;">
+            <button type="button" class="btn-inline-link" id="btn-pas-toggle-examples" style="font-size: 0.8rem;">
+              ${showPasExamples ? 'Ocultar ideas' : 'Ver ideas'}
+            </button>
+            ${showPasExamples ? `
+              <div style="margin-top: 8px;">
+                ${!editPassenger ? `
+                  <div class="quick-chips-row" style="margin-top: 0; margin-bottom: 8px;">
+                    ${this.passengerArchetypes.map((arch, idx) => `
+                      <button type="button" class="quick-fill-chip pas-arch-btn" data-pas-arch-idx="${idx}">
+                        ${arch.icon} ${arch.name}
+                      </button>
+                    `).join('')}
+                  </div>
+                ` : ''}
+                <div class="quick-chips-row" style="margin-top: 0;">
+                  ${shoutChips.map(s => `
+                    <button type="button" class="quick-fill-chip pas-shout-preset" data-pas-shout="${esc(s)}">
+                      + "${s}"
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="act-typeform-footer">
+            <button type="button" class="btn-secondary" id="btn-modal-cancel">Cancelar</button>
+            <button type="button" class="btn-primary" id="btn-pas-next-1">
+              Siguiente
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
+        `;
+      } else if (pasStep === 2) {
+        stepHtml = `
+          <div class="act-step-header">
+            <h3 class="act-step-question">¿De qué intenta protegerte «${esc(pasData.name || 'este pasajero')}»?</h3>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="input-pas-protects" style="font-size: 0.86rem;">¿Qué intenta evitar?</label>
+            <input type="text" id="input-pas-protects" class="form-input" value="${esc(pasData.protectsFrom)}"
+                   placeholder="Ej: Quedar mal, sufrir rechazo o fallar…">
+          </div>
+
+          <div class="form-group mt-3">
+            <label class="form-label" for="input-pas-detour" style="font-size: 0.86rem;">¿Qué te empuja a hacer?</label>
+            <input type="text" id="input-pas-detour" class="form-input" value="${esc(pasData.detour)}"
+                   placeholder="Ej: Callarme, posponer, evitar la escena…">
+          </div>
+
+          <div style="margin-top: 8px;">
+            <button type="button" class="btn-inline-link" id="btn-pas-toggle-examples" style="font-size: 0.8rem;">
+              ${showPasExamples ? 'Ocultar ideas' : 'Ver ideas'}
+            </button>
+            ${showPasExamples ? `
+              <div style="margin-top: 8px;">
+                <div class="quick-chips-row" style="margin-top: 0; margin-bottom: 6px;">
+                  ${protectsChips.map(p => `
+                    <button type="button" class="quick-fill-chip pas-protects-chip" data-pas-protects="${esc(p)}">
+                      ${p}
+                    </button>
+                  `).join('')}
+                </div>
+                <div class="quick-chips-row" style="margin-top: 0;">
+                  ${detourChips.map(d => `
+                    <button type="button" class="quick-fill-chip pas-detour-chip" data-pas-detour="${esc(d)}">
+                      ${d}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="act-typeform-footer">
+            <button type="button" class="btn-secondary" id="btn-pas-prev-2">← Atrás</button>
+            <button type="button" class="btn-primary" id="btn-pas-next-2">
+              Siguiente
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
+        `;
       } else {
-        window.stateManager.addBusPassenger({
-          icon: selectedIcon,
-          name,
-          shouts,
-          protectsFrom,
-          detour,
-          driverReply,
-          affectedValues: [...selectedAffectedValues],
-          status: selectedStatus
-        });
-        window.app?.showToast(`Pasajero subido al autobús:"${name}"`);
+        const displayReply = pasData.driverReply || (!replyEditedManually && (pasData.protectsFrom || pasData.detour) ? buildSuggestedReply(pasData.protectsFrom, pasData.detour) : '');
+        stepHtml = `
+          <div class="act-step-header">
+            <h3 class="act-step-question">¿Qué le respondes desde el volante?</h3>
+          </div>
+
+          <div class="form-group">
+            <div class="flex-between" style="gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+              <label class="form-label" for="input-pas-reply" style="font-size: 0.86rem; margin-bottom: 0;">Tu respuesta</label>
+              <button type="button" class="badge" id="btn-generate-driver-reply"
+                      style="cursor: pointer; padding: 4px 10px; font-size: 0.74rem; border: 1px solid var(--sage-400); background: rgba(87, 139, 116, 0.12); color: var(--sage-700); font-weight: 700;">
+                Sugerir respuesta
+              </button>
+            </div>
+            <textarea id="input-pas-reply" class="form-textarea" rows="3" style="font-size: 0.88rem; min-height: 76px;"
+                      placeholder="Cómo reconoces su miedo sin darle el volante…">${esc(displayReply)}</textarea>
+          </div>
+
+          <div class="form-group mt-3">
+            <label class="form-label" style="font-size: 0.84rem;">¿Dónde viaja ahora?</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <button type="button" class="quick-fill-chip pas-status-choice ${pasData.status === 'loud' ? 'active' : ''}" data-pas-choice-status="loud" style="text-align: center; padding: 8px 10px;">
+                Junto al volante
+              </button>
+              <button type="button" class="quick-fill-chip pas-status-choice ${pasData.status !== 'loud' ? 'active' : ''}" data-pas-choice-status="seated" style="text-align: center; padding: 8px 10px;">
+                Atrás en su asiento
+              </button>
+            </div>
+          </div>
+
+          ${profileValues.length > 0 ? `
+            <div class="form-group mt-3">
+              <label class="form-label" style="font-size: 0.82rem; margin-bottom: 6px;">Valores que intenta desviar (opcional)</label>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                ${profileValues.map(val => {
+                  const isSel = selectedAffectedValues.has(val.id) || selectedAffectedValues.has(val.domain);
+                  const shortStmt = val.statement.length > 36 ? val.statement.slice(0, 36) + '…' : val.statement;
+                  return `
+                    <button type="button" class="quick-fill-chip pas-value-toggle-btn ${isSel ? 'active' : ''}" data-pas-value-id="${val.id}" style="font-size: 0.76rem; padding: 5px 10px;">
+                      <strong>${esc(val.domain)}:</strong> ${esc(shortStmt)}
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          <div class="act-typeform-footer">
+            <button type="button" class="btn-secondary" id="btn-pas-prev-3">← Atrás</button>
+            <button type="button" class="btn-primary" id="btn-modal-save-passenger">
+              ${editPassenger ? 'Guardar cambios' : 'Guardar pasajero'}
+            </button>
+          </div>
+        `;
       }
 
-      closeModal();
-      this.activeProfileTab = 'autobus';
-      this.render();
-      this.bindEvents();
-    });
+      modalBody.innerHTML = window.KhoraUI.renderTypeformShell({
+        currentStep: pasStep,
+        totalSteps: 3,
+        bodyId: 'pas-step-body',
+        stepHtml,
+        compact: true
+      });
+
+      if (window.app?.openModal) {
+        window.app.openModal('medium', { resetScroll });
+      } else {
+        modal.classList.add('active');
+      }
+
+      document.getElementById('btn-modal-cancel')?.addEventListener('click', closeModal);
+      document.getElementById('btn-pas-toggle-examples')?.addEventListener('click', () => {
+        showPasExamples = !showPasExamples;
+        renderPassengerStep();
+      });
+
+      const nameEl = document.getElementById('input-pas-name');
+      const shoutsEl = document.getElementById('input-pas-shouts');
+      const protectsEl = document.getElementById('input-pas-protects');
+      const detourEl = document.getElementById('input-pas-detour');
+      const replyEl = document.getElementById('input-pas-reply');
+
+      nameEl?.addEventListener('input', (e) => { pasData.name = e.target.value; });
+      shoutsEl?.addEventListener('input', (e) => { pasData.shouts = e.target.value; });
+      protectsEl?.addEventListener('input', (e) => { pasData.protectsFrom = e.target.value; });
+      detourEl?.addEventListener('input', (e) => { pasData.detour = e.target.value; });
+      replyEl?.addEventListener('input', (e) => {
+        pasData.driverReply = e.target.value;
+        replyEditedManually = true;
+      });
+
+      modalBody.querySelectorAll('.pas-arch-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const arch = this.passengerArchetypes[parseInt(btn.dataset.pasArchIdx, 10)];
+          if (!arch) return;
+          pasData.icon = arch.icon;
+          pasData.name = arch.name;
+          pasData.shouts = arch.shouts;
+          pasData.protectsFrom = arch.protectsFrom;
+          pasData.detour = arch.detour;
+          replyEditedManually = false;
+          renderPassengerStep();
+        });
+      });
+
+      modalBody.querySelectorAll('.pas-shout-preset').forEach(btn => {
+        btn.addEventListener('click', () => {
+          pasData.shouts = btn.dataset.pasShout;
+          if (shoutsEl) shoutsEl.value = pasData.shouts;
+        });
+      });
+
+      modalBody.querySelectorAll('.pas-protects-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          pasData.protectsFrom = btn.dataset.pasProtects;
+          if (protectsEl) protectsEl.value = pasData.protectsFrom;
+          modalBody.querySelectorAll('.pas-protects-chip').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+
+      modalBody.querySelectorAll('.pas-detour-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          pasData.detour = btn.dataset.pasDetour;
+          if (detourEl) detourEl.value = pasData.detour;
+          modalBody.querySelectorAll('.pas-detour-chip').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+
+      document.getElementById('btn-pas-next-1')?.addEventListener('click', () => {
+        if (!pasData.name.trim()) {
+          window.app?.showToast('Ponle un nombre breve al pasajero');
+          nameEl?.focus?.();
+          return;
+        }
+        pasStep = 2;
+        renderPassengerStep({ resetScroll: true });
+      });
+
+      document.getElementById('btn-pas-prev-2')?.addEventListener('click', () => {
+        pasStep = 1;
+        renderPassengerStep({ resetScroll: true });
+      });
+
+      document.getElementById('btn-pas-next-2')?.addEventListener('click', () => {
+        pasStep = 3;
+        renderPassengerStep({ resetScroll: true });
+      });
+
+      document.getElementById('btn-pas-prev-3')?.addEventListener('click', () => {
+        pasStep = 2;
+        renderPassengerStep({ resetScroll: true });
+      });
+
+      document.getElementById('btn-generate-driver-reply')?.addEventListener('click', () => {
+        pasData.driverReply = buildSuggestedReply(pasData.protectsFrom, pasData.detour);
+        if (replyEl) replyEl.value = pasData.driverReply;
+        replyEditedManually = false;
+        window.app?.showToast('Respuesta sugerida (puedes retocarla)');
+      });
+
+      modalBody.querySelectorAll('.pas-status-choice').forEach(btn => {
+        btn.addEventListener('click', () => {
+          pasData.status = btn.dataset.pasChoiceStatus;
+          modalBody.querySelectorAll('.pas-status-choice').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+
+      modalBody.querySelectorAll('.pas-value-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const vid = btn.dataset.pasValueId;
+          if (!vid) return;
+          if (selectedAffectedValues.has(vid)) {
+            selectedAffectedValues.delete(vid);
+            btn.classList.remove('active');
+          } else {
+            selectedAffectedValues.add(vid);
+            btn.classList.add('active');
+          }
+        });
+      });
+
+      document.getElementById('btn-modal-save-passenger')?.addEventListener('click', () => {
+        const name = pasData.name.trim();
+        if (!name) {
+          window.app?.showToast('Ponle un nombre breve al pasajero');
+          return;
+        }
+        const finalReply = (replyEl?.value ?? pasData.driverReply ?? '').trim();
+        const payload = {
+          icon: pasData.icon,
+          name,
+          shouts: pasData.shouts.trim(),
+          protectsFrom: pasData.protectsFrom.trim(),
+          detour: pasData.detour.trim(),
+          driverReply: finalReply,
+          affectedValues: [...selectedAffectedValues],
+          status: pasData.status
+        };
+
+        if (editPassenger) {
+          window.stateManager.updateBusPassenger(editPassenger.id, payload);
+          window.app?.showToast(`Pasajero actualizado: "${name}"`);
+        } else {
+          window.stateManager.addBusPassenger(payload);
+          window.app?.showToast(`Pasajero subido al autobús: "${name}"`);
+        }
+
+        closeModal();
+        this.activeProfileTab = 'autobus';
+        this.render();
+        this.bindEvents();
+      });
+    };
+
+    renderPassengerStep({ resetScroll: true });
   }
 
   // ---------------------------------------------------------------
@@ -1670,6 +1775,29 @@ class PerfilApp {
         this.render();
         this.bindEvents();
         window.app?.showToast('Reto quitado');
+      });
+    });
+
+    // Anchors management in Yo -> Mis Anclajes
+    document.getElementById('btn-profile-new-anchor')?.addEventListener('click', () => {
+      window.pildorasAnclajesApp?.openCreateAnchorModal?.();
+    });
+    document.getElementById('btn-profile-new-anchor-empty')?.addEventListener('click', () => {
+      window.pildorasAnclajesApp?.openCreateAnchorModal?.();
+    });
+    document.querySelectorAll('.profile-anchor-edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const anchors = window.stateManager.getAnchors ? window.stateManager.getAnchors() : [];
+        const anc = anchors.find(a => a.id === btn.dataset.anchorEditId);
+        if (anc) window.pildorasAnclajesApp?.openCreateAnchorModal?.(anc);
+      });
+    });
+    document.querySelectorAll('.profile-anchor-delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.stateManager.deleteAnchor(btn.dataset.anchorDeleteId);
+        this.render();
+        this.bindEvents();
+        window.app?.showToast('Anclaje eliminado');
       });
     });
   }
