@@ -6,7 +6,7 @@
 class PazFalsaApp {
   constructor() {
     this.currentStep = 1;
-    this.totalSteps = 4;
+    this.totalSteps = 5;
     this.entryData = {
       context: 'Trabajo',
       situation: '',
@@ -23,7 +23,8 @@ class PazFalsaApp {
       note: ''
     };
     this.showSitExamples = false;
-    this.showConflictExamples = false;
+    this.showWantedExamples = false;
+    this.showDidExamples = false;
     this.situationChips = [
       'Acepté un plan o encargo cuando no tenía energía',
       'Me callé mi opinión para evitar una mala cara o discusión',
@@ -50,7 +51,8 @@ class PazFalsaApp {
   resetForm() {
     this.currentStep = 1;
     this.showSitExamples = false;
-    this.showConflictExamples = false;
+    this.showWantedExamples = false;
+    this.showDidExamples = false;
     this.entryData = {
       context: 'Trabajo',
       situation: '',
@@ -74,8 +76,6 @@ class PazFalsaApp {
     const container = document.getElementById('paz-falsa-view');
     if (!container) return;
 
-    const progressPercent = ((this.currentStep - 1) / (this.totalSteps - 1)) * 100;
-
     let stepHtml = '';
     switch (this.currentStep) {
       case 1:
@@ -90,65 +90,46 @@ class PazFalsaApp {
       case 4:
         stepHtml = this.renderStep4();
         break;
+      case 5:
+        stepHtml = this.renderStep5();
+        break;
     }
 
-    container.innerHTML = `
-      <div class="view-plain-shell">
-        <div class="card-header flex-between" style="margin-bottom: 12px;">
-          <div class="title-with-help">
-<h2 class="card-title" style="margin: 0;">El Espejo de la Paz Falsa</h2>
-            <button type="button" class="help-info-trigger" data-help-topic="paz-falsa" aria-label="Información de esta herramienta">ⓘ</button>
-          </div>
-          <span class="badge" style="background-color: var(--sage-100); color: var(--sage-700)">
-            Paso ${this.currentStep} de ${this.totalSteps}
-          </span>
-        </div>
-
-        <!-- Step Indicator Bar -->
-        <div class="step-bar-container">
-          <div class="step-bar-track">
-            <div class="step-bar-fill" style="width: ${progressPercent}%;"></div>
-          </div>
-          <div class="step-node ${this.currentStep >= 1 ? (this.currentStep === 1 ? 'active' : 'completed') : ''}">1</div>
-          <div class="step-node ${this.currentStep >= 2 ? (this.currentStep === 2 ? 'active' : 'completed') : ''}">2</div>
-          <div class="step-node ${this.currentStep >= 3 ? (this.currentStep === 3 ? 'active' : 'completed') : ''}">3</div>
-          <div class="step-node ${this.currentStep >= 4 ? (this.currentStep === 4 ? 'active' : 'completed') : ''}">4</div>
-        </div>
-
-        <!-- Step Body -->
-        <div id="pf-step-body">
-          ${stepHtml}
-        </div>
-      </div>
-    `;
+    container.innerHTML = window.KhoraUI.renderTypeformShell({
+      currentStep: this.currentStep,
+      totalSteps: this.totalSteps,
+      helpTopic: 'paz-falsa',
+      bodyId: 'pf-step-body',
+      stepHtml
+    });
   }
 
   renderStep1() {
     const contexts = [
-      { id:'Pareja', label:'Pareja', icon:'', desc:'Vínculo y convivencia' },
-      { id:'Trabajo', label:'Trabajo', icon:'', desc:'Jefes, equipo o clientes' },
-      { id:'Familia', label:'Familia', icon:'', desc:'Padres o familiares' },
-      { id:'Amigos', label:'Amigos', icon:'', desc:'Círculo social' },
-      { id:'Otro', label:'Otro', icon:'', desc:'Otras situaciones' }
+      { id: 'Pareja', label: 'Pareja', desc: 'Vínculo y convivencia' },
+      { id: 'Trabajo', label: 'Trabajo', desc: 'Jefes, equipo o clientes' },
+      { id: 'Familia', label: 'Familia', desc: 'Padres o familiares' },
+      { id: 'Amigos', label: 'Amigos', desc: 'Círculo social' },
+      { id: 'Otro', label: 'Otro', desc: 'Otras situaciones' }
     ];
 
     return `
-      <div class="form-group">
-        <label class="form-label">¿Dónde acabas de ceder o callarte?</label>
-        <div class="chip-grid mt-2">
-          ${contexts.map(c => `
-            <button type="button" class="chip-btn ${this.entryData.context === c.id ? 'selected' : ''}" data-context="${c.id}">
-              <span style="font-size: 1.5rem;">${c.icon}</span>
-              <span>${c.label}</span>
-              <small style="font-size: 0.7rem; color: var(--text-muted);">${c.desc}</small>
-            </button>
-          `).join('')}
-        </div>
+      <div class="act-step-header">
+        <h3 class="act-step-question">¿Dónde acabas de ceder o callarte?</h3>
       </div>
 
-      <div class="btn-group">
+      <div class="chip-grid">
+        ${contexts.map(c => `
+          <button type="button" class="chip-btn ${this.entryData.context === c.id ? 'selected' : ''}" data-context="${c.id}">
+            <span style="font-weight: 700;">${c.label}</span>
+            <small class="explanatory-subtext" style="font-size: 0.72rem; color: var(--text-muted);">${c.desc}</small>
+          </button>
+        `).join('')}
+      </div>
+
+      <div class="act-typeform-footer">
         <button type="button" class="btn-primary" id="btn-pf-next-1">
-          Continuar
+          Siguiente
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </div>
@@ -156,19 +137,23 @@ class PazFalsaApp {
   }
 
   renderStep2() {
+    const esc = window.KhoraUtils.escapeHtml;
     return `
+      <div class="act-step-header">
+        <h3 class="act-step-question">¿Qué ocurrió?</h3>
+      </div>
+
       <div class="form-group">
-        <label class="form-label" for="pf-situation">¿Qué ocurrió?</label>
-        <textarea id="pf-situation" class="form-textarea mt-1" rows="2" style="min-height: 76px;" placeholder="Describe brevemente con tus palabras qué ocurrió...">${this.entryData.situation}</textarea>
+        <textarea id="pf-situation" class="form-textarea" rows="3" style="min-height: 84px;" placeholder="Cuéntalo brevemente con tus palabras…">${esc(this.entryData.situation)}</textarea>
         <div style="margin-top: 8px;">
-          <button type="button" class="btn-inline-link" id="btn-pf-toggle-sit-examples" style="font-size: 0.78rem;">
-            ${this.showSitExamples ?'▴ Ocultar ejemplos' :'¿Bloqueado? Ver ejemplos'}
+          <button type="button" class="btn-inline-link" id="btn-pf-toggle-sit-examples" style="font-size: 0.8rem;">
+            ${this.showSitExamples ? 'Ocultar ideas' : 'Ver ideas'}
           </button>
           ${this.showSitExamples ? `
             <div class="quick-chips-row" style="margin-top: 8px;">
               ${this.situationChips.map(sit => `
-                <button type="button" class="quick-fill-chip ${this.entryData.situation === sit ? 'active' : ''}" data-pf-sit-chip="${sit.replace(/"/g, '&quot;')}">
-                  ${sit}
+                <button type="button" class="quick-fill-chip ${this.entryData.situation === sit ? 'active' : ''}" data-pf-sit-chip="${esc(sit)}">
+                  ${esc(sit)}
                 </button>
               `).join('')}
             </div>
@@ -176,8 +161,8 @@ class PazFalsaApp {
         </div>
       </div>
 
-      <div class="btn-group">
-        <button type="button" class="btn-secondary" id="btn-pf-prev-2">Atrás</button>
+      <div class="act-typeform-footer">
+        <button type="button" class="btn-secondary" id="btn-pf-prev-2">← Atrás</button>
         <button type="button" class="btn-primary" id="btn-pf-next-2">
           Siguiente
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -187,51 +172,32 @@ class PazFalsaApp {
   }
 
   renderStep3() {
+    const esc = window.KhoraUtils.escapeHtml;
     return `
+      <div class="act-step-header">
+        <h3 class="act-step-question">¿Qué querías hacer o decir de verdad?</h3>
+      </div>
+
       <div class="form-group">
-        <label class="form-label">La Verdad vs. La Máscara</label>
-        
-        <div class="mt-2" style="background-color: var(--bg-surface-elevated); padding: 14px; border-radius: var(--radius-md); border-left: 4px solid var(--sage-500); margin-bottom: 12px;">
-          <label class="form-label" for="pf-wanted" style="color: var(--sage-700);">
-            ¿Qué quería hacer o decir yo realmente?
-          </label>
-          <textarea id="pf-wanted" class="form-textarea mt-1" style="min-height: 64px;" placeholder="Lo que necesitabas de verdad...">${this.entryData.internalConflict.wanted}</textarea>
-          ${this.showConflictExamples ? `
+        <textarea id="pf-wanted" class="form-textarea" rows="3" style="min-height: 84px;" placeholder="Lo que necesitabas de verdad…">${esc(this.entryData.internalConflict.wanted)}</textarea>
+        <div style="margin-top: 8px;">
+          <button type="button" class="btn-inline-link" id="btn-pf-toggle-wanted-examples" style="font-size: 0.8rem;">
+            ${this.showWantedExamples ? 'Ocultar ideas' : 'Ver ideas'}
+          </button>
+          ${this.showWantedExamples ? `
             <div class="quick-chips-row" style="margin-top: 8px;">
               ${this.wantedChips.map(w => `
-                <button type="button" class="quick-fill-chip ${this.entryData.internalConflict.wanted === w ? 'active' : ''}" data-pf-wanted-chip="${w.replace(/"/g, '&quot;')}">
-                  ${w}
+                <button type="button" class="quick-fill-chip ${this.entryData.internalConflict.wanted === w ? 'active' : ''}" data-pf-wanted-chip="${esc(w)}">
+                  ${esc(w)}
                 </button>
               `).join('')}
             </div>
           ` : ''}
-        </div>
-
-        <div style="background-color: var(--bg-surface-elevated); padding: 14px; border-radius: var(--radius-md); border-left: 4px solid var(--accent-tension);">
-          <label class="form-label" for="pf-did" style="color: var(--accent-tension);">
-            ¿Qué hice al final?
-          </label>
-          <textarea id="pf-did" class="form-textarea mt-1" style="min-height: 64px;" placeholder="Cómo actuaste por fuera...">${this.entryData.internalConflict.did}</textarea>
-          ${this.showConflictExamples ? `
-            <div class="quick-chips-row" style="margin-top: 8px;">
-              ${this.didChips.map(d => `
-                <button type="button" class="quick-fill-chip ${this.entryData.internalConflict.did === d ? 'active' : ''}" data-pf-did-chip="${d.replace(/"/g, '&quot;')}">
-                  ${d}
-                </button>
-              `).join('')}
-            </div>
-          ` : ''}
-        </div>
-
-        <div style="margin-top: 8px;">
-          <button type="button" class="btn-inline-link" id="btn-pf-toggle-conflict-examples" style="font-size: 0.78rem;">
-            ${this.showConflictExamples ?'▴ Ocultar ejemplos' :'¿Bloqueado? Ver ejemplos'}
-          </button>
         </div>
       </div>
 
-      <div class="btn-group">
-        <button type="button" class="btn-secondary" id="btn-pf-prev-3">Atrás</button>
+      <div class="act-typeform-footer">
+        <button type="button" class="btn-secondary" id="btn-pf-prev-3">← Atrás</button>
         <button type="button" class="btn-primary" id="btn-pf-next-3">
           Siguiente
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -241,18 +207,52 @@ class PazFalsaApp {
   }
 
   renderStep4() {
-    const toll = this.entryData.toll;
+    const esc = window.KhoraUtils.escapeHtml;
     return `
-      <div class="form-group">
-        <div class="title-with-help" style="margin-bottom: 4px;">
-          <label class="form-label" style="margin-bottom: 0;">El Peaje Emocional</label>
-          <button type="button" class="help-info-trigger" data-help-topic="peaje-emocional" aria-label="Información de esta herramienta">ⓘ</button>
-        </div>
+      <div class="act-step-header">
+        <h3 class="act-step-question">¿Qué hiciste al final?</h3>
+      </div>
 
-        <!-- Sliders -->
-        <div class="slider-group mt-4">
+      <div class="form-group">
+        <textarea id="pf-did" class="form-textarea" rows="3" style="min-height: 84px;" placeholder="Cómo actuaste por fuera…">${esc(this.entryData.internalConflict.did)}</textarea>
+        <div style="margin-top: 8px;">
+          <button type="button" class="btn-inline-link" id="btn-pf-toggle-did-examples" style="font-size: 0.8rem;">
+            ${this.showDidExamples ? 'Ocultar ideas' : 'Ver ideas'}
+          </button>
+          ${this.showDidExamples ? `
+            <div class="quick-chips-row" style="margin-top: 8px;">
+              ${this.didChips.map(d => `
+                <button type="button" class="quick-fill-chip ${this.entryData.internalConflict.did === d ? 'active' : ''}" data-pf-did-chip="${esc(d)}">
+                  ${esc(d)}
+                </button>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+
+      <div class="act-typeform-footer">
+        <button type="button" class="btn-secondary" id="btn-pf-prev-4">← Atrás</button>
+        <button type="button" class="btn-primary" id="btn-pf-next-4">
+          Siguiente
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    `;
+  }
+
+  renderStep5() {
+    const toll = this.entryData.toll;
+    const esc = window.KhoraUtils.escapeHtml;
+    return `
+      <div class="act-step-header">
+        <h3 class="act-step-question">¿Cómo te dejó por dentro?</h3>
+      </div>
+
+      <div class="form-group">
+        <div class="slider-group">
           <div class="slider-header">
-<span>Resentimiento hacia la otra persona o situación</span>
+            <span>Resentimiento o enfado</span>
             <span class="slider-val-badge" id="val-resentment">${toll.resentment}/10</span>
           </div>
           <input type="range" class="range-slider" id="slider-resentment" min="0" max="10" value="${toll.resentment}">
@@ -260,7 +260,7 @@ class PazFalsaApp {
 
         <div class="slider-group">
           <div class="slider-header">
-<span>Agotamiento Físico o Pesadez Somática</span>
+            <span>Cansancio físico</span>
             <span class="slider-val-badge" id="val-exhaustion">${toll.physicalExhaustion}/10</span>
           </div>
           <input type="range" class="range-slider" id="slider-exhaustion" min="0" max="10" value="${toll.physicalExhaustion}">
@@ -268,7 +268,7 @@ class PazFalsaApp {
 
         <div class="slider-group">
           <div class="slider-header">
-<span>Ansiedad o Hipervigilancia</span>
+            <span>Ansiedad o tensión</span>
             <span class="slider-val-badge" id="val-anxiety">${toll.anxiety}/10</span>
           </div>
           <input type="range" class="range-slider" id="slider-anxiety" min="0" max="10" value="${toll.anxiety}">
@@ -276,24 +276,23 @@ class PazFalsaApp {
 
         <div class="slider-group">
           <div class="slider-header">
-<span>Sensación de Vacío o Desconexión de Uno Mismo</span>
+            <span>Sensación de vacío</span>
             <span class="slider-val-badge" id="val-emptiness">${toll.emptiness}/10</span>
           </div>
           <input type="range" class="range-slider" id="slider-emptiness" min="0" max="10" value="${toll.emptiness}">
         </div>
 
-        <!-- Venting note -->
         <div class="form-group mt-4">
-          <label class="form-label" for="pf-note">Nota de desahogo libre (opcional)</label>
-          <textarea id="pf-note" class="form-textarea" placeholder="Escribe aquí cualquier sensación o pensamiento crudo para vaciar la mente...">${this.entryData.note}</textarea>
+          <label class="form-label" for="pf-note">Nota libre (opcional)</label>
+          <textarea id="pf-note" class="form-textarea" rows="2" placeholder="Si quieres añadir algo más…">${esc(this.entryData.note)}</textarea>
         </div>
       </div>
 
-      <div class="btn-group">
-        <button type="button" class="btn-secondary" id="btn-pf-prev-4">Atrás</button>
+      <div class="act-typeform-footer">
+        <button type="button" class="btn-secondary" id="btn-pf-prev-5">← Atrás</button>
         <button type="button" class="btn-primary" id="btn-pf-save">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          Registrar en mi Diario Privado
+          Guardar y terminar
         </button>
       </div>
     `;
@@ -342,24 +341,18 @@ class PazFalsaApp {
     if (prev2) prev2.addEventListener('click', () => this.setStep(1));
     if (next2) next2.addEventListener('click', () => this.setStep(3));
 
-    // Step 3
+    // Step 3 (Wanted)
     const prev3 = document.getElementById('btn-pf-prev-3');
     const next3 = document.getElementById('btn-pf-next-3');
-    document.getElementById('btn-pf-toggle-conflict-examples')?.addEventListener('click', () => {
-      this.showConflictExamples = !this.showConflictExamples;
+    document.getElementById('btn-pf-toggle-wanted-examples')?.addEventListener('click', () => {
+      this.showWantedExamples = !this.showWantedExamples;
       this.render();
       this.bindEvents();
     });
     const wantedInput = document.getElementById('pf-wanted');
-    const didInput = document.getElementById('pf-did');
     if (wantedInput) {
       wantedInput.addEventListener('input', (e) => {
         this.entryData.internalConflict.wanted = e.target.value;
-      });
-    }
-    if (didInput) {
-      didInput.addEventListener('input', (e) => {
-        this.entryData.internalConflict.did = e.target.value;
       });
     }
     document.querySelectorAll('[data-pf-wanted-chip]').forEach(chip => {
@@ -371,6 +364,23 @@ class PazFalsaApp {
         e.currentTarget.classList.add('active');
       });
     });
+    if (prev3) prev3.addEventListener('click', () => this.setStep(2));
+    if (next3) next3.addEventListener('click', () => this.setStep(4));
+
+    // Step 4 (Did)
+    const prev4 = document.getElementById('btn-pf-prev-4');
+    const next4 = document.getElementById('btn-pf-next-4');
+    document.getElementById('btn-pf-toggle-did-examples')?.addEventListener('click', () => {
+      this.showDidExamples = !this.showDidExamples;
+      this.render();
+      this.bindEvents();
+    });
+    const didInput = document.getElementById('pf-did');
+    if (didInput) {
+      didInput.addEventListener('input', (e) => {
+        this.entryData.internalConflict.did = e.target.value;
+      });
+    }
     document.querySelectorAll('[data-pf-did-chip]').forEach(chip => {
       chip.addEventListener('click', (e) => {
         const val = e.currentTarget.dataset.pfDidChip;
@@ -380,10 +390,10 @@ class PazFalsaApp {
         e.currentTarget.classList.add('active');
       });
     });
-    if (prev3) prev3.addEventListener('click', () => this.setStep(2));
-    if (next3) next3.addEventListener('click', () => this.setStep(4));
+    if (prev4) prev4.addEventListener('click', () => this.setStep(3));
+    if (next4) next4.addEventListener('click', () => this.setStep(5));
 
-    // Step 4 Sliders
+    // Step 5 Sliders
     const setupSlider = (id, key, badgeId) => {
       const slider = document.getElementById(id);
       const badge = document.getElementById(badgeId);
@@ -408,8 +418,8 @@ class PazFalsaApp {
       });
     }
 
-    const prev4 = document.getElementById('btn-pf-prev-4');
-    if (prev4) prev4.addEventListener('click', () => this.setStep(3));
+    const prev5 = document.getElementById('btn-pf-prev-5');
+    if (prev5) prev5.addEventListener('click', () => this.setStep(4));
 
     const saveBtn = document.getElementById('btn-pf-save');
     if (saveBtn) {
