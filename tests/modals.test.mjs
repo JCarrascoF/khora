@@ -445,3 +445,89 @@ test('Install gate modal & Settings PWA section explain Android Chrome URL notif
     /Usar como App en el Móvil \(PWA\)[\s\S]*Aviso normal de Chrome en Android:[\s\S]*Toca para copiar la URL de esta aplicación/
   );
 });
+
+test('Feedback modal submits anonymously to /api/feedback without requiring an account', async () => {
+  const { onRequestPost } = await import('../functions/api/feedback.js');
+
+  // 1. Rejects empty feedback
+  const emptyRes = await onRequestPost({
+    request: new Request('https://khora.pages.dev/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'Sugerencia o nueva idea', title: '   ', message: '' })
+    }),
+    env: { GITHUB_FEEDBACK_TOKEN: 'ghp_test' }
+  });
+  assert.equal(emptyRes.status, 400);
+
+  // 2. Honeypot silently succeeds without calling upstream fetch
+  const originalFetch = globalThis.fetch;
+  let fetchCalled = false;
+  globalThis.fetch = async () => {
+    fetchCalled = true;
+    return new Response('{}', { status: 201 });
+  };
+  try {
+    const botRes = await onRequestPost({
+      request: new Request('https://khora.pages.dev/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: 'Spam', message: 'Buy stuff', website: 'http://spam.example' })
+      }),
+      env: { GITHUB_FEEDBACK_TOKEN: 'ghp_test' }
+    });
+    assert.equal(botRes.status, 200);
+    assert.equal(fetchCalled, false);
+
+    // 3. Missing token returns 503
+    const unconfiguredRes = await onRequestPost({
+      request: new Request('https://khora.pages.dev/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: 'Idea', message: 'Detalle' })
+      }),
+      env: {}
+    });
+    assert.equal(unconfiguredRes.status, 503);
+
+    // 4. Valid feedback creates GitHub issue via upstream API
+    let capturedUrl = '';
+    let capturedInit = null;
+    globalThis.fetch = async (url, init) => {
+      capturedUrl = url;
+      capturedInit = init;
+      return new Response(JSON.stringify({ html_url: 'https://github.com/JCarrascoF/khora/issues/99' }), {
+        status: 201
+      });
+    };
+    const okRes = await onRequestPost({
+      request: new Request('https://khora.pages.dev/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'Sugerencia o nueva idea',
+          title: 'Filtro nuevo',
+          message: 'Sería útil filtrar por fecha',
+          lang: 'es',
+          mode: 'local',
+          website: ''
+        })
+      }),
+      env: { GITHUB_FEEDBACK_TOKEN: 'ghp_secret_token' }
+    });
+    assert.equal(okRes.status, 201);
+    assert.equal(capturedUrl, 'https://api.github.com/repos/JCarrascoF/khora/issues');
+    assert.equal(capturedInit.method, 'POST');
+    assert.equal(capturedInit.headers.Authorization, 'Bearer ghp_secret_token');
+    const sentBody = JSON.parse(capturedInit.body);
+    assert.equal(sentBody.title, '[Feedback] Filtro nuevo');
+    assert.match(sentBody.body, /Sería útil filtrar por fecha/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+
+  // 5. Frontend modal renders direct submit button, honeypot, copy and GitHub fallback
+  assert.match(appJsSrc, /id="btn-feedback-submit"/);
+  assert.match(appJsSrc, /id="feedback-website"/);
+  assert.match(appJsSrc, /fetch\('\/api\/feedback'/);
+});

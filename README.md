@@ -1,4 +1,4 @@
-![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-live-2c8ecc)
+![Cloudflare Pages](https://img.shields.io/badge/Cloudflare%20Pages-live-F38020)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 🇪🇸 **Español** | 🇬🇧 [English](./README.en.md)
@@ -65,7 +65,7 @@ Khōra es una herramienta personal de autoconocimiento, registro y práctica cot
 
 ## ¿Eres desarrollador o quieres alojar tu propia instancia?
 
-Consulta toda la documentación técnica (arquitectura, cifrado `AES-256-GCM`, despliegue gratuito en GitHub Pages / Cloudflare Pages y Docker con SQLite opcional) en **[docs/development.md](docs/development.md)**.
+Consulta toda la documentación técnica (arquitectura, cifrado `AES-256-GCM`, despliegue gratuito en Cloudflare Pages y Docker con SQLite opcional) en **[docs/development.md](docs/development.md)**.
 
 ---
 

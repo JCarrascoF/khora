@@ -1452,13 +1452,15 @@ class AppController {
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
 
+    const t = (text) => (window.i18n?.translateText ? window.i18n.translateText(text) : text);
+
     modalBody.innerHTML = `
       <div id="feedback-modal-root">
         <div class="flex-between" style="gap: 8px; align-items: flex-start;">
           <div>
-<h3 class="card-title">Enviar Feedback o Sugerencia</h3>
+            <h3 class="card-title">Enviar Feedback o Sugerencia</h3>
             <p class="card-subtitle mt-1" style="line-height: 1.45;">
-              Comparte cualquier idea de mejora, fallo detectado o comentario sobre tu experiencia con Khōra.
+              Comparte cualquier idea de mejora, fallo detectado o comentario sobre tu experiencia con Khōra. No necesitas cuenta.
             </p>
           </div>
           <button type="button" class="btn-icon" id="btn-feedback-x" aria-label="Cerrar" style="width: 34px; height: 34px; flex-shrink: 0;">✕</button>
@@ -1467,9 +1469,9 @@ class AppController {
         <div class="form-group mt-3">
           <label class="form-label" for="feedback-type">Tipo de comentario</label>
           <select id="feedback-type" class="form-select">
-<option value="Sugerencia o nueva idea">Sugerencia o nueva idea</option>
-<option value="Fallo o problema técnico">Fallo o problema técnico</option>
-<option value="Comentario sobre la app">Comentario sobre la app</option>
+            <option value="Sugerencia o nueva idea">Sugerencia o nueva idea</option>
+            <option value="Fallo o problema técnico">Fallo o problema técnico</option>
+            <option value="Comentario sobre la app">Comentario sobre la app</option>
           </select>
         </div>
 
@@ -1483,13 +1485,20 @@ class AppController {
           <textarea id="feedback-message" class="form-textarea" rows="4" placeholder="Describe tu sugerencia, comentario o qué ocurrió..."></textarea>
         </div>
 
+        <input type="text" id="feedback-website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none;">
+
+        <div id="feedback-status" class="hidden" style="margin-top: 10px; font-size: 0.82rem; color: var(--terracotta-700, #9a4a35); line-height: 1.4;"></div>
+
         <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
-          <button type="button" class="btn-primary" id="btn-feedback-github" style="width: 100%; justify-content: center;">
-            Enviar en GitHub Issues
+          <button type="button" class="btn-primary" id="btn-feedback-submit" style="width: 100%; justify-content: center;">
+            Enviar feedback
           </button>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button type="button" class="btn-secondary" id="btn-feedback-copy" style="flex: 1; justify-content: center; font-size: 0.82rem;">
               Copiar mensaje
+            </button>
+            <button type="button" class="btn-secondary" id="btn-feedback-github" style="flex: 1; justify-content: center; font-size: 0.82rem;">
+              GitHub Issues
             </button>
             <button type="button" class="btn-secondary" id="btn-feedback-cancel" style="font-size: 0.82rem;">
               Cerrar
@@ -1502,24 +1511,80 @@ class AppController {
     this.openModal('default');
 
     const buildFormatted = () => {
-      const type = document.getElementById('feedback-type')?.value ||'Sugerencia o nueva idea';
-      const title = document.getElementById('feedback-title')?.value?.trim() ||'Feedback Khōra';
-      const bodyMsg = document.getElementById('feedback-message')?.value?.trim() || '';
+      const type = document.getElementById('feedback-type')?.value || 'Sugerencia o nueva idea';
+      const rawTitle = document.getElementById('feedback-title')?.value?.trim() || '';
+      const rawBody = document.getElementById('feedback-message')?.value?.trim() || '';
+      const title = rawTitle || 'Feedback Khōra';
       const lang = window.i18n?.getLang?.() || 'es';
+      const mode = window.stateManager?.getStorageMode?.() || 'local';
       const issueTitle = `[Feedback] ${title}`;
       const issueBody = [
         `**${type}**`,
         '',
-        bodyMsg || '(Sin descripción adicional)',
+        rawBody || '(Sin descripción adicional)',
         '',
-        `---`,
-`Khōra · lang: ${lang} · mode: ${window.stateManager?.getStorageMode?.() ||'local'}`
+        '---',
+        `Khōra · lang: ${lang} · mode: ${mode}`
       ].join('\n');
-      return { issueTitle, issueBody };
+      return { type, rawTitle, rawBody, lang, mode, issueTitle, issueBody };
+    };
+
+    const showStatusError = (msg) => {
+      const el = document.getElementById('feedback-status');
+      if (!el) return;
+      el.textContent = t(msg);
+      el.classList?.remove('hidden');
     };
 
     document.getElementById('btn-feedback-x')?.addEventListener('click', () => this.closeModal());
     document.getElementById('btn-feedback-cancel')?.addEventListener('click', () => this.closeModal());
+
+    document.getElementById('btn-feedback-submit')?.addEventListener('click', async () => {
+      const submitBtn = document.getElementById('btn-feedback-submit');
+      const statusEl = document.getElementById('feedback-status');
+      statusEl?.classList?.add('hidden');
+
+      const { type, rawTitle, rawBody, lang, mode } = buildFormatted();
+      if (!rawTitle && !rawBody) {
+        this.showToast('Escribe un título o detalle antes de enviar');
+        return;
+      }
+
+      const website = document.getElementById('feedback-website')?.value || '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = t('Enviando...');
+      }
+
+      try {
+        const res = await fetch('/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type,
+            title: rawTitle,
+            message: rawBody,
+            lang,
+            mode,
+            website
+          })
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+
+        this.closeModal();
+        this.showToast('¡Gracias! Feedback enviado');
+      } catch {
+        showStatusError('No se pudo enviar automáticamente. Puedes usar «Copiar mensaje» o «GitHub Issues».');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = t('Enviar feedback');
+        }
+      }
+    });
 
     document.getElementById('btn-feedback-github')?.addEventListener('click', () => {
       const { issueTitle, issueBody } = buildFormatted();
