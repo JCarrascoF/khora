@@ -15,7 +15,7 @@ const surfacesCss = fs.readFileSync(path.join(ROOT_DIR, 'public', 'css', 'surfac
 
 function extractAttrButtons(html, attrName, datasetKey) {
   const results = [];
-  const regex = new RegExp(`<button\\b([^>]*\\b${attrName}="([^"]*)"[^>]*)>`, 'g');
+  const regex = new RegExp(`<(?:button|div|article)\\b([^>]*\\b${attrName}="([^"]*)"[^>]*)>`, 'g');
   let match;
   while ((match = regex.exec(html)) !== null) {
     const attrs = match[1];
@@ -25,6 +25,7 @@ function extractAttrButtons(html, attrName, datasetKey) {
     const el = {
       dataset: { [datasetKey]: value },
       className: classMatch ? classMatch[1] : '',
+      closest: () => null,
       addEventListener(type, fn) {
         if (!listeners[type]) listeners[type] = [];
         listeners[type].push(fn);
@@ -48,6 +49,11 @@ function loadToolkitHarness({ withApp = false, withI18n = false, initialLang = '
   let containerHtml = '';
   let cachedGroupBtns = [];
   let cachedTrickBtns = [];
+  let cachedStudyAreaBtns = [];
+  let cachedPillCards = [];
+  let cachedReadingBtns = [];
+  let cachedWorkshopBtns = [];
+  let cachedIdButtons = new Map();
 
   const container = {
     id: 'pildoras-anclajes-view',
@@ -59,6 +65,21 @@ function loadToolkitHarness({ withApp = false, withI18n = false, initialLang = '
       containerHtml = String(val || '');
       cachedGroupBtns = extractAttrButtons(containerHtml, 'data-trick-group', 'trickGroup');
       cachedTrickBtns = extractAttrButtons(containerHtml, 'data-launch-trick-id', 'launchTrickId');
+      cachedStudyAreaBtns = extractAttrButtons(containerHtml, 'data-study-area', 'studyArea');
+      cachedPillCards = extractAttrButtons(containerHtml, 'data-pill-id', 'pillId');
+      cachedReadingBtns = extractAttrButtons(containerHtml, 'data-open-reading', 'openReading');
+      cachedWorkshopBtns = extractAttrButtons(containerHtml, 'data-open-workshop', 'openWorkshop');
+      cachedIdButtons = new Map();
+      for (const id of ['btn-reading-back', 'btn-reading-back-bottom', 'btn-workshop-back']) {
+        if (containerHtml.includes(`id="${id}"`)) {
+          const listeners = [];
+          cachedIdButtons.set(id, {
+            id,
+            addEventListener(type, fn) { if (type === 'click') listeners.push(fn); },
+            click() { listeners.forEach((fn) => fn({ currentTarget: this, target: this, stopPropagation() {} })); }
+          });
+        }
+      }
     }
   };
 
@@ -111,6 +132,7 @@ function loadToolkitHarness({ withApp = false, withI18n = false, initialLang = '
         if (id === 'pildoras-anclajes-view') return container;
         if (id === 'app-modal') return modal;
         if (id === 'modal-body') return modalBody;
+        if (cachedIdButtons.has(id)) return cachedIdButtons.get(id);
         if (sections.has(id)) return sections.get(id);
         return null;
       },
@@ -118,6 +140,10 @@ function loadToolkitHarness({ withApp = false, withI18n = false, initialLang = '
       querySelectorAll(selector) {
         if (selector === '[data-trick-group]') return cachedGroupBtns;
         if (selector === '[data-launch-trick-id]') return cachedTrickBtns;
+        if (selector === '[data-study-area]') return cachedStudyAreaBtns;
+        if (selector === '[data-pill-id]') return cachedPillCards;
+        if (selector === '[data-open-reading]') return cachedReadingBtns;
+        if (selector === '[data-open-workshop]') return cachedWorkshopBtns;
         return [];
       }
     },
@@ -195,7 +221,13 @@ function loadToolkitHarness({ withApp = false, withI18n = false, initialLang = '
       toolkit.launchTrickRunner = origLaunch;
     },
     getGroupButtons: () => cachedGroupBtns,
-    getTrickButtons: () => cachedTrickBtns
+    getTrickButtons: () => cachedTrickBtns,
+    getStudyAreaButtons: () => cachedStudyAreaBtns,
+    getPillCards: () => cachedPillCards,
+    getReadingButtons: () => cachedReadingBtns,
+    getWorkshopButtons: () => cachedWorkshopBtns,
+    getIdButton: (id) => cachedIdButtons.get(id) || null,
+    modalBody
   };
 }
 
@@ -322,8 +354,8 @@ test('EN i18n translates Botiquín doors, tabs, tricks, dynamic counts, and help
   // Landing strings & dynamic counts
   assert.equal(i18n.t('¿Qué necesitas ahora mismo?'), 'What do you need right now?');
   assert.equal(
-    i18n.t('Elige lo que más se parezca a este momento para ver 2 o 3 ejercicios de un minuto.'),
-    'Pick what fits this moment to see just 2 or 3 one-minute exercises.'
+    i18n.t('Elige lo que más se parezca a este momento para ver 2 o 3 ejercicios breves.'),
+    'Pick what fits this moment to see just 2 or 3 short exercises.'
   );
   assert.equal(i18n.t('2 ejercicios'), '2 exercises');
   assert.equal(i18n.t('3 ejercicios'), '3 exercises');
@@ -359,4 +391,80 @@ test('surfaces.css styles .toolkit-row for both editorial and lino modes and kee
   assert.match(surfacesCss, /\.toolkit-row-title\b/);
   assert.match(surfacesCss, /\.trick-card,/);
   assert.match(surfacesCss, /\.trick-step-card,/);
+});
+
+test('Lecturas y Conceptos ACT renders open editorial index and navigates readings and workshops in surface without modals', () => {
+  const { toolkit, container, modalBody, getReadingButtons, getWorkshopButtons, getIdButton } = loadToolkitHarness();
+  toolkit.mode = 'estudio';
+  toolkit.currentTab = 'pildoras';
+  toolkit.init();
+
+  // Default landing shows open editorial index without anchors card or hero time banner
+  assert.equal(toolkit.activeReadingId, null);
+  assert.equal(toolkit.activeWorkshopId, null);
+  assert.equal(container.innerHTML.includes('anchors-unified-card'), false);
+  assert.equal(container.innerHTML.includes('intro-guide-card'), false);
+  assert.match(container.innerHTML, /Fundamentos de Khōra y ACT/);
+  assert.match(container.innerHTML, /Defusión Cognitiva/);
+  assert.match(container.innerHTML, /Límites y Soberanía/);
+  assert.match(container.innerHTML, /Aceptación y Compasión/);
+  assert.match(container.innerHTML, /Momento Presente y Regulación/);
+  assert.match(container.innerHTML, /El Pivote: Del Dolor al Anhelo/);
+
+  // Clicking a reading opens it in surface without opening a modal
+  const readingBtns = getReadingButtons();
+  assert.equal(readingBtns.length, 7);
+  readingBtns.find((b) => b.dataset.openReading === 'pill_2').click();
+  assert.equal(toolkit.activeReadingId, 'pill_2');
+  assert.equal(modalBody.innerHTML, '');
+  assert.match(container.innerHTML, /← Volver a Lecturas y Ejercicios/);
+  assert.match(container.innerHTML, /tu deseo por sí solo no tiene validez legal/);
+
+  // Returning to index works in surface
+  getIdButton('btn-reading-back').click();
+  assert.equal(toolkit.activeReadingId, null);
+  assert.match(container.innerHTML, /Fundamentos de Khōra y ACT/);
+
+  // Clicking a workshop opens it in surface without opening a modal
+  const workshopBtn = getWorkshopButtons().find((b) => b.dataset.openWorkshop === 'pivot');
+  assert.ok(workshopBtn);
+  workshopBtn.click();
+  assert.equal(toolkit.activeWorkshopId, 'pivot');
+  assert.equal(modalBody.innerHTML, '');
+  assert.match(container.innerHTML, /← Volver a Lecturas y Ejercicios/);
+  assert.match(container.innerHTML, /El Pivote: Del Dolor al Anhelo/);
+
+  getIdButton('btn-workshop-back').click();
+  assert.equal(toolkit.activeWorkshopId, null);
+});
+
+test('AppController.navigate resets activeStudyArea on entry from another view and preserves it in-place', () => {
+  const { toolkit, app } = loadToolkitHarness({ withApp: true });
+  app.currentView = 'guia-inicio';
+  toolkit.activeStudyArea = 'limites';
+
+  app.navigate('pildoras-estudio');
+  assert.equal(app.currentView, 'pildoras-estudio');
+  assert.equal(toolkit.activeStudyArea, null);
+
+  toolkit.activeStudyArea = 'defusion';
+  app.navigate('pildoras-estudio');
+  assert.equal(toolkit.activeStudyArea, 'defusion');
+
+  app.navigate('guia-inicio');
+  app.navigate('pildoras-estudio');
+  assert.equal(toolkit.activeStudyArea, null);
+});
+
+test('EN i18n translates Lecturas y Conceptos ACT progressive main-view strings', () => {
+  const { i18n } = loadToolkitHarness({ withApp: true, withI18n: true, initialLang: 'es' });
+  i18n.setLang('en');
+
+  assert.equal(i18n.t('← Todos los conceptos'), '← All concepts');
+  assert.equal(i18n.t('Todas (6)'), 'All (6)');
+  assert.equal(i18n.t('Ver las 6 lecturas en lista →'), 'View all 6 readings in a list →');
+  assert.equal(i18n.t('Las 6 lecturas breves ordenadas por concepto.'), 'All 6 short readings grouped by concept.');
+  assert.equal(i18n.t('Lecturas breves'), 'Short readings');
+  assert.equal(i18n.t('Talleres en calma'), 'Calm-state workshops');
+  assert.equal(i18n.t('Practicar trucos rápidos en el Botiquín →'), 'Practice quick tricks in the First-Aid Kit →');
 });
