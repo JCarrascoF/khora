@@ -24,6 +24,7 @@ const STORAGE_KEYS = {
   SURFACE_PREF:'act_surface_pref',
   BUTTONS_PREF:'act_buttons_pref',
   EXPLANATIONS_PREF:'act_explanations_pref',
+  ACT_CONCEPTS_PREF:'act_concepts_pref',
   CUSTOM_PALETTE_PREF:'act_custom_palette_pref'
 };
 
@@ -254,14 +255,18 @@ class StateManager {
           if (storedBtns ==='editorial' || storedBtns ==='ultraligero') buttonsPref = storedBtns;
           const storedEx = localStorage.getItem(STORAGE_KEYS.EXPLANATIONS_PREF);
           if (storedEx ==='hide' || storedEx ==='show') explanationsPref = storedEx;
+          let actConceptsPref = 'show';
+          const storedConcepts = localStorage.getItem(STORAGE_KEYS.ACT_CONCEPTS_PREF);
+          if (storedConcepts === 'hide' || storedConcepts === 'show') actConceptsPref = storedConcepts;
         } catch {
           themePref = 'light';
           palettePref ='arcilla';
           surfacePref ='editorial';
           buttonsPref ='ultraligero';
           explanationsPref ='show';
+          actConceptsPref = 'show';
         }
-        return { theme: themePref, palette: palettePref, surface: surfacePref, buttons: buttonsPref, explanations: explanationsPref, sound: false, vibration: true, mindName: '', mindNameCustomized: false };
+        return { theme: themePref, palette: palettePref, surface: surfacePref, buttons: buttonsPref, explanations: explanationsPref, actConcepts: actConceptsPref, sound: false, vibration: true, mindName: '', mindNameCustomized: false };
       }
       case STORAGE_KEYS.PROFILE:
         return {
@@ -666,6 +671,9 @@ class StateManager {
         if (storedBtns ==='editorial' || storedBtns ==='ultraligero') buttonsPref = storedBtns;
         const storedEx = localStorage.getItem(STORAGE_KEYS.EXPLANATIONS_PREF);
         if (storedEx ==='hide' || storedEx ==='show') explanationsPref = storedEx;
+        let actConceptsPref = 'show';
+        const storedConcepts = localStorage.getItem(STORAGE_KEYS.ACT_CONCEPTS_PREF);
+        if (storedConcepts === 'hide' || storedConcepts === 'show') actConceptsPref = storedConcepts;
       } catch {
         // Ignore
       }
@@ -675,6 +683,7 @@ class StateManager {
         surface: surfacePref,
         buttons: buttonsPref,
         explanations: explanationsPref,
+        actConcepts: actConceptsPref,
         sound: false,
         vibration: true,
         mindName: '',
@@ -807,6 +816,7 @@ class StateManager {
         if (value.surface) localStorage.setItem(STORAGE_KEYS.SURFACE_PREF, value.surface);
         if (value.buttons) localStorage.setItem(STORAGE_KEYS.BUTTONS_PREF, value.buttons);
         if (value.explanations) localStorage.setItem(STORAGE_KEYS.EXPLANATIONS_PREF, value.explanations);
+        if (value.actConcepts) localStorage.setItem(STORAGE_KEYS.ACT_CONCEPTS_PREF, value.actConcepts);
         if (value.customPalette) localStorage.setItem(STORAGE_KEYS.CUSTOM_PALETTE_PREF, JSON.stringify(value.customPalette));
       } catch {
         // Ignore
@@ -2189,7 +2199,7 @@ class StateManager {
         isExample: true,
         domain: 'Trabajo',
         statement: 'Trabajar con rigor y honestidad protegiendo mi descanso y comunicando prioridades con claridad',
-        microAction: 'Pedir 15 minutos para revisar prioridades antes de aceptar un encargo fuera de horario',
+        microAction: 'Pedir una pausa para revisar prioridades antes de aceptar un encargo fuera de horario',
         willingness: 'Hacer hueco a la incomodidad de no estar disponible al instante sin dar mil excusas',
         lensUsed: 'Ejemplo guía (Hayes)',
         practicedCount: 2,
@@ -2201,7 +2211,7 @@ class StateManager {
         isExample: true,
         domain: 'Conmigo Mismo',
         statement: 'Tratarme con paciencia y respeto en los días difíciles cuidando mi energía física y emocional',
-        microAction: 'Hacer una pausa de 5 minutos sin pantallas para notar mi cuerpo antes de responder en automático',
+        microAction: 'Hacer una pausa sin pantallas para notar mi cuerpo antes de responder en automático',
         willingness: 'Sostener el cosquilleo de culpa inicial cuando paro a descansar',
         lensUsed: 'Ejemplo guía (Hayes)',
         practicedCount: 4,
@@ -2258,7 +2268,7 @@ class StateManager {
         isExample: true,
         date: now - (1 * day),
         type: 'values_updated',
-        note: 'Paso dado en Trabajo: "Pedir 15 minutos para revisar prioridades antes de aceptar un encargo fuera de horario"'
+        note: 'Paso dado en Trabajo: "Pedir una pausa para revisar prioridades antes de aceptar un encargo fuera de horario"'
       },
       {
         id: 'demo_log_2',
@@ -2414,7 +2424,7 @@ class StateManager {
         postIntensity: 5,
         autopilotUrge: 'Ceder de nuevo y disculparme preventivamente.',
         valueChosen: 'Autenticidad',
-        committedAction: 'Pausar 10 minutos, respirar en el plexo y expresar mi postura con suavidad pero con firmeza.',
+        committedAction: 'Pausar con calma, respirar en el plexo y expresar mi postura con suavidad pero con firmeza.',
         carriedPassenger: 'El Policía de la Culpa ("Eres egoísta")',
         choiceType: 'value',
         followUpNotes: []
@@ -2453,7 +2463,7 @@ class StateManager {
           longTermCost: 'Agotamiento acumulado, resentimiento sordo hacia el otro y desconexión de mi dignidad.'
         },
         weeklyExperiment: {
-          text: 'Esta semana, ante una propuesta imprevista, pediré 15 minutos para consultar mi agenda y sentir si me apetece, sin decir "sí" de inmediato.',
+          text: 'Esta semana, ante una propuesta imprevista, pediré una pausa para consultar mi agenda y sentir si me apetece, sin decir "sí" de inmediato.',
           definedAt: now - (6 * day),
           targetDate: now + (1 * day)
         },

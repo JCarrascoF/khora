@@ -9,6 +9,9 @@ const KHORA_CREDITS = {
   kofiUrl: 'https://ko-fi.com/jcarrascof'
 };
 
+const KHORA_VERSION = (typeof window !== 'undefined' && window.__KHORA_APP_VERSION__) || '1.0.0';
+window.KHORA_VERSION = KHORA_VERSION;
+
 const ACT_GLOSSARY = {
   'autoabandono': {
     title: 'Autoabandono',
@@ -43,7 +46,7 @@ const ACT_GLOSSARY = {
   'aceptacion': {
     title: 'Aceptación / Disposición ACT',
     plain: 'No es resignarte ni aguantar abusos; es hacerle hueco en el cuerpo a una incomodidad limpia (como el vértigo o la culpa al poner un límite) para actuar según tus valores.',
-    example: 'Sostener el cosquilleo de culpa 10 minutos tras decir "hoy no puedo" sin correr a retractarte.'
+    example: 'Sostener el cosquilleo de culpa tras decir "hoy no puedo" sin correr a retractarte.'
   },
   'fisicalizar': {
     title: 'Fisicalizar la Sensación',
@@ -159,7 +162,7 @@ class AppController {
         items: [
           { id:'guia-inicio', icon:'', label:'Inicio' },
           { id:'espacio-act', icon:'', label:'Procesar Emoción' },
-          { id:'pildoras-trucos', icon:'', label:'Botiquín 1-Min' },
+          { id:'pildoras-trucos', icon:'', label:'Botiquín' },
           { id:'brujula-valores', icon:'', label:'Elegir qué Hacer' },
           { id:'paz-falsa', icon:'', label:'Acabo de Ceder' },
           { id:'pildoras-estudio', icon:'', label:'Lecturas y Ejercicios' }
@@ -170,6 +173,7 @@ class AppController {
         items: [
           { id:'perfil-valores', icon:'', label:'Mis Valores', helpTopic:'valores-faro' },
           { id:'perfil-autobus', icon:'', label:'Mi Autobús', helpTopic:'autobus-act' },
+          { id:'perfil-anclajes', icon:'', label:'Mis Anclajes', helpTopic:'tarjetas-anclaje' },
           { id:'radar-patrones', icon:'', label:'Mis Patrones', helpTopic:'radar-patrones' }
         ]
       },
@@ -191,6 +195,7 @@ class AppController {
     this.initSurface();
     this.initButtons();
     this.initExplanations();
+    this.initActConcepts();
     this.initPWA();
     window.i18n?.init?.();
     this.bindGlobalNavigation();
@@ -215,25 +220,72 @@ class AppController {
     // Check url hash if present & support browser Back / Forward (hashchange)
     this.validViews = [
       'guia-inicio', 'ahora-mismo', 'yo', 'valores-rutina',
-      'perfil', 'perfil-valores', 'perfil-autobus',
+      'perfil', 'perfil-valores', 'perfil-autobus', 'perfil-anclajes',
       'paz-falsa', 'espacio-act', 'radar-patrones', 'brujula-valores',
       'pildoras-anclajes', 'pildoras-trucos', 'pildoras-estudio',
       'insight', 'insight-terapia', 'insight-graficos', 'insight-historial', 'insight-actividad'
     ];
-    const initialHash = (window.location.hash || '').replace('#', '');
-    if (this.validViews.includes(initialHash)) {
-      this.navigate(initialHash, { updateHash: false });
-    } else {
-      this.navigate('guia-inicio');
-    }
+    const handleHashRoute = (rawHash, { isInitial = false } = {}) => {
+      const clean = (rawHash || '').replace('#', '');
+      if (clean.startsWith('pildoras-estudio/lectura/')) {
+        const pillId = clean.slice('pildoras-estudio/lectura/'.length);
+        if (window.pildorasAnclajesApp) {
+          window.pildorasAnclajesApp.activeReadingId = pillId || null;
+          window.pildorasAnclajesApp.activeWorkshopId = null;
+        }
+        if (this.currentView === 'pildoras-estudio') {
+          window.pildorasAnclajesApp?.render?.();
+          window.pildorasAnclajesApp?.bindEvents?.();
+        } else {
+          this.navigate('pildoras-estudio', { updateHash: false, preserveStudySubView: true });
+        }
+        return;
+      }
+      if (clean.startsWith('pildoras-estudio/taller/')) {
+        const workshopId = clean.slice('pildoras-estudio/taller/'.length);
+        if (window.pildorasAnclajesApp) {
+          window.pildorasAnclajesApp.activeWorkshopId = workshopId || null;
+          window.pildorasAnclajesApp.activeReadingId = null;
+        }
+        if (this.currentView === 'pildoras-estudio') {
+          window.pildorasAnclajesApp?.render?.();
+          window.pildorasAnclajesApp?.bindEvents?.();
+        } else {
+          this.navigate('pildoras-estudio', { updateHash: false, preserveStudySubView: true });
+        }
+        return;
+      }
+
+      const target = this.validViews.includes(clean) ? clean : 'guia-inicio';
+      if (
+        target === 'pildoras-estudio' &&
+        this.currentView === 'pildoras-estudio' &&
+        window.pildorasAnclajesApp &&
+        (window.pildorasAnclajesApp.activeReadingId || window.pildorasAnclajesApp.activeWorkshopId)
+      ) {
+        window.pildorasAnclajesApp.activeReadingId = null;
+        window.pildorasAnclajesApp.activeWorkshopId = null;
+        window.pildorasAnclajesApp.render();
+        window.pildorasAnclajesApp.bindEvents();
+        return;
+      }
+
+      if (isInitial) {
+        if (this.validViews.includes(clean)) {
+          this.navigate(clean, { updateHash: false });
+        } else {
+          this.navigate('guia-inicio');
+        }
+      } else if (target !== this.currentView) {
+        this.navigate(target, { updateHash: false });
+      }
+    };
+
+    handleHashRoute(window.location.hash, { isInitial: true });
 
     if (!this._hashChangeBound) {
       window.addEventListener('hashchange', () => {
-        const nextHash = (window.location.hash || '').replace('#', '') || 'guia-inicio';
-        const target = this.validViews.includes(nextHash) ? nextHash : 'guia-inicio';
-        if (target !== this.currentView) {
-          this.navigate(target, { updateHash: false });
-        }
+        handleHashRoute(window.location.hash, { isInitial: false });
       });
       this._hashChangeBound = true;
     }
@@ -277,6 +329,12 @@ class AppController {
         }
         if (closedModal || tooltipWasVisible) {
           e.preventDefault?.();
+          return;
+        }
+        if (document.body.classList.contains('crisis-immersive')) {
+          this.setCrisisImmersive(false);
+          this.navigate('guia-inicio');
+          e.preventDefault?.();
         }
       }
     });
@@ -292,6 +350,7 @@ class AppController {
           this.initSurface();
     this.initButtons();
     this.initExplanations();
+    this.initActConcepts();
           this.updatePersistenceWarningBanner();
           this.maybeShowInstallGateModal();
         } else if (event === 'vault_locked') {
@@ -321,6 +380,7 @@ class AppController {
         this.initSurface();
     this.initButtons();
     this.initExplanations();
+    this.initActConcepts();
       }
 
       if (this.currentView === 'guia-inicio') {
@@ -328,7 +388,8 @@ class AppController {
       } else if (
         (this.currentView === 'perfil' ||
          this.currentView === 'perfil-valores' ||
-         this.currentView === 'perfil-autobus') &&
+         this.currentView === 'perfil-autobus' ||
+         this.currentView === 'perfil-anclajes') &&
         window.perfilApp
       ) {
         window.perfilApp.render();
@@ -474,6 +535,11 @@ class AppController {
         if (window.pildorasAnclajesApp.currentTab === 'trucos' || window.pildorasAnclajesApp.currentTab === 'posture') {
           window.pildorasAnclajesApp.currentTab = 'pildoras';
         }
+        if (this.currentView !== 'pildoras-estudio' && !options.preserveStudySubView) {
+          window.pildorasAnclajesApp.activeStudyArea = null;
+          window.pildorasAnclajesApp.activeReadingId = null;
+          window.pildorasAnclajesApp.activeWorkshopId = null;
+        }
       }
     } else if (resolvedSubView === 'pildoras-anclajes') {
       sectionId = 'pildoras-anclajes';
@@ -485,14 +551,16 @@ class AppController {
       }
     } else if (
       resolvedSubView === 'perfil-valores' ||
-      resolvedSubView === 'perfil-autobus'
+      resolvedSubView === 'perfil-autobus' ||
+      resolvedSubView === 'perfil-anclajes'
     ) {
       sectionId = 'perfil';
       activeGroup = 'yo';
       if (window.perfilApp) {
         const tabMap = {
           'perfil-valores': 'valores',
-          'perfil-autobus': 'autobus'
+          'perfil-autobus': 'autobus',
+          'perfil-anclajes': 'anclajes'
         };
         window.perfilApp.activeProfileTab = tabMap[resolvedSubView] || 'valores';
       }
@@ -521,11 +589,19 @@ class AppController {
       activeGroup = 'ahora-mismo';
     }
 
+    const prevView = this.currentView;
     this.currentView = resolvedSubView;
     this.currentGroup = activeGroup;
-    if (sectionId !== 'espacio-act') {
+    const immersiveViews = new Set(['espacio-act', 'paz-falsa', 'brujula-valores']);
+    if (!immersiveViews.has(sectionId)) {
       this.setCrisisImmersive(false);
-      window.espacioActApp?.stopBreathing?.();
+    }
+    if (sectionId !== 'espacio-act') {
+      if (prevView === 'espacio-act' && window.espacioActApp?.resetForm) {
+        window.espacioActApp.resetForm();
+      } else {
+        window.espacioActApp?.stopBreathing?.();
+      }
     }
     if (options.updateHash !== false && window.location.hash !== `#${resolvedSubView}`) {
       window.location.hash = resolvedSubView;
@@ -568,15 +644,18 @@ class AppController {
       window.insightApp.render();
       window.insightApp.bindEvents();
     } else if (sectionId === 'brujula-valores' && window.brujulaValoresApp) {
+      this.setCrisisImmersive(true);
       window.brujulaValoresApp.render();
       window.brujulaValoresApp.bindEvents();
     } else if (sectionId === 'pildoras-anclajes' && window.pildorasAnclajesApp) {
       window.pildorasAnclajesApp.render();
       window.pildorasAnclajesApp.bindEvents();
     } else if (sectionId === 'espacio-act' && window.espacioActApp) {
+      this.setCrisisImmersive(true);
       window.espacioActApp.render();
       window.espacioActApp.bindEvents();
     } else if (sectionId === 'paz-falsa' && window.pazFalsaApp) {
+      this.setCrisisImmersive(true);
       window.pazFalsaApp.render();
       window.pazFalsaApp.bindEvents();
     } else if (sectionId === 'radar-patrones' && window.radarPatronesApp) {
@@ -608,30 +687,31 @@ class AppController {
       {
         view: 'espacio-act',
         primary: true,
-        title: 'Tengo un nudo, agobio o bloqueo',
-        does: 'Ponle nombre a lo que sientes, bájalo al cuerpo y quítale ruido a la cabeza.'
+        title: 'Siento agobio, tensión o la cabeza llena de ruido',
+        does: 'Pon en palabras lo que sientes, <span class="act-term" data-term="defusion">suelta la pelea mental</span> y dale un <span class="act-term" data-term="aceptacion">respiro a tu cuerpo</span>.'
       },
       {
         view: 'pildoras-trucos',
         primary: false,
-        title: 'Necesito frenar ya y bajar revoluciones',
-        does: 'Trucos rápidos para aterrizar, esperar 2 minutos antes de contestar o decir «no» sin dar mil explicaciones.'
+        title: 'Voy muy acelerado/a y necesito frenar un momento',
+        does: 'Pausas de un minuto para respirar, <span class="act-term" data-term="echar-el-ancla">frenar el impulso</span> o responder con calma.'
       },
       {
         view: 'brujula-valores',
         primary: false,
-        title: 'Dudo qué hacer y me cuesta decir que no',
-        does: 'Aclara qué te está frenando y elige un pequeño paso fiel a ti.'
+        title: 'No sé qué hacer o me cuesta tomar una decisión',
+        does: 'Aclara qué miedo te está frenando y elige el paso que tenga más <span class="act-term" data-term="valores-act">sentido para ti</span>.'
       },
       {
         view: 'paz-falsa',
         primary: false,
-        title: 'Acabo de callarme o decir que sí sin querer',
-        does: 'Apúntalo sin machacarte para ver lo que de verdad te cuesta ceder.'
+        title: 'He dicho que sí por compromiso o miedo al conflicto',
+        does: 'Anota cuándo <span class="act-term" data-term="paz-falsa">cediste por compromiso</span> para entender el desgaste y aprender a cuidar tus límites.'
       }
     ];
 
     const greeting = this.getCozyTimeGreeting();
+    const isIntroDismissed = typeof localStorage !== 'undefined' && localStorage.getItem('act_intro_guide_dismissed') === '1';
 
     container.innerHTML = `
       <div class="view-plain-shell">
@@ -643,6 +723,17 @@ class AppController {
           </div>
           <p class="cozy-home-sub">No hace falta arreglarlo todo hoy. Elige lo que más se parezca a este momento.</p>
         </div>
+
+        ${!isIntroDismissed ? `
+          <div class="intro-guide-card" id="intro-guide-recommendation">
+            <div class="intro-guide-kicker">¿Primera vez en Khōra?</div>
+            <p class="intro-guide-text">Una guía breve de 2 minutos sobre cómo funciona este espacio y por qué aquí no intentamos luchar contra lo que sientes.</p>
+            <div class="intro-guide-actions">
+              <button type="button" class="intro-guide-link" id="btn-read-intro-guide">Leer guía breve →</button>
+              <button type="button" class="intro-guide-dismiss" id="btn-dismiss-intro-guide" aria-label="Ya conozco la guía">Ya la conozco</button>
+            </div>
+          </div>
+        ` : ''}
 
         <div>
           <div class="cozy-section-label">Ahora mismo…</div>
@@ -660,11 +751,11 @@ class AppController {
         </div>
 
         <div class="triage-calm-section">
-          <div class="cozy-section-label">En calma</div>
+          <div class="cozy-section-label">Perspectiva y práctica</div>
           <button type="button" class="triage-calm-item" data-go-view="pildoras-estudio" style="width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
             <div>
-              <div class="triage-card-title" style="font-size: 1.04rem;">Tengo un rato tranquilo para leer o practicar</div>
-              <p class="triage-card-desc">Ideas cortas, tus frases de apoyo y ejercicios para soltar etiquetas y aclarar lo que te importa.</p>
+              <div class="triage-card-title" style="font-size: 1.04rem;">Lecturas breves y ejercicios para momentos de calma</div>
+              <p class="triage-card-desc">Ideas y herramientas para entender cómo funciona tu mente y <span class="act-term" data-term="hexaflex">recordar hacia dónde quieres ir</span>.</p>
             </div>
             <span class="triage-card-arrow" aria-hidden="true">→</span>
           </button>
@@ -672,8 +763,27 @@ class AppController {
       </div>
     `;
 
+    document.getElementById('btn-read-intro-guide')?.addEventListener('click', () => {
+      try { localStorage.setItem('act_intro_guide_dismissed', '1'); } catch {}
+      this.navigate('pildoras-estudio');
+      setTimeout(() => {
+        window.pildorasAnclajesApp?.openPill?.('pill_guia_act');
+      }, 120);
+    });
+
+    document.getElementById('btn-dismiss-intro-guide')?.addEventListener('click', () => {
+      try { localStorage.setItem('act_intro_guide_dismissed', '1'); } catch {}
+      const card = document.getElementById('intro-guide-recommendation');
+      if (card) card.remove();
+    });
+
     container.querySelectorAll('[data-go-view]').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        const isConceptsActive = document.documentElement.getAttribute('data-act-concepts') !== 'hide';
+        if (isConceptsActive && e.target.closest('.act-term')) {
+          e.stopPropagation();
+          return;
+        }
         const target = btn.dataset.goView;
         if (target) this.navigate(target);
       });
@@ -736,11 +846,6 @@ class AppController {
     // Brand click returns to guided home
     document.querySelector('.brand-wrapper')?.addEventListener('click', () => {
       this.navigate('guia-inicio');
-    });
-
-    // SOS Crisis quick button -> Opens Low-Load ACT Crisis Triage Modal
-    document.getElementById('btn-sos-crisis')?.addEventListener('click', () => {
-      this.openSosCrisisModal();
     });
 
     // Quick Privacy Lock Button
@@ -864,140 +969,6 @@ class AppController {
     }
   }
 
-  // SOS ACT Crisis Triage Modal (Low Cognitive Load)
-  openSosCrisisModal() {
-    const modal = document.getElementById('app-modal');
-    const modalBody = document.getElementById('modal-body');
-    if (!modal || !modalBody) return;
-
-    const esc = window.KhoraUtils.escapeHtml;
-
-    const profile = window.stateManager?.getProfile() || {};
-    const anchors = window.stateManager?.getAnchors() || [];
-    const primaryVal = (profile.coreValues && profile.coreValues[0]) ? profile.coreValues[0] : null;
-    const topAnchor = anchors[0] || null;
-
-    let lighthouseHtml = '';
-    if (primaryVal || topAnchor) {
-      const valText = primaryVal ? `${primaryVal.domain}: ${primaryVal.statement}` : '';
-      const anchorText = topAnchor ? topAnchor.text : '';
-      lighthouseHtml = `
-<div style="background: var(--bg-surface); border-left: 2px solid var(--sage-500); border-radius: var(--radius-md); padding: 12px 15px; margin: 12px 0; text-align: left;">
-<div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--sage-500); margin-bottom: 4px;">
-            Tu Faro Personal ACT
-          </div>
-          ${valText ?`<div style="font-family: var(--font-serif); font-size: 0.96rem; color: var(--text-primary); line-height: 1.45;">«${esc(valText)}»</div>` :''}
-          ${anchorText ?`<div style="font-family: var(--font-serif); font-size: 0.84rem; font-style: italic; color: var(--text-secondary); margin-top: ${valText ?'4px' :'0'};">"${esc(anchorText)}"</div>` :''}
-        </div>
-      `;
-    }
-
-    modalBody.innerHTML = `
-      <div class="flex-between" style="gap: 8px; align-items: flex-start;">
-        <div>
-<h3 class="card-title">Asistencia rápida en crisis ACT</h3>
-<p class="card-subtitle mt-1" style="line-height: 1.5;">
-            En ACT no luchamos contra la ola emocional ni intentamos suprimirla. Primero echamos el ancla para no ser arrastrados y luego elegimos hacia dónde llevar el timón.
-          </p>
-        </div>
-        <button type="button" class="btn-icon" id="btn-sos-close" aria-label="Cerrar" style="width: 34px; height: 34px; flex-shrink: 0;">✕</button>
-      </div>
-
-      ${lighthouseHtml}
-
-      <div class="sos-options-stack" style="display: flex; flex-direction: column; margin-top: 14px;">
-        <button type="button" id="btn-sos-drop-anchor" class="sos-option-block sos-option-primary" style="text-align: left; width: 100%; cursor: pointer; font-family: inherit;">
-          <div style="font-family: var(--font-serif); font-size: 1.06rem; color: var(--text-primary); margin-bottom: 4px;">
-            1. Echar el Ancla en 60s (Protocolo ACE)
-          </div>
-          <div style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.48;">
-            Para picos de angustia, agobio o miedo intenso: reconoce la ola (A), vuelve al cuerpo (C) y conecta con el presente (E).
-          </div>
-        </button>
-
-        <div class="sos-option-block">
-          <div style="font-family: var(--font-serif); font-size: 1rem; color: var(--text-primary); margin-bottom: 4px;">
-            2. Frenar el piloto automático
-            </div>
-          <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">
-              Cuando sientes urgencia de huir, ceder por miedo o reaccionar en caliente:
-            </div>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button type="button" class="btn-secondary" id="btn-sos-bus-driver" style="flex: 1; font-size: 0.8rem; padding: 8px 12px;">
-              Negar el Volante
-              </button>
-            <button type="button" class="btn-secondary" id="btn-sos-pause-2min" style="flex: 1; font-size: 0.8rem; padding: 8px 12px;">
-              Pausa de 2 Minutos
-              </button>
-            </div>
-          </div>
-
-        <div class="sos-option-block">
-          <div style="font-family: var(--font-serif); font-size: 1rem; color: var(--text-primary); margin-bottom: 4px;">
-            3. Procesar la crisis en 4 pasos
-            </div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
-              <button type="button" class="btn-primary" id="btn-sos-full-act" style="flex: 1; font-size: 0.82rem; padding: 9px 12px;">
-              Empezar en Rueda Emocional
-              </button>
-              <button type="button" class="btn-secondary" id="btn-sos-body-act" style="flex: 1; font-size: 0.82rem; padding: 9px 12px;">
-              Ir directo al Cuerpo (Paso 2)
-              </button>
-            </div>
-          </div>
-        </div>
-    `;
-
-    this.openModal('medium');
-    this.triggerHaptic([50]);
-
-    document.getElementById('btn-sos-close')?.addEventListener('click', () => {
-      this.closeModal();
-    });
-
-    document.getElementById('btn-sos-drop-anchor')?.addEventListener('click', () => {
-      if (window.pildorasAnclajesApp) {
-        window.pildorasAnclajesApp.launchTrickRunner('trick_drop_anchor');
-      }
-    });
-
-    document.getElementById('btn-sos-bus-driver')?.addEventListener('click', () => {
-      if (window.pildorasAnclajesApp) {
-        window.pildorasAnclajesApp.launchTrickRunner('trick_bus_driver');
-      }
-    });
-
-    document.getElementById('btn-sos-pause-2min')?.addEventListener('click', () => {
-      if (window.pildorasAnclajesApp) {
-        window.pildorasAnclajesApp.launchTrickRunner('trick_pause_rescue');
-      }
-    });
-
-    document.getElementById('btn-sos-full-act')?.addEventListener('click', () => {
-      this.closeModal();
-      if (window.espacioActApp) {
-        window.espacioActApp.resetForm();
-      }
-      this.navigate('espacio-act');
-      this.setCrisisImmersive(true);
-      this.showToast('Espacio de Acompañamiento ACT iniciado');
-    });
-
-    document.getElementById('btn-sos-body-act')?.addEventListener('click', () => {
-      this.closeModal();
-      if (window.espacioActApp) {
-        window.espacioActApp.resetForm();
-        window.espacioActApp.entryData.emotions = ['Desbordamiento'];
-        window.espacioActApp.entryData.lastFocusedEmotion = 'Desbordamiento';
-        window.espacioActApp.entryData.emotion = 'Desbordamiento';
-        window.espacioActApp.setStep(2);
-      }
-      this.navigate('espacio-act');
-      this.setCrisisImmersive(true);
-      this.showToast('Aterrizando en el cuerpo (Aceptación ACT)');
-    });
-  }
-
   // Toast System
   showToast(message) {
     const container = document.getElementById('toast-container');
@@ -1052,8 +1023,10 @@ class AppController {
       const entry = ACT_GLOSSARY[key];
       if (!entry) return;
 
+      const badgeLabel = window.i18n?.isEn?.() ? 'ACT Principle' : 'Concepto ACT';
       tooltip.innerHTML = `
-<div class="act-glossary-title">${entry.title}</div>
+        <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--sage-600); font-weight: 700; margin-bottom: 2px;">${badgeLabel}</div>
+        <div class="act-glossary-title">${entry.title}</div>
         <div class="act-glossary-plain">${entry.plain}</div>
         <div class="act-glossary-example"><strong>${window.i18n?.isEn?.() ? 'Example:' : 'Ejemplo:'}</strong> ${entry.example}</div>
       `;
@@ -1069,7 +1042,6 @@ class AppController {
       tooltip.innerHTML = `
         <div class="act-glossary-title" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
           <span>${item.title}</span>
-          ${item.time ? `<span class="flow-purpose-pill" style="font-size: 0.72rem; padding: 1px 8px;">${item.time}</span>` : ''}
         </div>
         <div class="act-glossary-plain" style="display: flex; flex-direction: column; gap: 5px; margin-top: 6px;">
           ${item.does ? `<div><strong>Qué haces:</strong> <span>${item.does}</span></div>` : (item.summary ? `<div>${item.summary}</div>` : '')}
@@ -1094,7 +1066,10 @@ class AppController {
         return;
       }
       const termEl = e.target.closest?.('.act-term[data-term]');
-      if (termEl) showTooltipForTerm(termEl);
+      if (termEl) {
+        if (document.documentElement.getAttribute('data-act-concepts') === 'hide') return;
+        showTooltipForTerm(termEl);
+      }
     };
 
     const handleLeave = (e) => {
@@ -1115,6 +1090,7 @@ class AppController {
       }
       const termEl = e.target.closest?.('.act-term[data-term]');
       if (termEl) {
+        if (document.documentElement.getAttribute('data-act-concepts') === 'hide') return;
         showTooltipForTerm(termEl);
       } else {
         hideTooltip();
@@ -1878,6 +1854,41 @@ ${showAndroidUrlNote ? `
     });
   }
 
+  applyPwaUpdate(reg, applyBtn = null, toastEl = null) {
+    const t = (text) => (window.i18n?.translateText ? window.i18n.translateText(text) : text);
+    if (applyBtn) {
+      applyBtn.disabled = true;
+      applyBtn.textContent = t('Actualizando…');
+    }
+    this.swUpdateRequested = true;
+
+    (async () => {
+      try {
+        await window.state?.flushPendingWrites?.(4000);
+      } catch {
+        // Proceed with update even if flush encounters an error
+      }
+
+      if (reg?.waiting) {
+        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        setTimeout(() => {
+          if (!this.swRefreshing) {
+            this.swRefreshing = true;
+            window.location?.reload?.();
+          }
+        }, 2500);
+      } else {
+        this.swRefreshing = true;
+        window.location?.reload?.();
+      }
+    })();
+
+    if (toastEl) {
+      toastEl.querySelector('#btn-pwa-dismiss-update')?.addEventListener('click', () => {
+        toastEl.remove();
+      });
+    }
+  }
   showPwaUpdateToast(registration) {
     const container = document.getElementById('toast-container');
     if (!container || !registration) return;
@@ -1900,37 +1911,8 @@ ${showAndroidUrlNote ? `
     container.appendChild(toast);
 
     const applyBtn = toast.querySelector('#btn-pwa-apply-update');
-    const dismissBtn = toast.querySelector('#btn-pwa-dismiss-update');
-
-    dismissBtn?.addEventListener('click', () => {
-      toast.remove();
-    });
-
-    applyBtn?.addEventListener('click', async () => {
-      if (applyBtn.disabled) return;
-      applyBtn.disabled = true;
-      applyBtn.textContent = t('Actualizando…');
-      this.swUpdateRequested = true;
-
-      try {
-        await window.state?.flushPendingWrites?.(4000);
-      } catch {
-        // Proceed with update even if flush encounters an error
-      }
-
-      if (registration.waiting) {
-        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        // Fallback reload in case controllerchange does not fire
-        setTimeout(() => {
-          if (!this.swRefreshing) {
-            this.swRefreshing = true;
-            window.location?.reload?.();
-          }
-        }, 2500);
-      } else {
-        this.swRefreshing = true;
-        window.location?.reload?.();
-      }
+    applyBtn?.addEventListener('click', () => {
+      this.applyPwaUpdate(registration, applyBtn, toast);
     });
   }
 
@@ -1970,6 +1952,7 @@ ${showAndroidUrlNote ? `
 
       navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
         .then((reg) => {
+          this.swRegistration = reg;
           console.log('[PWA] Service Worker registrado con éxito:', reg.scope);
 
           const notifyIfWaiting = () => {
