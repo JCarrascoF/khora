@@ -10,13 +10,12 @@
         'guia-inicio': {
           title: 'Guía de Inicio — ¿Cómo estás ahora mismo?',
           time: '10 seg',
-          does: 'Elegir cómo te encuentras ahora mismo (en caliente o en calma) para ir directo al ejercicio adecuado.',
+          does: 'Elegir cómo te encuentras ahora mismo para ir directo al ejercicio adecuado.',
           brings: 'Orientarte sin fricción según lo que necesites en este instante.',
-          whenToUse: 'Es tu punto de entrada rápido según cómo te sientas en este momento: en medio de una ola emocional o con calma para entrenar.',
+          whenToUse: 'Es tu punto de entrada rápido según lo que necesites en este momento: atravesar un momento intenso o ganar perspectiva y entrenar.',
           steps: [
-            '1. Elige una tarjeta de «Ahora mismo…» si notas un nudo, necesitas frenar, dudas qué hacer o acabas de ceder.',
-            '2. Usa la tarjeta de «En calma» cuando tengas un rato tranquilo para leer ideas cortas y practicar.',
-            '3. Si necesitas bajar revoluciones al instante, pulsa arriba «Necesito calma ahora».'
+            '1. Elige una tarjeta de «Ahora mismo…» si notas un nudo o bucle, estás acelerado/a, dudas qué hacer o acabas de ceder.',
+            '2. Usa la sección de «Perspectiva y práctica» para leer ideas breves, revisar tus valores o entrenar habilidades.'
           ],
           tip: 'En Khōra no hace falta rellenarlo todo ni entrar cada día: abre solo la herramienta que encaja contigo ahora.'
         },
@@ -61,17 +60,17 @@
           tip: 'Pasa de «¿qué esperan que haga?» a «¿qué clase de persona elijo ser aquí?».'
         },
         'pildoras-trucos': {
-          title:'Botiquín de 1 Minuto (Micro-Trucos)',
+          title:'Botiquín (Micro-Trucos)',
           time:'30-60 seg',
           does: 'Ejecutar una micro-técnica guiada paso a paso.',
           brings: 'Frenar el piloto automático en vivo.',
-          whenToUse: 'Cuando necesitas frenar un impulso urgente en vivo en menos de 60 segundos (decir no, soltar culpa o bajar ansiedad).',
+          whenToUse: 'Cuando necesitas frenar un impulso urgente en vivo (decir no, soltar culpa o bajar ansiedad).',
           steps: [
             '1. Elige la situación que más se parezca a este momento (cuerpo, mente o límites).',
-            '2. Abre el ejercicio guiado paso a paso (Echar el Ancla, Silencio de 15s, Dos Flechas, Autobús ACT o Postura del SÍ).',
+            '2. Abre el ejercicio guiado paso a paso (Echar el Ancla, Silencio, Dos Flechas, Autobús ACT o Postura del SÍ).',
             '3. Síguelo en directo antes de contestar o decidir.'
           ],
-          tip: 'Los temporizadores (15s de silencio o 2 minutos de pausa) cortan el reflejo automático de justificarte.'
+          tip: 'Las pausas conscientes cortan el reflejo automático de justificarte.'
         },
         'pildoras-estudio': {
           title:'Lecturas y Ejercicios ACT (En Calma)',
@@ -134,7 +133,7 @@
           steps: [
             '1. Bautiza a tu mente pensante (ej. «George» o «Radio Catástrofe») para recordar que solo es un comentarista.',
             '2. Registra tus pasajeros recurrentes: qué gritan, de qué intentan protegerte y qué desvío te piden.',
-            '3. Mándalos al asiento trasero sin pelear ni echarlos, y practica con el simulador en 1 minuto.'
+            '3. Mándalos al asiento trasero sin pelear ni echarlos, y practica con el simulador.'
           ],
           tip: 'En ACT los miedos no desaparecen del autobús; aprendes a conducir hacia tus valores aunque sigan hablando atrás.'
         },
@@ -171,7 +170,7 @@
           brings: 'Visión clara de tus avances para detectar patrones con curiosidad y compasión.',
           whenToUse: 'Para observar tendencias de intensidad, peaje de falsa paz, ámbitos con más sumisión y tu perfil Hexaflex.',
           steps: [
-            '1. Evalúa de 0 a 10 los 6 procesos de flexibilidad psicológica en «Evaluar mi Hexaflex (1 min)».',
+            '1. Evalúa de 0 a 10 los 6 procesos de flexibilidad psicológica en «Evaluar mi Hexaflex».',
             '2. Revisa si baja la intensidad en tus crisis y qué ocurre con tu resentimiento en el tiempo.',
             '3. Observa en el mapa de calor en qué contextos (Trabajo, Pareja, Familia…) cedes más a menudo.'
           ],
@@ -195,13 +194,12 @@
         'guia-inicio': {
           title: '¿Cómo estás ahora mismo?',
           time: '10 seg',
-          does: 'Elegir cómo te encuentras ahora mismo (en caliente o en calma) para ir directo al ejercicio adecuado.',
+          does: 'Elegir cómo te encuentras ahora mismo para ir directo al ejercicio adecuado.',
           brings: 'Orientarte sin fricción según lo que necesites en este instante.',
-          summary: 'Es tu punto de entrada rápido según cómo te sientas en este momento: en medio de una ola emocional o con calma para entrenar.',
+          summary: 'Es tu punto de entrada rápido según lo que necesites en este momento: atravesar un momento intenso o ganar perspectiva y entrenar.',
           bullets: [
-            '1. Elige una tarjeta de «Ahora mismo…» si notas un nudo, necesitas frenar, dudas qué hacer o acabas de ceder.',
-            '2. Usa la tarjeta de «En calma» cuando tengas un rato tranquilo para leer ideas cortas y practicar.',
-            '3. Si necesitas bajar revoluciones al instante, pulsa arriba «Necesito calma ahora».'
+            '1. Elige una tarjeta de «Ahora mismo…» si notas un nudo o bucle, estás acelerado/a, dudas qué hacer o acabas de ceder.',
+            '2. Usa la sección de «Perspectiva y práctica» para leer ideas breves, revisar tus valores o entrenar habilidades.'
           ],
           note: 'En Khōra no hace falta rellenarlo todo ni entrar cada día: abre solo la herramienta que encaja contigo ahora.'
         },
@@ -263,7 +261,7 @@
           time:'30 seg',
           does: 'Valorar del 0 al 10 cuánto resentimiento, agotamiento, ansiedad y vacío te dejó ceder.',
           brings: 'Hacer visible la factura interna de complacer y calcular tu Índice de Autoabandono.',
-          summary: 'Ceder automáticamente suele traer alivio de 5 minutos por fuera, pero cobra una factura física y emocional por dentro.',
+          summary: 'Ceder automáticamente suele traer alivio inmediato por fuera, pero cobra una factura física y emocional por dentro.',
           bullets: [
 'Resentimiento, Agotamiento, Ansiedad y Vacío resumen el coste real de callar o complacer.',
 'Su media alimenta el «Índice de Autoabandono» para que veas qué situaciones o contextos te desgastan más.'
@@ -296,40 +294,39 @@
           note: 'Cada micro-acción honesta suma dirección vital aunque el resultado externo no dependa de ti.'
         },
         'pildoras-trucos': {
-          title:'Botiquín de 1 Minuto (Micro-Trucos)',
+          title:'Botiquín (Micro-Trucos)',
           time:'30-60 seg',
           does: 'Ejecutar una micro-técnica guiada paso a paso.',
           brings: 'Frenar el piloto automático en vivo.',
-          summary: 'Cuando necesitas frenar un impulso urgente en vivo en menos de 60 segundos (decir no, soltar culpa o bajar ansiedad).',
+          summary: 'Cuando necesitas frenar un impulso urgente en vivo (decir no, soltar culpa o bajar ansiedad).',
           bullets: [
             '1. Elige la situación que más se parezca a este momento (cuerpo, mente o límites).',
-            '2. Abre el ejercicio guiado paso a paso (Echar el Ancla, Silencio de 15s, Dos Flechas, Autobús ACT o Postura del SÍ).',
+            '2. Abre el ejercicio guiado paso a paso (Echar el Ancla, Silencio, Dos Flechas, Autobús ACT o Postura del SÍ).',
             '3. Síguelo en directo antes de contestar o decidir.'
           ],
-          note: 'Los temporizadores (15s de silencio o 2 minutos de pausa) cortan el reflejo automático de justificarte.'
+          note: 'Las pausas conscientes cortan el reflejo automático de justificarte.'
         },
         'tarjetas-anclaje': {
           title:'Mis Tarjetas de Anclaje ACT',
           time:'30 seg',
           does: 'Guardar y repasar frases breves o mantras personales alineados con tus valores.',
           brings: 'Tener recordatorios rápidos a mano cuando aparece una ola emocional.',
-          summary: 'Frases cortas de perspectiva ACT y recordatorios propios que también aparecen en tu botón SOS de crisis.',
+          summary: 'Frases cortas de perspectiva ACT y recordatorios propios para tener a mano.',
           bullets: [
             '1. Desliza las tarjetas para leer tus anclajes guardados.',
-            '2. Pulsa «+ Nuevo Anclaje» para escribir una frase tuya que te devuelva al presente.',
-            '3. Tus tarjetas se integran automáticamente en la ventana de Asistencia Rápida SOS.'
+            '2. Pulsa «+ Nuevo Anclaje» para escribir una frase tuya que te devuelva al presente.'
           ],
           note: 'Las mejores frases ancla no son positivismo forzado, sino recordatorios de aceptación y valores.'
         },
         'miniguias-bolsillo': {
-          title:'Miniguías de Bolsillo (Lecturas de 1 Minuto)',
+          title:'Miniguías de Bolsillo (Lecturas Breves)',
           time:'1 min',
           does: 'Leer micro-reflexiones prácticas sobre defusión, límites y aceptación y abrir su truco guiado.',
           brings: 'Entrenar flexibilidad psicológica en calma para que sea accesible en crisis.',
           summary: 'Lecturas breves diseñadas para asimilar conceptos ACT en momentos tranquilos.',
           bullets: [
 '1. Filtra por categoría (Defusión, Límites, Aceptación) o marca tus favoritas con .',
-            '2. Abre cualquier píldora para leer el desglose completo en menos de 1 minuto.',
+            '2. Abre cualquier píldora para leer el desglose completo.',
 '3. Pulsa «Ejecutar truco guiado» para practicar la técnica asociada al instante.'
           ],
           note: 'Lo que entrenas en calma se vuelve accesible con mucho menos esfuerzo cuando llega la tormenta.'
@@ -508,7 +505,7 @@
           brings: 'Visualizar qué proceso tienes más fuerte y cuál necesita entrenamiento suave.',
           summary: 'El Hexaflex de Steven Hayes resume las 6 habilidades que componen la flexibilidad psicológica.',
           bullets: [
-            '1. Pulsa «Evaluar mi Hexaflex (1 min)» para puntuar cómo te has sentido en cada proceso.',
+            '1. Pulsa «Evaluar mi Hexaflex» para puntuar cómo te has sentido en cada proceso.',
             '2. El gráfico radar dibuja tu equilibrio actual entre aceptación, defusión, presencia y acción.',
             '3. Repítelo cada cierto tiempo para observar qué área se va fortaleciendo.'
           ],
@@ -621,9 +618,8 @@
           <button type="button" class="btn-icon" id="btn-help-topic-x" aria-label="Cerrar" style="width: 34px; height: 34px; flex-shrink: 0;">✕</button>
         </div>
 
-        ${(topic.time || topic.does || topic.brings) ? `
+        ${(topic.does || topic.brings) ? `
           <div class="flow-purpose-bar" style="margin-top: 12px; margin-bottom: 10px;">
-            ${topic.time ? `<span class="flow-purpose-pill">${topic.time}</span>` : ''}
             ${topic.does ? `<span class="flow-purpose-item"><strong>Qué haces:</strong> <span>${topic.does}</span></span>` : ''}
             ${topic.brings ?`<span class="flow-purpose-item"><strong>Qué aporta:</strong><span>${topic.brings}</span></span>` :''}
           </div>

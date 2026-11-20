@@ -9,11 +9,11 @@ class RadarPatronesApp {
     this.oppositesTemplates = [
       {
         label:'Variar el Tiempo (Romper la urgencia)',
-        text: 'Esta semana, ante el detonante, pediré 15 minutos antes de responder sí o no para consultar qué quiero realmente.'
+        text: 'Esta semana, ante el detonante, tomaré una pausa antes de responder sí o no para consultar qué quiero realmente.'
       },
       {
         label:'Variar la Forma (Cero sobre-justificación)',
-        text: 'Expresaré mi límite o preferencia en 1 sola frase amable, sosteniendo 30 segundos sin dar excusas.'
+        text: 'Expresaré mi límite o preferencia en 1 sola frase amable, sosteniendo el silencio sin dar excusas.'
       },
       {
         label:'Variar el Cuerpo (Romper el apocamiento)',
@@ -283,7 +283,7 @@ class RadarPatronesApp {
         response: 'Digo que sí rápido fingiendo entusiasmo o me callo.',
         short: 'Evito tensión inmediata y caras largas.',
         long: 'Agotamiento, resentimiento acumulado y distancia interna.',
-        exp: 'Pedir 15 minutos antes de responder sí o no para consultar qué quiero realmente.'
+        exp: 'Tomar una pausa antes de responder sí o no para consultar qué quiero realmente.'
       },
       {
         chip:'Asumir carga extra en el trabajo sin decir no',
@@ -545,7 +545,7 @@ class RadarPatronesApp {
 
       <div class="form-group">
         <label class="form-label" for="chk-learned">¿Qué aprendiste sobre tu mente o sobre la situación?</label>
-        <textarea id="chk-learned" class="form-textarea" placeholder="Ej: Descubrí que la otra persona no se molestó tanto como mi mente predecía, o noté mucha culpa que fue bajando tras 10 minutos..."></textarea>
+        <textarea id="chk-learned" class="form-textarea" placeholder="Ej: Descubrí que la otra persona no se molestó tanto como mi mente predecía, o noté que la culpa fue bajando al no ceder..."></textarea>
       </div>
 
       <div class="btn-group">
