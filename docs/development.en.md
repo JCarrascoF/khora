@@ -42,21 +42,24 @@ const KHORA_CREDITS = {
 
 ## Free Static PWA Hosting (Recommended)
 
-### Option A: GitHub Pages (Automated)
+### Option A: Cloudflare Pages (Automated)
 
-This repository includes [`.github/workflows/pages.yml`](../.github/workflows/pages.yml), which packages and publishes **only** the static client files in `public/` (`index.html`, `manifest.json`, `sw.js`, `css/`, `js/`, `icons/`).
+This repository includes [`.github/workflows/pages.yml`](../.github/workflows/pages.yml), which runs `npm run check` and publishes with `wrangler pages deploy public` **only** the static client files in `public/` (`index.html`, `manifest.json`, `sw.js`, `css/`, `js/`, `icons/`). It also publishes the Page Function [`functions/api/feedback.js`](../functions/api/feedback.js) at the `/api/feedback` endpoint.
 
-1. Push the project to a GitHub repository named `khora` (`.gitignore` already excludes `data/`, `*.db`, `*.sqlite*`, and `.env`).
-2. Go to **Settings → Pages**.
-3. Under **Build and deployment → Source**, choose **GitHub Actions**.
-4. Every push to `main` deploys the HTTPS PWA at `https://<your-user>.github.io/khora/`.
+1. Create a **Pages** project in **Cloudflare Dashboard → Workers & Pages**.
+2. Under **Settings → Variables and Secrets**, define:
+   - `CLOUDFLARE_API_TOKEN` (a token with *Cloudflare Pages: Edit* permissions)
+   - `CLOUDFLARE_ACCOUNT_ID` (on the project's **Workers & Pages** page)
+   - `GITHUB_FEEDBACK_TOKEN` (a fine-grained GitHub token with *Contents: read/write* on the repo, so the feedback modal can create issues)
+   - `GITHUB_REPO` *(optional)*, e.g. `JCarrascoF/khora` (that is the default)
+3. Every push to `main` runs the checks and deploys the HTTPS PWA.
 
-### Option B: Cloudflare Pages
+### Option B: GitHub Pages or other static hosting (manual)
 
-1. Go to **Cloudflare Dashboard → Workers & Pages → Create → Pages**.
-2. Connect your GitHub repository (`Build command`: empty, `Build output directory`: `/public/`) **or** use **Upload assets** uploading only the `public/` folder.
+1. Publish the static files in `public/` on your favorite host (or use **Upload assets** on Cloudflare Pages uploading only the `public/` folder).
+2. Without the Page Functions, the **💬 Feedback** modal only offers "Copy message" and "GitHub Issues" as manual alternatives.
 
-> **Static-only behavior:** When `/api/health` is absent, Khora automatically enables **Local Browser Mode**, hides SQLite controls inside `⚙️ Settings`, and activates the **PWA install detector + persistence warning** on mobile browsers not yet launched from the Home Screen.
+> **Static-only behavior:** When `/api/health` is absent, Khora automatically enables **Local Browser Mode**, hides SQLite controls inside `⚙️ Settings`, and activates the **PWA install detector + persistence warning** on mobile browsers not yet launched from the Home Screen. Without `GITHUB_FEEDBACK_TOKEN`, the direct feedback submission responds `503` and the modal shows the manual alternatives.
 
 ---
 

@@ -1,4 +1,4 @@
-![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-live-2c8ecc)
+![Cloudflare Pages](https://img.shields.io/badge/Cloudflare%20Pages-live-F38020)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 🇪🇸 [Español](./README.md) | 🇬🇧 **English**
@@ -64,7 +64,7 @@ Khōra is a personal self-reflection and everyday practice tool inspired by Acce
 
 ## Developer or self-hosting?
 
-Read the full technical documentation (architecture, `i18n`, `AES-256-GCM` encryption, free GitHub Pages / Cloudflare Pages deployment, and Docker with optional SQLite) in **[docs/development.en.md](docs/development.en.md)**.
+Read the full technical documentation (architecture, `i18n`, `AES-256-GCM` encryption, free Cloudflare Pages deployment, and Docker with optional SQLite) in **[docs/development.en.md](docs/development.en.md)**.
 
 ### How to contribute
 
