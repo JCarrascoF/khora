@@ -8,6 +8,13 @@ html, body {
   letter-spacing: -0.005em;
 }
 
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+}
+
 /* Editorial Serif Hierarchy */
 .brand-title-group h1,
 .card-title,
@@ -25,7 +32,7 @@ blockquote {
 }
 
 .form-textarea {
-  font-family: var(--font-serif);
+  font-family: inherit;
   background-color: var(--bg-input);
   line-height: 1.65;
 }
