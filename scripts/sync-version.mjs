@@ -49,9 +49,18 @@ const swContent = updateOrCheck(
 
 const htmlContent = updateOrCheck(
   HTML_PATH,
-  (src) => src.replace(/((?:href|src)="\.\/(?:css|js)\/[^"?]+)\?v=[0-9A-Za-z._-]+(")/g, `$1?v=${version}$2`),
+  (src) =>
+    src
+      .replace(/((?:href|src)="\.\/(?:css|js)\/[^"?]+)\?v=[0-9A-Za-z._-]+(")/g, `$1?v=${version}$2`)
+      .replace(/<!-- khora:version:[0-9A-Za-z._-]+ -->/, `<!-- khora:version:${version} -->`)
+      .replace(/window\.__KHORA_APP_VERSION__\s*=\s*'[^']*';/, `window.__KHORA_APP_VERSION__ = '${version}';`),
   'public/index.html'
 );
+
+const htmlVersionMatch = htmlContent.match(/<!-- khora:version:([0-9A-Za-z._-]+) -->/);
+if (!htmlVersionMatch || htmlVersionMatch[1] !== version) {
+  errors.push(`public/index.html '<!-- khora:version:${version} -->' marker does not match package.json version`);
+}
 
 // Verify ASSETS_TO_CACHE entries exist on disk
 const assetsBlockMatch = swContent.match(/const ASSETS_TO_CACHE = \[([\s\S]*?)\];/);
