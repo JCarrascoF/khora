@@ -21,12 +21,10 @@ In Greek philosophy, *khōra* means *the space that holds without judging*: a pl
 
 ### 1. 🔥 Right now *(in the heat of the moment or for quick practice)*
 * **🌊 Feeling intense emotion or freeze:** put an exact name on what you feel, map where it sits in your body, and step back from the thought feeding it.
-* **⚡ 1-Min Toolkit:** guided live micro-exercises to interrupt autopilot (*Dropping Anchor / ACE protocol*, *Say NO in 15s*, *2-Minute Pause*, *Somatic YES Posture*…).
+* **⚡ Toolkit:** guided live micro-exercises to interrupt autopilot (*Dropping Anchor / ACE protocol*, *Say NO in 15s*, *2-Minute Pause*, *Somatic YES Posture*…).
 * **⚖️ Torn on what to do or afraid to give in:** clarify what is holding you back and pick one honest, value-aligned micro-step in 2 steps.
 * **🏳️ Just gave in (*False Peace*):** log when you said "yes" wanting to say "no" so its real physical and emotional toll becomes visible.
-* **📖 ACT Readings & Exercises:** 1-minute pocket pills, anchor cards, *"I Am" Label Deconstructor*, and *The Pivot (from pain to yearning)*.
-
-*(Plus, the **"I need calm now"** button in the top header launches distraction-free immersive grounding in seconds.)*
+* **📖 ACT Readings & Concepts:** foundations, workshops, and readings organized by area, *"I Am" Label Deconstructor*, and *The Pivot (from pain to yearning)*.
 
 ---
 
@@ -34,6 +32,7 @@ In Greek philosophy, *khōra* means *the space that holds without judging*: a pl
 * **💎 My Values:** define who you choose to be across 5 life areas (*Partner, Work, Family, Friendship, and Myself*), set your **Primary Lighthouse Value**, and log steps practiced.
 * **🧭 Focus & Patterns:** capture what is on your mind, spot which barriers are activated, and design small weekly experiments to break recurring people-pleasing loops.
 * **🚌 My ACT Bus:** visualize your recurring fears and guilt (*the passengers*) and practice seating them in the back without handing over the steering wheel.
+* **🔒 My Anchors:** short phrases that remind you where you are headed, always at hand.
 
 ---
 

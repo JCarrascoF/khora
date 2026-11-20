@@ -21,12 +21,10 @@ En filosofía griega, *khōra* significa *el espacio que da cabida sin juzgar*: 
 
 ### 1. 🔥 Ahora mismo *(cuando estás en caliente o quieres practicar)*
 * **🌊 Siento una emoción intensa o bloqueo:** pones nombre exacto a lo que sientes, lo localizas en tu cuerpo y tomas distancia del pensamiento que lo alimenta.
-* **⚡ Botiquín 1-Min:** ejercicios guiados en vivo para cortar el piloto automático (*Echar el Ancla / protocolo ACE*, *Decir NO en 15 segundos*, *Pausa de 2 minutos*, *Postura del SÍ*…).
+* **⚡ Toolkit:** ejercicios guiados en vivo para cortar el piloto automático (*Echar el Ancla / protocolo ACE*, *Decir NO en 15 segundos*, *Pausa de 2 minutos*, *Postura del SÍ*…).
 * **⚖️ Dudo qué hacer o temo ceder:** aclaras qué te está frenando y eliges un micro-paso fiel a ti en 2 pasos.
 * **🏳️ Acabo de ceder (*Paz Falsa*):** registras cuándo dijiste «sí» queriendo decir «no» para hacer visible su desgaste real.
-* **📖 Lecturas y Ejercicios ACT:** píldoras de 1 minuto, frases ancla, *Deconstructor «Yo Soy»* y *El Pivote (del dolor al anhelo)*.
-
-*(Además, tienes siempre arriba el botón **«Necesito calma ahora»** para entrar en modo inmersivo sin distracciones y echar el ancla en segundos.)*
+* **📖 Lecturas y Conceptos ACT:** fundamentos, talleres y lecturas organizadas por área, *Deconstructor «Yo Soy»* y *El Pivote (del dolor al anhelo)*.
 
 ---
 
@@ -34,6 +32,7 @@ En filosofía griega, *khōra* significa *el espacio que da cabida sin juzgar*: 
 * **💎 Mis Valores:** define qué persona quieres ser en tus 5 ámbitos vitales (*Pareja, Trabajo, Familia, Amistad y Conmigo Mismo*), fija tu **Valor Faro Principal** y registra cada paso que das.
 * **🧭 Mi Foco y Patrones:** anota qué situación tienes en mente, qué barreras se activan y diseña pequeños experimentos semanales para romper bucles repetitivos.
 * **🚌 Mi Autobús ACT:** un esquema visual donde pones nombre a tus miedos y culpas habituales (*los pasajeros*) y practicas cómo mandarlos a los asientos traseros sin entregarles el volante.
+* **🔒 Mis Anclajes:** frases corta que te recuerdan hacia dónde vas, disponibles siempre a mano.
 
 ---
 
