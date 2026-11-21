@@ -59,14 +59,14 @@ class PildorasAnclajesApp {
         id: 'pill_guia_act',
         category: 'fundamentos',
         categoryLabel: 'Fundamentos',
-        title: 'Fundamentos de Khōra y ACT',
-        summary: 'Por qué aquí no intentamos borrar las emociones difíciles, qué significa hacerles espacio y cómo usar tus valores como brújula.',
+        title: 'Introducción a ACT',
+        summary: 'Qué es la Terapia de Aceptación y Compromiso, por qué no luchamos contra lo que sientes y cómo usar tus valores como brújula.',
         content: `
           <p style="margin-bottom: 12px; line-height: 1.6;">
-            Si has entrado en Khōra buscando «trucos para dejar de sentir ansiedad» o «pensar en positivo», esta breve guía te ahorrará mucha frustración.
+            Si buscas «trucos para dejar de sentir ansiedad» o «pensar en positivo», esta breve introducción te ahorrará mucha frustración.
           </p>
           <p style="margin-bottom: 12px; line-height: 1.6;">
-            Esta aplicación se basa en la <strong>Terapia de Aceptación y Compromiso (ACT)</strong>, una corriente psicológica con amplia evidencia científica que propone algo radicalmente distinto al control mental tradicional.
+            La <strong>Terapia de Aceptación y Compromiso (ACT)</strong> es una corriente psicológica con amplia evidencia científica que propone algo radicalmente distinto al control mental tradicional.
           </p>
           <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin-top: 14px; margin-bottom: 6px;">1. Tu mente no tiene botón de borrar</div>
           <p style="margin-bottom: 12px; line-height: 1.6;">
@@ -585,14 +585,16 @@ class PildorasAnclajesApp {
         </div>
 
         <div class="study-index-groups">
-          ${foundationsPill ? `
-            <section class="study-index-group">
-              <div class="cozy-section-label">Inicio</div>
-              <div class="study-index-list">
-                ${renderIndexReading(foundationsPill)}
-              </div>
-            </section>
-          ` : ''}
+          <section class="study-index-group">
+            <div class="cozy-section-label">Inicio</div>
+            <div class="study-index-list">
+              ${foundationsPill ? renderIndexReading(foundationsPill) : ''}
+              <button type="button" class="study-index-item" id="btn-study-open-khora-guide">
+                <span class="study-index-item-title">Guía de uso de Khōra</span>
+                <span class="study-index-arrow" aria-hidden="true">→</span>
+              </button>
+            </div>
+          </section>
 
           ${this.studyAreas.map(area => {
             const areaPills = this.pills.filter(p => p.category === area.id);
@@ -1903,6 +1905,10 @@ class PildorasAnclajesApp {
       document.getElementById('btn-reading-back')?.addEventListener('click', returnToStudyIndex);
       document.getElementById('btn-reading-back-bottom')?.addEventListener('click', returnToStudyIndex);
       document.getElementById('btn-workshop-back')?.addEventListener('click', returnToStudyIndex);
+
+      document.getElementById('btn-study-open-khora-guide')?.addEventListener('click', () => {
+        window.app?.navigate?.('guide', { guideSection: null, guideReturnView: 'readings' });
+      });
 
       document.getElementById('btn-study-go-botiquin')?.addEventListener('click', () => {
         window.app?.navigate?.('pildoras-trucos');

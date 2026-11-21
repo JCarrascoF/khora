@@ -70,6 +70,19 @@
       "screenshot": "screenshots/01-screens/01-guia-inicio.png"
     },
     {
+      "id": "guide",
+      "name": "Guía de uso de Khōra",
+      "group": "ahora-mismo",
+      "route": "#guide",
+      "file": "public/js/app.js",
+      "render_method": "renderKhoraGuide",
+      "parent": "home",
+      "trigger": "Click en 'Guía de uso de Khōra' en Home o Configuración → Sobre Khōra",
+      "archetype": "list-detail-feed",
+      "characteristics": ["chip-grid", "bottom-actions-bar"],
+      "css_selectors": [".study-index-groups", ".study-index-list", ".study-index-item", ".study-reading-body"]
+    },
+    {
       "id": "act-space",
       "name": "Espacio ACT (Procesar Emoción)",
       "group": "ahora-mismo",
@@ -143,13 +156,13 @@
     },
     {
       "id": "readings",
-      "name": "Píldoras y Anclajes · Estudio ACT",
-      "group": "ahora-mismo",
+      "name": "Aprender · Lecturas y Ejercicios ACT",
+      "group": "learn",
       "route": "#readings",
       "file": "public/js/subapp-pills-anchors.js",
       "render_method": "renderPillListView",
-      "parent": "home",
-      "trigger": "Click en opción 'Tengo un momento de calma para leer o practicar' de Inicio",
+      "parent": null,
+      "trigger": "Click en pestaña 'Aprender' o navegación directa a #readings",
       "archetype": "list-detail-feed",
       "characteristics": ["chip-grid", "help-trigger"],
       "css_selectors": [".pills-container", ".pill-card", ".internal-tab-btn"],

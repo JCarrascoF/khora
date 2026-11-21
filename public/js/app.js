@@ -153,6 +153,8 @@ class AppController {
   constructor() {
     this.currentView = 'home';
     this.currentGroup = 'ahora-mismo';
+    this.guideSection = null;
+    this.guideReturnView = null;
     this.toastTimer = null;
     this.deferredInstallPrompt = null;
 
@@ -181,7 +183,9 @@ class AppController {
       'insight-terapia': 'therapy',
       'insight-historial': 'history',
       'insight-graficos': 'charts',
-      'insight-actividad': 'activity'
+      'insight-actividad': 'activity',
+      'learn': 'readings',
+      'aprender': 'readings'
     };
 
     this.navGroups = {
@@ -192,8 +196,7 @@ class AppController {
           { id:'act-space', icon:'', label:'Procesar Emoción' },
           { id:'toolkit', icon:'', label:'Botiquín' },
           { id:'compass', icon:'', label:'Elegir qué Hacer' },
-          { id:'false-peace', icon:'', label:'Acabo de Ceder' },
-          { id:'readings', icon:'', label:'Lecturas y Ejercicios' }
+          { id:'false-peace', icon:'', label:'Acabo de Ceder' }
         ]
       },
       'yo': {
@@ -212,6 +215,12 @@ class AppController {
           { id:'history', icon:'', label:'Historial en Frío', helpTopic:'insight-historial' },
           { id:'charts', icon:'', label:'Gráficos y Hexaflex' },
           { id:'activity', icon:'', label:'Actividad Reciente' }
+        ]
+      },
+      'learn': {
+        label:'Aprender',
+        items: [
+          { id:'readings', icon:'', label:'Lecturas y Ejercicios' }
         ]
       }
     };
@@ -270,7 +279,7 @@ class AppController {
 
     // Check url hash if present & support browser Back / Forward (hashchange)
     this.validViews = [
-      'home',
+      'home', 'guide',
       'act-space', 'toolkit', 'compass', 'false-peace', 'readings', 'pills-anchors',
       'values', 'bus', 'anchors', 'patterns',
       'therapy', 'history', 'charts', 'activity'
@@ -444,6 +453,8 @@ class AppController {
 
       if (this.currentView === 'home') {
         this.renderGuiaInicio();
+      } else if (this.currentView === 'guide') {
+        this.renderKhoraGuide();
       } else if (
         (this.currentView === 'values' ||
          this.currentView === 'bus' ||
@@ -583,7 +594,7 @@ class AppController {
       }
     } else if (resolvedSubView === 'readings') {
       sectionId = 'pills-anchors';
-      activeGroup = 'ahora-mismo';
+      activeGroup = 'learn';
       if (window.pildorasAnclajesApp) {
         window.pildorasAnclajesApp.mode = 'estudio';
         if (window.pildorasAnclajesApp.currentTab === 'trucos' || window.pildorasAnclajesApp.currentTab === 'posture') {
@@ -599,7 +610,7 @@ class AppController {
     } else if (resolvedSubView === 'pills-anchors') {
       sectionId = 'pills-anchors';
       const isTricks = window.pildorasAnclajesApp?.mode === 'trucos' || window.pildorasAnclajesApp?.currentTab === 'trucos';
-      activeGroup = 'ahora-mismo';
+      activeGroup = isTricks ? 'ahora-mismo' : 'learn';
       resolvedSubView = isTricks ? 'toolkit' : 'readings';
       if (window.pildorasAnclajesApp) {
         window.pildorasAnclajesApp.mode = isTricks ? 'trucos' : 'estudio';
@@ -638,6 +649,21 @@ class AppController {
           'activity': 'actividad'
         };
         window.insightApp.activeInsightTab = tabMap[resolvedSubView] || 'terapia';
+      }
+    } else if (resolvedSubView === 'guide') {
+      sectionId = 'guide';
+      activeGroup = this.guideReturnView === 'readings' ? 'learn' : 'ahora-mismo';
+      if (options.guideReturnView !== undefined) {
+        this.guideReturnView = options.guideReturnView;
+        activeGroup = this.guideReturnView === 'readings' ? 'learn' : 'ahora-mismo';
+      } else if (this.currentView !== 'guide') {
+        this.guideReturnView = null;
+        activeGroup = 'ahora-mismo';
+      }
+      if (options.guideSection !== undefined) {
+        this.guideSection = options.guideSection;
+      } else if (this.currentView !== 'guide') {
+        this.guideSection = null;
       }
     } else {
       // home, act-space, false-peace, compass
@@ -692,6 +718,8 @@ class AppController {
     // Re-render target subapp if necessary
     if (sectionId === 'home') {
       this.renderGuiaInicio();
+    } else if (sectionId === 'guide') {
+      this.renderKhoraGuide();
     } else if (sectionId === 'profile' && window.perfilApp) {
       window.perfilApp.render();
       window.perfilApp.bindEvents();
@@ -765,26 +793,16 @@ class AppController {
       }
     ];
 
-    const greeting = this.getCozyTimeGreeting();
     const isIntroDismissed = typeof localStorage !== 'undefined' && localStorage.getItem('act_intro_guide_dismissed') === '1';
 
     container.innerHTML = `
       <div class="view-plain-shell">
-        <div class="cozy-home-header">
-          <p class="cozy-greeting">${greeting}</p>
-          <div class="title-with-help">
-            <h2 class="cozy-home-heading">¿Cómo estás ahora mismo?</h2>
-            <button type="button" class="help-info-trigger" data-help-topic="home" aria-label="Información de esta herramienta">ⓘ</button>
-          </div>
-          <p class="cozy-home-sub">No hace falta arreglarlo todo hoy. Elige lo que más se parezca a este momento.</p>
-        </div>
-
         ${!isIntroDismissed ? `
           <div class="intro-guide-card" id="intro-guide-recommendation">
-            <div class="intro-guide-kicker">¿Primera vez en Khōra?</div>
-            <p class="intro-guide-text">Una guía breve de 2 minutos sobre cómo funciona este espacio y por qué aquí no intentamos luchar contra lo que sientes.</p>
+            <div class="intro-guide-kicker">Bienvenido/a a Khōra</div>
+            <p class="intro-guide-text">Descubre en 2 minutos cómo está organizado este espacio local-first para acompañarte sin juzgar ni luchar contra lo que sientes.</p>
             <div class="intro-guide-actions">
-              <button type="button" class="intro-guide-link" id="btn-read-intro-guide">Leer guía breve →</button>
+              <button type="button" class="intro-guide-link" id="btn-open-khora-guide">Guía de uso de Khōra →</button>
               <button type="button" class="intro-guide-dismiss" id="btn-dismiss-intro-guide" aria-label="Ya conozco la guía">Ya la conozco</button>
             </div>
           </div>
@@ -804,29 +822,12 @@ class AppController {
             `).join('')}
           </div>
         </div>
-
-        <div class="triage-calm-section">
-          <div class="cozy-section-label">Perspectiva y práctica</div>
-          <button type="button" class="triage-calm-item" data-go-view="readings" style="width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
-            <div>
-              <div class="triage-card-title" style="font-size: 1.04rem;">Lecturas breves y ejercicios para momentos de calma</div>
-              <p class="triage-card-desc">Ideas y herramientas para entender cómo funciona tu mente y <span class="act-term" data-term="hexaflex">recordar hacia dónde quieres ir</span>.</p>
-            </div>
-            <span class="triage-card-arrow" aria-hidden="true">→</span>
-          </button>
-        </div>
       </div>
     `;
 
-    document.getElementById('btn-read-intro-guide')?.addEventListener('click', () => {
+    document.getElementById('btn-open-khora-guide')?.addEventListener('click', () => {
       try { localStorage.setItem('act_intro_guide_dismissed', '1'); } catch {}
-      if (window.pildorasAnclajesApp) {
-        window.pildorasAnclajesApp.activeStudyArea = null;
-        window.pildorasAnclajesApp.activeWorkshopId = null;
-        window.pildorasAnclajesApp.activeReadingId = 'pill_guia_act';
-        window.pildorasAnclajesApp.readingReturnView = 'home';
-      }
-      this.navigate('readings', { preserveStudySubView: true });
+      this.navigate('guide', { guideSection: null });
     });
 
     document.getElementById('btn-dismiss-intro-guide')?.addEventListener('click', () => {
@@ -1059,7 +1060,7 @@ class AppController {
     if (!subnavEl) return;
 
     const group = this.navGroups[groupId];
-    if (!group || groupId === 'ahora-mismo') {
+    if (!group || groupId === 'ahora-mismo' || group.items.length <= 1) {
       subnavEl.classList.add('hidden');
       subnavEl.innerHTML = '';
       return;
