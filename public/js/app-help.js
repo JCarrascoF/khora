@@ -7,7 +7,7 @@
   getHelpCatalog() {
     return {
       screens: {
-        'guia-inicio': {
+        'home': {
           title: 'Guía de Inicio — ¿Cómo estás ahora mismo?',
           time: '10 seg',
           does: 'Elegir cómo te encuentras ahora mismo para ir directo al ejercicio adecuado.',
@@ -19,7 +19,7 @@
           ],
           tip: 'En Khōra no hace falta rellenarlo todo ni entrar cada día: abre solo la herramienta que encaja contigo ahora.'
         },
-        'espacio-act': {
+        'act-space': {
           title:'El Espacio ACT — Procesar en 4 Pasos',
           time:'3 min',
           does: 'Nombrar la emoción, bajarla al cuerpo y desenganchar la mente.',
@@ -33,7 +33,7 @@
           ],
           tip: 'El objetivo no es suprimir la emoción ni sentir cero miedo, sino bajar la lucha y recuperar tu margen de elección.'
         },
-        'paz-falsa': {
+        'false-peace': {
           title:'El Espejo de la Paz Falsa',
           time:'2 min',
           does: 'Contrastar qué querías decir vs. qué cediste por miedo.',
@@ -46,7 +46,7 @@
           ],
           tip: 'Nombrar la falsa paz no sirve para machacarte: tu resentimiento indica dónde te importa cuidar tus límites.'
         },
-        'brujula-valores': {
+        'compass': {
           title:'La Brújula de Valores',
           time:'1 min',
           does: 'Pasar de «¿qué espera el otro?» a «¿qué elijo yo?».',
@@ -59,7 +59,7 @@
           ],
           tip: 'Pasa de «¿qué esperan que haga?» a «¿qué clase de persona elijo ser aquí?».'
         },
-        'pildoras-trucos': {
+        'toolkit': {
           title:'Botiquín (Micro-Trucos)',
           time:'30-60 seg',
           does: 'Ejecutar una micro-técnica guiada paso a paso.',
@@ -72,7 +72,7 @@
           ],
           tip: 'Las pausas conscientes cortan el reflejo automático de justificarte.'
         },
-        'pildoras-estudio': {
+        'readings': {
           title:'Lecturas y Ejercicios ACT (En Calma)',
           time:'2-3 min',
           does: 'Reencuadrar etiquetas rígidas, transformar dolor en anhelo y guardar mantras.',
@@ -85,7 +85,7 @@
           ],
           tip: 'Lo que entrenas en calma se vuelve accesible con mucho menos esfuerzo cuando llega la tormenta.'
         },
-        'perfil-valores': {
+        'values': {
           title:'Mis Valores — Tu Brújula Vital',
           time:'2 min',
           does: 'Definir quién eliges ser en tus 5 ámbitos vitales y en qué conducta concreta se nota.',
@@ -111,7 +111,7 @@
           ],
           tip: 'Marcar las barreras no es una etiqueta negativa: es el filtro que le dice a la app qué ejercicio encaja mejor contigo.'
         },
-        'radar-patrones': {
+        'patterns': {
           title:'El Radar de Patrones y Práctica de Opuestos',
           time:'3 min',
           does: 'Mapear un bucle que se repite y diseñar 1 micro-experimento semanal.',
@@ -124,7 +124,7 @@
           ],
           tip: 'Los cambios pequeños pero medibles rompen hábitos de complacencia mucho mejor que propósitos gigantes.'
         },
-        'perfil-autobus': {
+        'bus': {
           title:'Mi Autobús ACT y Radio Mental',
           time:'2 min',
           does: 'Identificar a tus pasajeros recurrentes (miedos y culpas) y sentarlos atrás sin pelear con ellos.',
@@ -137,7 +137,7 @@
           ],
           tip: 'En ACT los miedos no desaparecen del autobús; aprendes a conducir hacia tus valores aunque sigan hablando atrás.'
         },
-        'insight-terapia': {
+        'therapy': {
           title:'Cuaderno de Terapia',
           time:'1-2 min',
           does: 'Anotar reflexiones, bloqueos o avances entre sesiones y preparar un resumen clínico listo para copiar.',
@@ -150,7 +150,7 @@
           ],
           tip: 'Marca las reflexiones como «Tratadas en sesión» cuando ya las hayáis trabajado en consulta.'
         },
-        'insight-historial': {
+        'history': {
           title:'Historial en Frío y Consolidación',
           time:'2 min',
           does: 'Filtrar episodios pasados por emoción o ámbito y revisarlos en frío con perspectiva.',
@@ -163,7 +163,7 @@
           ],
           tip: 'Mirar en frío un episodio pasado transforma la culpa en aprendizaje práctico para la próxima vez.'
         },
-        'insight-graficos': {
+        'charts': {
           title:'Gráficos y Perfil Hexaflex',
           time:'1 min',
           does: 'Revisar tu evolución, integrar episodios en frío y observar tendencias y tu perfil Hexaflex.',
@@ -176,7 +176,7 @@
           ],
           tip: 'Los gráficos no buscan la perfección: ayudan a detectar patrones con curiosidad científica y compasión.'
         },
-        'insight-actividad': {
+        'activity': {
           title:'Actividad Reciente y Micro-Victorias',
           time:'Consulta rápida',
           does:'Revisar tus últimos pasos en Khōra (foco, valores, barreras y pasajeros) y anotar micro-victorias.',
@@ -188,10 +188,25 @@
             '3. Vuelve aquí cuando necesites recordar todo lo que ya estás moviendo aunque cueste.'
           ],
           tip: 'La flexibilidad psicológica se construye con pequeños gestos repetidos, no con días perfectos.'
+        },
+        'guide': {
+          title: 'Guía de uso de Khōra',
+          time: '2 min',
+          does: 'Recorrido breve en 5 secciones por Ahora mismo, Yo, Evolución, Aprender y Privacidad local.',
+          brings: 'Orientación rápida para saber qué herramienta usar en cada momento y cómo guardar copias.',
+          whenToUse: 'Cuando abras Khōra por primera vez o quieras repasar cómo funciona cada pestaña.',
+          steps: [
+            '1. Ahora mismo: herramientas para sostener el presente, frenar y elegir.',
+            '2. Yo: tus valores, tu autobús de pasajeros, anclajes y patrones.',
+            '3. Evolución: cuaderno de terapia, historial en frío y gráficos.',
+            '4. Aprender: lecturas breves, introducción a ACT y talleres.',
+            '5. Privacidad local y copias: todo se guarda en tu dispositivo con bloqueo y copias JSON.'
+          ],
+          tip: 'Puedes volver a abrir esta guía en cualquier momento desde Aprender o Configuración → Sobre Khōra.'
         }
       },
       topics: {
-        'guia-inicio': {
+        'home': {
           title: '¿Cómo estás ahora mismo?',
           time: '10 seg',
           does: 'Elegir cómo te encuentras ahora mismo para ir directo al ejercicio adecuado.',
@@ -203,7 +218,7 @@
           ],
           note: 'En Khōra no hace falta rellenarlo todo ni entrar cada día: abre solo la herramienta que encaja contigo ahora.'
         },
-        'espacio-act': {
+        'act-space': {
           title:'El Espacio ACT — Procesar en 4 Pasos',
           time:'3 min',
           does: 'Nombrar la emoción, bajarla al cuerpo y desenganchar la mente.',
@@ -243,7 +258,7 @@
           ],
           note: 'No hace falta discutir si el pensamiento es verdadero o falso: basta preguntarse si seguirlo te acerca a tus valores.'
         },
-        'paz-falsa': {
+        'false-peace': {
           title:'El Espejo de la Paz Falsa',
           time:'2 min',
           does: 'Contrastar qué querías decir vs. qué cediste por miedo.',
@@ -268,7 +283,7 @@
           ],
           note: 'Reconocer este coste es el primer paso para elegir límites más cuidadosos contigo.'
         },
-        'brujula-valores': {
+        'compass': {
           title:'La Brújula de Valores',
           time:'1 min',
           does: 'Pasar de «¿qué espera el otro?» a «¿qué elijo yo?».',
@@ -293,7 +308,7 @@
           ],
           note: 'Cada micro-acción honesta suma dirección vital aunque el resultado externo no dependa de ti.'
         },
-        'pildoras-trucos': {
+        'toolkit': {
           title:'Botiquín (Micro-Trucos)',
           time:'30-60 seg',
           does: 'Ejecutar una micro-técnica guiada paso a paso.',
@@ -435,7 +450,7 @@
           ],
           note: 'Puedes ignorar cualquier sugerencia y entrar directamente al ejercicio que prefieras.'
         },
-        'radar-patrones': {
+        'patterns': {
           title:'El Radar de Patrones y Práctica de Opuestos',
           time:'3 min',
           does: 'Mapear un bucle que se repite y diseñar 1 micro-experimento semanal.',
@@ -485,7 +500,7 @@
           ],
           note: 'Ningún dato sale de tu navegador a menos que tú copies o exportes el texto.'
         },
-        'insight-historial': {
+        'history': {
           title:'Historial en Frío y Consolidación',
           time:'2 min',
           does: 'Filtrar episodios pasados por emoción o ámbito y revisarlos en frío con perspectiva.',
@@ -545,8 +560,10 @@
     if (!drawer || !backdrop) return false;
 
     const catalog = this.getHelpCatalog();
-    const resolvedId = viewId || this.currentView || 'guia-inicio';
-    const guide = (topicId && catalog.topics[topicId]) || catalog.screens[resolvedId] || catalog.screens['guia-inicio'];
+    const rawId = viewId || this.currentView || 'home';
+    const resolvedId = this.resolveViewAlias ? this.resolveViewAlias(rawId) : rawId;
+    const resolvedTopic = topicId && this.resolveViewAlias ? (catalog.topics[topicId] ? topicId : this.resolveViewAlias(topicId)) : topicId;
+    const guide = (resolvedTopic && catalog.topics[resolvedTopic]) || catalog.screens[resolvedId] || catalog.screens['home'];
     const glossary = (typeof ACT_GLOSSARY !== 'undefined' && ACT_GLOSSARY) ? ACT_GLOSSARY : {};
     const focusedTerm = termKey && glossary[termKey] ? { key: termKey, ...glossary[termKey] } : null;
     const otherTerms = Object.entries(glossary).filter(([k]) => k !== termKey);
@@ -669,8 +686,9 @@
     if (!modal || !modalBody) return;
 
     const catalog = this.getHelpCatalog();
-    const resolvedId = viewId || this.currentView || 'guia-inicio';
-    const guide = catalog.screens[resolvedId] || catalog.screens['guia-inicio'];
+    const rawId = viewId || this.currentView || 'home';
+    const resolvedId = this.resolveViewAlias ? this.resolveViewAlias(rawId) : rawId;
+    const guide = catalog.screens[resolvedId] || catalog.screens['home'];
 
     modalBody.innerHTML = `
       <div id="help-modal-root">

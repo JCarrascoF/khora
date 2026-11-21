@@ -73,7 +73,7 @@ class PazFalsaApp {
   }
 
   render() {
-    const container = document.getElementById('paz-falsa-view');
+    const container = document.getElementById('false-peace-view');
     if (!container) return;
 
     let stepHtml = '';
@@ -430,7 +430,7 @@ class PazFalsaApp {
   saveEntry() {
     const entry = window.stateManager.addPazFalsaEntry(this.entryData);
 
-    const container = document.getElementById('paz-falsa-view');
+    const container = document.getElementById('false-peace-view');
     if (!container) return;
 
     // Show empathetic ACT validation screen
@@ -470,7 +470,7 @@ class PazFalsaApp {
     });
 
     document.getElementById('btn-pf-go-insight')?.addEventListener('click', () => {
-      window.app?.navigate('insight');
+      window.app?.navigate('therapy');
     });
 
     window.app?.showToast('Registro de autoabandono guardado');

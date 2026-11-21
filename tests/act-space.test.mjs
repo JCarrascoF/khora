@@ -59,11 +59,11 @@ function createStubElement(id = '') {
 }
 
 function loadActSpaceHarness({ coreValues = [], busPassengers = [], mindName = 'George' } = {}) {
-  const container = createStubElement('espacio-act-view');
+  const container = createStubElement('act-space-view');
   const modal = createStubElement('app-modal');
   const modalBody = createStubElement('modal-body');
   const elements = new Map([
-    ['espacio-act-view', container],
+    ['act-space-view', container],
     ['app-modal', modal],
     ['modal-body', modalBody]
   ]);
@@ -119,7 +119,7 @@ function loadActSpaceHarness({ coreValues = [], busPassengers = [], mindName = '
     window: {},
     document: {
       getElementById(id) {
-        if (id === 'espacio-act-view') return container;
+        if (id === 'act-space-view') return container;
         if (id === 'app-modal') return modal;
         if (id === 'modal-body') return modalBody;
         if (
@@ -166,7 +166,7 @@ function loadActSpaceHarness({ coreValues = [], busPassengers = [], mindName = '
       }
     },
     app: {
-      currentView: 'espacio-act',
+      currentView: 'act-space',
       showToast: (msg) => toasts.push(msg),
       triggerHaptic: (pattern) => haptics.push(pattern),
       playGentleTone: (freq, dur) => tones.push({ freq, dur }),

@@ -62,7 +62,7 @@ class RadarPatronesApp {
   }
 
   render() {
-    const container = document.getElementById('radar-patrones-view');
+    const container = document.getElementById('patterns-view');
     if (!container) return;
 
     const patterns = window.stateManager.getPatterns();

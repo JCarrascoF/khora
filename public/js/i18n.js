@@ -521,7 +521,7 @@
         if (window.stateManager?.isVaultLocked?.()) {
           window.app.renderPrivacyLockOverlay?.();
         }
-        const cur = window.app.currentView || 'guia-inicio';
+        const cur = window.app.currentView || 'home';
         const modalWasOpen = document.getElementById('app-modal')?.classList.contains('active');
         const wasSettingsOpen = Boolean(document.getElementById('storage-mode-modal-root'));
 
