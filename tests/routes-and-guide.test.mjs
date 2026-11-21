@@ -202,6 +202,15 @@ test('Learn nav group is separated from Ahora mismo and Home welcome focuses on 
   assert.match(homeView.innerHTML, /id="btn-open-khora-guide"/);
   assert.doesNotMatch(homeView.innerHTML, /id="btn-read-intro-guide"/);
   assert.doesNotMatch(homeView.innerHTML, /triage-calm-section/);
+
+  const { sandbox: enSandbox, app: enApp, homeView: enHomeView } = loadAppHarness({ initialLang: 'en' });
+  enApp.navigate('home');
+  assert.match(enHomeView.innerHTML, /let go of the mental struggle/);
+  assert.match(enHomeView.innerHTML, /pause the urge/);
+  assert.match(enHomeView.innerHTML, /makes the most sense to you/);
+  assert.match(enHomeView.innerHTML, /you gave in out of obligation/);
+  assert.doesNotMatch(enHomeView.innerHTML, /suelta la pelea mental/);
+  enSandbox.i18n.setLang('es');
 });
 
 test('Guide return view resets on fresh entry and preserves on re-entry, with back label switching', () => {

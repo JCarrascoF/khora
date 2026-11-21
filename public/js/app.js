@@ -767,30 +767,39 @@ class AppController {
     const container = document.getElementById('home-view');
     if (!container || !window.stateManager) return;
 
+    const isEn = window.i18n?.getLang?.() === 'en';
     const hotFlows = [
       {
         view: 'act-space',
         primary: true,
         title: 'Siento agobio, tensión o la cabeza llena de ruido',
-        does: 'Pon en palabras lo que sientes, <span class="act-term" data-term="defusion">suelta la pelea mental</span> y dale un <span class="act-term" data-term="aceptacion">respiro a tu cuerpo</span>.'
+        does: isEn
+          ? 'Put what you feel into words, <span class="act-term" data-term="defusion">let go of the mental struggle</span>, and give <span class="act-term" data-term="aceptacion">your body a breather</span>.'
+          : 'Pon en palabras lo que sientes, <span class="act-term" data-term="defusion">suelta la pelea mental</span> y dale un <span class="act-term" data-term="aceptacion">respiro a tu cuerpo</span>.'
       },
       {
         view: 'toolkit',
         primary: false,
         title: 'Voy muy acelerado/a y necesito frenar un momento',
-        does: 'Pausas de un minuto para respirar, <span class="act-term" data-term="echar-el-ancla">frenar el impulso</span> o responder con calma.'
+        does: isEn
+          ? 'One-minute resets to breathe, <span class="act-term" data-term="echar-el-ancla">pause the urge</span>, or reply calmly.'
+          : 'Pausas de un minuto para respirar, <span class="act-term" data-term="echar-el-ancla">frenar el impulso</span> o responder con calma.'
       },
       {
         view: 'compass',
         primary: false,
         title: 'No sé qué hacer o me cuesta tomar una decisión',
-        does: 'Aclara qué miedo te está frenando y elige el paso que tenga más <span class="act-term" data-term="valores-act">sentido para ti</span>.'
+        does: isEn
+          ? 'Clarify what fear is holding you back and pick the step that <span class="act-term" data-term="valores-act">makes the most sense to you</span>.'
+          : 'Aclara qué miedo te está frenando y elige el paso que tenga más <span class="act-term" data-term="valores-act">sentido para ti</span>.'
       },
       {
         view: 'false-peace',
         primary: false,
         title: 'He dicho que sí por compromiso o miedo al conflicto',
-        does: 'Anota cuándo <span class="act-term" data-term="paz-falsa">cediste por compromiso</span> para entender el desgaste y aprender a cuidar tus límites.'
+        does: isEn
+          ? 'Write down when <span class="act-term" data-term="paz-falsa">you gave in out of obligation</span> to understand the toll and learn to protect your boundaries.'
+          : 'Anota cuándo <span class="act-term" data-term="paz-falsa">cediste por compromiso</span> para entender el desgaste y aprender a cuidar tus límites.'
       }
     ];
 
