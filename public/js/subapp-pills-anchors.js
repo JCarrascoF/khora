@@ -60,7 +60,6 @@ class PildorasAnclajesApp {
         category: 'fundamentos',
         categoryLabel: 'Fundamentos',
         title: 'Fundamentos de Khōra y ACT',
-        trickId: 'trick_cold_breath',
         summary: 'Por qué aquí no intentamos borrar las emociones difíciles, qué significa hacerles espacio y cómo usar tus valores como brújula.',
         content: `
           <p style="margin-bottom: 12px; line-height: 1.6;">

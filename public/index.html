@@ -96,16 +96,15 @@
 </head>
 <body>
 
+  <!-- Brief Entry Splash -->
+  <div id="app-splash" class="app-splash" aria-hidden="true">
+    <span class="app-splash-title">Khōra</span>
+  </div>
+
   <div class="app-container">
-    <!-- Top Global Header -->
+    <!-- Top Global Header (Sub-navigation + Global Actions) -->
     <header class="app-header">
-      <div class="header-brand-cluster">
-        <div class="brand-wrapper">
-          <div class="brand-title-group">
-            <h1>Khōra</h1>
-          </div>
-        </div>
-      </div>
+      <div id="context-subnav" class="context-subnav hidden" aria-label="Sub-navegación del espacio actual"></div>
 
       <div class="header-actions">
         <!-- Quick Lock Button (Visible only when Privacy Vault is enabled) -->
@@ -170,9 +169,6 @@
         </svg>
       </button>
     </nav>
-
-    <!-- Contextual Sub-Navigation Bar -->
-    <div id="context-subnav" class="context-subnav" aria-label="Sub-navegación del espacio actual"></div>
 
     <!-- Main Views Container -->
     <main class="app-main">
