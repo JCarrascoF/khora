@@ -117,7 +117,7 @@ class BrujulaValoresApp {
   }
 
   render() {
-    const container = document.getElementById('brujula-valores-view');
+    const container = document.getElementById('compass-view');
     if (!container) return;
 
     let stepHtml = '';
@@ -483,7 +483,7 @@ class BrujulaValoresApp {
 
       window.stateManager.addCompassEntry(this.formData);
 
-      const container = document.getElementById('brujula-valores-view');
+      const container = document.getElementById('compass-view');
       if (!container) return;
 
       container.innerHTML = `
@@ -517,7 +517,7 @@ class BrujulaValoresApp {
       });
 
       document.getElementById('btn-compass-go-home')?.addEventListener('click', () => {
-        window.app?.navigate('guia-inicio');
+        window.app?.navigate('home');
       });
 
       window.app?.showToast('Norte de valores fijado');

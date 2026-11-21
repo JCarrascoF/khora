@@ -214,7 +214,7 @@ class EspacioActApp {
   }
 
   render() {
-    const container = document.getElementById('espacio-act-view');
+    const container = document.getElementById('act-space-view');
     if (!container) return;
 
     const progressPercent = (this.currentStep / this.totalSteps) * 100;
@@ -1275,7 +1275,7 @@ class EspacioActApp {
   // Event Binding
   // -------------------------------------------------------------
   bindEvents() {
-    const viewRoot = document.getElementById('espacio-act-view') || document;
+    const viewRoot = document.getElementById('act-space-view') || document;
 
     // Top step pills navigation
     viewRoot.querySelectorAll('[data-goto-step]').forEach(btn => {
@@ -1948,7 +1948,7 @@ class EspacioActApp {
     const renderModalContent = ({ preserveScroll = false } = {}) => {
       const prevScroll = preserveScroll ? modalBody.scrollTop : 0;
       modalBody.classList.add('modal-wheel-maximized');
-      const isInEspacioAct = window.app?.currentView === 'espacio-act';
+      const isInEspacioAct = window.app?.currentView === 'act-space';
 
       modalBody.innerHTML = `
         <div class="flex-between" style="margin-bottom: 10px; gap: 10px; flex-wrap: wrap;">
@@ -1997,7 +1997,7 @@ class EspacioActApp {
       document.getElementById('btn-modal-wheel-go-act')?.addEventListener('click', () => {
         closeModal();
         this.currentStep = 1;
-        window.app?.navigate('espacio-act');
+        window.app?.navigate('act-space');
         this.render();
         this.bindEvents();
       });
@@ -2246,7 +2246,7 @@ class EspacioActApp {
       }
     }
 
-    const container = document.getElementById('espacio-act-view');
+    const container = document.getElementById('act-space-view');
     if (!container) return;
 
     const delta = (entry.initialIntensity || 0) - (entry.postIntensity || 0);
@@ -2303,7 +2303,7 @@ class EspacioActApp {
     });
 
     document.getElementById('btn-act-go-insight')?.addEventListener('click', () => {
-      window.app?.navigate('insight');
+      window.app?.navigate('therapy');
     });
 
     window.app?.showToast('Crisis procesada e integrada en tu historial');

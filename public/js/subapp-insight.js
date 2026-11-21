@@ -1229,7 +1229,7 @@ class InsightApp {
         window.pildorasAnclajesApp.mode = 'estudio';
         window.pildorasAnclajesApp.currentTab = 'pildoras';
       }
-      window.app?.navigate('pildoras-estudio');
+      window.app?.navigate('readings');
     });
 
     document.getElementById('btn-add-progress-note')?.addEventListener('click', () => {
@@ -1380,7 +1380,7 @@ class InsightApp {
       this.pendingTherapyDraft = draftText;
 
       if (window.app?.navigate) {
-        window.app.navigate('insight-terapia');
+        window.app.navigate('therapy');
       } else {
         this.activeInsightTab = 'terapia';
         this.render();

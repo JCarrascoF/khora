@@ -275,7 +275,7 @@ class PerfilApp {
   }
 
   render() {
-    const container = document.getElementById('perfil-view');
+    const container = document.getElementById('profile-view');
     if (!container) return;
 
     const profile = window.stateManager.getProfile();
@@ -908,7 +908,7 @@ class PerfilApp {
       `;
     }
 
-    const container = document.getElementById('perfil-view');
+    const container = document.getElementById('profile-view');
     if (!container) return;
 
     container.innerHTML = window.KhoraUI.renderTypeformShell({
@@ -1299,7 +1299,7 @@ class PerfilApp {
         `;
       }
 
-      const container = document.getElementById('perfil-view');
+      const container = document.getElementById('profile-view');
       if (!container) return;
       const closeModal = () => {
         this.render();
@@ -1628,7 +1628,7 @@ class PerfilApp {
           }
           window.brujulaValoresApp.formData.situation = `Quiero actuar fiel a mi valor en ${val.domain}: ${val.statement}`;
         }
-        window.app?.navigate('brujula-valores');
+        window.app?.navigate('compass');
       });
     });
 
@@ -1662,7 +1662,7 @@ class PerfilApp {
     // Change Faro shortcut in bus destination sign
     document.getElementById('btn-bus-change-faro')?.addEventListener('click', () => {
       if (window.app) {
-        window.app.navigate('perfil-valores');
+        window.app.navigate('values');
       } else {
         this.activeProfileTab = 'valores';
         this.render();

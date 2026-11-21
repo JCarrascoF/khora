@@ -154,7 +154,7 @@ async function main() {
 
     await cdp.eval(`new Promise(resolve => {
       const check = () => {
-        if (window.app && window.stateManager && document.getElementById('guia-inicio-view')?.innerHTML.trim()) {
+        if (window.app && window.stateManager && document.getElementById('home-view')?.innerHTML.trim()) {
           resolve(true);
         } else {
           setTimeout(check, 100);
@@ -165,7 +165,7 @@ async function main() {
 
     await cdp.eval(`(() => {
       window.stateManager.seedDemoData();
-      window.app.navigate('guia-inicio');
+      window.app.navigate('home');
     })()`);
     await sleep(400);
 
@@ -188,11 +188,11 @@ async function main() {
       await record('01-screens', name, fileRel, { fullPage: true, viewportWidth: 1280, viewportHeight: 900 });
     };
 
-    await navAndShot('guia-inicio', 'Inicio (Ahora mismo)', '01-screens/01-guia-inicio.png');
+    await navAndShot('home', 'Inicio (Ahora mismo)', '01-screens/01-guia-inicio.png');
 
-    await navAndShot('espacio-act', 'Espacio ACT - Paso 1: Emoción', '01-screens/02-espacio-act-step1.png', `
+    await navAndShot('act-space', 'Espacio ACT - Paso 1: Emoción', '01-screens/02-espacio-act-step1.png', `
       (() => {
-        const chip = document.querySelector('#espacio-act-view .emotion-chip, #espacio-act-view [data-emotion]');
+        const chip = document.querySelector('#act-space-view .emotion-chip, #act-space-view [data-emotion]');
         if (chip) chip.click();
       })()
     `);
@@ -206,7 +206,7 @@ async function main() {
       });
     }
 
-    await navAndShot('brujula-valores', 'Brújula de Valores - Paso 1', '01-screens/03-brujula-valores-step1.png');
+    await navAndShot('compass', 'Brújula de Valores - Paso 1', '01-screens/03-brujula-valores-step1.png');
     await cdp.eval(`(() => {
       if (window.brujulaValoresApp) {
         window.brujulaValoresApp.currentStep = 2;
@@ -221,7 +221,7 @@ async function main() {
       viewportHeight: 900,
     });
 
-    await navAndShot('paz-falsa', 'Espejo Paz Falsa - Paso 1', '01-screens/04-paz-falsa-step1.png');
+    await navAndShot('false-peace', 'Espejo Paz Falsa - Paso 1', '01-screens/04-paz-falsa-step1.png');
     for (let step = 2; step <= 4; step++) {
       await cdp.eval(`window.pazFalsaApp.setStep(${step})`);
       await sleep(200);
@@ -232,18 +232,18 @@ async function main() {
       });
     }
 
-    await navAndShot('perfil-valores', 'Yo - Mis Valores', '01-screens/05-perfil-valores.png');
-    await navAndShot('perfil-autobus', 'Yo - Mi Autobús', '01-screens/06-perfil-autobus.png');
-    await navAndShot('radar-patrones', 'Yo - Mis Patrones', '01-screens/07-radar-patrones.png');
-    await navAndShot('insight-terapia', 'Evolución - Cuaderno de Terapia', '01-screens/08-insight-terapia.png');
-    await navAndShot('insight-historial', 'Evolución - Historial en Frío', '01-screens/09-insight-historial.png');
-    await navAndShot('insight-graficos', 'Evolución - Gráficos y Hexaflex', '01-screens/10-insight-graficos.png');
-    await navAndShot('insight-actividad', 'Evolución - Actividad Reciente', '01-screens/11-insight-actividad.png');
-    await navAndShot('pildoras-trucos', 'Píldoras - Trucos Rápidos', '01-screens/12-pildoras-trucos.png');
-    await navAndShot('pildoras-estudio', 'Píldoras - Estudio ACT', '01-screens/13-pildoras-estudio.png');
+    await navAndShot('values', 'Yo - Mis Valores', '01-screens/05-perfil-valores.png');
+    await navAndShot('bus', 'Yo - Mi Autobús', '01-screens/06-perfil-autobus.png');
+    await navAndShot('patterns', 'Yo - Mis Patrones', '01-screens/07-radar-patrones.png');
+    await navAndShot('therapy', 'Evolución - Cuaderno de Terapia', '01-screens/08-insight-terapia.png');
+    await navAndShot('history', 'Evolución - Historial en Frío', '01-screens/09-insight-historial.png');
+    await navAndShot('charts', 'Evolución - Gráficos y Hexaflex', '01-screens/10-insight-graficos.png');
+    await navAndShot('activity', 'Evolución - Actividad Reciente', '01-screens/11-insight-actividad.png');
+    await navAndShot('toolkit', 'Píldoras - Trucos Rápidos', '01-screens/12-pildoras-trucos.png');
+    await navAndShot('readings', 'Píldoras - Estudio ACT', '01-screens/13-pildoras-estudio.png');
 
     // 2. Modals
-    await cdp.eval(`window.app.navigate('guia-inicio')`);
+    await cdp.eval(`window.app.navigate('home')`);
     await sleep(200);
     await cdp.eval(`document.getElementById('btn-settings').click()`);
     await sleep(200);
@@ -271,7 +271,7 @@ async function main() {
     await cdp.eval(`window.app.closeModal()`);
     await sleep(200);
 
-    await cdp.eval(`window.app.navigate('radar-patrones')`);
+    await cdp.eval(`window.app.navigate('patterns')`);
     await sleep(200);
     await cdp.eval(`document.getElementById('btn-new-pattern')?.click()`);
     await sleep(200);
@@ -279,7 +279,7 @@ async function main() {
     await cdp.eval(`window.app.closeModal()`);
 
     // 3. Theme variations
-    await cdp.eval(`window.app.navigate('guia-inicio')`);
+    await cdp.eval(`window.app.navigate('home')`);
     const palettes = ['arcilla', 'musgo', 'sepia', 'niebla', 'custom'];
     for (const theme of ['light', 'dark']) {
       for (const palette of palettes) {
@@ -305,11 +305,11 @@ async function main() {
     await cdp.setViewport(390, 844, true, 2);
     await sleep(200);
     const mobileViews = [
-      ['guia-inicio', 'Móvil - Inicio', '04-mobile/01-guia-inicio.png'],
-      ['espacio-act', 'Móvil - Espacio ACT', '04-mobile/02-espacio-act.png'],
-      ['perfil-valores', 'Móvil - Mis Valores', '04-mobile/03-perfil-valores.png'],
-      ['perfil-autobus', 'Móvil - Mi Autobús', '04-mobile/04-perfil-autobus.png'],
-      ['insight-graficos', 'Móvil - Gráficos y Hexaflex', '04-mobile/05-insight-graficos.png'],
+      ['home', 'Móvil - Inicio', '04-mobile/01-guia-inicio.png'],
+      ['act-space', 'Móvil - Espacio ACT', '04-mobile/02-espacio-act.png'],
+      ['values', 'Móvil - Mis Valores', '04-mobile/03-perfil-valores.png'],
+      ['bus', 'Móvil - Mi Autobús', '04-mobile/04-perfil-autobus.png'],
+      ['charts', 'Móvil - Gráficos y Hexaflex', '04-mobile/05-insight-graficos.png'],
     ];
     for (const [view, name, fileRel] of mobileViews) {
       await cdp.eval(`window.app.navigate('${view}')`);

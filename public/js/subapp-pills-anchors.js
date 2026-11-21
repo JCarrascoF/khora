@@ -382,7 +382,7 @@ class PildorasAnclajesApp {
   }
 
   render() {
-    const container = document.getElementById('pildoras-anclajes-view');
+    const container = document.getElementById('pills-anchors-view');
     if (!container) return;
 
     if (this.mode === 'trucos') {
@@ -448,7 +448,7 @@ class PildorasAnclajesApp {
           <div class="cozy-home-header toolkit-header">
             <div class="title-with-help">
               <h2 class="card-title" style="margin: 0;">Botiquín</h2>
-              <button type="button" class="help-info-trigger" data-help-topic="pildoras-trucos" aria-label="Información de esta herramienta">ⓘ</button>
+              <button type="button" class="help-info-trigger" data-help-topic="toolkit" aria-label="Información de esta herramienta">ⓘ</button>
             </div>
             <p class="cozy-home-sub">Elige lo que más se parezca a este momento para ver 2 o 3 ejercicios breves.</p>
           </div>
@@ -491,7 +491,7 @@ class PildorasAnclajesApp {
           <div class="flex-between" style="flex-wrap: wrap; gap: 8px 16px;">
             <div class="title-with-help">
               <h2 class="card-title" style="margin: 0;">Botiquín</h2>
-              <button type="button" class="help-info-trigger" data-help-topic="pildoras-trucos" aria-label="Información de esta herramienta">ⓘ</button>
+              <button type="button" class="help-info-trigger" data-help-topic="toolkit" aria-label="Información de esta herramienta">ⓘ</button>
             </div>
             <button type="button" class="btn-inline-link toolkit-back-btn" data-trick-group="">
               ← Elegir situación
@@ -636,7 +636,7 @@ class PildorasAnclajesApp {
     const area = this.studyAreas.find(a => a.id === pill.category) || null;
     const relatedWorkshop = area?.workshops?.[0] || null;
 
-    const backLabel = this.readingReturnView === 'guia-inicio'
+    const backLabel = this.readingReturnView === 'home'
       ? '← Volver al inicio'
       : '← Volver a Lecturas y Ejercicios';
 
@@ -908,14 +908,14 @@ class PildorasAnclajesApp {
     if (!trick) return;
 
     this.stopTrickTimer();
-    const surfaceContainer = document.getElementById('pildoras-anclajes-view');
+    const surfaceContainer = document.getElementById('pills-anchors-view');
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     const target = surfaceContainer || modalBody;
     if (!target) return;
 
-    if (surfaceContainer && window.app?.currentView !== 'pildoras-trucos' && window.app?.navigate) {
-      window.app.navigate('pildoras-trucos', { updateHash: false });
+    if (surfaceContainer && window.app?.currentView !== 'toolkit' && window.app?.navigate) {
+      window.app.navigate('toolkit', { updateHash: false });
     }
 
     if (trickId === 'trick_drop_anchor') {
@@ -955,7 +955,7 @@ class PildorasAnclajesApp {
 
   closeAppModal() {
     this.stopTrickTimer();
-    const surfaceContainer = document.getElementById('pildoras-anclajes-view');
+    const surfaceContainer = document.getElementById('pills-anchors-view');
     if (surfaceContainer) {
       this.render();
       this.bindEvents();
@@ -1875,8 +1875,8 @@ class PildorasAnclajesApp {
           if (!pillId) return;
           this.activeReadingId = pillId;
           this.activeWorkshopId = null;
-          if (typeof location !== 'undefined' && window.app && location.hash !== `#pildoras-estudio/lectura/${pillId}`) {
-            location.hash = `pildoras-estudio/lectura/${pillId}`;
+          if (typeof location !== 'undefined' && window.app && location.hash !== `#readings/reading/${pillId}`) {
+            location.hash = `readings/reading/${pillId}`;
           }
           this.render();
           this.bindEvents();
@@ -1889,12 +1889,12 @@ class PildorasAnclajesApp {
         this.readingReturnView = null;
         this.activeReadingId = null;
         this.activeWorkshopId = null;
-        if (returnTarget === 'guia-inicio' && window.app?.navigate) {
-          window.app.navigate('guia-inicio');
+        if (returnTarget === 'home' && window.app?.navigate) {
+          window.app.navigate('home');
           return;
         }
-        if (typeof location !== 'undefined' && window.app && location.hash !== '#pildoras-estudio') {
-          location.hash = 'pildoras-estudio';
+        if (typeof location !== 'undefined' && window.app && location.hash !== '#readings') {
+          location.hash = 'readings';
         }
         this.render();
         this.bindEvents();
@@ -1914,8 +1914,8 @@ class PildorasAnclajesApp {
           const workshopId = btn.dataset.openWorkshop;
           this.activeWorkshopId = workshopId;
           this.activeReadingId = null;
-          if (typeof location !== 'undefined' && window.app && location.hash !== `#pildoras-estudio/taller/${workshopId}`) {
-            location.hash = `pildoras-estudio/taller/${workshopId}`;
+          if (typeof location !== 'undefined' && window.app && location.hash !== `#readings/workshop/${workshopId}`) {
+            location.hash = `readings/workshop/${workshopId}`;
           }
           this.render();
           this.bindEvents();
@@ -2338,8 +2338,8 @@ class PildorasAnclajesApp {
     this.currentTab = 'pildoras';
     this.activeReadingId = pillId;
     this.activeWorkshopId = null;
-    if (typeof location !== 'undefined' && window.app && location.hash !== `#pildoras-estudio/lectura/${pillId}`) {
-      location.hash = `pildoras-estudio/lectura/${pillId}`;
+    if (typeof location !== 'undefined' && window.app && location.hash !== `#readings/reading/${pillId}`) {
+      location.hash = `readings/reading/${pillId}`;
     }
     this.render();
     this.bindEvents();

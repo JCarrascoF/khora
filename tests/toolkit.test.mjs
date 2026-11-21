@@ -56,7 +56,7 @@ function loadToolkitHarness({ withApp = false, withI18n = false, initialLang = '
   let cachedIdButtons = new Map();
 
   const container = {
-    id: 'pildoras-anclajes-view',
+    id: 'pills-anchors-view',
     classList: { add: () => {}, remove: () => {} },
     get innerHTML() {
       return containerHtml;
@@ -96,8 +96,8 @@ function loadToolkitHarness({ withApp = false, withI18n = false, initialLang = '
   const store = { act_lang_pref: initialLang };
   const launchedTricks = [];
   const sections = new Map([
-    ['guia-inicio-view', { innerHTML: '', classList: { add: noop, remove: noop }, querySelectorAll: () => [] }],
-    ['pildoras-anclajes-view', { innerHTML: '', classList: { add: noop, remove: noop }, querySelectorAll: () => [] }]
+    ['home-view', { innerHTML: '', classList: { add: noop, remove: noop }, querySelectorAll: () => [] }],
+    ['pills-anchors-view', { innerHTML: '', classList: { add: noop, remove: noop }, querySelectorAll: () => [] }]
   ]);
 
   const bodyEl = {
@@ -129,7 +129,7 @@ function loadToolkitHarness({ withApp = false, withI18n = false, initialLang = '
       addEventListener: noop,
       createTreeWalker: () => ({ nextNode: () => null }),
       getElementById(id) {
-        if (id === 'pildoras-anclajes-view') return container;
+        if (id === 'pills-anchors-view') return container;
         if (id === 'app-modal') return modal;
         if (id === 'modal-body') return modalBody;
         if (cachedIdButtons.has(id)) return cachedIdButtons.get(id);
@@ -317,22 +317,22 @@ test('All-exercises directory shows all 8 unique tricks grouped cleanly with zer
 
 test('AppController.navigate resets activeTrickGroup on entry from another view and preserves it in-place', () => {
   const { toolkit, app } = loadToolkitHarness({ withApp: true });
-  app.currentView = 'guia-inicio';
+  app.currentView = 'home';
   toolkit.activeTrickGroup = 'limits';
 
-  // Entering pildoras-trucos from guia-inicio resets to 3-door triage
-  app.navigate('pildoras-trucos');
-  assert.equal(app.currentView, 'pildoras-trucos');
+  // Entering toolkit from home resets to 3-door triage
+  app.navigate('toolkit');
+  assert.equal(app.currentView, 'toolkit');
   assert.equal(toolkit.activeTrickGroup, null);
 
-  // Switching to a group while already on pildoras-trucos and re-navigating keeps the open group
+  // Switching to a group while already on toolkit and re-navigating keeps the open group
   toolkit.activeTrickGroup = 'mind';
-  app.navigate('pildoras-trucos');
+  app.navigate('toolkit');
   assert.equal(toolkit.activeTrickGroup, 'mind');
 
   // Leaving to another screen and returning resets back to null
-  app.navigate('guia-inicio');
-  app.navigate('pildoras-trucos');
+  app.navigate('home');
+  app.navigate('toolkit');
   assert.equal(toolkit.activeTrickGroup, null);
 });
 
@@ -367,7 +367,7 @@ test('EN i18n translates Botiquín doors, tabs, tricks, dynamic counts, and help
   assert.equal(i18n.t('La Postura Somática del "SÍ"'), 'The Somatic "YES" Posture');
 
   // Help catalog step updated cleanly
-  const helpStep = app.getHelpCatalog().screens['pildoras-trucos'].steps[0];
+  const helpStep = app.getHelpCatalog().screens['toolkit'].steps[0];
   assert.equal(i18n.t(helpStep), '1. Pick the situation closest to this moment (body, mind, or boundaries).');
 
   // Render in EN and open a group
@@ -440,19 +440,19 @@ test('Lecturas y Conceptos ACT renders open editorial index and navigates readin
 
 test('AppController.navigate resets activeStudyArea on entry from another view and preserves it in-place', () => {
   const { toolkit, app } = loadToolkitHarness({ withApp: true });
-  app.currentView = 'guia-inicio';
+  app.currentView = 'home';
   toolkit.activeStudyArea = 'limites';
 
-  app.navigate('pildoras-estudio');
-  assert.equal(app.currentView, 'pildoras-estudio');
+  app.navigate('readings');
+  assert.equal(app.currentView, 'readings');
   assert.equal(toolkit.activeStudyArea, null);
 
   toolkit.activeStudyArea = 'defusion';
-  app.navigate('pildoras-estudio');
+  app.navigate('readings');
   assert.equal(toolkit.activeStudyArea, 'defusion');
 
-  app.navigate('guia-inicio');
-  app.navigate('pildoras-estudio');
+  app.navigate('home');
+  app.navigate('readings');
   assert.equal(toolkit.activeStudyArea, null);
 });
 
