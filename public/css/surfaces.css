@@ -184,19 +184,18 @@ blockquote {
   stroke-width: 1.65;
 }
 
-/* Contextual Sub-Navigation (Flat editorial text bar, zero box, zero pills) */
+/* Contextual Sub-Navigation (Flat editorial text bar inside compact header) */
 .context-subnav {
-  padding: 0 20px;
+  padding: 0;
 }
 
 .context-subnav-inner {
   background-color: transparent;
   border: none;
-  border-bottom: 1px solid var(--border-subtle);
   border-radius: 0;
   box-shadow: none;
-  padding: 10px 0;
-  gap: 16px;
+  padding: 0;
+  gap: 14px;
 }
 
 .context-subnav-label {

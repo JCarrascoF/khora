@@ -33,6 +33,36 @@ html, body {
   }
 }
 
+/* Brief Entry Splash */
+.app-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-primary);
+  opacity: 1;
+  transition: opacity 0.35s ease;
+  pointer-events: auto;
+}
+
+.app-splash.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.app-splash.hidden {
+  display: none;
+}
+
+.app-splash-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
 /* Header */
 .app-header {
   position: sticky;
@@ -42,10 +72,12 @@ html, body {
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border-subtle);
-  padding: 12px 20px;
+  padding: 10px 20px;
+  min-height: 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .header-brand-cluster {
@@ -93,6 +125,8 @@ html, body {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 /* Zen Pulse Indicator */
@@ -1780,7 +1814,9 @@ button.breathing-orb {
    ========================================================================== */
 
 .context-subnav {
-  padding: 10px 20px 0;
+  padding: 0;
+  flex: 1;
+  min-width: 0;
 }
 
 .context-subnav.hidden {
@@ -1789,14 +1825,16 @@ button.breathing-orb {
 
 .context-subnav-inner {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  box-shadow: var(--card-shadow);
+  gap: 6px;
+  padding: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.context-subnav-inner::-webkit-scrollbar {
+  display: none;
 }
 
 .context-subnav-label {
@@ -1891,13 +1929,6 @@ button.breathing-orb {
 @media (max-width: 767px) {
   .app-nav {
     justify-content: space-around;
-  }
-  .context-subnav {
-    padding: 8px 12px 0;
-  }
-  .context-subnav-inner {
-    padding: 8px 10px;
-    gap: 6px;
   }
 }
 

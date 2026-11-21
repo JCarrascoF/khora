@@ -189,7 +189,25 @@ class AppController {
     };
   }
 
+  dismissSplash() {
+    const splash = document.getElementById('app-splash');
+    if (!splash) return;
+    const isLocked = Boolean(window.stateManager?.isVaultLocked?.());
+    const reducedMotion = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches);
+    if (isLocked || reducedMotion) {
+      splash.classList.add('hidden');
+      return;
+    }
+    setTimeout(() => {
+      splash.classList.add('is-leaving');
+      setTimeout(() => {
+        splash.classList.add('hidden');
+      }, 360);
+    }, 450);
+  }
+
   init() {
+    this.dismissSplash();
     this.initTheme();
     this.initPalette();
     this.initSurface();
@@ -804,7 +822,6 @@ class AppController {
     subnavEl.classList.remove('hidden');
     subnavEl.innerHTML = `
       <div class="context-subnav-inner">
-        <span class="context-subnav-label">${group.label}</span>
         ${group.items.map(item => {
           const isActive = item.id === activeSubView;
           const btnHtml = `
