@@ -824,21 +824,12 @@ class AppController {
       <div class="context-subnav-inner">
         ${group.items.map(item => {
           const isActive = item.id === activeSubView;
-          const btnHtml = `
+          return `
             <button type="button" class="subnav-pill ${isActive ? 'active' : ''}" data-subnav-view="${item.id}">
               ${item.icon ?`<span>${item.icon}</span>` :''}
               <span>${item.label}</span>
             </button>
           `;
-          if (isActive && item.helpTopic) {
-            return `
-              <span class="subnav-pill-group">
-                ${btnHtml}
-                <button type="button" class="help-info-trigger subnav-help-trigger" data-help-topic="${item.helpTopic}" aria-label="Información de esta herramienta">ⓘ</button>
-              </span>
-            `;
-          }
-          return btnHtml;
         }).join('')}
       </div>
     `;
@@ -1003,115 +994,21 @@ class AppController {
 
     setTimeout(() => {
       toast.style.opacity = '0';
-      toast.style.transform = 'translateY(10px)';
+      toast.style.transform = 'translateY(-10px)';
       toast.style.transition = 'all 0.3s ease';
       setTimeout(() => toast.remove(), 300);
     }, 3200);
   }
 
-  // Global Accessible ACT Glossary Tooltips (.act-term, .help-info-trigger & #act-glossary-tooltip)
+  // Unified Contextual Help & ACT Glossary Triggers (.act-term -> #help-drawer)
   initGlossaryTooltips() {
-    const tooltip = document.getElementById('act-glossary-tooltip');
-    if (!tooltip) return;
-
-    const localizeTooltip = () => {
-      window.i18n?.localizeDOM?.(tooltip);
-    };
-
-    const positionAndShowTooltip = (anchorEl) => {
-      localizeTooltip();
-      tooltip.setAttribute('aria-hidden', 'false');
-      tooltip.classList.add('visible');
-
-      const rect = anchorEl.getBoundingClientRect();
-      const tipW = tooltip.offsetWidth || 345;
-      const tipH = tooltip.offsetHeight || 150;
-      const left = Math.max(12, Math.min(rect.left, window.innerWidth - tipW - 12));
-      const top = rect.top - tipH - 10 >= 8
-        ? rect.top - tipH - 10
-        : Math.min(window.innerHeight - tipH - 12, rect.bottom + 10);
-
-      tooltip.style.left = `${left}px`;
-      tooltip.style.top = `${top}px`;
-    };
-
-    const showTooltipForTerm = (termEl) => {
-      const key = termEl.dataset.term;
-      const entry = ACT_GLOSSARY[key];
-      if (!entry) return;
-
-      const badgeLabel = window.i18n?.isEn?.() ? 'ACT Principle' : 'Concepto ACT';
-      tooltip.innerHTML = `
-        <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--sage-600); font-weight: 700; margin-bottom: 2px;">${badgeLabel}</div>
-        <div class="act-glossary-title">${entry.title}</div>
-        <div class="act-glossary-plain">${entry.plain}</div>
-        <div class="act-glossary-example"><strong>${window.i18n?.isEn?.() ? 'Example:' : 'Ejemplo:'}</strong> ${entry.example}</div>
-      `;
-      positionAndShowTooltip(termEl);
-    };
-
-    const showTooltipForHelpTrigger = (triggerEl) => {
-      const topicId = triggerEl.dataset.helpTopic;
-      const catalog = this.getHelpCatalog();
-      const item = catalog.topics[topicId] || catalog.screens[topicId];
-      if (!item) return;
-
-      tooltip.innerHTML = `
-        <div class="act-glossary-title" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
-          <span>${item.title}</span>
-        </div>
-        <div class="act-glossary-plain" style="display: flex; flex-direction: column; gap: 5px; margin-top: 6px;">
-          ${item.does ? `<div><strong>Qué haces:</strong> <span>${item.does}</span></div>` : (item.summary ? `<div>${item.summary}</div>` : '')}
-          ${item.brings ?`<div><strong>Qué aporta:</strong><span>${item.brings}</span></div>` :''}
-        </div>
-        <div class="act-glossary-example" style="margin-top: 6px; font-style: normal; font-size: 0.73rem;">
-          Pulsa ⓘ para ver la guía paso a paso
-        </div>
-      `;
-      positionAndShowTooltip(triggerEl);
-    };
-
-    const hideTooltip = () => {
-      tooltip.classList.remove('visible');
-      tooltip.setAttribute('aria-hidden', 'true');
-    };
-
-    const handleEnter = (e) => {
-      const helpTrigger = e.target.closest?.('.help-info-trigger[data-help-topic]');
-      if (helpTrigger) {
-        showTooltipForHelpTrigger(helpTrigger);
-        return;
-      }
-      const termEl = e.target.closest?.('.act-term[data-term]');
-      if (termEl) {
-        if (document.documentElement.getAttribute('data-act-concepts') === 'hide') return;
-        showTooltipForTerm(termEl);
-      }
-    };
-
-    const handleLeave = (e) => {
-      if (e.target.closest?.('.help-info-trigger[data-help-topic], .act-term[data-term]')) {
-        hideTooltip();
-      }
-    };
-
-    document.body.addEventListener('mouseover', handleEnter);
-    document.body.addEventListener('mouseout', handleLeave);
-    document.body.addEventListener('focusin', handleEnter);
-    document.body.addEventListener('focusout', handleLeave);
-
     document.body.addEventListener('click', (e) => {
-      if (e.target.closest?.('.help-info-trigger[data-help-topic]')) {
-        hideTooltip();
-        return;
-      }
       const termEl = e.target.closest?.('.act-term[data-term]');
-      if (termEl) {
-        if (document.documentElement.getAttribute('data-act-concepts') === 'hide') return;
-        showTooltipForTerm(termEl);
-      } else {
-        hideTooltip();
-      }
+      if (!termEl) return;
+      if (document.documentElement.getAttribute('data-act-concepts') === 'hide') return;
+      e.preventDefault();
+      e.stopPropagation();
+      this.openHelpDrawer?.({ termKey: termEl.dataset.term });
     });
 
     const appContainer = document.querySelector('.app-container') || document.body;
@@ -1563,15 +1460,12 @@ class AppController {
 
       const { type, rawTitle, rawBody, lang, mode } = buildFormatted();
       if (!rawTitle && !rawBody) {
-        this.showToast('Escribe un título o detalle antes de enviar');
+        showStatusError('Escribe un título o detalle antes de enviar');
         return;
       }
 
       const website = document.getElementById('feedback-website')?.value || '';
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = t('Enviando...');
-      }
+      window.KhoraUI?.buttonInlineState?.(submitBtn, 'pending', t('Enviando…'));
 
       try {
         const res = await fetch('/api/feedback', {
@@ -1591,15 +1485,13 @@ class AppController {
           throw new Error(`HTTP ${res.status}`);
         }
 
-        this.closeModal();
-        this.showToast('¡Gracias! Feedback enviado');
+        window.KhoraUI?.buttonInlineState?.(submitBtn, 'ok', t('✓ Enviado'), {
+          resetMs: 1200,
+          onDone: () => this.closeModal()
+        });
       } catch {
+        window.KhoraUI?.buttonInlineState?.(submitBtn, 'reset');
         showStatusError('No se pudo enviar automáticamente. Puedes usar «Copiar mensaje» o «GitHub Issues».');
-      } finally {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = t('Enviar feedback');
-        }
       }
     });
 
@@ -1607,10 +1499,10 @@ class AppController {
       const { issueTitle, issueBody } = buildFormatted();
       const url = `https://github.com/${KHORA_CREDITS.githubUser}/${KHORA_CREDITS.repoName}/issues/new?title=${encodeURIComponent(issueTitle)}&body=${encodeURIComponent(issueBody)}`;
       window.open?.(url, '_blank', 'noopener,noreferrer');
-      this.showToast('Abriendo GitHub Issues con tu mensaje preparado');
     });
 
     document.getElementById('btn-feedback-copy')?.addEventListener('click', async () => {
+      const copyBtn = document.getElementById('btn-feedback-copy');
       const { issueTitle, issueBody } = buildFormatted();
       const fullText = `${issueTitle}\n\n${issueBody}`;
       try {
@@ -1624,9 +1516,9 @@ class AppController {
           document.execCommand?.('copy');
           tmp.remove();
         }
-        this.showToast('Feedback copiado al portapapeles');
+        window.KhoraUI?.buttonInlineState?.(copyBtn, 'ok', t('✓ Copiado'));
       } catch {
-        this.showToast('Feedback preparado para copiar');
+        window.KhoraUI?.buttonInlineState?.(copyBtn, 'error', t('No se pudo copiar'));
       }
     });
   }

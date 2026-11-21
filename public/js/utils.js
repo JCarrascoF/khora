@@ -43,11 +43,8 @@
      * @param {string} [options.badgeStyle] - Optional inline style or class
      * @returns {string} HTML string
      */
-    renderHeader({ title, currentStep, totalSteps, helpTopic, helpAriaLabel = 'Información de esta herramienta', badgeStyle = '' }) {
+    renderHeader({ title, currentStep, totalSteps, badgeStyle = '' }) {
       const esc = escapeHtml;
-      const helpBtn = helpTopic
-        ? `<button type="button" class="help-info-trigger" data-help-topic="${esc(helpTopic)}" aria-label="${esc(helpAriaLabel)}">ⓘ</button>`
-        : '';
       const badge = (currentStep && totalSteps)
         ? `<span class="badge" style="${badgeStyle || 'background-color: var(--sage-100); color: var(--sage-700);'}">Paso ${esc(currentStep)} de ${esc(totalSteps)}</span>`
         : '';
@@ -55,7 +52,6 @@
         <div class="card-header flex-between" style="margin-bottom: 12px;">
           <div class="title-with-help">
             <h2 class="card-title" style="margin: 0;">${esc(title)}</h2>
-            ${helpBtn}
           </div>
           ${badge}
         </div>
@@ -73,12 +69,9 @@
      * @param {boolean} [options.compact=false] - Compact mode for modals (no outer max-width margin)
      * @returns {string} HTML string
      */
-    renderTypeformShell({ currentStep, totalSteps, helpTopic = '', bodyId = 'typeform-step-body', stepHtml = '', compact = false }) {
+    renderTypeformShell({ currentStep, totalSteps, bodyId = 'typeform-step-body', stepHtml = '', compact = false }) {
       const esc = escapeHtml;
       const progressPercent = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 100;
-      const helpBtn = helpTopic
-        ? `<button type="button" class="help-info-trigger" data-help-topic="${esc(helpTopic)}" aria-label="Información de esta herramienta">ⓘ</button>`
-        : '';
 
       return `
         <div class="act-typeform-shell" ${compact ? 'style="max-width: 100%; margin: 0;"' : ''}>
@@ -87,7 +80,6 @@
               <span class="badge" style="background-color: rgba(87, 139, 116, 0.16); color: var(--sage-700)">
                 ${esc(currentStep)} / ${esc(totalSteps)}
               </span>
-              ${helpBtn}
             </div>
             <div class="act-progress-track" role="progressbar" aria-valuenow="${esc(currentStep)}" aria-valuemin="1" aria-valuemax="${esc(totalSteps)}">
               <div class="act-progress-fill" style="width: ${progressPercent}%;"></div>
@@ -227,6 +219,81 @@
           }).join('')}
         </div>
       `.trim();
+    },
+
+    /**
+     * Transitions a button through inline feedback states ('pending' | 'ok' | 'error' | 'reset')
+     * instead of firing a floating toast banner.
+     * @param {HTMLButtonElement | null} btn
+     * @param {'pending' | 'ok' | 'error' | 'reset'} state
+     * @param {string} [label]
+     * @param {{ resetMs?: number, onDone?: () => void }} [options]
+     */
+    buttonInlineState(btn, state, label, { resetMs = 1500, onDone } = {}) {
+      if (!btn) {
+        if (state === 'ok' && typeof onDone === 'function') onDone();
+        return;
+      }
+
+      if (btn._inlineStateTimer) {
+        clearTimeout(btn._inlineStateTimer);
+        btn._inlineStateTimer = null;
+      }
+
+      if (btn.dataset.inlineOrigHtml === undefined) {
+        btn.dataset.inlineOrigHtml = btn.innerHTML;
+        btn.dataset.inlineOrigDisabled = btn.disabled ? '1' : '0';
+      }
+
+      const restore = () => {
+        btn.classList.remove('btn-inline-pending', 'btn-inline-ok', 'btn-inline-error');
+        if (btn.dataset.inlineOrigHtml !== undefined) {
+          btn.innerHTML = btn.dataset.inlineOrigHtml;
+          delete btn.dataset.inlineOrigHtml;
+        }
+        if (btn.dataset.inlineOrigDisabled !== undefined) {
+          btn.disabled = btn.dataset.inlineOrigDisabled === '1';
+          delete btn.dataset.inlineOrigDisabled;
+        } else {
+          btn.disabled = false;
+        }
+      };
+
+      if (state === 'reset') {
+        restore();
+        return;
+      }
+
+      btn.classList.remove('btn-inline-pending', 'btn-inline-ok', 'btn-inline-error');
+
+      if (state === 'pending') {
+        btn.disabled = true;
+        btn.classList.add('btn-inline-pending');
+        btn.textContent = label || 'Guardando…';
+        return;
+      }
+
+      if (state === 'ok') {
+        btn.disabled = true;
+        btn.classList.add('btn-inline-ok');
+        btn.textContent = label || '✓ Guardado';
+        btn._inlineStateTimer = setTimeout(() => {
+          btn._inlineStateTimer = null;
+          restore();
+          if (typeof onDone === 'function') onDone();
+        }, resetMs);
+        return;
+      }
+
+      if (state === 'error') {
+        btn.disabled = false;
+        btn.classList.add('btn-inline-error');
+        btn.textContent = label || 'No se pudo';
+        btn._inlineStateTimer = setTimeout(() => {
+          btn._inlineStateTimer = null;
+          restore();
+        }, resetMs);
+      }
     }
   });
 
