@@ -636,12 +636,16 @@ class PildorasAnclajesApp {
     const area = this.studyAreas.find(a => a.id === pill.category) || null;
     const relatedWorkshop = area?.workshops?.[0] || null;
 
+    const backLabel = this.readingReturnView === 'guia-inicio'
+      ? '← Volver al inicio'
+      : '← Volver a Lecturas y Ejercicios';
+
     return `
       <div class="view-plain-shell">
         <div class="toolkit-header toolkit-header-compact" style="margin-bottom: 18px;">
           <div class="flex-between" style="flex-wrap: wrap; gap: 10px 16px;">
             <button type="button" class="btn-inline-link toolkit-back-btn" id="btn-reading-back">
-              ← Volver a Lecturas y Ejercicios
+              ${backLabel}
             </button>
             <button type="button" class="btn-secondary" data-toggle-fav="${pill.id}" style="font-size: 0.8rem; padding: 6px 12px; color: ${isFav ? '#b86b59' : 'var(--text-secondary)'};">
               ${isFav ? '♥ Guardado' : '♡ Guardar lectura'}
@@ -682,7 +686,7 @@ class PildorasAnclajesApp {
 
         <div class="toolkit-all-footer" style="margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
           <button type="button" class="btn-inline-link" id="btn-reading-back-bottom">
-            ← Volver a Lecturas y Ejercicios
+            ${backLabel}
           </button>
         </div>
       </div>
@@ -1881,8 +1885,14 @@ class PildorasAnclajesApp {
       });
 
       const returnToStudyIndex = () => {
+        const returnTarget = this.readingReturnView;
+        this.readingReturnView = null;
         this.activeReadingId = null;
         this.activeWorkshopId = null;
+        if (returnTarget === 'guia-inicio' && window.app?.navigate) {
+          window.app.navigate('guia-inicio');
+          return;
+        }
         if (typeof location !== 'undefined' && window.app && location.hash !== '#pildoras-estudio') {
           location.hash = 'pildoras-estudio';
         }

@@ -557,6 +557,7 @@ class AppController {
           window.pildorasAnclajesApp.activeStudyArea = null;
           window.pildorasAnclajesApp.activeReadingId = null;
           window.pildorasAnclajesApp.activeWorkshopId = null;
+          window.pildorasAnclajesApp.readingReturnView = null;
         }
       }
     } else if (resolvedSubView === 'pildoras-anclajes') {
@@ -783,10 +784,13 @@ class AppController {
 
     document.getElementById('btn-read-intro-guide')?.addEventListener('click', () => {
       try { localStorage.setItem('act_intro_guide_dismissed', '1'); } catch {}
-      this.navigate('pildoras-estudio');
-      setTimeout(() => {
-        window.pildorasAnclajesApp?.openPill?.('pill_guia_act');
-      }, 120);
+      if (window.pildorasAnclajesApp) {
+        window.pildorasAnclajesApp.activeStudyArea = null;
+        window.pildorasAnclajesApp.activeWorkshopId = null;
+        window.pildorasAnclajesApp.activeReadingId = 'pill_guia_act';
+        window.pildorasAnclajesApp.readingReturnView = 'guia-inicio';
+      }
+      this.navigate('pildoras-estudio', { preserveStudySubView: true });
     });
 
     document.getElementById('btn-dismiss-intro-guide')?.addEventListener('click', () => {

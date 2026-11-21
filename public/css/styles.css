@@ -63,6 +63,19 @@ html, body {
   color: var(--text-primary);
 }
 
+/* Desktop-only Brand Header (hidden on mobile) */
+.app-header-desktop {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .app-header-desktop {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px 6px;
+  }
+}
+
 /* Header */
 .app-header {
   position: sticky;
@@ -206,18 +219,36 @@ html, body {
   z-index: 35;
   background-color: var(--bg-surface);
   border-top: 1px solid var(--border-subtle);
-  padding: 6px 12px;
+  padding: 6px 10px;
   display: flex;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  gap: 6px;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.04);
 }
 
-.app-nav::-webkit-scrollbar {
+.nav-primary-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  min-width: 0;
+  flex: 1;
+}
+
+.nav-primary-group::-webkit-scrollbar {
   display: none;
+}
+
+.nav-utilities {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 8px;
+  border-left: 1px solid var(--border-subtle);
+  flex-shrink: 0;
 }
 
 @media (min-width: 768px) {
@@ -226,11 +257,13 @@ html, body {
     border-top: none;
     border-bottom: 1px solid var(--border-subtle);
     background-color: transparent;
-    padding: 12px 20px;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: flex-start;
+    padding: 10px 20px;
+    gap: 12px;
     box-shadow: none;
+  }
+
+  .nav-primary-group {
+    gap: 10px;
   }
 }
 
@@ -267,10 +300,6 @@ html, body {
   .nav-item.nav-item-clock {
     padding: 8px 12px;
   }
-}
-
-.nav-item-clock {
-  margin-left: auto;
 }
 
 .nav-item.active {
@@ -1935,9 +1964,7 @@ button.breathing-orb {
    ========================================================================== */
 
 .context-subnav {
-  padding: 0;
-  flex: 1;
-  min-width: 0;
+  padding: 10px 20px 0;
 }
 
 .context-subnav.hidden {

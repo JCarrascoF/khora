@@ -140,6 +140,10 @@ blockquote {
   .app-nav {
     border-bottom: 1px solid var(--border-subtle);
     padding: 0 20px;
+    gap: 16px;
+  }
+
+  .nav-primary-group {
     gap: 20px;
   }
 
@@ -184,9 +188,9 @@ blockquote {
   stroke-width: 1.65;
 }
 
-/* Contextual Sub-Navigation (Flat editorial text bar inside compact header) */
+/* Contextual Sub-Navigation (Flat editorial text bar below nav) */
 .context-subnav {
-  padding: 0;
+  padding: 8px 20px 0;
 }
 
 .context-subnav-inner {
