@@ -2302,8 +2302,6 @@
     'Ir a Aprender': 'Go to Learn',
     '5. Privacidad y copias': '5. Privacy & backups',
     '5. Privacidad local y copias de seguridad': '5. Local privacy & backups',
-    '4. Privacidad y copias': '4. Privacy & backups',
-    '4. Privacidad local y copias de seguridad': '4. Local privacy & backups',
     'Khōra es local-first: tus datos se quedan en tu dispositivo, sin cuentas obligatorias ni rastreadores.': 'Khōra is local-first: your data stays on your device, with no required accounts or trackers.',
     'Almacenamiento local: todo vive en tu navegador (o en tu propio servidor SQLite opcional si lo autoalojas).': 'Local storage: everything lives in your browser (or your own optional SQLite server if self-hosted).',
     'Bloqueo rápido con PIN/contraseña: activa la bóveda en Configuración → Privacidad y bloqueo para cifrar tu sesión.': 'Quick PIN/password lock: enable the vault in Settings → Privacy & lock to encrypt your session.',

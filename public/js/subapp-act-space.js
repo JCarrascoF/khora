@@ -1948,7 +1948,7 @@ class EspacioActApp {
     const renderModalContent = ({ preserveScroll = false } = {}) => {
       const prevScroll = preserveScroll ? modalBody.scrollTop : 0;
       modalBody.classList.add('modal-wheel-maximized');
-      const isInEspacioAct = window.app?.currentView === 'espacio-act';
+      const isInEspacioAct = window.app?.currentView === 'act-space';
 
       modalBody.innerHTML = `
         <div class="flex-between" style="margin-bottom: 10px; gap: 10px; flex-wrap: wrap;">

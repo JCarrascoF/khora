@@ -305,11 +305,11 @@ async function main() {
     await cdp.setViewport(390, 844, true, 2);
     await sleep(200);
     const mobileViews = [
-      ['guia-inicio', 'Móvil - Inicio', '04-mobile/01-guia-inicio.png'],
-      ['espacio-act', 'Móvil - Espacio ACT', '04-mobile/02-espacio-act.png'],
-      ['perfil-valores', 'Móvil - Mis Valores', '04-mobile/03-perfil-valores.png'],
-      ['perfil-autobus', 'Móvil - Mi Autobús', '04-mobile/04-perfil-autobus.png'],
-      ['insight-graficos', 'Móvil - Gráficos y Hexaflex', '04-mobile/05-insight-graficos.png'],
+      ['home', 'Móvil - Inicio', '04-mobile/01-guia-inicio.png'],
+      ['act-space', 'Móvil - Espacio ACT', '04-mobile/02-espacio-act.png'],
+      ['values', 'Móvil - Mis Valores', '04-mobile/03-perfil-valores.png'],
+      ['bus', 'Móvil - Mi Autobús', '04-mobile/04-perfil-autobus.png'],
+      ['charts', 'Móvil - Gráficos y Hexaflex', '04-mobile/05-insight-graficos.png'],
     ];
     for (const [view, name, fileRel] of mobileViews) {
       await cdp.eval(`window.app.navigate('${view}')`);

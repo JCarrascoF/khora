@@ -636,7 +636,7 @@ class PildorasAnclajesApp {
     const area = this.studyAreas.find(a => a.id === pill.category) || null;
     const relatedWorkshop = area?.workshops?.[0] || null;
 
-    const backLabel = this.readingReturnView === 'guia-inicio'
+    const backLabel = this.readingReturnView === 'home'
       ? '← Volver al inicio'
       : '← Volver a Lecturas y Ejercicios';
 
@@ -914,7 +914,7 @@ class PildorasAnclajesApp {
     const target = surfaceContainer || modalBody;
     if (!target) return;
 
-    if (surfaceContainer && window.app?.currentView !== 'pildoras-trucos' && window.app?.navigate) {
+    if (surfaceContainer && window.app?.currentView !== 'toolkit' && window.app?.navigate) {
       window.app.navigate('toolkit', { updateHash: false });
     }
 
