@@ -240,9 +240,9 @@
     if (explanations !== 'hide' && explanations !== 'show') {
       try {
         const stored = localStorage.getItem('act_explanations_pref');
-        explanations = stored === 'hide' ? 'hide' : 'show';
+        explanations = stored === 'show' ? 'show' : 'hide';
       } catch {
-        explanations = 'show';
+        explanations = 'hide';
       }
     }
     document.documentElement.setAttribute('data-explanations', explanations);
@@ -491,7 +491,7 @@
         : '—';
       const currentLang = window.i18n?.getLang?.() || 'es';
       const anchorsOn = settings.showAnchorsCard !== false;
-      const explanationsOn = (document.documentElement.getAttribute('data-explanations') || settings.explanations || 'show') !== 'hide';
+      const explanationsOn = (document.documentElement.getAttribute('data-explanations') || settings.explanations || 'hide') !== 'hide';
       const actConceptsOn = (document.documentElement.getAttribute('data-act-concepts') || settings.actConcepts || 'show') !== 'hide';
 
       const serverBadge = serverAvailable

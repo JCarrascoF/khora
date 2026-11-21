@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light" data-palette="arcilla" data-surface="editorial" data-buttons="ultraligero" data-explanations="show">
+<html lang="es" data-theme="light" data-palette="arcilla" data-surface="editorial" data-buttons="ultraligero" data-explanations="hide">
 <!-- khora:version:1.2.1 -->
 <head>
   <meta charset="UTF-8">
@@ -223,11 +223,12 @@
       <div class="modal-card" id="modal-body"></div>
     </div>
 
-    <!-- Toast Notification Container -->
-    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+    <!-- Top-Down Notification Container (for global events without a trigger button) -->
+    <div id="toast-container" class="toast-container top-notice-container" aria-live="polite"></div>
 
-    <!-- Global Accessible Glossary Tooltip -->
-    <div id="act-glossary-tooltip" class="act-glossary-tooltip" role="tooltip" aria-hidden="true"></div>
+    <!-- Unified Contextual Help & ACT Glossary Drawer -->
+    <div id="help-drawer-backdrop" class="help-drawer-backdrop hidden" aria-hidden="true"></div>
+    <aside id="help-drawer" class="help-drawer hidden" role="dialog" aria-modal="true" aria-label="Ayuda contextual y conceptos ACT"></aside>
   </div>
 
   <!-- Full-Screen Privacy Lock Overlay (PIN / Password / Biometric AES-256) -->

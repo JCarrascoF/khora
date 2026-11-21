@@ -9,13 +9,13 @@ const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 const utilsSrc = fs.readFileSync(path.join(ROOT_DIR, 'public', 'js', 'utils.js'), 'utf8');
 
 function loadKhoraUI() {
-  const sandbox = { window: {} };
+  const sandbox = { window: {}, setTimeout, clearTimeout };
   sandbox.window = sandbox;
   vm.runInNewContext(utilsSrc, sandbox);
   return sandbox.KhoraUI;
 }
 
-test('KhoraUI.renderHeader renders title, help trigger and step badge cleanly', () => {
+test('KhoraUI.renderHeader renders title and step badge cleanly without scattered help triggers', () => {
   const KhoraUI = loadKhoraUI();
 
   const html = KhoraUI.renderHeader({
@@ -26,8 +26,43 @@ test('KhoraUI.renderHeader renders title, help trigger and step badge cleanly', 
   });
 
   assert.match(html, /<h2 class="card-title"[^>]*>Mi Flujo ACT<\/h2>/);
-  assert.match(html, /data-help-topic="act-flow"/);
+  assert.doesNotMatch(html, /help-info-trigger/);
   assert.match(html, /Paso 2 de 5/);
+});
+
+test('KhoraUI.buttonInlineState transitions pending -> ok -> restored', async () => {
+  const KhoraUI = loadKhoraUI();
+  const classes = new Set();
+  const btn = {
+    innerHTML: 'Enviar feedback',
+    textContent: 'Enviar feedback',
+    disabled: false,
+    dataset: {},
+    classList: {
+      add: (...c) => c.forEach(x => classes.add(x)),
+      remove: (...c) => c.forEach(x => classes.delete(x)),
+      has: (c) => classes.has(c)
+    }
+  };
+
+  KhoraUI.buttonInlineState(btn, 'pending', 'Enviando…');
+  assert.equal(btn.disabled, true);
+  assert.equal(btn.textContent, 'Enviando…');
+  assert.equal(classes.has('btn-inline-pending'), true);
+
+  let doneCalled = false;
+  KhoraUI.buttonInlineState(btn, 'ok', '✓ Enviado', {
+    resetMs: 25,
+    onDone: () => { doneCalled = true; }
+  });
+  assert.equal(btn.textContent, '✓ Enviado');
+  assert.equal(classes.has('btn-inline-ok'), true);
+
+  await new Promise(r => setTimeout(r, 45));
+  assert.equal(doneCalled, true);
+  assert.equal(btn.disabled, false);
+  assert.equal(btn.innerHTML, 'Enviar feedback');
+  assert.equal(classes.has('btn-inline-ok'), false);
 });
 
 test('KhoraUI.renderStepper renders nodes variant with correct active/completed states', () => {

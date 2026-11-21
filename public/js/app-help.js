@@ -539,7 +539,131 @@
     };
   },
 
+  openHelpDrawer({ viewId = null, topicId = null, termKey = null } = {}) {
+    const drawer = document.getElementById('help-drawer');
+    const backdrop = document.getElementById('help-drawer-backdrop');
+    if (!drawer || !backdrop) return false;
+
+    const catalog = this.getHelpCatalog();
+    const resolvedId = viewId || this.currentView || 'guia-inicio';
+    const guide = (topicId && catalog.topics[topicId]) || catalog.screens[resolvedId] || catalog.screens['guia-inicio'];
+    const glossary = (typeof ACT_GLOSSARY !== 'undefined' && ACT_GLOSSARY) ? ACT_GLOSSARY : {};
+    const focusedTerm = termKey && glossary[termKey] ? { key: termKey, ...glossary[termKey] } : null;
+    const otherTerms = Object.entries(glossary).filter(([k]) => k !== termKey);
+
+    const esc = (v) => (window.KhoraUtils?.escapeHtml ? window.KhoraUtils.escapeHtml(v) : String(v ?? ''));
+    const stepsList = guide.steps || guide.bullets || [];
+
+    drawer.innerHTML = `
+      <div class="help-drawer-header">
+        <div>
+          <span class="badge" style="background: rgba(87, 139, 116, 0.14); color: var(--sage-700); margin-bottom: 4px; display: inline-block;">
+            ${focusedTerm ? 'Concepto ACT' : 'Guía y conceptos ACT'}
+          </span>
+          <h3 class="card-title" style="margin: 0;">${esc(focusedTerm ? focusedTerm.title : guide.title)}</h3>
+        </div>
+        <button type="button" class="btn-icon" id="btn-help-drawer-close" aria-label="Cerrar" style="width: 34px; height: 34px; flex-shrink: 0;">✕</button>
+      </div>
+
+      <div class="help-drawer-body">
+        ${focusedTerm ? `
+          <div class="help-drawer-term-card is-focused">
+            <p style="font-size: 0.88rem; color: var(--text-primary); line-height: 1.55; margin: 0 0 8px;">${esc(focusedTerm.plain)}</p>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.45;">
+              <strong>Ejemplo:</strong> ${esc(focusedTerm.example)}
+            </div>
+          </div>
+          <hr style="border: none; border-top: 1px solid var(--border-subtle); margin: 14px 0;">
+          <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;">
+            En esta pantalla: ${esc(guide.title)}
+          </div>
+        ` : ''}
+
+        ${(guide.does || guide.brings) ? `
+          <div class="flow-purpose-bar" style="margin-top: 6px; margin-bottom: 10px;">
+            ${guide.does ? `<span class="flow-purpose-item"><strong>Qué haces:</strong> <span>${esc(guide.does)}</span></span>` : ''}
+            ${guide.brings ? `<span class="flow-purpose-item"><strong>Qué aporta:</strong> <span>${esc(guide.brings)}</span></span>` : ''}
+          </div>
+        ` : ''}
+
+        ${guide.whenToUse ? `<p class="card-subtitle" style="line-height: 1.5; color: var(--text-primary); margin-bottom: 10px;">${esc(guide.whenToUse)}</p>` : ''}
+        ${guide.summary ? `<p class="card-subtitle" style="line-height: 1.5; color: var(--text-primary); margin-bottom: 10px;">${esc(guide.summary)}</p>` : ''}
+
+        ${stepsList.length > 0 ? `
+          <ul style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55; padding-left: 18px; margin: 0 0 12px;">
+            ${stepsList.map(st => `<li style="margin-bottom: 5px;">${esc(st)}</li>`).join('')}
+          </ul>
+        ` : ''}
+
+        ${(guide.tip || guide.note) ? `
+          <div style="padding: 10px 13px; border-radius: var(--radius-md); background: rgba(87, 139, 116, 0.1); border-left: 3.5px solid var(--sage-500); font-size: 0.81rem; color: var(--text-primary); line-height: 1.48; margin-bottom: 14px;">
+            <strong>Clave ACT:</strong> <span>${esc(guide.tip || guide.note)}</span>
+          </div>
+        ` : ''}
+
+        ${otherTerms.length > 0 ? `
+          <details class="help-drawer-glossary" ${focusedTerm ? '' : ''}>
+            <summary style="cursor: pointer; font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); padding: 6px 0;">
+              Glosario ACT (${otherTerms.length} conceptos)
+            </summary>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+              ${otherTerms.map(([k, entry]) => `
+                <div class="help-drawer-term-card" data-glossary-key="${esc(k)}">
+                  <div style="font-weight: 700; font-size: 0.83rem; color: var(--text-primary);">${esc(entry.title)}</div>
+                  <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.45; margin-top: 2px;">${esc(entry.plain)}</div>
+                </div>
+              `).join('')}
+            </div>
+          </details>
+        ` : ''}
+      </div>
+    `;
+
+    backdrop.classList.remove('hidden');
+    drawer.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      backdrop.classList.add('visible');
+      drawer.classList.add('visible');
+    });
+
+    const closeHandler = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      this.closeHelpDrawer();
+    };
+
+    backdrop.onclick = closeHandler;
+    document.getElementById('btn-help-drawer-close')?.addEventListener('click', closeHandler);
+
+    if (!this._helpDrawerEscBound) {
+      this._helpDrawerEscBound = true;
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !drawer.classList.contains('hidden')) {
+          this.closeHelpDrawer();
+        }
+      });
+    }
+
+    window.i18n?.localizeDOM?.(drawer);
+    return true;
+  },
+
+  closeHelpDrawer() {
+    const drawer = document.getElementById('help-drawer');
+    const backdrop = document.getElementById('help-drawer-backdrop');
+    if (!drawer || !backdrop) return;
+    drawer.classList.remove('visible');
+    backdrop.classList.remove('visible');
+    setTimeout(() => {
+      drawer.classList.add('hidden');
+      backdrop.classList.add('hidden');
+    }, 220);
+  },
+
   openScreenHelpModal(viewId = null) {
+    if (this.openHelpDrawer({ viewId })) return;
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
@@ -589,12 +713,7 @@
   },
 
   openTopicHelpModal(topicId) {
-    const tooltip = document.getElementById('act-glossary-tooltip');
-    if (tooltip) {
-      tooltip.classList.remove('visible');
-      tooltip.setAttribute('aria-hidden', 'true');
-    }
-
+    if (this.openHelpDrawer({ topicId })) return;
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
