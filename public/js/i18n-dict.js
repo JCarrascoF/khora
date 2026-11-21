@@ -995,6 +995,31 @@
         }
       },
       pills: {
+        pill_guia_act: {
+          categoryLabel: 'Foundations',
+          title: 'Khōra & ACT Foundations',
+          summary: 'Why we do not try to erase difficult emotions here, what making space means, and how to use your values as a compass.',
+          content: `
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              If you opened Khōra looking for "tricks to stop feeling anxious" or "think positive", this brief guide will save you a lot of frustration.
+            </p>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              This app is grounded in <strong>Acceptance and Commitment Therapy (ACT)</strong>, an evidence-based psychological approach that proposes something radically different from traditional mental control.
+            </p>
+            <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin-top: 14px; margin-bottom: 6px;">1. Your mind has no delete button</div>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              Trying <em>not</em> to feel fear, guilt, or sadness almost always multiplies them. If you try with all your strength not to think about a white bear for a minute, the only thing you will think about is the bear. We are not here to fight what you feel or argue with your head.
+            </p>
+            <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin-top: 14px; margin-bottom: 6px;">2. Make space (instead of fighting)</div>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              Emotional discomfort is unpleasant, but it is not dangerous and does not mean you are broken. When you learn to locate it in the body, name it, and give it room without rushing to numb it, it stops hijacking all your energy.
+            </p>
+            <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin-top: 14px; margin-bottom: 6px;">3. Your values drive the bus</div>
+            <p style="margin-bottom: 12px; line-height: 1.6;">
+              Your doubts and fears will ride in the back seats, sometimes shouting. But they do not have hands to turn the steering wheel. The goal is not to feel zero fear, but to take steps toward what truly matters to you <em>even with fear along for the ride</em>.
+            </p>
+          `
+        },
         pill_1: {
           categoryLabel: 'Defusion',
           title: 'What is cognitive defusion and how to use it in 30 seconds?',
@@ -1232,6 +1257,7 @@
     'Visibilizar el coste de la «falsa paz» y detectar dónde necesitas límites.': 'Spot the hidden cost of "false peace" and see where boundaries are needed.',
     '📖 Entrenar y Leer (En calma)': '📖 Train & Read (In Calm Moments)',
     '📖 Lecturas y Ejercicios ACT': '📖 ACT Readings & Exercises',
+    '← Volver a Lecturas y Ejercicios': '← Back to Readings & Exercises',
     'Píldoras de 1 min, frases ancla, Deconstructor «Yo Soy» y El Pivote (Dolor → Anhelo).': '1-min pills, anchor cards, "I Am" Deconstructor, and The Pivot (Pain → Yearning).',
     'Abrir →': 'Open →',
     '✨ Qué aporta:': '✨ What it brings:',

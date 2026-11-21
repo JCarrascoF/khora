@@ -194,3 +194,26 @@ test('seedDemoData localizes all demo items in EN and reverts cleanly to ES', ()
   assert.equal(enEnv.sm.getAnchors().find(a => a.id === 'demo_anc_1').category, 'Límites');
   assert.equal(enEnv.sm.getTherapyReflections().find(r => r.id === 'demo_ref_2').clinicalExtract.sessionFocus, esRef2Focus);
 });
+
+test('all study pills including pill_guia_act and back navigation strings have EN translations', () => {
+  const i18n = loadI18n();
+  const pillsSrc = fs.readFileSync(path.join(ROOT_DIR, 'public', 'js', 'subapp-pills-anchors.js'), 'utf8');
+  const pillIds = [...pillsSrc.matchAll(/id:\s*'(pill_[^']+)'/g)].map(m => m[1]);
+  assert.ok(pillIds.includes('pill_guia_act'), 'pill_guia_act should exist in subapp-pills-anchors.js');
+
+  const sandbox = { window: {}, globalThis: {} };
+  sandbox.window = sandbox;
+  sandbox.globalThis = sandbox;
+  vm.runInNewContext(i18nDictSrc, sandbox);
+  const enPills = sandbox.KHORA_I18N_DICT.CATALOGS_EN.pildoras.pills;
+
+  for (const id of pillIds) {
+    assert.ok(enPills[id], `Missing EN translation in i18n-dict.js for pill "${id}"`);
+    assert.ok(enPills[id].title?.trim(), `Missing EN title for pill "${id}"`);
+    assert.ok(enPills[id].content?.trim(), `Missing EN content for pill "${id}"`);
+  }
+
+  i18n.lang = 'en';
+  assert.equal(i18n.translateText('← Volver a Lecturas y Ejercicios'), '← Back to Readings & Exercises');
+  assert.equal(i18n.translateText('← Volver al inicio'), '← Back to home');
+});

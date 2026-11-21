@@ -908,31 +908,27 @@ class PerfilApp {
       `;
     }
 
-    modalBody.innerHTML = window.KhoraUI.renderTypeformShell({
+    const container = document.getElementById('perfil-view');
+    if (!container) return;
+
+    container.innerHTML = window.KhoraUI.renderTypeformShell({
       currentStep: w.step,
       totalSteps: 3,
       bodyId: 'wiz-step-body',
-      stepHtml,
-      compact: true
+      stepHtml
     });
-    if (window.app?.openModal) {
-      window.app.openModal('medium', { resetScroll });
-    } else {
-      modal.classList.add('active');
-    }
-    if (!resetScroll) {
-      modalBody.scrollTop = prevScroll;
+    if (resetScroll) {
+      window.KhoraUtils?.scrollToTop?.();
     }
     this.bindWizardEvents();
   }
 
   bindWizardEvents() {
-    const modal = document.getElementById('app-modal');
     const w = this.wizardState;
 
     const closeModal = () => {
-      if (window.app?.closeModal) window.app.closeModal();
-      else modal?.classList.remove('active');
+      this.render();
+      this.bindEvents();
     };
 
     document.getElementById('btn-wiz-cancel')?.addEventListener('click', closeModal);
@@ -1303,18 +1299,22 @@ class PerfilApp {
         `;
       }
 
-      modalBody.innerHTML = window.KhoraUI.renderTypeformShell({
+      const container = document.getElementById('perfil-view');
+      if (!container) return;
+      const closeModal = () => {
+        this.render();
+        this.bindEvents();
+      };
+
+      container.innerHTML = window.KhoraUI.renderTypeformShell({
         currentStep: pasStep,
         totalSteps: 3,
         bodyId: 'pas-step-body',
-        stepHtml,
-        compact: true
+        stepHtml
       });
 
-      if (window.app?.openModal) {
-        window.app.openModal('medium', { resetScroll });
-      } else {
-        modal.classList.add('active');
+      if (resetScroll) {
+        window.KhoraUtils?.scrollToTop?.();
       }
 
       document.getElementById('btn-modal-cancel')?.addEventListener('click', closeModal);

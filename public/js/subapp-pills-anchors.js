@@ -636,12 +636,16 @@ class PildorasAnclajesApp {
     const area = this.studyAreas.find(a => a.id === pill.category) || null;
     const relatedWorkshop = area?.workshops?.[0] || null;
 
+    const backLabel = this.readingReturnView === 'guia-inicio'
+      ? '← Volver al inicio'
+      : '← Volver a Lecturas y Ejercicios';
+
     return `
       <div class="view-plain-shell">
         <div class="toolkit-header toolkit-header-compact" style="margin-bottom: 18px;">
           <div class="flex-between" style="flex-wrap: wrap; gap: 10px 16px;">
             <button type="button" class="btn-inline-link toolkit-back-btn" id="btn-reading-back">
-              ← Volver a Lecturas y Ejercicios
+              ${backLabel}
             </button>
             <button type="button" class="btn-secondary" data-toggle-fav="${pill.id}" style="font-size: 0.8rem; padding: 6px 12px; color: ${isFav ? '#b86b59' : 'var(--text-secondary)'};">
               ${isFav ? '♥ Guardado' : '♡ Guardar lectura'}
@@ -682,7 +686,7 @@ class PildorasAnclajesApp {
 
         <div class="toolkit-all-footer" style="margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
           <button type="button" class="btn-inline-link" id="btn-reading-back-bottom">
-            ← Volver a Lecturas y Ejercicios
+            ${backLabel}
           </button>
         </div>
       </div>
@@ -904,32 +908,40 @@ class PildorasAnclajesApp {
     if (!trick) return;
 
     this.stopTrickTimer();
+    const surfaceContainer = document.getElementById('pildoras-anclajes-view');
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
-    if (!modal || !modalBody) return;
-    const modalSize = trickId === 'trick_bus_driver' ? 'medium' : 'wide';
+    const target = surfaceContainer || modalBody;
+    if (!target) return;
 
-    if (trickId === 'trick_drop_anchor') {
-      this.runTrickDropAnchor(modalBody);
-    } else if (trickId === 'trick_bus_driver') {
-      this.runTrickBusDriver(modalBody, options);
-    } else if (trickId === 'trick_serene_silence') {
-      this.runTrickSereneSilence(modalBody);
-    } else if (trickId === 'trick_comic_voice') {
-      this.runTrickComicVoice(modalBody);
-    } else if (trickId === 'trick_cold_breath') {
-      this.runTrickColdBreath(modalBody);
-    } else if (trickId === 'trick_two_arrows') {
-      this.runTrickTwoArrows(modalBody);
-    } else if (trickId === 'trick_pause_rescue') {
-      this.runTrickPauseRescue(modalBody);
-    } else if (trickId === 'trick_somatic_yes') {
-      this.runTrickSomaticYes(modalBody);
+    if (surfaceContainer && window.app?.currentView !== 'pildoras-trucos' && window.app?.navigate) {
+      window.app.navigate('pildoras-trucos', { updateHash: false });
     }
 
-    if (window.app?.openModal) {
+    if (trickId === 'trick_drop_anchor') {
+      this.runTrickDropAnchor(target);
+    } else if (trickId === 'trick_bus_driver') {
+      this.runTrickBusDriver(target, options);
+    } else if (trickId === 'trick_serene_silence') {
+      this.runTrickSereneSilence(target);
+    } else if (trickId === 'trick_comic_voice') {
+      this.runTrickComicVoice(target);
+    } else if (trickId === 'trick_cold_breath') {
+      this.runTrickColdBreath(target);
+    } else if (trickId === 'trick_two_arrows') {
+      this.runTrickTwoArrows(target);
+    } else if (trickId === 'trick_pause_rescue') {
+      this.runTrickPauseRescue(target);
+    } else if (trickId === 'trick_somatic_yes') {
+      this.runTrickSomaticYes(target);
+    }
+
+    if (surfaceContainer) {
+      window.KhoraUtils?.scrollToTop?.();
+    } else if (window.app?.openModal) {
+      const modalSize = trickId === 'trick_bus_driver' ? 'medium' : 'wide';
       window.app.openModal(modalSize);
-    } else {
+    } else if (modal) {
       modal.classList.add('active');
     }
   }
@@ -943,6 +955,12 @@ class PildorasAnclajesApp {
 
   closeAppModal() {
     this.stopTrickTimer();
+    const surfaceContainer = document.getElementById('pildoras-anclajes-view');
+    if (surfaceContainer) {
+      this.render();
+      this.bindEvents();
+      return;
+    }
     if (window.app?.closeModal) {
       window.app.closeModal();
     } else {
@@ -1867,8 +1885,14 @@ class PildorasAnclajesApp {
       });
 
       const returnToStudyIndex = () => {
+        const returnTarget = this.readingReturnView;
+        this.readingReturnView = null;
         this.activeReadingId = null;
         this.activeWorkshopId = null;
+        if (returnTarget === 'guia-inicio' && window.app?.navigate) {
+          window.app.navigate('guia-inicio');
+          return;
+        }
         if (typeof location !== 'undefined' && window.app && location.hash !== '#pildoras-estudio') {
           location.hash = 'pildoras-estudio';
         }

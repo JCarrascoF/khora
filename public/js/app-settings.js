@@ -490,7 +490,6 @@
         ? new Date(status.lastSync).toLocaleTimeString(window.i18n?.getLocale?.() || 'es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
         : '—';
       const currentLang = window.i18n?.getLang?.() || 'es';
-      const anchorsOn = settings.showAnchorsCard !== false;
       const explanationsOn = (document.documentElement.getAttribute('data-explanations') || settings.explanations || 'hide') !== 'hide';
       const actConceptsOn = (document.documentElement.getAttribute('data-act-concepts') || settings.actConcepts || 'show') !== 'hide';
 
@@ -727,18 +726,8 @@ ${currentPalette === 'custom' ? (() => {
 
 <div class="pref-row">
 <div class="pref-row-info">
-<span class="pref-row-label">Tarjetas de anclaje en Lecturas</span>
-<span class="pref-row-hint">Mostrar tus frases ancla en la parte superior</span>
-</div>
-<button type="button" class="pref-switch ${anchorsOn ?'on' :''}" id="btn-setting-toggle-anchors" role="switch" aria-checked="${anchorsOn ?'true' :'false'}" aria-label="Tarjetas de anclaje en Lecturas">
-<span class="pref-switch-knob"></span>
-              </button>
-            </div>
-
-<div class="pref-row">
-<div class="pref-row-info">
 <span class="pref-row-label">Textos explicativos</span>
-<span class="pref-row-hint">Mostrar descripciones y guías breves en pantalla (no afecta a los botones ⓘ)</span>
+<span class="pref-row-hint">Mostrar descripciones y guías breves en pantalla</span>
 </div>
 <button type="button" class="pref-switch ${explanationsOn ?'on' :''}" id="btn-setting-toggle-explanations" role="switch" aria-checked="${explanationsOn ?'true' :'false'}" aria-label="Textos explicativos">
 <span class="pref-switch-knob"></span>
@@ -1058,19 +1047,6 @@ ${currentPalette === 'custom' ? (() => {
         st.vibration = nextVal;
         window.stateManager.saveSettings(st);
         if (nextVal) this.triggerHaptic([40]);
-        renderModalContent();
-        this.triggerSettingsSaveIndicator();
-      });
-
-      document.getElementById('btn-setting-toggle-anchors')?.addEventListener('click', () => {
-        const st = window.stateManager.getSettings();
-        const nextVal = st.showAnchorsCard === false;
-        st.showAnchorsCard = nextVal;
-        window.stateManager.saveSettings(st);
-        if (window.pildorasAnclajesApp) {
-          window.pildorasAnclajesApp.render();
-          window.pildorasAnclajesApp.bindEvents();
-        }
         renderModalContent();
         this.triggerSettingsSaveIndicator();
       });

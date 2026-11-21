@@ -69,9 +69,32 @@
      * @param {boolean} [options.compact=false] - Compact mode for modals (no outer max-width margin)
      * @returns {string} HTML string
      */
-    renderTypeformShell({ currentStep, totalSteps, bodyId = 'typeform-step-body', stepHtml = '', compact = false }) {
+    renderTypeformShell({
+      currentStep,
+      totalSteps,
+      steps = [],
+      navAriaLabel = 'Pasos',
+      backId = '',
+      backLabel = '← Volver',
+      bodyId = 'typeform-step-body',
+      stepHtml = '',
+      compact = false
+    }) {
       const esc = escapeHtml;
       const progressPercent = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 100;
+      const backBtn = backId
+        ? `<button type="button" class="btn-inline-link" id="${esc(backId)}">${esc(backLabel)}</button>`
+        : '';
+      const stepsNav = Array.isArray(steps) && steps.length > 0
+        ? `
+          <nav class="act-typeform-steps-nav" aria-label="${esc(navAriaLabel)}">
+            ${steps.map(s => {
+              const cls = s.step === currentStep ? 'active' : (s.step < currentStep ? 'completed' : '');
+              return `<button type="button" class="act-step-pill ${cls}" data-goto-step="${esc(s.step)}" ${s.step === currentStep ? 'aria-current="step"' : ''}>${esc(s.label)}</button>`;
+            }).join('')}
+          </nav>
+        `.trim()
+        : '';
 
       return `
         <div class="act-typeform-shell" ${compact ? 'style="max-width: 100%; margin: 0;"' : ''}>
@@ -80,10 +103,12 @@
               <span class="badge" style="background-color: rgba(87, 139, 116, 0.16); color: var(--sage-700)">
                 ${esc(currentStep)} / ${esc(totalSteps)}
               </span>
+              ${backBtn}
             </div>
             <div class="act-progress-track" role="progressbar" aria-valuenow="${esc(currentStep)}" aria-valuemin="1" aria-valuemax="${esc(totalSteps)}">
               <div class="act-progress-fill" style="width: ${progressPercent}%;"></div>
             </div>
+            ${stepsNav}
           </div>
 
           <div id="${esc(bodyId)}" class="act-typeform-stage">
