@@ -199,6 +199,37 @@ test('Learn nav group is separated from Ahora mismo and Home welcome focuses on 
   assert.doesNotMatch(homeView.innerHTML, /triage-calm-section/);
 });
 
+test('Guide return view resets on fresh entry and preserves on re-entry, with back label switching', () => {
+  const { app, guideView } = loadAppHarness({ initialLang: 'es' });
+
+  // Fresh entry from Home: resets to ahora-mismo + Inicio back label
+  app.navigate('home');
+  app.navigate('guide');
+  assert.equal(app.currentView, 'guide');
+  assert.equal(app.currentGroup, 'ahora-mismo');
+  assert.equal(app.guideReturnView, null);
+  assert.match(guideView.innerHTML, /← Volver a Inicio/);
+
+  // Re-entry from Learn: sets guideReturnView to readings + learn group + Aprender back label
+  app.navigate('guide', { guideSection: null, guideReturnView: 'readings' });
+  assert.equal(app.currentGroup, 'learn');
+  assert.match(guideView.innerHTML, /← Volver a Aprender/);
+
+  // In-place re-render while already on guide (no options): preserves return view
+  app.navigate('guide');
+  assert.equal(app.currentView, 'guide');
+  assert.equal(app.guideReturnView, 'readings');
+  assert.equal(app.currentGroup, 'learn');
+  assert.match(guideView.innerHTML, /← Volver a Aprender/);
+
+  // Fresh entry again from home resets back to ahora-mismo + Inicio
+  app.navigate('home');
+  app.navigate('guide');
+  assert.equal(app.currentGroup, 'ahora-mismo');
+  assert.equal(app.guideReturnView, null);
+  assert.match(guideView.innerHTML, /← Volver a Inicio/);
+});
+
 test('HTML and Settings expose English section IDs and Khōra Usage Guide button', () => {
   const html = fs.readFileSync(path.join(ROOT, 'public/index.html'), 'utf8');
   const settingsJs = fs.readFileSync(path.join(ROOT, 'public/js/app-settings.js'), 'utf8');
