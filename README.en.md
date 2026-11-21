@@ -24,7 +24,6 @@ In Greek philosophy, *khōra* means *the space that holds without judging*: a pl
 * **⚡ Toolkit:** guided live micro-exercises to interrupt autopilot (*Dropping Anchor / ACE protocol*, *Say NO in 15s*, *2-Minute Pause*, *Somatic YES Posture*…).
 * **⚖️ Torn on what to do or afraid to give in:** clarify what is holding you back and pick one honest, value-aligned micro-step in 2 steps.
 * **🏳️ Just gave in (*False Peace*):** log when you said "yes" wanting to say "no" so its real physical and emotional toll becomes visible.
-* **📖 ACT Readings & Concepts:** foundations, workshops, and readings organized by area, *"I Am" Label Deconstructor*, and *The Pivot (from pain to yearning)*.
 
 ---
 
@@ -40,6 +39,13 @@ In Greek philosophy, *khōra* means *the space that holds without judging*: a pl
 * **🛋️ Therapy Notebook:** jot down insights between sessions and generate a **ready-to-copy brief clinical summary** to bring to your therapist.
 * **🌱 Cool-Down History:** revisit past episodes calmly once the wave passes to consolidate long-term perspective.
 * **📈 Charts & Hexaflex:** track your psychological flexibility radar and your ratio of value-driven choices over time.
+
+---
+
+### 4. 📖 Learn *(at your own pace)*
+* **📖 ACT Readings & Concepts:** foundations, workshops, and readings organized by area, *"I Am" Label Deconstructor*, and *The Pivot (from pain to yearning)*.
+* **🧭 ACT Introduction:** a short guide to get oriented before you start practicing.
+* **🗺️ Khōra Usage Guide:** a tour of every app feature; find it from **Home**, from *Learn*, or from **⚙️ Settings → About Khōra**.
 
 ---
 

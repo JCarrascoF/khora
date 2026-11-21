@@ -582,8 +582,7 @@
           { id: 'act-space', label: 'Process Emotion' },
           { id: 'toolkit', label: 'Toolkit' },
           { id: 'compass', label: 'Choose Action' },
-          { id: 'false-peace', label: 'Just Gave In' },
-          { id: 'readings', label: 'Readings & Exercises' }
+          { id: 'false-peace', label: 'Just Gave In' }
         ]
       },
       'yo': {
@@ -602,6 +601,12 @@
           { id: 'history', label: 'Cool-Down History' },
           { id: 'charts', label: 'Charts & Hexaflex' },
           { id: 'activity', label: 'Recent Activity' }
+        ]
+      },
+      'learn': {
+        label: 'Learn:',
+        items: [
+          { id: 'readings', label: 'Readings & Exercises' }
         ]
       }
     },
@@ -999,14 +1004,14 @@
       pills: {
         pill_guia_act: {
           categoryLabel: 'Foundations',
-          title: 'Khōra & ACT Foundations',
-          summary: 'Why we do not try to erase difficult emotions here, what making space means, and how to use your values as a compass.',
+          title: 'Introduction to ACT',
+          summary: 'What Acceptance and Commitment Therapy is, why we do not fight what you feel, and how to use your values as a compass.',
           content: `
             <p style="margin-bottom: 12px; line-height: 1.6;">
-              If you opened Khōra looking for "tricks to stop feeling anxious" or "think positive", this brief guide will save you a lot of frustration.
+              If you are looking for "tricks to stop feeling anxious" or "think positive", this brief introduction will save you a lot of frustration.
             </p>
             <p style="margin-bottom: 12px; line-height: 1.6;">
-              This app is grounded in <strong>Acceptance and Commitment Therapy (ACT)</strong>, an evidence-based psychological approach that proposes something radically different from traditional mental control.
+              <strong>Acceptance and Commitment Therapy (ACT)</strong> is an evidence-based psychological approach that proposes something radically different from traditional mental control.
             </p>
             <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin-top: 14px; margin-bottom: 6px;">1. Your mind has no delete button</div>
             <p style="margin-bottom: 12px; line-height: 1.6;">

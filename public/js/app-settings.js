@@ -887,6 +887,9 @@ ${currentPalette === 'custom' ? (() => {
                 En filosofía griega, <em>khōra</em> es el espacio que da cabida sin juzgar. Esta aplicación es gratuita, sin rastreadores y guarda tus datos únicamente en tu dispositivo. Es una herramienta personal de práctica ACT y no sustituye la terapia psicológica.
               </p>
               <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <button type="button" class="btn-secondary" id="btn-settings-khora-guide" style="font-size: 0.78rem; padding: 6px 11px;">
+                  Guía de uso de Khōra
+                </button>
                 <a href="https://github.com/${KHORA_CREDITS.githubUser}/${KHORA_CREDITS.repoName}" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 0.78rem; padding: 6px 11px; text-decoration: none;">
                   Creado con por @${KHORA_CREDITS.githubUser}
                 </a>
@@ -1267,6 +1270,12 @@ ${currentPalette === 'custom' ? (() => {
         }
         this.deferredInstallPrompt = null;
         renderModalContent();
+      });
+
+      document.getElementById('btn-settings-khora-guide')?.addEventListener('click', () => {
+        this.hideSettingsSaveIndicator();
+        this.closeModal();
+        this.navigate('guide', { guideSection: null });
       });
 
       document.getElementById('btn-settings-feedback')?.addEventListener('click', () => {

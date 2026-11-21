@@ -24,7 +24,6 @@ En filosofía griega, *khōra* significa *el espacio que da cabida sin juzgar*: 
 * **⚡ Toolkit:** ejercicios guiados en vivo para cortar el piloto automático (*Echar el Ancla / protocolo ACE*, *Decir NO en 15 segundos*, *Pausa de 2 minutos*, *Postura del SÍ*…).
 * **⚖️ Dudo qué hacer o temo ceder:** aclaras qué te está frenando y eliges un micro-paso fiel a ti en 2 pasos.
 * **🏳️ Acabo de ceder (*Paz Falsa*):** registras cuándo dijiste «sí» queriendo decir «no» para hacer visible su desgaste real.
-* **📖 Lecturas y Conceptos ACT:** fundamentos, talleres y lecturas organizadas por área, *Deconstructor «Yo Soy»* y *El Pivote (del dolor al anhelo)*.
 
 ---
 
@@ -40,6 +39,13 @@ En filosofía griega, *khōra* significa *el espacio que da cabida sin juzgar*: 
 * **🛋️ Cuaderno de Terapia:** apunta lo que descubras entre sesiones y genera con un clic un **resumen clínico listo para copiar y llevar a tu psicólogo/a**.
 * **🌱 Historial en Frío:** revisa momentos pasados con calma para integrar aprendizajes con perspectiva.
 * **📈 Gráficos y Hexaflex:** visualiza cómo evolucionas en flexibilidad psicológica y en tus elecciones guiadas por valores.
+
+---
+
+### 4. 📖 Aprender *(para ir a tu ritmo)*
+* **📖 Lecturas y Conceptos ACT:** fundamentos, talleres y lecturas organizadas por área, *Deconstructor «Yo Soy»* y *El Pivote (del dolor al anhelo)*.
+* **🧭 Introducción a ACT:** una guía corta para situarte antes de empezar a practicar.
+* **🗺️ Guía de uso de Khōra:** un recorrido por cada función de la app; la encuentras desde el **Home**, desde *Aprender* o desde **⚙️ Configuración → Sobre Khōra**.
 
 ---
 

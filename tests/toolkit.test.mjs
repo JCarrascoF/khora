@@ -404,7 +404,7 @@ test('Lecturas y Conceptos ACT renders open editorial index and navigates readin
   assert.equal(toolkit.activeWorkshopId, null);
   assert.equal(container.innerHTML.includes('anchors-unified-card'), false);
   assert.equal(container.innerHTML.includes('intro-guide-card'), false);
-  assert.match(container.innerHTML, /Fundamentos de Khōra y ACT/);
+  assert.match(container.innerHTML, /Introducción a ACT/);
   assert.match(container.innerHTML, /Defusión Cognitiva/);
   assert.match(container.innerHTML, /Límites y Soberanía/);
   assert.match(container.innerHTML, /Aceptación y Compasión/);
@@ -423,7 +423,7 @@ test('Lecturas y Conceptos ACT renders open editorial index and navigates readin
   // Returning to index works in surface
   getIdButton('btn-reading-back').click();
   assert.equal(toolkit.activeReadingId, null);
-  assert.match(container.innerHTML, /Fundamentos de Khōra y ACT/);
+  assert.match(container.innerHTML, /Introducción a ACT/);
 
   // Clicking a workshop opens it in surface without opening a modal
   const workshopBtn = getWorkshopButtons().find((b) => b.dataset.openWorkshop === 'pivot');

@@ -147,11 +147,96 @@ test('AppController resolves English routes and backward-compatible Spanish alia
   }
 });
 
-test('HTML exposes English section IDs', () => {
+test('Khōra Usage Guide renders document index with 5 sections and enter/exit navigation in ES & EN', () => {
+  const { app, guideView, sandbox } = loadAppHarness({ initialLang: 'es' });
+
+  app.navigate('guide');
+  assert.equal(app.currentView, 'guide');
+  assert.equal(sandbox.location.hash, 'guide');
+  assert.doesNotMatch(guideView.innerHTML, /act-typeform-shell/);
+  assert.match(guideView.innerHTML, /study-index-list/);
+  assert.match(guideView.innerHTML, /study-index-item/);
+  assert.match(guideView.innerHTML, /data-guide-section="now"/);
+  assert.match(guideView.innerHTML, /data-guide-section="me"/);
+  assert.match(guideView.innerHTML, /data-guide-section="evolution"/);
+  assert.match(guideView.innerHTML, /data-guide-section="learn"/);
+  assert.match(guideView.innerHTML, /data-guide-section="privacy"/);
+
+  app.guideSection = 'learn';
+  app.renderKhoraGuide();
+  assert.match(guideView.innerHTML, /study-reading-body/);
+  assert.match(guideView.innerHTML, /4\. Aprender: lecturas, introducción a ACT y talleres/);
+  assert.match(guideView.innerHTML, /btn-guide-section-back/);
+
+  app.guideSection = null;
+  app.renderKhoraGuide();
+  assert.match(guideView.innerHTML, /Guía de uso de Khōra/);
+
+  sandbox.i18n.setLang('en');
+  app.guideSection = 'privacy';
+  app.renderKhoraGuide();
+  assert.match(guideView.innerHTML, /5\. Local privacy &amp; backups/);
+  assert.match(guideView.innerHTML, /← All sections/);
+
+  app.navigate('guide', { guideSection: null, guideReturnView: 'readings' });
+  assert.equal(app.currentGroup, 'learn');
+  assert.match(guideView.innerHTML, /← Back to Learn/);
+});
+
+test('Learn nav group is separated from Ahora mismo and Home welcome focuses on Khōra guide', () => {
+  const { app, homeView } = loadAppHarness({ initialLang: 'es' });
   const html = fs.readFileSync(path.join(ROOT, 'public/index.html'), 'utf8');
+
+  assert.match(html, /data-nav-group="learn"/);
+  assert.match(html, /data-view="readings"/);
+
+  app.navigate('readings');
+  assert.equal(app.currentGroup, 'learn');
+
+  app.navigate('home');
+  assert.match(homeView.innerHTML, /id="btn-open-khora-guide"/);
+  assert.doesNotMatch(homeView.innerHTML, /id="btn-read-intro-guide"/);
+  assert.doesNotMatch(homeView.innerHTML, /triage-calm-section/);
+});
+
+test('Guide return view resets on fresh entry and preserves on re-entry, with back label switching', () => {
+  const { app, guideView } = loadAppHarness({ initialLang: 'es' });
+
+  // Fresh entry from Home: resets to ahora-mismo + Inicio back label
+  app.navigate('home');
+  app.navigate('guide');
+  assert.equal(app.currentView, 'guide');
+  assert.equal(app.currentGroup, 'ahora-mismo');
+  assert.equal(app.guideReturnView, null);
+  assert.match(guideView.innerHTML, /← Volver a Inicio/);
+
+  // Re-entry from Learn: sets guideReturnView to readings + learn group + Aprender back label
+  app.navigate('guide', { guideSection: null, guideReturnView: 'readings' });
+  assert.equal(app.currentGroup, 'learn');
+  assert.match(guideView.innerHTML, /← Volver a Aprender/);
+
+  // In-place re-render while already on guide (no options): preserves return view
+  app.navigate('guide');
+  assert.equal(app.currentView, 'guide');
+  assert.equal(app.guideReturnView, 'readings');
+  assert.equal(app.currentGroup, 'learn');
+  assert.match(guideView.innerHTML, /← Volver a Aprender/);
+
+  // Fresh entry again from home resets back to ahora-mismo + Inicio
+  app.navigate('home');
+  app.navigate('guide');
+  assert.equal(app.currentGroup, 'ahora-mismo');
+  assert.equal(app.guideReturnView, null);
+  assert.match(guideView.innerHTML, /← Volver a Inicio/);
+});
+
+test('HTML and Settings expose English section IDs and Khōra Usage Guide button', () => {
+  const html = fs.readFileSync(path.join(ROOT, 'public/index.html'), 'utf8');
+  const settingsJs = fs.readFileSync(path.join(ROOT, 'public/js/app-settings.js'), 'utf8');
 
   for (const id of [
     'home-view',
+    'guide-view',
     'profile-view',
     'false-peace-view',
     'act-space-view',
@@ -162,4 +247,7 @@ test('HTML exposes English section IDs', () => {
   ]) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
+
+  assert.match(settingsJs, /id="btn-settings-khora-guide"/);
+  assert.match(settingsJs, /Guía de uso de Khōra/);
 });
