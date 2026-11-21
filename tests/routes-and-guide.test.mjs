@@ -156,6 +156,7 @@ test('Khōra Usage Guide renders document index with 5 sections and enter/exit n
   assert.doesNotMatch(guideView.innerHTML, /act-typeform-shell/);
   assert.match(guideView.innerHTML, /study-index-list/);
   assert.match(guideView.innerHTML, /study-index-item/);
+  assert.match(guideView.innerHTML, /card-subtitle explanatory-subtext/);
   assert.match(guideView.innerHTML, /data-guide-section="now"/);
   assert.match(guideView.innerHTML, /data-guide-section="me"/);
   assert.match(guideView.innerHTML, /data-guide-section="evolution"/);
@@ -166,6 +167,8 @@ test('Khōra Usage Guide renders document index with 5 sections and enter/exit n
   app.renderKhoraGuide();
   assert.match(guideView.innerHTML, /study-reading-body/);
   assert.match(guideView.innerHTML, /4\. Aprender: lecturas, introducción a ACT y talleres/);
+  assert.match(guideView.innerHTML, /Qué encuentras y cuándo usarlo/);
+  assert.match(guideView.innerHTML, /Cómo conecta con el resto/);
   assert.match(guideView.innerHTML, /btn-guide-section-back/);
 
   app.guideSection = null;
@@ -176,6 +179,8 @@ test('Khōra Usage Guide renders document index with 5 sections and enter/exit n
   app.guideSection = 'privacy';
   app.renderKhoraGuide();
   assert.match(guideView.innerHTML, /5\. Local privacy &amp; backups/);
+  assert.match(guideView.innerHTML, /What you find here &amp; when to use it/);
+  assert.match(guideView.innerHTML, /How it connects to the rest/);
   assert.match(guideView.innerHTML, /← All sections/);
 
   app.navigate('guide', { guideSection: null, guideReturnView: 'readings' });
