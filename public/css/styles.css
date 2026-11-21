@@ -1930,13 +1930,6 @@ button.breathing-orb {
   .app-nav {
     justify-content: space-around;
   }
-  .context-subnav {
-    padding: 8px 12px 0;
-  }
-  .context-subnav-inner {
-    padding: 8px 10px;
-    gap: 6px;
-  }
 }
 
 /* ==========================================================================
