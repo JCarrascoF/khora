@@ -245,7 +245,7 @@ class AppController {
       setTimeout(() => {
         splash.classList.add('hidden');
       }, 360);
-    }, 450);
+    }, 700);
   }
 
   init() {
@@ -259,6 +259,7 @@ class AppController {
     this.initPWA();
     window.i18n?.init?.();
     this.bindGlobalNavigation();
+    this.initFeedbackGesture();
     
     // Initialize sub-apps
     if (window.perfilApp) window.perfilApp.init();
@@ -1608,12 +1609,179 @@ class AppController {
     }
   }
 
+  getFeedbackContext() {
+    const view = this.currentView || 'home';
+    if (view === 'guide' && this.guideSection) {
+      return `guide/${this.guideSection}`;
+    }
+    if (view === 'readings' && window.pildorasAnclajesApp) {
+      if (window.pildorasAnclajesApp.activeReadingId) {
+        return `readings/reading/${window.pildorasAnclajesApp.activeReadingId}`;
+      }
+      if (window.pildorasAnclajesApp.activeWorkshopId) {
+        return `readings/workshop/${window.pildorasAnclajesApp.activeWorkshopId}`;
+      }
+    }
+    return view;
+  }
+
+  initFeedbackGesture() {
+    if (this._feedbackGestureBound || typeof window === 'undefined' || typeof document === 'undefined') return;
+    this._feedbackGestureBound = true;
+
+    let lastTriggeredAt = 0;
+    const isBlocked = () => {
+      if (Date.now() - lastTriggeredAt < 1500) return true;
+      if (window.stateManager?.isVaultLocked?.()) return true;
+      const modal = document.getElementById('app-modal');
+      if (modal?.classList?.contains('active')) return true;
+      const drawer = document.getElementById('help-drawer');
+      if (drawer?.classList?.contains('open')) return true;
+      return false;
+    };
+
+    const tr = (text) => (window.i18n?.translateText ? window.i18n.translateText(text) : text);
+
+    let backdropEl = null;
+    let indicatorEl = null;
+    const ensureIndicator = () => {
+      if (!backdropEl) {
+        backdropEl = document.createElement('div');
+        backdropEl.className = 'feedback-pull-backdrop';
+        backdropEl.setAttribute('aria-hidden', 'true');
+        document.body?.appendChild?.(backdropEl);
+      }
+      if (!indicatorEl) {
+        indicatorEl = document.createElement('div');
+        indicatorEl.className = 'feedback-pull-indicator pos-bottom';
+        indicatorEl.setAttribute('aria-hidden', 'true');
+        indicatorEl.innerHTML = `<img src="./icons/icon-192.svg" alt=""><span class="feedback-pull-label"></span>`;
+        document.body?.appendChild?.(indicatorEl);
+      }
+      return { backdropEl, indicatorEl };
+    };
+
+    const updateIndicator = (progress, position = 'bottom') => {
+      const { backdropEl: bg, indicatorEl: el } = ensureIndicator();
+      const clamped = Math.max(0, Math.min(1, progress));
+      const isReady = clamped >= 1;
+
+      bg.classList.toggle('ready', isReady);
+      bg.style.opacity = clamped > 0.08 ? (isReady ? '1' : String((clamped * 0.65).toFixed(2))) : '0';
+
+      el.classList.toggle('pos-bottom', position === 'bottom');
+      el.classList.toggle('pos-top', position === 'top');
+      el.classList.toggle('ready', isReady);
+      el.style.opacity = String(clamped > 0.08 ? Math.min(1, clamped * 1.15) : 0);
+
+      const img = el.querySelector('img');
+      if (img) {
+        const deg = Math.round(clamped * 360);
+        const gray = (1 - clamped).toFixed(2);
+        const opa = (0.35 + 0.65 * clamped).toFixed(2);
+        const scale = (0.9 + 0.1 * clamped).toFixed(2);
+        img.style.filter = `grayscale(${gray}) opacity(${opa})`;
+        img.style.transform = `rotate(${deg}deg) scale(${scale})`;
+      }
+      const label = el.querySelector('.feedback-pull-label');
+      if (label) {
+        label.textContent = isReady ? tr('Suelta para enviar feedback') : tr('Enviar feedback');
+        if (!isReady) {
+          label.style.opacity = String((0.25 + 0.75 * clamped).toFixed(2));
+        } else {
+          label.style.opacity = '1';
+        }
+      }
+    };
+
+    const hideIndicator = () => {
+      if (backdropEl) {
+        backdropEl.style.opacity = '0';
+        backdropEl.classList.remove('ready');
+      }
+      if (indicatorEl) {
+        indicatorEl.style.opacity = '0';
+        indicatorEl.classList.remove('ready');
+      }
+    };
+
+    // Mobile/touch only: pull-up on bottom nav bar OR long pull-down at top of page
+    const NAV_PULL_THRESHOLD = 64;
+    const TOP_PULL_THRESHOLD = 120;
+    let touchStartY = 0;
+    let touchStartX = 0;
+    let touchStartedInNav = false;
+    let touchAtTop = false;
+    let currentProgress = 0;
+
+    document.addEventListener('touchstart', (e) => {
+      currentProgress = 0;
+      if (isBlocked() || !e.touches || e.touches.length !== 1) {
+        touchStartedInNav = false;
+        touchAtTop = false;
+        return;
+      }
+      const t = e.touches[0];
+      touchStartY = t.clientY;
+      touchStartX = t.clientX;
+      touchStartedInNav = Boolean(e.target?.closest?.('.app-nav'));
+      const scrollTop = window.scrollY || document.documentElement?.scrollTop || 0;
+      touchAtTop = scrollTop <= 2;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+      if ((!touchStartedInNav && !touchAtTop) || !e.touches || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      const deltaY = t.clientY - touchStartY;
+      const deltaX = t.clientX - touchStartX;
+      const isVertical = Math.abs(deltaY) > Math.abs(deltaX) * 1.4;
+      if (!isVertical) {
+        currentProgress = 0;
+        hideIndicator();
+        return;
+      }
+
+      if (touchStartedInNav && deltaY < -10) {
+        currentProgress = Math.min(1, Math.abs(deltaY) / NAV_PULL_THRESHOLD);
+        updateIndicator(currentProgress, 'bottom');
+      } else if (touchAtTop && !touchStartedInNav && deltaY > 18) {
+        currentProgress = Math.min(1, deltaY / TOP_PULL_THRESHOLD);
+        updateIndicator(currentProgress, 'top');
+      } else {
+        currentProgress = 0;
+        hideIndicator();
+      }
+    }, { passive: true });
+
+    const finishTouch = () => {
+      const shouldOpen = currentProgress >= 1 && !isBlocked();
+      currentProgress = 0;
+      touchStartedInNav = false;
+      touchAtTop = false;
+      hideIndicator();
+      if (shouldOpen) {
+        lastTriggeredAt = Date.now();
+        this.openFeedbackModal();
+      }
+    };
+
+    document.addEventListener('touchend', finishTouch, { passive: true });
+    document.addEventListener('touchcancel', () => {
+      currentProgress = 0;
+      touchStartedInNav = false;
+      touchAtTop = false;
+      hideIndicator();
+    }, { passive: true });
+  }
+
   openFeedbackModal() {
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
     if (!modal || !modalBody) return;
 
     const t = (text) => (window.i18n?.translateText ? window.i18n.translateText(text) : text);
+    const esc = window.KhoraUtils?.escapeHtml || ((v) => String(v ?? ''));
+    const viewContext = this.getFeedbackContext();
 
     modalBody.innerHTML = `
       <div id="feedback-modal-root">
@@ -1645,6 +1813,12 @@ class AppController {
           <label class="form-label" for="feedback-message">Detalles</label>
           <textarea id="feedback-message" class="form-textarea" rows="4" placeholder="Describe tu sugerencia, comentario o qué ocurrió..."></textarea>
         </div>
+
+        <label style="display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 0.82rem; color: var(--text-secondary); cursor: pointer;">
+          <input type="checkbox" id="feedback-include-context" checked>
+          <span>El feedback tiene que ver con donde estaba</span>
+          <code style="font-size: 0.74rem; color: var(--text-muted);">#${esc(viewContext)}</code>
+        </label>
 
         <input type="text" id="feedback-website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none;">
 
@@ -1679,13 +1853,17 @@ class AppController {
       const lang = window.i18n?.getLang?.() || 'es';
       const mode = window.stateManager?.getStorageMode?.() || 'local';
       const issueTitle = `[Feedback] ${title}`;
+      const includeContext = Boolean(document.getElementById('feedback-include-context')?.checked);
+      const metaLine = includeContext
+        ? `Khōra · view: #${viewContext} · lang: ${lang} · mode: ${mode}`
+        : `Khōra · lang: ${lang} · mode: ${mode}`;
       const issueBody = [
         `**${type}**`,
         '',
         rawBody || '(Sin descripción adicional)',
         '',
         '---',
-        `Khōra · lang: ${lang} · mode: ${mode}`
+        metaLine
       ].join('\n');
       return { type, rawTitle, rawBody, lang, mode, issueTitle, issueBody };
     };
