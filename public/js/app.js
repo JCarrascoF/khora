@@ -1338,7 +1338,7 @@ class AppController {
       e.preventDefault();
       e.stopPropagation();
       this.openHelpDrawer?.({ termKey: termEl.dataset.term });
-    });
+    }, true);
 
     const appContainer = document.querySelector('.app-container') || document.body;
     this.glossaryObserver = new MutationObserver(() => {
