@@ -6,6 +6,7 @@ import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const utilsSrc = fs.readFileSync(path.join(ROOT_DIR, 'public', 'js', 'utils.js'), 'utf8');
 const actSpaceSrc = fs.readFileSync(path.join(ROOT_DIR, 'public', 'js', 'subapp-act-space.js'), 'utf8');
 const i18nDictSrc = fs.readFileSync(path.join(ROOT_DIR, 'public', 'js', 'i18n-dict.js'), 'utf8');
 const i18nSrc = fs.readFileSync(path.join(ROOT_DIR, 'public', 'js', 'i18n.js'), 'utf8');
@@ -188,6 +189,7 @@ function loadActSpaceHarness({ coreValues = [], busPassengers = [], mindName = '
   sandbox.window = sandbox;
   sandbox.globalThis = sandbox;
 
+  vm.runInNewContext(utilsSrc, sandbox);
   vm.runInNewContext(actSpaceSrc, sandbox);
   return {
     app: sandbox.espacioActApp,

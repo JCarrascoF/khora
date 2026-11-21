@@ -904,32 +904,40 @@ class PildorasAnclajesApp {
     if (!trick) return;
 
     this.stopTrickTimer();
+    const surfaceContainer = document.getElementById('pildoras-anclajes-view');
     const modal = document.getElementById('app-modal');
     const modalBody = document.getElementById('modal-body');
-    if (!modal || !modalBody) return;
-    const modalSize = trickId === 'trick_bus_driver' ? 'medium' : 'wide';
+    const target = surfaceContainer || modalBody;
+    if (!target) return;
 
-    if (trickId === 'trick_drop_anchor') {
-      this.runTrickDropAnchor(modalBody);
-    } else if (trickId === 'trick_bus_driver') {
-      this.runTrickBusDriver(modalBody, options);
-    } else if (trickId === 'trick_serene_silence') {
-      this.runTrickSereneSilence(modalBody);
-    } else if (trickId === 'trick_comic_voice') {
-      this.runTrickComicVoice(modalBody);
-    } else if (trickId === 'trick_cold_breath') {
-      this.runTrickColdBreath(modalBody);
-    } else if (trickId === 'trick_two_arrows') {
-      this.runTrickTwoArrows(modalBody);
-    } else if (trickId === 'trick_pause_rescue') {
-      this.runTrickPauseRescue(modalBody);
-    } else if (trickId === 'trick_somatic_yes') {
-      this.runTrickSomaticYes(modalBody);
+    if (surfaceContainer && window.app?.currentView !== 'pildoras-trucos' && window.app?.navigate) {
+      window.app.navigate('pildoras-trucos', { updateHash: false });
     }
 
-    if (window.app?.openModal) {
+    if (trickId === 'trick_drop_anchor') {
+      this.runTrickDropAnchor(target);
+    } else if (trickId === 'trick_bus_driver') {
+      this.runTrickBusDriver(target, options);
+    } else if (trickId === 'trick_serene_silence') {
+      this.runTrickSereneSilence(target);
+    } else if (trickId === 'trick_comic_voice') {
+      this.runTrickComicVoice(target);
+    } else if (trickId === 'trick_cold_breath') {
+      this.runTrickColdBreath(target);
+    } else if (trickId === 'trick_two_arrows') {
+      this.runTrickTwoArrows(target);
+    } else if (trickId === 'trick_pause_rescue') {
+      this.runTrickPauseRescue(target);
+    } else if (trickId === 'trick_somatic_yes') {
+      this.runTrickSomaticYes(target);
+    }
+
+    if (surfaceContainer) {
+      window.KhoraUtils?.scrollToTop?.();
+    } else if (window.app?.openModal) {
+      const modalSize = trickId === 'trick_bus_driver' ? 'medium' : 'wide';
       window.app.openModal(modalSize);
-    } else {
+    } else if (modal) {
       modal.classList.add('active');
     }
   }
@@ -943,6 +951,12 @@ class PildorasAnclajesApp {
 
   closeAppModal() {
     this.stopTrickTimer();
+    const surfaceContainer = document.getElementById('pildoras-anclajes-view');
+    if (surfaceContainer) {
+      this.render();
+      this.bindEvents();
+      return;
+    }
     if (window.app?.closeModal) {
       window.app.closeModal();
     } else {

@@ -254,33 +254,14 @@ class EspacioActApp {
       { step: 7, label: '7. Cierre' }
     ];
 
-    container.innerHTML = `
-      <div class="act-typeform-shell">
-        <div class="act-typeform-topbar">
-          <div class="act-typeform-topbar-row">
-            <span class="badge" style="background-color: rgba(87, 139, 116, 0.16); color: var(--sage-700)">
-              ${this.currentStep} / ${this.totalSteps}
-            </span>
-            <button type="button" class="help-info-trigger" data-help-topic="espacio-act" aria-label="Información de esta herramienta">ⓘ</button>
-          </div>
-
-          <div class="act-progress-track" role="progressbar" aria-valuenow="${this.currentStep}" aria-valuemin="1" aria-valuemax="${this.totalSteps}">
-            <div class="act-progress-fill" style="width: ${progressPercent}%;"></div>
-          </div>
-
-          <nav class="act-typeform-steps-nav" aria-label="Pasos de Espacio ACT">
-            ${stepLabels.map(s => {
-              const cls = s.step === this.currentStep ? 'active' : (s.step < this.currentStep ? 'completed' : '');
-              return `<button type="button" class="act-step-pill ${cls}" data-goto-step="${s.step}" ${s.step === this.currentStep ? 'aria-current="step"' : ''}>${s.label}</button>`;
-            }).join('')}
-          </nav>
-        </div>
-
-        <div id="act-step-body" class="act-typeform-stage">
-          ${stepHtml}
-        </div>
-      </div>
-    `;
+    container.innerHTML = window.KhoraUI.renderTypeformShell({
+      currentStep: this.currentStep,
+      totalSteps: this.totalSteps,
+      steps: stepLabels,
+      navAriaLabel: 'Pasos de Espacio ACT',
+      bodyId: 'act-step-body',
+      stepHtml
+    });
   }
 
   toggleEmotion(emotionId) {
