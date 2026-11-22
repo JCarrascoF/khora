@@ -400,8 +400,8 @@ class AppController {
           e.preventDefault?.();
           return;
         }
-        if (document.body.classList.contains('crisis-immersive')) {
-          this.setCrisisImmersive(false);
+        if (document.body.classList.contains('flow-immersive')) {
+          this.setFlowImmersive(false);
           this.navigate('home');
           e.preventDefault?.();
         }
@@ -424,7 +424,7 @@ class AppController {
           this.maybeShowInstallGateModal();
         } else if (event === 'vault_locked') {
           this.closeModal();
-          this.setCrisisImmersive(false);
+          this.setFlowImmersive(false);
         }
       }
       if (event === 'auth_required') {
@@ -676,7 +676,7 @@ class AppController {
     this.currentGroup = activeGroup;
     const immersiveViews = new Set(['act-space', 'false-peace', 'compass']);
     if (!immersiveViews.has(sectionId)) {
-      this.setCrisisImmersive(false);
+      this.setFlowImmersive(false);
     }
     if (sectionId !== 'act-space') {
       if (prevView === 'act-space' && window.espacioActApp?.resetForm) {
@@ -728,18 +728,18 @@ class AppController {
       window.insightApp.render();
       window.insightApp.bindEvents();
     } else if (sectionId === 'compass' && window.brujulaValoresApp) {
-      this.setCrisisImmersive(true);
+      this.setFlowImmersive(true);
       window.brujulaValoresApp.render();
       window.brujulaValoresApp.bindEvents();
     } else if (sectionId === 'pills-anchors' && window.pildorasAnclajesApp) {
       window.pildorasAnclajesApp.render();
       window.pildorasAnclajesApp.bindEvents();
     } else if (sectionId === 'act-space' && window.espacioActApp) {
-      this.setCrisisImmersive(true);
+      this.setFlowImmersive(true);
       window.espacioActApp.render();
       window.espacioActApp.bindEvents();
     } else if (sectionId === 'false-peace' && window.pazFalsaApp) {
-      this.setCrisisImmersive(true);
+      this.setFlowImmersive(true);
       window.pazFalsaApp.render();
       window.pazFalsaApp.bindEvents();
     } else if (sectionId === 'patterns' && window.radarPatronesApp) {
@@ -755,11 +755,11 @@ class AppController {
     return'Buenas noches. Sin prisa, estás en un lugar seguro.';
   }
 
-  setCrisisImmersive(active) {
+  setFlowImmersive(active) {
     if (active) {
-      document.body.classList.add('crisis-immersive');
+      document.body.classList.add('flow-immersive');
     } else {
-      document.body.classList.remove('crisis-immersive');
+      document.body.classList.remove('flow-immersive');
     }
   }
 
@@ -1246,8 +1246,8 @@ class AppController {
     });
 
     // Exit Immersive Crisis Mode bar
-    document.getElementById('btn-exit-crisis-immersive')?.addEventListener('click', () => {
-      this.setCrisisImmersive(false);
+    document.getElementById('btn-exit-flow-immersive')?.addEventListener('click', () => {
+      this.setFlowImmersive(false);
       this.navigate('home');
     });
   }
