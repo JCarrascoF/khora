@@ -92,7 +92,7 @@ class InsightApp {
           <div class="card-header flex-between" style="flex-wrap: wrap; gap: 8px;">
             <div class="title-with-help">
               <h3 class="card-title" style="margin: 0;">Perfil de Flexibilidad Psicológica (Hexaflex)</h3>
-              <button type="button" class="help-info-trigger" data-help-topic="hexaflex-perfil" aria-label="Información de esta herramienta">ⓘ</button>
+              <button type="button" class="help-info-trigger" data-help-topic="hexaflex-perfil" aria-label="Información de esta herramienta">?</button>
             </div>
             <button type="button" class="btn-primary" id="btn-open-hexaflex-modal" style="font-size: 0.82rem; padding: 6px 14px;">
               Evaluar mi Hexaflex
@@ -131,7 +131,7 @@ class InsightApp {
             <div class="card-header">
               <div class="title-with-help">
                 <h3 class="card-title" style="margin: 0;">Tendencias Emocionales y Evolución</h3>
-                <button type="button" class="help-info-trigger" data-help-topic="tendencias-evolucion" aria-label="Información de esta herramienta">ⓘ</button>
+                <button type="button" class="help-info-trigger" data-help-topic="tendencias-evolucion" aria-label="Información de esta herramienta">?</button>
               </div>
             </div>
 
@@ -160,7 +160,7 @@ class InsightApp {
             <div class="card-header flex-between" style="flex-wrap: wrap; gap: 8px;">
               <div class="title-with-help">
                 <h3 class="card-title" style="margin: 0;">Mapa de Calor por Contextos (Sumisión Emocional)</h3>
-                <button type="button" class="help-info-trigger" data-help-topic="mapa-calor-contextos" aria-label="Información de esta herramienta">ⓘ</button>
+                <button type="button" class="help-info-trigger" data-help-topic="mapa-calor-contextos" aria-label="Información de esta herramienta">?</button>
               </div>
               <button type="button" class="btn-secondary" id="btn-insight-go-anchors" style="font-size: 0.76rem; padding: 5px 11px;">
                 Gestionar Tarjetas de Anclaje →
@@ -195,7 +195,7 @@ class InsightApp {
         <div class="card-header" style="margin-bottom: 12px;">
           <div class="title-with-help">
 <h3 class="card-title" style="margin: 0;">Actividad Reciente y Micro-Victorias</h3>
-            <button type="button" class="help-info-trigger" data-help-topic="resumen-progresion" aria-label="Información de esta herramienta">ⓘ</button>
+            <button type="button" class="help-info-trigger" data-help-topic="resumen-progresion" aria-label="Información de esta herramienta">?</button>
           </div>
         </div>
 

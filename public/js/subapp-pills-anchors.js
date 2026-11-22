@@ -446,10 +446,7 @@ class PildorasAnclajesApp {
       return `
         <div class="view-plain-shell">
           <div class="cozy-home-header toolkit-header">
-            <div class="title-with-help">
-              <h2 class="card-title" style="margin: 0;">Botiquín</h2>
-              <button type="button" class="help-info-trigger" data-help-topic="toolkit" aria-label="Información de esta herramienta">ⓘ</button>
-            </div>
+            <h2 class="card-title" style="margin: 0;">Botiquín</h2>
             <p class="cozy-home-sub">Elige lo que más se parezca a este momento para ver 2 o 3 ejercicios breves.</p>
           </div>
 
@@ -489,10 +486,7 @@ class PildorasAnclajesApp {
       <div class="view-plain-shell">
         <div class="toolkit-header toolkit-header-compact">
           <div class="flex-between" style="flex-wrap: wrap; gap: 8px 16px;">
-            <div class="title-with-help">
-              <h2 class="card-title" style="margin: 0;">Botiquín</h2>
-              <button type="button" class="help-info-trigger" data-help-topic="toolkit" aria-label="Información de esta herramienta">ⓘ</button>
-            </div>
+            <h2 class="card-title" style="margin: 0;">Botiquín</h2>
             <button type="button" class="btn-inline-link toolkit-back-btn" data-trick-group="">
               ← Elegir situación
             </button>
@@ -576,10 +570,7 @@ class PildorasAnclajesApp {
       <div class="view-plain-shell">
         <div class="card-header flex-between" style="margin-bottom: 18px;">
           <div>
-            <div class="title-with-help">
-              <h2 class="card-title" style="margin: 0;">Lecturas y Conceptos ACT</h2>
-              <button type="button" class="help-info-trigger" data-help-topic="miniguias-bolsillo" aria-label="Información de esta herramienta">ⓘ</button>
-            </div>
+            <h2 class="card-title" style="margin: 0;">Lecturas y Conceptos ACT</h2>
             <p class="card-subtitle">Índice de lecturas breves y talleres para momentos de calma.</p>
           </div>
         </div>
@@ -745,7 +736,7 @@ class PildorasAnclajesApp {
         <div class="card-header" style="margin-bottom: 12px;">
           <div class="title-with-help">
 <h2 class="card-title" style="margin: 0;">El Deconstructor del "Yo Soy"</h2>
-            <button type="button" class="help-info-trigger" data-help-topic="deconstructor-pivote" aria-label="Información de esta herramienta">ⓘ</button>
+            <button type="button" class="help-info-trigger" data-help-topic="deconstructor-pivote" aria-label="Información de esta herramienta">?</button>
           </div>
           <p class="card-subtitle">Desmonta una etiqueta fija en una conducta concreta y modificable.</p>
         </div>
@@ -838,7 +829,7 @@ class PildorasAnclajesApp {
         <div class="card-header" style="margin-bottom: 12px;">
           <div class="title-with-help">
 <h2 class="card-title" style="margin: 0;">El Pivote: Del Dolor al Anhelo</h2>
-            <button type="button" class="help-info-trigger" data-help-topic="el-pivote" aria-label="Información de esta herramienta">ⓘ</button>
+            <button type="button" class="help-info-trigger" data-help-topic="el-pivote" aria-label="Información de esta herramienta">?</button>
           </div>
           <p class="card-subtitle">Detrás de cada miedo hay algo legítimo que te importa. Cuídalo con dignidad, no con sumisión.</p>
         </div>

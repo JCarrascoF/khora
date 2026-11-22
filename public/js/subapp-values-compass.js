@@ -152,7 +152,7 @@ class BrujulaValoresApp {
           <div class="card-header" style="margin-bottom: 12px;">
             <div class="title-with-help">
               <h3 class="card-title" style="font-size: 1.05rem; margin: 0;">Nortes Fijados Recientemente</h3>
-              <button type="button" class="help-info-trigger" data-help-topic="nortes-recientes" aria-label="Información de esta herramienta">ⓘ</button>
+              <button type="button" class="help-info-trigger" data-help-topic="nortes-recientes" aria-label="Información de esta herramienta">?</button>
             </div>
           </div>
           <div>
