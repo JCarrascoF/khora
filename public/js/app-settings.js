@@ -513,7 +513,8 @@
           <div class="internal-tabs-bar" role="tablist" style="margin-top: 12px; margin-bottom: 14px;">
             <button type="button" class="internal-tab-btn ${activeSettingsTab === 'apariencia' ? 'active' : ''}" data-settings-tab="apariencia" role="tab" aria-selected="${activeSettingsTab === 'apariencia'}">Apariencia</button>
             <button type="button" class="internal-tab-btn ${activeSettingsTab === 'privacidad' ? 'active' : ''}" data-settings-tab="privacidad" role="tab" aria-selected="${activeSettingsTab === 'privacidad'}">Privacidad</button>
-            <button type="button" class="internal-tab-btn ${activeSettingsTab === 'datos' ? 'active' : ''}" data-settings-tab="datos" role="tab" aria-selected="${activeSettingsTab === 'datos'}">Datos y App</button>
+            <button type="button" class="internal-tab-btn ${activeSettingsTab === 'datos' ? 'active' : ''}" data-settings-tab="datos" role="tab" aria-selected="${activeSettingsTab === 'datos'}">Datos</button>
+            <button type="button" class="internal-tab-btn ${activeSettingsTab === 'acerca' ? 'active' : ''}" data-settings-tab="acerca" role="tab" aria-selected="${activeSettingsTab === 'acerca'}">Acerca de</button>
           </div>
 
           <div class="modal-grid-2col" style="margin-top: 6px;">
@@ -859,10 +860,58 @@ ${currentPalette === 'custom' ? (() => {
               </button>
             </div>
           </div>
+            ` : activeSettingsTab === 'acerca' ? `
+          <!-- 4. Sobre Khōra y Autor -->
+          <div class="modal-span-full settings-section-block">
+            <div class="settings-section-title" style="margin-bottom: 8px;">
+              Sobre Khōra — Tu espacio ACT
+            </div>
+            <p style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; margin: 0 0 10px 0;">
+              En filosofía griega, <em>khōra</em> es el espacio que da cabida sin juzgar. Esta aplicación es gratuita, sin rastreadores y guarda tus datos únicamente en tu dispositivo. Es una herramienta personal de práctica ACT y no sustituye la terapia psicológica.
+            </p>
+            <p style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.45; margin: 0 0 12px 0;">
+              Desarrollada con ❤️ por <strong>@${KHORA_CREDITS.githubUser}</strong>. Tip: en móvil, desliza hacia arriba desde el final de cualquier pantalla para enviar feedback.
+            </p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+              <button type="button" class="btn-secondary" id="btn-settings-khora-guide" style="font-size: 0.78rem; padding: 6px 11px;">
+                Guía de uso de Khōra
+              </button>
+              <a href="https://github.com/${KHORA_CREDITS.githubUser}/${KHORA_CREDITS.repoName}" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 0.78rem; padding: 6px 11px; text-decoration: none;">
+                GitHub @${KHORA_CREDITS.githubUser}
+              </a>
+              <a href="${KHORA_CREDITS.kofiUrl}" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 0.78rem; padding: 6px 11px; text-decoration: none;">
+                Invítame a un café en Ko-fi
+              </a>
+              <button type="button" class="btn-secondary" id="btn-settings-feedback" style="font-size: 0.78rem; padding: 6px 12px;">
+                Enviar Feedback
+              </button>
+            </div>
+            <div class="flex-between" style="gap: 8px 12px; align-items: center; flex-wrap: wrap; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border-subtle); font-size: 0.72rem; color: var(--text-muted);">
+              <div>
+                <span>${(() => {
+                  const htmlV = window.__KHORA_APP_VERSION__ || '';
+                  const swUrl = this.swRegistration?.active?.scriptURL || '';
+                  const swV = swUrl ? (swUrl.match(/v([0-9]+(?:\.[0-9]+)+)/) || [])[1] || '' : '';
+                  if (!htmlV && !swV) return 'v— (service worker no activo)';
+                  const parts = [htmlV ? `v${htmlV}` : '', swV ? `SW v${swV}` : ''];
+                  return parts.filter(Boolean).join(' · ');
+                })()}</span>
+                <span aria-hidden="true"> · </span>
+                <span>${matchMedia?.('(display-mode: standalone)')?.matches ? 'App instalada' : 'Pestaña del navegador'}</span>
+              </div>
+              ${(() => {
+                const hasWaiting = Boolean(this.swRegistration?.waiting);
+                if (hasWaiting) {
+                  return `<button type="button" class="btn-primary" id="btn-pwa-check-updates" style="font-size: 0.75rem; padding: 5px 10px;">Actualizar y recargar</button>`;
+                }
+                return `<button type="button" id="btn-pwa-check-updates" style="background: none; border: none; padding: 0; font: inherit; color: var(--text-muted); text-decoration: underline; text-underline-offset: 2px; cursor: pointer;">Revisar actualizaciones</button>`;
+              })()}
+            </div>
+          </div>
 
-          <!-- 4. Instalar como App Móvil (PWA) -->
-<div class="settings-section-block">
-<div class="settings-section-title" style="margin-bottom: 8px;">
+          <!-- 5. Usar como App en el Móvil (PWA) -->
+          <div class="modal-span-full settings-section-block">
+            <div class="settings-section-title" style="margin-bottom: 8px;">
               Usar como App en el Móvil (PWA)
             </div>
             ${this.deferredInstallPrompt ? `
@@ -877,51 +926,6 @@ ${currentPalette === 'custom' ? (() => {
               <li><strong>Aviso normal de Chrome en Android:</strong> la notificación «Toca para copiar la URL de esta aplicación» aparece siempre al abrir cualquier app web (PWA). Puedes ocultarla manteniendo pulsada la notificación y desactivando solo ese canal.</li>
             </ul>
           </div>
-
-<!-- 5. Sobre Khōra y Autor -->
-<div class="modal-span-full settings-section-block">
-<div class="settings-section-title" style="margin-bottom: 8px;">
-                Sobre Khōra — Tu espacio ACT
-              </div>
-              <p style="font-size: 0.76rem; color: var(--text-secondary); line-height: 1.45; margin: 0 0 10px 0;">
-                En filosofía griega, <em>khōra</em> es el espacio que da cabida sin juzgar. Esta aplicación es gratuita, sin rastreadores y guarda tus datos únicamente en tu dispositivo. Es una herramienta personal de práctica ACT y no sustituye la terapia psicológica.
-              </p>
-              <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                <button type="button" class="btn-secondary" id="btn-settings-khora-guide" style="font-size: 0.78rem; padding: 6px 11px;">
-                  Guía de uso de Khōra
-                </button>
-                <a href="https://github.com/${KHORA_CREDITS.githubUser}/${KHORA_CREDITS.repoName}" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 0.78rem; padding: 6px 11px; text-decoration: none;">
-                  Creado con por @${KHORA_CREDITS.githubUser}
-                </a>
-                <a href="${KHORA_CREDITS.kofiUrl}" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 0.78rem; padding: 6px 11px; text-decoration: none;">
-                  Invítame a un café en Ko-fi
-                </a>
-                <button type="button" class="btn-secondary" id="btn-settings-feedback" style="font-size: 0.78rem; padding: 6px 12px;">
-                  Enviar Feedback
-                </button>
-              </div>
-              <div class="flex-between" style="gap: 8px 12px; align-items: center; flex-wrap: wrap; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border-subtle); font-size: 0.72rem; color: var(--text-muted);">
-                <div>
-                  <span>${(() => {
-                    const htmlV = window.__KHORA_APP_VERSION__ || '';
-                    const swUrl = this.swRegistration?.active?.scriptURL || '';
-                    const swV = swUrl ? (swUrl.match(/v([0-9]+(?:\.[0-9]+)+)/) || [])[1] || '' : '';
-                    if (!htmlV && !swV) return 'v— (service worker no activo)';
-                    const parts = [htmlV ? `v${htmlV}` : '', swV ? `SW v${swV}` : ''];
-                    return parts.filter(Boolean).join(' · ');
-                  })()}</span>
-                  <span aria-hidden="true"> · </span>
-                  <span>${matchMedia?.('(display-mode: standalone)')?.matches ? 'App instalada' : 'Pestaña del navegador'}</span>
-                </div>
-                ${(() => {
-                  const hasWaiting = Boolean(this.swRegistration?.waiting);
-                  if (hasWaiting) {
-                    return `<button type="button" class="btn-primary" id="btn-pwa-check-updates" style="font-size: 0.75rem; padding: 5px 10px;">Actualizar y recargar</button>`;
-                  }
-                  return `<button type="button" id="btn-pwa-check-updates" style="background: none; border: none; padding: 0; font: inherit; color: var(--text-muted); text-decoration: underline; text-underline-offset: 2px; cursor: pointer;">Revisar actualizaciones</button>`;
-                })()}
-              </div>
-            </div>
             ` : ''}
           </div>
       `;

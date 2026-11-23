@@ -3029,6 +3029,12 @@ button:disabled {
   text-align: center;
 }
 
+@media (max-width: 767px) {
+  .app-footer {
+    display: none;
+  }
+}
+
 .app-footer-actions {
   display: flex;
   align-items: center;

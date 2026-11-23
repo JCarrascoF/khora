@@ -2162,6 +2162,8 @@
     'Botones con relleno activados': 'Filled buttons activated',
     'Apariencia': 'Appearance',
     'Privacidad': 'Privacy',
+    'Datos': 'Data',
+    'Acerca de': 'About',
     'Datos y App': 'Data & App',
     'Idioma': 'Language',
     'Vibración guía': 'Guided haptics',

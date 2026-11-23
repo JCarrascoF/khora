@@ -689,3 +689,10 @@ test('Feedback swipe gesture works inside active exercise modal (>50% viewport) 
   assert.equal(feedbackModalOverlay.classList.contains('active'), false);
   assert.equal(appModal.classList.contains('active'), true);
 });
+
+test('Mobile hides #app-footer and Settings exposes dedicated Acerca de tab', () => {
+  const settingsJsSrc = fs.readFileSync(path.join(ROOT_DIR, 'public', 'js', 'app-settings.js'), 'utf8');
+  assert.match(stylesCss, /@media\s*\(max-width:\s*767px\)\s*\{\s*\.app-footer\s*\{\s*display:\s*none;\s*\}\s*\}/);
+  assert.match(settingsJsSrc, /data-settings-tab="acerca"/);
+  assert.match(settingsJsSrc, /activeSettingsTab === 'acerca'/);
+});
