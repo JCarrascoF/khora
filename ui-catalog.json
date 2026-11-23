@@ -77,7 +77,7 @@
       "file": "public/js/app.js",
       "render_method": "renderKhoraGuide",
       "parent": "home",
-      "trigger": "Click en 'Guía de uso de Khōra' en Home o Configuración → Sobre Khōra",
+      "trigger": "Click en 'Guía de uso de Khōra' en Home o Configuración → Acerca de",
       "archetype": "list-detail-feed",
       "characteristics": ["chip-grid", "bottom-actions-bar"],
       "css_selectors": [".study-index-groups", ".study-index-list", ".study-index-item", ".study-reading-body"]
@@ -292,14 +292,24 @@
     },
     {
       "id": "modal-settings-datos",
-      "name": "Configuración · Datos y App",
+      "name": "Configuración · Datos",
       "file": "public/js/app-settings.js",
       "render_method": "openSettingsModal",
-      "trigger": "Click en pestaña 'Datos y App' de Configuración",
+      "trigger": "Click en pestaña 'Datos' de Configuración",
       "archetype": "modal-dialog",
       "characteristics": ["modal-overlay"],
       "css_selectors": ["#storage-mode-modal-root", ".settings-card"],
       "screenshot": "screenshots/02-modals/03-settings-datos.png"
+    },
+    {
+      "id": "modal-settings-acerca",
+      "name": "Configuración · Acerca de",
+      "file": "public/js/app-settings.js",
+      "render_method": "openSettingsModal",
+      "trigger": "Click en pestaña 'Acerca de' de Configuración",
+      "archetype": "modal-dialog",
+      "characteristics": ["modal-overlay"],
+      "css_selectors": ["#storage-mode-modal-root", ".settings-card"]
     },
     {
       "id": "modal-context-help",

@@ -255,7 +255,7 @@ async function main() {
 
     await cdp.eval(`document.querySelector('[data-settings-tab="datos"]').click()`);
     await sleep(200);
-    await record('02-modals', 'Configuración - Datos y App', '02-modals/03-settings-datos.png', { fullPage: false });
+    await record('02-modals', 'Configuración - Datos', '02-modals/03-settings-datos.png', { fullPage: false });
     await cdp.eval(`window.app.closeModal()`);
     await sleep(200);
 
