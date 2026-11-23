@@ -1162,7 +1162,7 @@ blockquote {
 }
 
 /* Immersive Crisis ACT Mode */
-.crisis-immersive-bar {
+.flow-immersive-bar {
   display: none;
   align-items: center;
   justify-content: space-between;
@@ -1171,26 +1171,27 @@ blockquote {
   font-size: 0.84rem;
 }
 
-.crisis-immersive-label {
+.flow-immersive-label {
   font-family: var(--font-serif);
   font-style: italic;
   color: var(--accent-tension);
   font-size: 0.88rem;
 }
 
-body.crisis-immersive .app-header,
-body.crisis-immersive .app-nav,
-body.crisis-immersive .context-subnav,
-body.crisis-immersive .app-footer,
-body.crisis-immersive .persistence-warning-banner {
+body.flow-immersive .app-header,
+body.flow-immersive .app-header-desktop,
+body.flow-immersive .app-nav,
+body.flow-immersive .context-subnav,
+body.flow-immersive .app-footer,
+body.flow-immersive .persistence-warning-banner {
   display: none !important;
 }
 
-body.crisis-immersive .crisis-immersive-bar {
+body.flow-immersive .flow-immersive-bar {
   display: flex;
 }
 
-body.crisis-immersive .app-container {
+body.flow-immersive .app-container {
   max-width: 720px;
   padding-bottom: 32px;
 }

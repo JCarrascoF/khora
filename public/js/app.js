@@ -400,8 +400,8 @@ class AppController {
           e.preventDefault?.();
           return;
         }
-        if (document.body.classList.contains('crisis-immersive')) {
-          this.setCrisisImmersive(false);
+        if (document.body.classList.contains('flow-immersive')) {
+          this.setFlowImmersive(false);
           this.navigate('home');
           e.preventDefault?.();
         }
@@ -424,7 +424,7 @@ class AppController {
           this.maybeShowInstallGateModal();
         } else if (event === 'vault_locked') {
           this.closeModal();
-          this.setCrisisImmersive(false);
+          this.setFlowImmersive(false);
         }
       }
       if (event === 'auth_required') {
@@ -676,7 +676,7 @@ class AppController {
     this.currentGroup = activeGroup;
     const immersiveViews = new Set(['act-space', 'false-peace', 'compass']);
     if (!immersiveViews.has(sectionId)) {
-      this.setCrisisImmersive(false);
+      this.setFlowImmersive(false);
     }
     if (sectionId !== 'act-space') {
       if (prevView === 'act-space' && window.espacioActApp?.resetForm) {
@@ -728,18 +728,18 @@ class AppController {
       window.insightApp.render();
       window.insightApp.bindEvents();
     } else if (sectionId === 'compass' && window.brujulaValoresApp) {
-      this.setCrisisImmersive(true);
+      this.setFlowImmersive(true);
       window.brujulaValoresApp.render();
       window.brujulaValoresApp.bindEvents();
     } else if (sectionId === 'pills-anchors' && window.pildorasAnclajesApp) {
       window.pildorasAnclajesApp.render();
       window.pildorasAnclajesApp.bindEvents();
     } else if (sectionId === 'act-space' && window.espacioActApp) {
-      this.setCrisisImmersive(true);
+      this.setFlowImmersive(true);
       window.espacioActApp.render();
       window.espacioActApp.bindEvents();
     } else if (sectionId === 'false-peace' && window.pazFalsaApp) {
-      this.setCrisisImmersive(true);
+      this.setFlowImmersive(true);
       window.pazFalsaApp.render();
       window.pazFalsaApp.bindEvents();
     } else if (sectionId === 'patterns' && window.radarPatronesApp) {
@@ -755,11 +755,11 @@ class AppController {
     return'Buenas noches. Sin prisa, estás en un lugar seguro.';
   }
 
-  setCrisisImmersive(active) {
+  setFlowImmersive(active) {
     if (active) {
-      document.body.classList.add('crisis-immersive');
+      document.body.classList.add('flow-immersive');
     } else {
-      document.body.classList.remove('crisis-immersive');
+      document.body.classList.remove('flow-immersive');
     }
   }
 
@@ -767,30 +767,39 @@ class AppController {
     const container = document.getElementById('home-view');
     if (!container || !window.stateManager) return;
 
+    const isEn = window.i18n?.getLang?.() === 'en';
     const hotFlows = [
       {
         view: 'act-space',
         primary: true,
         title: 'Siento agobio, tensión o la cabeza llena de ruido',
-        does: 'Pon en palabras lo que sientes, <span class="act-term" data-term="defusion">suelta la pelea mental</span> y dale un <span class="act-term" data-term="aceptacion">respiro a tu cuerpo</span>.'
+        does: isEn
+          ? 'Put what you feel into words, <span class="act-term" data-term="defusion">let go of the mental struggle</span>, and give <span class="act-term" data-term="aceptacion">your body a breather</span>.'
+          : 'Pon en palabras lo que sientes, <span class="act-term" data-term="defusion">suelta la pelea mental</span> y dale un <span class="act-term" data-term="aceptacion">respiro a tu cuerpo</span>.'
       },
       {
         view: 'toolkit',
         primary: false,
         title: 'Voy muy acelerado/a y necesito frenar un momento',
-        does: 'Pausas de un minuto para respirar, <span class="act-term" data-term="echar-el-ancla">frenar el impulso</span> o responder con calma.'
+        does: isEn
+          ? 'One-minute resets to breathe, <span class="act-term" data-term="echar-el-ancla">pause the urge</span>, or reply calmly.'
+          : 'Pausas de un minuto para respirar, <span class="act-term" data-term="echar-el-ancla">frenar el impulso</span> o responder con calma.'
       },
       {
         view: 'compass',
         primary: false,
         title: 'No sé qué hacer o me cuesta tomar una decisión',
-        does: 'Aclara qué miedo te está frenando y elige el paso que tenga más <span class="act-term" data-term="valores-act">sentido para ti</span>.'
+        does: isEn
+          ? 'Clarify what fear is holding you back and pick the step that <span class="act-term" data-term="valores-act">makes the most sense to you</span>.'
+          : 'Aclara qué miedo te está frenando y elige el paso que tenga más <span class="act-term" data-term="valores-act">sentido para ti</span>.'
       },
       {
         view: 'false-peace',
         primary: false,
         title: 'He dicho que sí por compromiso o miedo al conflicto',
-        does: 'Anota cuándo <span class="act-term" data-term="paz-falsa">cediste por compromiso</span> para entender el desgaste y aprender a cuidar tus límites.'
+        does: isEn
+          ? 'Write down when <span class="act-term" data-term="paz-falsa">you gave in out of obligation</span> to understand the toll and learn to protect your boundaries.'
+          : 'Anota cuándo <span class="act-term" data-term="paz-falsa">cediste por compromiso</span> para entender el desgaste y aprender a cuidar tus límites.'
       }
     ];
 
@@ -862,12 +871,26 @@ class AppController {
         id: 'now',
         label: tr('1. Ahora mismo'),
         title: tr('1. Ahora mismo: sostener el presente'),
-        lead: tr('Cuando hay agobio, prisa o dudas, empieza por la pestaña Ahora mismo sin tener que explicarlo todo.'),
+        lead: tr('Cuando hay agobio, bloqueo o prisa, pensar demasiado suele empeorar el ruido. Ahora mismo está diseñada para acompañarte dentro del momento difícil sin pedirte análisis profundos ni explicaciones largas.'),
         points: [
-          tr('Procesar Emoción (Espacio ACT): flujo guiado en 7 pasos para bajar el ruido mental, notar el cuerpo y elegir un gesto con sentido.'),
-          tr('Botiquín: pausas rápidas de 1 minuto (respiración, anclaje, freno al impulso) para momentos acelerados.'),
-          tr('Elegir qué Hacer y Acabo de Ceder: para aclarar bloqueos antes de actuar o registrar cuándo cediste por compromiso.')
+          {
+            name: tr('Procesar Emoción (Espacio ACT)'),
+            text: tr('úsalo cuando sientes una emoción intensa y tienes unos minutos para atravesarla en 7 pasos: bajar el ruido mental, notar el cuerpo y elegir un gesto con sentido.')
+          },
+          {
+            name: tr('Botiquín'),
+            text: tr('úsalo cuando estás desbordado/a o con prisa y solo puedes hacer una pausa de 1 minuto (respiración, anclaje o freno al impulso).')
+          },
+          {
+            name: tr('Elegir qué Hacer'),
+            text: tr('úsalo antes de actuar cuando sientes duda, parálisis o conflicto interno entre lo que te da miedo y lo que te importa.')
+          },
+          {
+            name: tr('Acabo de Ceder'),
+            text: tr('úsalo después de haber evitado algo o cedido por compromiso o culpa, para observar qué pasó sin castigarte.')
+          }
         ],
+        connection: tr('Lo que guardes aquí nutre después tu Historial en Frío y tus gráficos en Evolución, apoyándose en los valores y anclajes que hayas preparado en Yo.'),
         ctaLabel: tr('Ir a Ahora mismo'),
         ctaView: 'home'
       },
@@ -875,13 +898,26 @@ class AppController {
         id: 'me',
         label: tr('2. Yo'),
         title: tr('2. Yo: tus valores, tu autobús y tus patrones'),
-        lead: tr('Tu brújula personal vive en la pestaña Yo. No es una lista rígida: evoluciona contigo.'),
+        lead: tr('En medio de una crisis es difícil recordar qué es importante para ti. Yo es el espacio para construir tu brújula personal en días más tranquilos. No es una lista rígida ni definitiva: evoluciona contigo.'),
         points: [
-          tr('Mis Valores: define qué importa de verdad en tu vida y traduce esos valores en acciones concretas.'),
-          tr('Mi Autobús: identifica a tus "pasajeros" (miedos, autoexigencia, culpa) que gritan pero no llevan el volante.'),
-          tr('Mis Anclajes: frases y recordatorios propios para recuperar perspectiva cuando la mente se engancha.'),
-          tr('Mis Patrones: observa qué emociones o contextos se repiten con curiosidad y sin juicio.')
+          {
+            name: tr('Mis Valores'),
+            text: tr('define qué importa de verdad en tu vida y tradúcelo en acciones pequeñas y concretas. Tu Valor Faro guía las decisiones en toda la app.')
+          },
+          {
+            name: tr('Mi Autobús'),
+            text: tr('pon nombre a tus «pasajeros» internos (miedos, autoexigencia, culpa) para recordar que pueden hacer ruido en el asiento de atrás sin llevar el volante.')
+          },
+          {
+            name: tr('Mis Anclajes'),
+            text: tr('guarda frases y recordatorios propios que te devuelven perspectiva cuando la mente se engancha en un bucle.')
+          },
+          {
+            name: tr('Mis Patrones'),
+            text: tr('observa qué emociones, pensamientos o contextos se repiten en tu día a día con curiosidad y sin juicio.')
+          }
         ],
+        connection: tr('Todo lo que defines aquí aparece como apoyo directo cuando usas Espacio ACT o Elegir qué Hacer en Ahora mismo.'),
         ctaLabel: tr('Explorar Yo'),
         ctaView: 'values'
       },
@@ -889,13 +925,26 @@ class AppController {
         id: 'evolution',
         label: tr('3. Evolución'),
         title: tr('3. Evolución: mirar atrás en frío'),
-        lead: tr('En Evolución conviertes tus registros diarios en aprendizaje sereno para ti o para tus sesiones.'),
+        lead: tr('Cuando estamos dentro del malestar, la mente tiende a verlo todo más grande o permanente. Evolución existe para revisar tu recorrido en frío, con distancia, y transformar registros sueltos en aprendizaje sereno para ti o para tus sesiones.'),
         points: [
-          tr('Cuaderno de Terapia: reúne notas, temas pendientes y un informe en texto plano listo para copiar.'),
-          tr('Historial en Frío: revisa tus registros pasados de Espacio ACT, Brújula y Paz Falsa sin el ruido del momento.'),
-          tr('Gráficos y Hexaflex: visualiza tendencias y equilibrio entre los 6 procesos de flexibilidad psicológica.'),
-          tr('Actividad Reciente: línea temporal breve con tus últimos pasos y micro-victorias.')
+          {
+            name: tr('Cuaderno de Terapia'),
+            text: tr('reúne notas, temas pendientes y genera un resumen en texto plano listo para copiar antes de una sesión.')
+          },
+          {
+            name: tr('Historial en Frío'),
+            text: tr('repasa tus registros pasados de Espacio ACT, Elegir qué Hacer y Acabo de Ceder sin la carga emocional del momento.')
+          },
+          {
+            name: tr('Gráficos y Hexaflex'),
+            text: tr('visualiza tendencias en el tiempo y el equilibrio entre los 6 procesos de flexibilidad psicológica de ACT.')
+          },
+          {
+            name: tr('Actividad Reciente'),
+            text: tr('una línea temporal breve para ver tus últimos pasos y micro-victorias sin abrumarte con métricas.')
+          }
         ],
+        connection: tr('Se alimenta automáticamente de lo que vas registrando en Ahora mismo; si acabas de empezar, es normal verla casi vacía al principio.'),
         ctaLabel: tr('Ver Evolución'),
         ctaView: 'therapy'
       },
@@ -903,12 +952,22 @@ class AppController {
         id: 'learn',
         label: tr('4. Aprender'),
         title: tr('4. Aprender: lecturas, introducción a ACT y talleres'),
-        lead: tr('Separado de los momentos de urgencia: un espacio tranquilo para entender la Terapia ACT y practicar con calma.'),
+        lead: tr('Aprender teoría o hacer ejercicios reflexivos mientras lo estás pasando mal no suele funcionar. Aprender separa el estudio y la práctica calmada de los momentos de urgencia, para que entiendas el porqué de las herramientas a tu ritmo.'),
         points: [
-          tr('Introducción a ACT: lectura breve sobre por qué aquí no luchamos contra lo que sientes y cómo funcionan la aceptación y la defusión.'),
-          tr('Lecturas breves: píldoras claras organizadas por concepto (límites, valores, evitación, presencia).'),
-          tr('Talleres y ejercicios: prácticas interactivas como El Pivote o el Deconstructor para los días de calma.')
+          {
+            name: tr('Introducción a ACT'),
+            text: tr('una lectura breve para entender por qué aquí no luchamos contra lo que sientes y qué significan conceptos como aceptación o defusión.')
+          },
+          {
+            name: tr('Lecturas breves'),
+            text: tr('píldoras cortas organizadas por tema (límites, valores, evitación, presencia) para leer en 2 minutos.')
+          },
+          {
+            name: tr('Talleres y ejercicios'),
+            text: tr('prácticas interactivas más pausadas, como El Pivote o el Deconstructor, pensadas para días de calma.')
+          }
         ],
+        connection: tr('Muchas lecturas enlazan directamente con técnicas del Botiquín para que puedas pasar de la idea a la práctica cuando quieras.'),
         ctaLabel: tr('Ir a Aprender'),
         ctaView: 'readings'
       },
@@ -916,13 +975,26 @@ class AppController {
         id: 'privacy',
         label: tr('5. Privacidad y copias'),
         title: tr('5. Privacidad local y copias de seguridad'),
-        lead: tr('Khōra es local-first: tus datos se quedan en tu dispositivo, sin cuentas obligatorias ni rastreadores.'),
+        lead: tr('Para escribir con honestidad necesitas saber que nadie te está mirando. Khōra es local-first: funciona sin cuentas obligatorias, sin nube y sin rastreadores.'),
         points: [
-          tr('Almacenamiento local: todo vive en tu navegador (o en tu propio servidor SQLite opcional si lo autoalojas).'),
-          tr('Bloqueo rápido con PIN/contraseña: activa la bóveda en Configuración → Privacidad y bloqueo para cifrar tu sesión.'),
-          tr('Copias de seguridad: exporta o importa un archivo JSON cifrado o en texto en cualquier momento para no perder tu historial.'),
-          tr('Ayuda contextual (?): en cualquier pantalla puedes abrir su guía rápida desde el botón superior.')
+          {
+            name: tr('Almacenamiento local'),
+            text: tr('todo se guarda en tu dispositivo (o en tu propio servidor SQLite opcional si la autoalojas).')
+          },
+          {
+            name: tr('Bloqueo rápido con PIN o contraseña'),
+            text: tr('activa la bóveda en Configuración → Privacidad y bloqueo para cifrar tus datos si compartes dispositivo o quieres una capa extra de intimidad.')
+          },
+          {
+            name: tr('Copias de seguridad'),
+            text: tr('exporta o importa un archivo JSON cifrado o en texto cuando quieras cambiar de dispositivo o guardar un respaldo.')
+          },
+          {
+            name: tr('Ayuda contextual (?)'),
+            text: tr('en cualquier pantalla puedes pulsar el botón ? superior para ver instrucciones paso a paso de esa vista concreta.')
+          }
         ],
+        connection: tr('Puedes volver a abrir esta guía en cualquier momento desde Aprender o Configuración → Sobre Khōra.'),
         ctaLabel: tr('Abrir Configuración'),
         ctaAction: 'settings'
       }
@@ -953,9 +1025,18 @@ class AppController {
 
             <div class="study-reading-body" style="color: var(--text-primary); font-size: 0.96rem; line-height: 1.7;">
               <p style="margin-bottom: 12px; line-height: 1.6;">${esc(activeSection.lead)}</p>
-              <ul style="padding-left: 20px; line-height: 1.6; display: grid; gap: 8px; margin-bottom: 4px;">
-                ${activeSection.points.map(p => `<li>${esc(p)}</li>`).join('')}
+              <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin-top: 14px; margin-bottom: 8px;">
+                ${esc(tr('Qué encuentras y cuándo usarlo'))}
+              </div>
+              <ul style="padding-left: 20px; line-height: 1.6; display: grid; gap: 8px; margin-bottom: 12px;">
+                ${activeSection.points.map(p => `<li><strong>${esc(p.name)}:</strong> ${esc(p.text)}</li>`).join('')}
               </ul>
+              ${activeSection.connection ? `
+                <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin-top: 14px; margin-bottom: 6px;">
+                  ${esc(tr('Cómo conecta con el resto'))}
+                </div>
+                <p style="margin-bottom: 4px; line-height: 1.6;">${esc(activeSection.connection)}</p>
+              ` : ''}
             </div>
           </article>
 
@@ -1011,7 +1092,7 @@ class AppController {
         <div class="card-header flex-between" style="margin-bottom: 18px;">
           <div>
             <h2 class="card-title" style="margin: 0;">${esc(tr('Guía de uso de Khōra'))}</h2>
-            <p class="card-subtitle">${esc(tr('Índice de secciones para orientarte en la app a tu ritmo.'))}</p>
+            <p class="card-subtitle explanatory-subtext">${esc(tr('Índice de secciones para orientarte en la app a tu ritmo.'))}</p>
           </div>
         </div>
 
@@ -1165,8 +1246,8 @@ class AppController {
     });
 
     // Exit Immersive Crisis Mode bar
-    document.getElementById('btn-exit-crisis-immersive')?.addEventListener('click', () => {
-      this.setCrisisImmersive(false);
+    document.getElementById('btn-exit-flow-immersive')?.addEventListener('click', () => {
+      this.setFlowImmersive(false);
       this.navigate('home');
     });
   }
@@ -1257,7 +1338,7 @@ class AppController {
       e.preventDefault();
       e.stopPropagation();
       this.openHelpDrawer?.({ termKey: termEl.dataset.term });
-    });
+    }, true);
 
     const appContainer = document.querySelector('.app-container') || document.body;
     this.glossaryObserver = new MutationObserver(() => {

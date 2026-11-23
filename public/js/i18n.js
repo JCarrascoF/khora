@@ -71,7 +71,7 @@
     [/^Pivotes Registrados \((\d+)\)$/, (_, n) => `Recorded Pivots (${n})`],
     [/^🚨 Junto al Volante \((\d+)\)$/, (_, n) => `🚨 Near the Wheel (${n})`],
     [/^💺 Asientos Traseros \((\d+)\)$/, (_, n) => `💺 Back Seats (${n})`],
-    [/^✅ Valorado e integrado \((\d+)\)$/, (_, n) => `✅ Reviewed & integrated (${n})`],
+    [/^(?:✅\s*)?Valorado e integrado \((\d+)\)$/, (_, n) => `Reviewed & integrated (${n})`],
     [/^📌 (\d+) tema pendiente$/, (_, n) => `📌 ${n} pending topic`],
     [/^📌 (\d+) temas pendientes$/, (_, n) => `📌 ${n} pending topics`],
     [/^Autoabandono: (\d+)\/100$/, (_, n) => `Self-abandonment: ${n}/100`],
