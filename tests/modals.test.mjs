@@ -689,3 +689,29 @@ test('Feedback swipe gesture works inside active exercise modal (>50% viewport) 
   assert.equal(feedbackModalOverlay.classList.contains('active'), false);
   assert.equal(appModal.classList.contains('active'), true);
 });
+
+test('Mobile hides #app-footer and Settings exposes dedicated Acerca de tab', () => {
+  const settingsJsSrc = fs.readFileSync(path.join(ROOT_DIR, 'public', 'js', 'app-settings.js'), 'utf8');
+  const i18nDictSrc = fs.readFileSync(path.join(ROOT_DIR, 'public', 'js', 'i18n-dict.js'), 'utf8');
+  const appJsSrc = fs.readFileSync(path.join(ROOT_DIR, 'public', 'js', 'app.js'), 'utf8');
+  const helpJsSrc = fs.readFileSync(path.join(ROOT_DIR, 'public', 'js', 'app-help.js'), 'utf8');
+
+  assert.match(stylesCss, /@media\s*\(max-width:\s*767px\)\s*\{\s*\.app-footer\s*\{\s*display:\s*none;\s*\}\s*\}/);
+  assert.match(settingsJsSrc, /data-settings-tab="acerca"/);
+  assert.match(settingsJsSrc, /activeSettingsTab === 'acerca'/);
+
+  // New Acerca de strings and updated guide location must have EN translations
+  for (const key of [
+    "'Datos': 'Data'",
+    "'Acerca de': 'About'",
+    "'Desarrollada con ❤️ por': 'Built with ❤️ by'",
+    "'. Tip: en móvil, desliza hacia arriba desde el final de cualquier pantalla para enviar feedback.'",
+    "'Invítame a un café en Ko-fi': 'Buy me a coffee on Ko-fi'",
+    "'Puedes volver a abrir esta guía en cualquier momento desde Aprender o Configuración → Acerca de.': 'You can reopen this guide anytime from Learn or Settings → About.'"
+  ]) {
+    assert.equal(i18nDictSrc.includes(key), true, `Expected i18n-dict.js to include ${key}`);
+  }
+
+  assert.equal(appJsSrc.includes('Configuración → Acerca de.'), true);
+  assert.equal(helpJsSrc.includes('Configuración → Acerca de.'), true);
+});

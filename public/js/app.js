@@ -998,7 +998,7 @@ class AppController {
             text: tr('en cualquier pantalla puedes pulsar el botón ? superior para ver instrucciones paso a paso de esa vista concreta.')
           }
         ],
-        connection: tr('Puedes volver a abrir esta guía en cualquier momento desde Aprender o Configuración → Sobre Khōra.'),
+        connection: tr('Puedes volver a abrir esta guía en cualquier momento desde Aprender o Configuración → Acerca de.'),
         ctaLabel: tr('Abrir Configuración'),
         ctaAction: 'settings'
       }
