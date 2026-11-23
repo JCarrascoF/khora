@@ -18,6 +18,7 @@ Guía técnica para desarrolladores, auto-alojamiento (Docker / Node / servidor 
   - `Web Crypto API`: derivación de clave con **`PBKDF2`** (SHA-256, 100.000 iteraciones) y cifrado autenticado **`AES-256-GCM`** por colección/singleton antes de escribir en `localStorage`, `IndexedDB` o enviar a SQLite.
   - Desbloqueo biométrico opcional por dispositivo mediante **`WebAuthn`** (*Platform Authenticator*: FaceID / TouchID / Huella).
 - **Backend opcional (`server/server.js`):** Node.js >= 22.5.0 puro (sin dependencias externas), que utiliza `node:http`, `node:crypto` y `node:sqlite`.
+- **Gesto de feedback (`js/app.js` → `initFeedbackGesture`):** un deslizamiento ascendente largo (> 52 % de la altura del viewport, con deadzone de 24 px) iniciado desde el **bottom del scroll** de cualquier contenedor scrolleable (o de la raíz del documento cuando el contenido no cabe) abre un overlay a pantalla completa con *splash* de marca + blur sobre el fondo. El gesto está bloqueado mientras `#app-modal` (exercise modal, install gate, settings, etc.) o el propio `#feedback-modal-overlay` estén activos, y con cooldown de 1,5 s tras cada disparo.
 
 ---
 

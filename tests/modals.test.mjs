@@ -22,6 +22,14 @@ function createClassList(initial = []) {
     contains(token) {
       return set.has(token);
     },
+    toggle(token, force) {
+      if (force === undefined) {
+        if (set.has(token)) { set.delete(token); return false; }
+        set.add(token); return true;
+      }
+      if (force) { set.add(token); return true; }
+      set.delete(token); return false;
+    },
     values() {
       return [...set];
     }
@@ -530,4 +538,154 @@ test('Feedback modal submits anonymously to /api/feedback without requiring an a
   assert.match(appJsSrc, /id="btn-feedback-submit"/);
   assert.match(appJsSrc, /id="feedback-website"/);
   assert.match(appJsSrc, /fetch\('\/api\/feedback'/);
+});
+
+test('Feedback swipe gesture works inside active exercise modal (>50% viewport) and uses dedicated overlay', () => {
+  assert.match(stylesCss, /\.feedback-pull-overlay\s*\{/);
+  assert.match(stylesCss, /\.feedback-pull-splash\s*\{/);
+  assert.match(stylesCss, /\.feedback-modal-overlay\s*\{/);
+
+  const docListeners = {};
+  const elementsById = new Map();
+  const appModal = { id: 'app-modal', classList: createClassList(['active']) };
+  elementsById.set('app-modal', appModal);
+
+  const makeEl = (tag = 'div') => {
+    const classList = createClassList();
+    const styleProps = {};
+    const el = {
+      tagName: tag.toUpperCase(),
+      classList,
+      style: {
+        setProperty(k, v) { styleProps[k] = v; },
+        getPropertyValue(k) { return styleProps[k] || ''; }
+      },
+      attributes: {},
+      children: [],
+      _innerHTML: '',
+      _textContent: '',
+      set className(val) {
+        classList.remove(...classList.values());
+        String(val || '').split(/\s+/).filter(Boolean).forEach((c) => classList.add(c));
+      },
+      get className() {
+        return classList.values().join(' ');
+      },
+      set id(val) {
+        this._id = val;
+        if (val) elementsById.set(val, this);
+      },
+      get id() {
+        return this._id;
+      },
+      setAttribute(k, v) { this.attributes[k] = v; },
+      addEventListener() {},
+      appendChild(child) {
+        this.children.push(child);
+        if (child.id) elementsById.set(child.id, child);
+        return child;
+      },
+      set innerHTML(html) {
+        this._innerHTML = html;
+        if (html.includes('id="feedback-modal-card"')) {
+          const card = makeEl('div');
+          card.id = 'feedback-modal-card';
+          this.children.push(card);
+        }
+      },
+      get innerHTML() {
+        return this._innerHTML;
+      },
+      set textContent(val) {
+        this._textContent = val;
+      },
+      get textContent() {
+        return this._textContent;
+      },
+      querySelector(sel) {
+        const cls = sel.startsWith('.') ? sel.slice(1) : null;
+        if (!cls) return null;
+        if (!this._qCache) this._qCache = {};
+        if (!this._qCache[cls]) {
+          this._qCache[cls] = makeEl('div');
+        }
+        return this._qCache[cls];
+      }
+    };
+    return el;
+  };
+
+  const scrollContainer = {
+    nodeType: 1,
+    scrollTop: 400,
+    clientHeight: 600,
+    scrollHeight: 1000,
+    parentElement: null
+  };
+
+  const body = makeEl('body');
+  const docEl = { scrollTop: 0, clientHeight: 800, scrollHeight: 800 };
+
+  const sandbox = {
+    window: {
+      innerHeight: 800,
+      KhoraAppSettingsMixin: {},
+      KhoraAppHelpMixin: {},
+      getComputedStyle: () => ({ overflowY: 'auto' })
+    },
+    document: {
+      body,
+      documentElement: docEl,
+      scrollingElement: docEl,
+      createElement: (tag) => makeEl(tag),
+      getElementById: (id) => elementsById.get(id) || null,
+      addEventListener(type, fn) {
+        docListeners[type] = docListeners[type] || [];
+        docListeners[type].push(fn);
+      }
+    },
+    navigator: {},
+    console
+  };
+  sandbox.window.window = sandbox.window;
+  sandbox.globalThis = sandbox;
+
+  vm.runInNewContext(`${appJsSrc}\n;globalThis.__AppController = AppController;`, sandbox);
+  const controller = new sandbox.__AppController();
+  controller.initFeedbackGesture();
+
+  const emitTouch = (type, clientY, target = scrollContainer) => {
+    const ev = type === 'touchend' || type === 'touchcancel'
+      ? { touches: [] }
+      : { target, touches: [{ clientX: 180, clientY }] };
+    (docListeners[type] || []).forEach((fn) => fn(ev));
+  };
+
+  // 1. Short swipe (< 50% viewport) shows "Desliza más..." and does NOT open feedback
+  emitTouch('touchstart', 700);
+  emitTouch('touchmove', 450); // deltaY = -250 (< 52% of 800 = 416)
+  const overlayEl = body.children.find((c) => c.classList.contains('feedback-pull-overlay'));
+  assert.ok(overlayEl, 'feedback-pull-overlay should be created');
+  assert.equal(overlayEl.querySelector('.feedback-pull-label').textContent, 'Desliza más si quieres enviar feedback');
+  assert.equal(overlayEl.classList.contains('ready'), false);
+  emitTouch('touchend', 450);
+  assert.equal(elementsById.get('feedback-modal-overlay'), undefined);
+
+  // 2. Long swipe (> 52% viewport) while #app-modal is active switches text and opens dedicated overlay
+  emitTouch('touchstart', 750);
+  emitTouch('touchmove', 250); // deltaY = -500 (> 416)
+  assert.equal(overlayEl.classList.contains('ready'), true);
+  assert.equal(overlayEl.querySelector('.feedback-pull-label').textContent, 'Suelta si quieres enviar feedback');
+  assert.equal(overlayEl.style.getPropertyValue('--pull-pct'), '100%', 'long swipe must set --pull-pct to 100%');
+  emitTouch('touchend', 250);
+
+  const feedbackModalOverlay = elementsById.get('feedback-modal-overlay');
+  assert.ok(feedbackModalOverlay, 'dedicated #feedback-modal-overlay should be created');
+  assert.equal(feedbackModalOverlay.classList.contains('active'), true);
+  assert.equal(appModal.classList.contains('active'), true, 'underlying #app-modal exercise must remain active');
+
+  // 3. Closing feedback modal leaves #app-modal intact
+  assert.equal(controller.closeFeedbackModal(), true);
+  assert.equal(feedbackModalOverlay.classList.contains('active'), false);
+  assert.equal(appModal.classList.contains('active'), true);
 });

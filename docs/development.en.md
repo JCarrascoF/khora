@@ -18,6 +18,7 @@ Developer guide covering architecture, **i18n (`ES`/`EN`)**, self-hosting (Docke
   - `Web Crypto API`: key derivation via **`PBKDF2`** (SHA-256, 100,000 iterations) and authenticated **`AES-256-GCM`** encryption per storage key before writing to `localStorage`, `IndexedDB`, or SQLite.
   - Optional per-device biometric unlock via **`WebAuthn`** (*Platform Authenticator*: FaceID / TouchID / Fingerprint).
 - **Optional Backend (`server/server.js`):** Pure Node.js `>= 22.5.0` (zero external npm dependencies), using `node:http`, `node:crypto`, and `node:sqlite`.
+- **Feedback gesture (`js/app.js` → `initFeedbackGesture`):** a long upward swipe (> 52 % of viewport height, 24 px deadzone) starting from the **scroll bottom** of any scrollable container (or the document root when content does not overflow) opens a full-screen overlay with a brand *splash* and a blurred backdrop. The gesture is blocked while `#app-modal` (exercise modal, install gate, settings, etc.) or `#feedback-modal-overlay` itself is active, and a 1.5 s cooldown applies after each trigger.
 
 ---
 

@@ -389,6 +389,10 @@ class AppController {
     document.addEventListener('keydown', (e) => {
       if (window.stateManager?.isVaultLocked?.()) return;
       if (e.key === 'Escape' || e.key === 'Esc') {
+        if (this.closeFeedbackModal?.()) {
+          e.preventDefault?.();
+          return;
+        }
         const closedModal = this.closeModal();
         const tooltip = document.getElementById('act-glossary-tooltip');
         const tooltipWasVisible = tooltip && tooltip.classList.contains('visible');
@@ -1714,8 +1718,8 @@ class AppController {
     const isBlocked = () => {
       if (Date.now() - lastTriggeredAt < 1500) return true;
       if (window.stateManager?.isVaultLocked?.()) return true;
-      const modal = document.getElementById('app-modal');
-      if (modal?.classList?.contains('active')) return true;
+      const feedbackOverlay = document.getElementById('feedback-modal-overlay');
+      if (feedbackOverlay?.classList?.contains('active')) return true;
       const drawer = document.getElementById('help-drawer');
       if (drawer?.classList?.contains('open')) return true;
       return false;
@@ -1723,122 +1727,163 @@ class AppController {
 
     const tr = (text) => (window.i18n?.translateText ? window.i18n.translateText(text) : text);
 
-    let backdropEl = null;
-    let indicatorEl = null;
-    const ensureIndicator = () => {
-      if (!backdropEl) {
-        backdropEl = document.createElement('div');
-        backdropEl.className = 'feedback-pull-backdrop';
-        backdropEl.setAttribute('aria-hidden', 'true');
-        document.body?.appendChild?.(backdropEl);
+    let overlayEl = null;
+    const ensureOverlay = () => {
+      if (!overlayEl) {
+        overlayEl = document.createElement('div');
+        overlayEl.className = 'feedback-pull-overlay';
+        overlayEl.setAttribute('aria-hidden', 'true');
+        overlayEl.innerHTML = `
+          <div class="feedback-pull-splash">
+            <img src="./icons/icon-192.svg" alt="" class="feedback-pull-icon">
+            <!-- brand name: intentionally not translated -->
+            <span class="feedback-pull-brand">Khōra</span>
+          </div>
+          <div class="feedback-pull-hint">
+            <span class="feedback-pull-label"></span>
+          </div>
+        `;
+        document.body?.appendChild?.(overlayEl);
       }
-      if (!indicatorEl) {
-        indicatorEl = document.createElement('div');
-        indicatorEl.className = 'feedback-pull-indicator pos-bottom';
-        indicatorEl.setAttribute('aria-hidden', 'true');
-        indicatorEl.innerHTML = `<img src="./icons/icon-192.svg" alt=""><span class="feedback-pull-label"></span>`;
-        document.body?.appendChild?.(indicatorEl);
-      }
-      return { backdropEl, indicatorEl };
+      return overlayEl;
     };
 
-    const updateIndicator = (progress, position = 'bottom') => {
-      const { backdropEl: bg, indicatorEl: el } = ensureIndicator();
+    const updateIndicator = (progress) => {
+      const el = ensureOverlay();
       const clamped = Math.max(0, Math.min(1, progress));
       const isReady = clamped >= 1;
+      const pct = `${Math.round(clamped * 100)}%`;
 
-      bg.classList.toggle('ready', isReady);
-      bg.style.opacity = clamped > 0.08 ? (isReady ? '1' : String((clamped * 0.65).toFixed(2))) : '0';
-
-      el.classList.toggle('pos-bottom', position === 'bottom');
-      el.classList.toggle('pos-top', position === 'top');
+      el.classList.toggle('active', clamped > 0.01);
       el.classList.toggle('ready', isReady);
-      el.style.opacity = String(clamped > 0.08 ? Math.min(1, clamped * 1.15) : 0);
+      el.style.setProperty('--pull-progress', clamped.toFixed(3));
+      el.style.setProperty('--pull-pct', pct);
 
-      const img = el.querySelector('img');
-      if (img) {
-        const deg = Math.round(clamped * 360);
-        const gray = (1 - clamped).toFixed(2);
-        const opa = (0.35 + 0.65 * clamped).toFixed(2);
-        const scale = (0.9 + 0.1 * clamped).toFixed(2);
-        img.style.filter = `grayscale(${gray}) opacity(${opa})`;
-        img.style.transform = `rotate(${deg}deg) scale(${scale})`;
+      const bgAlpha = (clamped * 0.58).toFixed(3);
+      const blurPx = (clamped * 12).toFixed(1);
+      const sat = (1 - clamped * 0.3).toFixed(2);
+      el.style.backgroundColor = `rgba(20, 22, 24, ${bgAlpha})`;
+      el.style.backdropFilter = `blur(${blurPx}px) saturate(${sat})`;
+      el.style.webkitBackdropFilter = `blur(${blurPx}px) saturate(${sat})`;
+      el.style.opacity = clamped > 0.01 ? '1' : '0';
+
+      const splash = el.querySelector('.feedback-pull-splash');
+      if (splash) {
+        const splashOpacity = clamped <= 0.12 ? 0 : Math.min(1, (clamped - 0.12) / 0.45);
+        splash.style.opacity = splashOpacity.toFixed(2);
+        splash.style.transform = `translateY(${Math.round((1 - splashOpacity) * 14)}px) scale(${(0.92 + 0.08 * splashOpacity).toFixed(3)})`;
       }
+
+      const icon = el.querySelector('.feedback-pull-icon');
+      if (icon) {
+        const deg = Math.round(clamped * 360);
+        const scale = (0.88 + 0.12 * clamped).toFixed(2);
+        icon.style.transform = `rotate(${deg}deg) scale(${scale})`;
+      }
+
       const label = el.querySelector('.feedback-pull-label');
       if (label) {
-        label.textContent = isReady ? tr('Suelta para enviar feedback') : tr('Enviar feedback');
-        if (!isReady) {
-          label.style.opacity = String((0.25 + 0.75 * clamped).toFixed(2));
-        } else {
-          label.style.opacity = '1';
-        }
+        label.textContent = isReady
+          ? tr('Suelta si quieres enviar feedback')
+          : tr('Desliza más si quieres enviar feedback');
       }
     };
 
     const hideIndicator = () => {
-      if (backdropEl) {
-        backdropEl.style.opacity = '0';
-        backdropEl.classList.remove('ready');
-      }
-      if (indicatorEl) {
-        indicatorEl.style.opacity = '0';
-        indicatorEl.classList.remove('ready');
+      if (!overlayEl) return;
+      overlayEl.classList.remove('active', 'ready');
+      overlayEl.style.opacity = '0';
+      overlayEl.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+      overlayEl.style.backdropFilter = 'blur(0px)';
+      overlayEl.style.webkitBackdropFilter = 'blur(0px)';
+      const splash = overlayEl.querySelector('.feedback-pull-splash');
+      if (splash) {
+        splash.style.opacity = '0';
       }
     };
 
-    // Mobile/touch only: pull-up on bottom nav bar OR long pull-down at top of page
-    const NAV_PULL_THRESHOLD = 64;
-    const TOP_PULL_THRESHOLD = 120;
+    const findScrollContainer = (target) => {
+      let node = target?.nodeType === 1 ? target : target?.parentElement;
+      while (node && node !== document.body && node !== document.documentElement) {
+        if (typeof window.getComputedStyle === 'function') {
+          const style = window.getComputedStyle(node);
+          const overflowY = style?.overflowY;
+          if ((overflowY === 'auto' || overflowY === 'scroll') && node.scrollHeight > node.clientHeight + 2) {
+            return node;
+          }
+        }
+        node = node.parentElement;
+      }
+      return document.scrollingElement || document.documentElement;
+    };
+
+    const isAtScrollBottom = (container) => {
+      if (!container) return true;
+      const scrollHeight = container.scrollHeight || 0;
+      const clientHeight = container.clientHeight || window.innerHeight || 0;
+      if (scrollHeight <= clientHeight + 2) return true;
+      const scrollTop = container === document.documentElement || container === document.body
+        ? (window.scrollY || container.scrollTop || 0)
+        : (container.scrollTop || 0);
+      return scrollTop + clientHeight >= scrollHeight - 6;
+    };
+
+    // Mobile/touch: long upward swipe (>50% viewport height) from scroll bottom anywhere (including exercises)
+    const DEADZONE_PX = 24;
+    const getThreshold = () => Math.max(240, Math.round((window.innerHeight || 700) * 0.52));
     let touchStartY = 0;
     let touchStartX = 0;
-    let touchStartedInNav = false;
-    let touchAtTop = false;
+    let touchEligible = false;
     let currentProgress = 0;
+    let wasReady = false;
 
     document.addEventListener('touchstart', (e) => {
       currentProgress = 0;
+      wasReady = false;
       if (isBlocked() || !e.touches || e.touches.length !== 1) {
-        touchStartedInNav = false;
-        touchAtTop = false;
+        touchEligible = false;
         return;
       }
       const t = e.touches[0];
       touchStartY = t.clientY;
       touchStartX = t.clientX;
-      touchStartedInNav = Boolean(e.target?.closest?.('.app-nav'));
-      const scrollTop = window.scrollY || document.documentElement?.scrollTop || 0;
-      touchAtTop = scrollTop <= 2;
+      const scrollContainer = findScrollContainer(e.target);
+      touchEligible = isAtScrollBottom(scrollContainer);
     }, { passive: true });
 
     document.addEventListener('touchmove', (e) => {
-      if ((!touchStartedInNav && !touchAtTop) || !e.touches || e.touches.length !== 1) return;
+      if (!touchEligible || !e.touches || e.touches.length !== 1) return;
       const t = e.touches[0];
       const deltaY = t.clientY - touchStartY;
       const deltaX = t.clientX - touchStartX;
       const isVertical = Math.abs(deltaY) > Math.abs(deltaX) * 1.4;
-      if (!isVertical) {
-        currentProgress = 0;
-        hideIndicator();
+      if (!isVertical || deltaY >= -DEADZONE_PX) {
+        if (currentProgress > 0) {
+          currentProgress = 0;
+          wasReady = false;
+          hideIndicator();
+        }
         return;
       }
 
-      if (touchStartedInNav && deltaY < -10) {
-        currentProgress = Math.min(1, Math.abs(deltaY) / NAV_PULL_THRESHOLD);
-        updateIndicator(currentProgress, 'bottom');
-      } else if (touchAtTop && !touchStartedInNav && deltaY > 18) {
-        currentProgress = Math.min(1, deltaY / TOP_PULL_THRESHOLD);
-        updateIndicator(currentProgress, 'top');
-      } else {
-        currentProgress = 0;
-        hideIndicator();
+      const threshold = getThreshold();
+      const span = Math.max(120, threshold - DEADZONE_PX);
+      currentProgress = Math.min(1, (Math.abs(deltaY) - DEADZONE_PX) / span);
+      const isReady = currentProgress >= 1;
+      if (isReady && !wasReady) {
+        wasReady = true;
+        navigator.vibrate?.(12);
+      } else if (!isReady) {
+        wasReady = false;
       }
+      updateIndicator(currentProgress);
     }, { passive: true });
 
     const finishTouch = () => {
       const shouldOpen = currentProgress >= 1 && !isBlocked();
       currentProgress = 0;
-      touchStartedInNav = false;
-      touchAtTop = false;
+      wasReady = false;
+      touchEligible = false;
       hideIndicator();
       if (shouldOpen) {
         lastTriggeredAt = Date.now();
@@ -1849,16 +1894,41 @@ class AppController {
     document.addEventListener('touchend', finishTouch, { passive: true });
     document.addEventListener('touchcancel', () => {
       currentProgress = 0;
-      touchStartedInNav = false;
-      touchAtTop = false;
+      wasReady = false;
+      touchEligible = false;
       hideIndicator();
     }, { passive: true });
   }
 
+  closeFeedbackModal() {
+    const overlay = document.getElementById('feedback-modal-overlay');
+    if (overlay && overlay.classList?.contains('active')) {
+      overlay.classList.remove('active');
+      return true;
+    }
+    return false;
+  }
+
   openFeedbackModal() {
-    const modal = document.getElementById('app-modal');
-    const modalBody = document.getElementById('modal-body');
-    if (!modal || !modalBody) return;
+    if (typeof document === 'undefined') return;
+    let overlay = document.getElementById('feedback-modal-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'feedback-modal-overlay';
+      overlay.className = 'modal-overlay feedback-modal-overlay';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.innerHTML = '<div class="modal-card" id="feedback-modal-card" role="document"></div>';
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          this.closeFeedbackModal();
+        }
+      });
+      document.body?.appendChild?.(overlay);
+    }
+
+    const modalBody = document.getElementById('feedback-modal-card');
+    if (!modalBody) return;
 
     const t = (text) => (window.i18n?.translateText ? window.i18n.translateText(text) : text);
     const esc = window.KhoraUtils?.escapeHtml || ((v) => String(v ?? ''));
@@ -1924,7 +1994,8 @@ class AppController {
       </div>
     `;
 
-    this.openModal('default');
+    overlay.classList.add('active');
+    modalBody.scrollTop = 0;
 
     const buildFormatted = () => {
       const type = document.getElementById('feedback-type')?.value || 'Sugerencia o nueva idea';
@@ -1956,8 +2027,8 @@ class AppController {
       el.classList?.remove('hidden');
     };
 
-    document.getElementById('btn-feedback-x')?.addEventListener('click', () => this.closeModal());
-    document.getElementById('btn-feedback-cancel')?.addEventListener('click', () => this.closeModal());
+    document.getElementById('btn-feedback-x')?.addEventListener('click', () => this.closeFeedbackModal());
+    document.getElementById('btn-feedback-cancel')?.addEventListener('click', () => this.closeFeedbackModal());
 
     document.getElementById('btn-feedback-submit')?.addEventListener('click', async () => {
       const submitBtn = document.getElementById('btn-feedback-submit');
@@ -1993,7 +2064,7 @@ class AppController {
 
         window.KhoraUI?.buttonInlineState?.(submitBtn, 'ok', t('✓ Enviado'), {
           resetMs: 1200,
-          onDone: () => this.closeModal()
+          onDone: () => this.closeFeedbackModal()
         });
       } catch {
         window.KhoraUI?.buttonInlineState?.(submitBtn, 'reset');
