@@ -2244,6 +2244,8 @@
     'Inicio': 'Start',
     'Evolución': 'Progress',
     'Enviar Feedback': 'Send Feedback',
+    'Desliza más si quieres enviar feedback': 'Swipe further to send feedback',
+    'Suelta si quieres enviar feedback': 'Release to send feedback',
     'Suelta para enviar feedback': 'Release to send feedback',
     'El feedback tiene que ver con donde estaba': 'This feedback is about where I was',
     'Pantalla actual:': 'Current screen:',
