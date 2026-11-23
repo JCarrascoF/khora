@@ -14,6 +14,7 @@ const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
 const PORT = Number(process.env.PORT) || 8080;
 const HOST = process.env.HOST || '0.0.0.0';
 const SQLITE_ENABLED = process.env.ENABLE_SQLITE_DB === 'true';
+const NO_CACHE = process.env.NO_CACHE === 'true' || process.argv.includes('--no-cache');
 const DB_PATH = process.env.DB_PATH || path.join(ROOT_DIR, 'data', 'act.db');
 const AUTH_USER = (process.env.AUTH_USER || 'admin').trim();
 const AUTH_PASSWORD = process.env.AUTH_PASSWORD || '';
@@ -263,22 +264,32 @@ function serveStaticFile(res, pathname) {
 
     const ext = path.extname(fullPath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-    const noCacheExts = ext === '.html' || ext === '.js' || ext === '.css';
+    const noCacheExts = NO_CACHE || ext === '.html' || ext === '.js' || ext === '.css';
     const headers = {
       'Content-Type': contentType,
-      'Cache-Control': noCacheExts ? 'no-store, no-cache, must-revalidate' : 'public, max-age=3600'
+      'Cache-Control': noCacheExts
+        ? 'no-store, no-cache, must-revalidate, proxy-revalidate'
+        : 'public, max-age=3600'
     };
+    if (NO_CACHE) {
+      headers['Pragma'] = 'no-cache';
+      headers['Expires'] = '0';
+    }
 
-    if (SQLITE_ENABLED && reqPath === '/index.html') {
+    if ((SQLITE_ENABLED || NO_CACHE) && reqPath === '/index.html') {
       fs.readFile(fullPath, 'utf8', (readErr, html) => {
         if (readErr) {
           res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
           res.end('Internal Server Error');
           return;
         }
-        const injected = html.includes('name="khora-api"')
-          ? html
-          : html.replace('</head>', '  <meta name="khora-api" content="1">\n</head>');
+        let injected = html;
+        if (SQLITE_ENABLED && !injected.includes('name="khora-api"')) {
+          injected = injected.replace('</head>', '  <meta name="khora-api" content="1">\n</head>');
+        }
+        if (NO_CACHE && !injected.includes('name="khora-no-sw"')) {
+          injected = injected.replace('</head>', '  <meta name="khora-no-sw" content="1">\n</head>');
+        }
         res.writeHead(200, headers);
         res.end(injected);
       });
@@ -604,7 +615,9 @@ const server = http.createServer(async (req, res) => {
 
 if (require.main === module) {
   server.listen(PORT, HOST, () => {
-    console.log(`[Khora] Servidor activo en http://${HOST}:${PORT} (${SQLITE_ENABLED ? `SQLite: ${DB_PATH}` : 'Modo estático / local en navegador'})`);
+    const modeLabel = SQLITE_ENABLED ? `SQLite: ${DB_PATH}` : 'Modo estático / local en navegador';
+    const cacheLabel = NO_CACHE ? ', sin caché ni SW' : '';
+    console.log(`[Khora] Servidor activo en http://${HOST}:${PORT} (${modeLabel}${cacheLabel})`);
   });
 
   const shutdown = () => {

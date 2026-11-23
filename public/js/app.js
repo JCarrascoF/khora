@@ -2491,7 +2491,22 @@ ${showAndroidUrlNote ? `
       this.updatePersistenceWarningBanner();
     });
 
-    if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
+    const noSwRequested = Boolean(
+      document.querySelector?.('meta[name="khora-no-sw"][content="1"]') ||
+      new URLSearchParams(window.location?.search || '').get('nocache') === '1'
+    );
+
+    if (noSwRequested && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations?.().then((regs) => {
+        regs.forEach((reg) => reg.unregister());
+      }).catch(() => {});
+      if (typeof caches !== 'undefined' && caches.keys) {
+        caches.keys().then((keys) => {
+          keys.forEach((key) => caches.delete(key));
+        }).catch(() => {});
+      }
+      console.log('[PWA] Service Worker desactivado en modo sin caché.');
+    } else if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
       this.swRefreshing = false;
       this.swUpdateRequested = false;
       const hadController = Boolean(navigator.serviceWorker.controller);
