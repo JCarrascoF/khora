@@ -1736,6 +1736,7 @@ class AppController {
         overlayEl.innerHTML = `
           <div class="feedback-pull-splash">
             <img src="./icons/icon-192.svg" alt="" class="feedback-pull-icon">
+            <!-- brand name: intentionally not translated -->
             <span class="feedback-pull-brand">Khōra</span>
           </div>
           <div class="feedback-pull-hint">
@@ -1915,7 +1916,9 @@ class AppController {
       overlay = document.createElement('div');
       overlay.id = 'feedback-modal-overlay';
       overlay.className = 'modal-overlay feedback-modal-overlay';
-      overlay.innerHTML = '<div class="modal-card" id="feedback-modal-card"></div>';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.innerHTML = '<div class="modal-card" id="feedback-modal-card" role="document"></div>';
       overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
           this.closeFeedbackModal();

@@ -676,6 +676,7 @@ test('Feedback swipe gesture works inside active exercise modal (>50% viewport) 
   emitTouch('touchmove', 250); // deltaY = -500 (> 416)
   assert.equal(overlayEl.classList.contains('ready'), true);
   assert.equal(overlayEl.querySelector('.feedback-pull-label').textContent, 'Suelta si quieres enviar feedback');
+  assert.equal(overlayEl.style.getPropertyValue('--pull-pct'), '100%', 'long swipe must set --pull-pct to 100%');
   emitTouch('touchend', 250);
 
   const feedbackModalOverlay = elementsById.get('feedback-modal-overlay');
