@@ -58,7 +58,7 @@
     {
       "id": "home",
       "name": "Inicio (Ahora)",
-      "group": "ahora-mismo",
+      "group": "ahora",
       "route": "#home",
       "file": "public/js/app.js",
       "render_method": "renderGuiaInicio",
@@ -72,7 +72,7 @@
     {
       "id": "guide",
       "name": "Guía de uso de Khōra",
-      "group": "ahora-mismo",
+      "group": "ahora",
       "route": "#guide",
       "file": "public/js/app.js",
       "render_method": "renderKhoraGuide",
@@ -85,7 +85,7 @@
     {
       "id": "act-space",
       "name": "Espacio ACT (Procesar Emoción)",
-      "group": "ahora-mismo",
+      "group": "ahora",
       "route": "#act-space",
       "file": "public/js/subapp-act-space.js",
       "render_method": "render",
@@ -107,7 +107,7 @@
     {
       "id": "compass",
       "name": "Brújula de Valores (Elegir qué Hacer)",
-      "group": "ahora-mismo",
+      "group": "ahora",
       "route": "#compass",
       "file": "public/js/subapp-values-compass.js",
       "render_method": "render",
@@ -124,7 +124,7 @@
     {
       "id": "false-peace",
       "name": "Espejo de la Paz Falsa (Acabo de Ceder)",
-      "group": "ahora-mismo",
+      "group": "ahora",
       "route": "#false-peace",
       "file": "public/js/subapp-false-peace.js",
       "render_method": "render",
@@ -143,7 +143,7 @@
     {
       "id": "toolkit",
       "name": "Píldoras y Anclajes · Trucos Rápidos",
-      "group": "ahora-mismo",
+      "group": "ahora",
       "route": "#toolkit",
       "file": "public/js/subapp-pills-anchors.js",
       "render_method": "renderTricksHubView",

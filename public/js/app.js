@@ -152,7 +152,7 @@ if (typeof globalThis !== 'undefined') {
 class AppController {
   constructor() {
     this.currentView = 'home';
-    this.currentGroup = 'ahora-mismo';
+    this.currentGroup = 'ahora';
     this.guideSection = null;
     this.guideReturnView = null;
     this.toastTimer = null;
@@ -160,7 +160,7 @@ class AppController {
 
     this.legacyViewAliases = {
       'guia-inicio': 'home',
-      'ahora-mismo': 'home',
+      'ahora': 'home',
       'perfil-foco': 'home',
       'now': 'home',
       'espacio-act': 'act-space',
@@ -189,7 +189,7 @@ class AppController {
     };
 
     this.navGroups = {
-      'ahora-mismo': {
+      'ahora': {
         label:'Ahora',
         items: [
           { id:'home', icon:'', label:'Inicio' },
@@ -581,11 +581,11 @@ class AppController {
     let resolvedSubView = this.resolveViewAlias(targetView);
 
     let sectionId = resolvedSubView;
-    let activeGroup = 'ahora-mismo';
+    let activeGroup = 'ahora';
 
     if (resolvedSubView === 'toolkit') {
       sectionId = 'pills-anchors';
-      activeGroup = 'ahora-mismo';
+      activeGroup = 'ahora';
       if (window.pildorasAnclajesApp) {
         window.pildorasAnclajesApp.mode = 'trucos';
         window.pildorasAnclajesApp.currentTab = 'trucos';
@@ -611,7 +611,7 @@ class AppController {
     } else if (resolvedSubView === 'pills-anchors') {
       sectionId = 'pills-anchors';
       const isTricks = window.pildorasAnclajesApp?.mode === 'trucos' || window.pildorasAnclajesApp?.currentTab === 'trucos';
-      activeGroup = isTricks ? 'ahora-mismo' : 'learn';
+      activeGroup = isTricks ? 'ahora' : 'learn';
       resolvedSubView = isTricks ? 'toolkit' : 'readings';
       if (window.pildorasAnclajesApp) {
         window.pildorasAnclajesApp.mode = isTricks ? 'trucos' : 'estudio';
@@ -653,13 +653,13 @@ class AppController {
       }
     } else if (resolvedSubView === 'guide') {
       sectionId = 'guide';
-      activeGroup = this.guideReturnView === 'readings' ? 'learn' : 'ahora-mismo';
+      activeGroup = this.guideReturnView === 'readings' ? 'learn' : 'ahora';
       if (options.guideReturnView !== undefined) {
         this.guideReturnView = options.guideReturnView;
-        activeGroup = this.guideReturnView === 'readings' ? 'learn' : 'ahora-mismo';
+        activeGroup = this.guideReturnView === 'readings' ? 'learn' : 'ahora';
       } else if (this.currentView !== 'guide') {
         this.guideReturnView = null;
-        activeGroup = 'ahora-mismo';
+        activeGroup = 'ahora';
       }
       if (options.guideSection !== undefined) {
         this.guideSection = options.guideSection;
@@ -668,7 +668,7 @@ class AppController {
       }
     } else {
       // home, act-space, false-peace, compass
-      activeGroup = 'ahora-mismo';
+      activeGroup = 'ahora';
     }
 
     const prevView = this.currentView;
@@ -1142,7 +1142,7 @@ class AppController {
     if (!subnavEl) return;
 
     const group = this.navGroups[groupId];
-    if (!group || groupId === 'ahora-mismo' || group.items.length <= 1) {
+    if (!group || groupId === 'ahora' || group.items.length <= 1) {
       subnavEl.classList.add('hidden');
       subnavEl.innerHTML = '';
       return;

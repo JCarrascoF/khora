@@ -575,7 +575,7 @@
   // Localized domain catalogs for all subapps (keep `.id` properties untouched!)
   const CATALOGS_EN = {
     navGroups: {
-      'ahora-mismo': {
+      'ahora': {
         label: 'Now:',
         items: [
           { id: 'home', label: 'Home' },
