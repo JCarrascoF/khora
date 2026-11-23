@@ -1187,6 +1187,10 @@ body.flow-immersive .persistence-warning-banner {
   display: none !important;
 }
 
+body[data-view]:not([data-view="home"]) .app-footer {
+  display: none;
+}
+
 body.flow-immersive .flow-immersive-bar {
   display: flex;
 }

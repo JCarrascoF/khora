@@ -678,6 +678,13 @@ class AppController {
     const prevView = this.currentView;
     this.currentView = resolvedSubView;
     this.currentGroup = activeGroup;
+    if (document.body?.dataset) {
+      document.body.dataset.view = sectionId;
+    }
+    const appFooter = document.getElementById('app-footer');
+    if (appFooter) {
+      appFooter.hidden = sectionId !== 'home';
+    }
     const immersiveViews = new Set(['act-space', 'false-peace', 'compass']);
     if (!immersiveViews.has(sectionId)) {
       this.setFlowImmersive(false);

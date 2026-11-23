@@ -39,6 +39,8 @@ function createElementStub(id = '') {
 function loadAppHarness({ initialLang = 'es' } = {}) {
   const homeView = createElementStub('home-view');
   const guideView = createElementStub('guide-view');
+  const appFooter = createElementStub('app-footer');
+  appFooter.hidden = false;
   const modal = createElementStub('app-modal');
   const modalBody = createElementStub('modal-body');
   const sections = new Map([
@@ -78,6 +80,7 @@ function loadAppHarness({ initialLang = 'es' } = {}) {
       addEventListener: noop,
       createTreeWalker: () => ({ nextNode: () => null }),
       getElementById(id) {
+        if (id === 'app-footer') return appFooter;
         if (id === 'app-modal') return modal;
         if (id === 'modal-body') return modalBody;
         if (sections.has(id)) return sections.get(id);
@@ -116,7 +119,7 @@ function loadAppHarness({ initialLang = 'es' } = {}) {
   const app = vm.runInContext('new AppController()', sandbox);
   sandbox.app = app;
   sandbox.i18n.init();
-  return { app, sandbox, homeView, guideView };
+  return { app, sandbox, homeView, guideView, appFooter };
 }
 
 test('AppController resolves English routes and backward-compatible Spanish aliases', () => {
@@ -264,4 +267,23 @@ test('HTML and Settings expose English section IDs and Khōra Usage Guide button
 
   assert.match(settingsJs, /id="btn-settings-khora-guide"/);
   assert.match(settingsJs, /Guía de uso de Khōra/);
+});
+
+test('global footer is only visible on the home view', () => {
+  const { app, appFooter, sandbox } = loadAppHarness({ initialLang: 'es' });
+  const { document } = sandbox;
+
+  app.navigate('home');
+  assert.equal(document.body.dataset.view, 'home');
+  assert.equal(appFooter.hidden, false);
+
+  for (const view of ['values', 'therapy', 'readings', 'guide', 'patterns']) {
+    app.navigate(view);
+    assert.notEqual(document.body.dataset.view, 'home');
+    assert.equal(appFooter.hidden, true);
+  }
+
+  app.navigate('home');
+  assert.equal(document.body.dataset.view, 'home');
+  assert.equal(appFooter.hidden, false);
 });
