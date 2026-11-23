@@ -14,7 +14,7 @@
           brings: 'Orientarte sin fricción según lo que necesites en este instante.',
           whenToUse: 'Es tu punto de entrada rápido según lo que necesites en este momento: atravesar un momento intenso o ganar perspectiva y entrenar.',
           steps: [
-            '1. Elige una tarjeta de «Ahora mismo…» si notas un nudo o bucle, estás acelerado/a, dudas qué hacer o acabas de ceder.',
+            '1. Elige una tarjeta de «Ahora…» si notas un nudo o bucle, estás acelerado/a, dudas qué hacer o acabas de ceder.',
             '2. Usa la sección de «Perspectiva y práctica» para leer ideas breves, revisar tus valores o entrenar habilidades.'
           ],
           tip: 'En Khōra no hace falta rellenarlo todo ni entrar cada día: abre solo la herramienta que encaja contigo ahora.'
@@ -192,11 +192,11 @@
         'guide': {
           title: 'Guía de uso de Khōra',
           time: '2 min',
-          does: 'Recorrido breve en 5 secciones por Ahora mismo, Yo, Evolución, Aprender y Privacidad local.',
+          does: 'Recorrido breve en 5 secciones por Ahora, Yo, Evolución, Aprender y Privacidad local.',
           brings: 'Orientación rápida para saber qué herramienta usar en cada momento y cómo guardar copias.',
           whenToUse: 'Cuando abras Khōra por primera vez o quieras repasar cómo funciona cada pestaña.',
           steps: [
-            '1. Ahora mismo: herramientas para sostener el presente, frenar y elegir.',
+            '1. Ahora: herramientas para sostener el presente, frenar y elegir.',
             '2. Yo: tus valores, tu autobús de pasajeros, anclajes y patrones.',
             '3. Evolución: cuaderno de terapia, historial en frío y gráficos.',
             '4. Aprender: lecturas breves, introducción a ACT y talleres.',
@@ -213,7 +213,7 @@
           brings: 'Orientarte sin fricción según lo que necesites en este instante.',
           summary: 'Es tu punto de entrada rápido según lo que necesites en este momento: atravesar un momento intenso o ganar perspectiva y entrenar.',
           bullets: [
-            '1. Elige una tarjeta de «Ahora mismo…» si notas un nudo o bucle, estás acelerado/a, dudas qué hacer o acabas de ceder.',
+            '1. Elige una tarjeta de «Ahora…» si notas un nudo o bucle, estás acelerado/a, dudas qué hacer o acabas de ceder.',
             '2. Usa la sección de «Perspectiva y práctica» para leer ideas breves, revisar tus valores o entrenar habilidades.'
           ],
           note: 'En Khōra no hace falta rellenarlo todo ni entrar cada día: abre solo la herramienta que encaja contigo ahora.'

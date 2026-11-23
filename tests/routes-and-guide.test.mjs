@@ -188,7 +188,7 @@ test('Khōra Usage Guide renders document index with 5 sections and enter/exit n
   assert.match(guideView.innerHTML, /← Back to Learn/);
 });
 
-test('Learn nav group is separated from Ahora mismo and Home welcome focuses on Khōra guide', () => {
+test('Learn nav group is separated from Ahora and Home welcome focuses on Khōra guide', () => {
   const { app, homeView } = loadAppHarness({ initialLang: 'es' });
   const html = fs.readFileSync(path.join(ROOT, 'public/index.html'), 'utf8');
 

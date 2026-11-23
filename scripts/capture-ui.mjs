@@ -188,7 +188,7 @@ async function main() {
       await record('01-screens', name, fileRel, { fullPage: true, viewportWidth: 1280, viewportHeight: 900 });
     };
 
-    await navAndShot('home', 'Inicio (Ahora mismo)', '01-screens/01-guia-inicio.png');
+    await navAndShot('home', 'Inicio (Ahora)', '01-screens/01-guia-inicio.png');
 
     await navAndShot('act-space', 'Espacio ACT - Paso 1: Emoción', '01-screens/02-espacio-act-step1.png', `
       (() => {

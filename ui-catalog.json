@@ -57,13 +57,13 @@
   "screens": [
     {
       "id": "home",
-      "name": "Inicio (Ahora mismo)",
+      "name": "Inicio (Ahora)",
       "group": "ahora-mismo",
       "route": "#home",
       "file": "public/js/app.js",
       "render_method": "renderGuiaInicio",
       "parent": null,
-      "trigger": "Acceso inicial o click en pestaña 'Ahora mismo'",
+      "trigger": "Acceso inicial o click en pestaña 'Ahora'",
       "archetype": "hero-hub",
       "characteristics": ["chip-grid", "help-trigger"],
       "css_selectors": [".guia-hero", ".guia-card", ".guia-header"],

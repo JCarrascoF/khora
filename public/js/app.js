@@ -190,7 +190,7 @@ class AppController {
 
     this.navGroups = {
       'ahora-mismo': {
-        label:'Ahora mismo',
+        label:'Ahora',
         items: [
           { id:'home', icon:'', label:'Inicio' },
           { id:'act-space', icon:'', label:'Procesar Emoción' },
@@ -573,7 +573,7 @@ class AppController {
     return false;
   }
 
-  // Navigation (Ahora mismo | Yo | Evolución [Reloj])
+  // Navigation (Ahora | Yo | Evolución [Reloj])
   navigate(targetView, options = {}) {
     if (!options.keepModal) {
       this.closeModal();
@@ -819,7 +819,7 @@ class AppController {
         ` : ''}
 
         <div>
-          <div class="cozy-section-label">Ahora mismo…</div>
+          <div class="cozy-section-label">Ahora…</div>
           <div class="guided-triage-grid">
             ${hotFlows.map(flow => `
               <button type="button" class="triage-card ${flow.primary ? 'triage-card-primary' : ''}" data-go-view="${flow.view}">
@@ -869,9 +869,9 @@ class AppController {
     const sections = [
       {
         id: 'now',
-        label: tr('1. Ahora mismo'),
-        title: tr('1. Ahora mismo: sostener el presente'),
-        lead: tr('Cuando hay agobio, bloqueo o prisa, pensar demasiado suele empeorar el ruido. Ahora mismo está diseñada para acompañarte dentro del momento difícil sin pedirte análisis profundos ni explicaciones largas.'),
+        label: tr('1. Ahora'),
+        title: tr('1. Ahora: sostener el presente'),
+        lead: tr('Cuando hay agobio, bloqueo o prisa, pensar demasiado suele empeorar el ruido. Ahora está diseñada para acompañarte dentro del momento difícil sin pedirte análisis profundos ni explicaciones largas.'),
         points: [
           {
             name: tr('Procesar Emoción (Espacio ACT)'),
@@ -891,7 +891,7 @@ class AppController {
           }
         ],
         connection: tr('Lo que guardes aquí nutre después tu Historial en Frío y tus gráficos en Evolución, apoyándose en los valores y anclajes que hayas preparado en Yo.'),
-        ctaLabel: tr('Ir a Ahora mismo'),
+        ctaLabel: tr('Ir a Ahora'),
         ctaView: 'home'
       },
       {
@@ -917,7 +917,7 @@ class AppController {
             text: tr('observa qué emociones, pensamientos o contextos se repiten en tu día a día con curiosidad y sin juicio.')
           }
         ],
-        connection: tr('Todo lo que defines aquí aparece como apoyo directo cuando usas Espacio ACT o Elegir qué Hacer en Ahora mismo.'),
+        connection: tr('Todo lo que defines aquí aparece como apoyo directo cuando usas Espacio ACT o Elegir qué Hacer en Ahora.'),
         ctaLabel: tr('Explorar Yo'),
         ctaView: 'values'
       },
@@ -944,7 +944,7 @@ class AppController {
             text: tr('una línea temporal breve para ver tus últimos pasos y micro-victorias sin abrumarte con métricas.')
           }
         ],
-        connection: tr('Se alimenta automáticamente de lo que vas registrando en Ahora mismo; si acabas de empezar, es normal verla casi vacía al principio.'),
+        connection: tr('Se alimenta automáticamente de lo que vas registrando en Ahora; si acabas de empezar, es normal verla casi vacía al principio.'),
         ctaLabel: tr('Ver Evolución'),
         ctaView: 'therapy'
       },
