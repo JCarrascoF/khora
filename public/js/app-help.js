@@ -202,7 +202,7 @@
             '4. Aprender: lecturas breves, introducción a ACT y talleres.',
             '5. Privacidad local y copias: todo se guarda en tu dispositivo con bloqueo y copias JSON.'
           ],
-          tip: 'Puedes volver a abrir esta guía en cualquier momento desde Aprender o Configuración → Sobre Khōra.'
+          tip: 'Puedes volver a abrir esta guía en cualquier momento desde Aprender o Configuración → Acerca de.'
         }
       },
       topics: {

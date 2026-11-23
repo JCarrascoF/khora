@@ -45,7 +45,7 @@ En filosofía griega, *khōra* significa *el espacio que da cabida sin juzgar*: 
 ### 4. 📖 Aprender *(para ir a tu ritmo)*
 * **📖 Lecturas y Conceptos ACT:** fundamentos, talleres y lecturas organizadas por área, *Deconstructor «Yo Soy»* y *El Pivote (del dolor al anhelo)*.
 * **🧭 Introducción a ACT:** una guía corta para situarte antes de empezar a practicar.
-* **🗺️ Guía de uso de Khōra:** un recorrido por cada función de la app; la encuentras desde el **Home**, desde *Aprender* o desde **⚙️ Configuración → Sobre Khōra**.
+* **🗺️ Guía de uso de Khōra:** un recorrido por cada función de la app; la encuentras desde el **Home**, desde *Aprender* o desde **⚙️ Configuración → Acerca de**.
 
 ---
 

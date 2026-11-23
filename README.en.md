@@ -45,7 +45,7 @@ In Greek philosophy, *khōra* means *the space that holds without judging*: a pl
 ### 4. 📖 Learn *(at your own pace)*
 * **📖 ACT Readings & Concepts:** foundations, workshops, and readings organized by area, *"I Am" Label Deconstructor*, and *The Pivot (from pain to yearning)*.
 * **🧭 ACT Introduction:** a short guide to get oriented before you start practicing.
-* **🗺️ Khōra Usage Guide:** a tour of every app feature; find it from **Home**, from *Learn*, or from **⚙️ Settings → About Khōra**.
+* **🗺️ Khōra Usage Guide:** a tour of every app feature; find it from **Home**, from *Learn*, or from **⚙️ Settings → About**.
 
 ---
 
