@@ -19,7 +19,7 @@ In Greek philosophy, *khōra* means *the space that holds without judging*: a pl
 
 ## What can you do in Khōra?
 
-### 1. 🔥 Right now *(in the heat of the moment or for quick practice)*
+### 1. 🔥 Now *(in the heat of the moment or for quick practice)*
 * **🌊 Feeling intense emotion or freeze:** put an exact name on what you feel, map where it sits in your body, and step back from the thought feeding it.
 * **⚡ Toolkit:** guided live micro-exercises to interrupt autopilot (*Dropping Anchor / ACE protocol*, *Say NO in 15s*, *2-Minute Pause*, *Somatic YES Posture*…).
 * **⚖️ Torn on what to do or afraid to give in:** clarify what is holding you back and pick one honest, value-aligned micro-step in 2 steps.

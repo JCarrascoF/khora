@@ -173,7 +173,7 @@ blockquote {
 @media (max-width: 767px) {
   .nav-item {
     border-radius: var(--radius-md);
-    padding: 7px 14px;
+    padding: 6px 4px;
   }
   .nav-item.active,
   [data-theme="dark"] .nav-item.active {

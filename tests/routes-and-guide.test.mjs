@@ -188,7 +188,7 @@ test('Khōra Usage Guide renders document index with 5 sections and enter/exit n
   assert.match(guideView.innerHTML, /← Back to Learn/);
 });
 
-test('Learn nav group is separated from Ahora mismo and Home welcome focuses on Khōra guide', () => {
+test('Learn nav group is separated from Ahora and Home welcome focuses on Khōra guide', () => {
   const { app, homeView } = loadAppHarness({ initialLang: 'es' });
   const html = fs.readFileSync(path.join(ROOT, 'public/index.html'), 'utf8');
 
@@ -216,11 +216,11 @@ test('Learn nav group is separated from Ahora mismo and Home welcome focuses on 
 test('Guide return view resets on fresh entry and preserves on re-entry, with back label switching', () => {
   const { app, guideView } = loadAppHarness({ initialLang: 'es' });
 
-  // Fresh entry from Home: resets to ahora-mismo + Inicio back label
+  // Fresh entry from Home: resets to ahora + Inicio back label
   app.navigate('home');
   app.navigate('guide');
   assert.equal(app.currentView, 'guide');
-  assert.equal(app.currentGroup, 'ahora-mismo');
+  assert.equal(app.currentGroup, 'ahora');
   assert.equal(app.guideReturnView, null);
   assert.match(guideView.innerHTML, /← Volver a Inicio/);
 
@@ -236,10 +236,10 @@ test('Guide return view resets on fresh entry and preserves on re-entry, with ba
   assert.equal(app.currentGroup, 'learn');
   assert.match(guideView.innerHTML, /← Volver a Aprender/);
 
-  // Fresh entry again from home resets back to ahora-mismo + Inicio
+  // Fresh entry again from home resets back to ahora + Inicio
   app.navigate('home');
   app.navigate('guide');
-  assert.equal(app.currentGroup, 'ahora-mismo');
+  assert.equal(app.currentGroup, 'ahora');
   assert.equal(app.guideReturnView, null);
   assert.match(guideView.innerHTML, /← Volver a Inicio/);
 });

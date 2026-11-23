@@ -290,6 +290,34 @@ html, body {
   flex-shrink: 0;
 }
 
+@media (max-width: 767px) {
+  .app-nav {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+
+  .nav-primary-group {
+    gap: 2px;
+  }
+
+  .nav-utilities {
+    gap: 4px;
+    padding-left: 6px;
+  }
+
+  .nav-utilities .btn-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .nav-item {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 6px 4px;
+    font-size: 0.7rem;
+  }
+}
+
 @media (min-width: 768px) {
   .app-nav {
     position: static;
