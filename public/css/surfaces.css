@@ -1187,6 +1187,7 @@ body.flow-immersive .persistence-warning-banner {
   display: none !important;
 }
 
+/* Fallback sin JS: si el estado por defecto es visible, solo JS lo oculta fuera de home. */
 body[data-view]:not([data-view="home"]) .app-footer {
   display: none;
 }
