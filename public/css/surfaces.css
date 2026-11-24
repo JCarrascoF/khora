@@ -1287,7 +1287,7 @@ body.flow-immersive .app-container {
     background-color: var(--bg-primary);
     border-top: 1px solid var(--border-subtle);
     border-bottom: none;
-    padding: 8px 16px max(8px, calc(env(safe-area-inset-bottom) - 14px));
+    padding: 8px 16px max(8px, calc(env(safe-area-inset-bottom) - 6px));
     min-height: 42px;
   }
 
@@ -1295,7 +1295,7 @@ body.flow-immersive .app-container {
     position: fixed;
     left: 0;
     right: 0;
-    bottom: calc(42px + max(0px, calc(env(safe-area-inset-bottom) - 14px)));
+    bottom: calc(42px + max(0px, calc(env(safe-area-inset-bottom) - 6px)));
     z-index: 34;
     margin-top: 0;
     padding: 10px 16px;
