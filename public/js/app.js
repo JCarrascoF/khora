@@ -260,6 +260,7 @@ class AppController {
     window.i18n?.init?.();
     this.bindGlobalNavigation();
     this.initFeedbackGesture();
+    this.initTabSwipeGesture();
     
     // Initialize sub-apps
     if (window.perfilApp) window.perfilApp.init();
@@ -712,12 +713,24 @@ class AppController {
 
     // Switch view containers
     document.querySelectorAll('.subapp-section').forEach(sec => {
-      sec.classList.remove('active');
+      sec.classList.remove('active', 'swipe-from-right', 'swipe-from-left', 'swipe-preview');
+      sec.style.transition = '';
+      sec.style.transform = '';
+      sec.style.opacity = '';
+      sec.style.animation = '';
     });
 
     const targetSec = document.getElementById(`${sectionId}-view`);
     if (targetSec) {
-      targetSec.classList.add('active');
+      if (options.skipSectionAnim) {
+        targetSec.classList.add('active');
+        targetSec.style.animation = 'none';
+      } else if (options.swipeDir === 'next' || options.swipeDir === 'prev') {
+        void targetSec.offsetWidth;
+        targetSec.classList.add('active', options.swipeDir === 'next' ? 'swipe-from-right' : 'swipe-from-left');
+      } else {
+        targetSec.classList.add('active');
+      }
     }
 
     // Render contextual sub-navigation bar
@@ -771,7 +784,7 @@ class AppController {
     if (active) {
       document.body.classList.add('flow-immersive');
     } else {
-      document.body.classList.remove('flow-immersive');
+      document.body.classList.remove('flow-immersive', 'flow-keyboard-open');
     }
   }
 
@@ -1180,6 +1193,9 @@ class AppController {
         this.navigate(btn.dataset.subnavView);
       });
     });
+
+    const activePill = subnavEl.querySelector('.subnav-pill.active');
+    activePill?.scrollIntoView?.({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   }
 
   bindGlobalNavigation() {
@@ -1262,6 +1278,36 @@ class AppController {
       this.setFlowImmersive(false);
       this.navigate('home');
     });
+
+    // Un-fix immersive bottom bars while mobile virtual keyboard / text input is active
+    const textInputSelector = 'input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]), textarea, select';
+    let keyboardBlurTimer = null;
+    const syncFlowKeyboardState = () => {
+      if (!document.body.classList.contains('flow-immersive') || window.innerWidth >= 768) {
+        document.body.classList.remove('flow-keyboard-open');
+        return;
+      }
+      const activeEl = document.activeElement;
+      const isTextFocused = Boolean(activeEl && activeEl.matches?.(textInputSelector));
+      const isViewportShrunk = Boolean(window.visualViewport && window.visualViewport.height < window.innerHeight * 0.78);
+      document.body.classList.toggle('flow-keyboard-open', isTextFocused || isViewportShrunk);
+    };
+
+    document.addEventListener('focusin', (e) => {
+      if (!document.body.classList.contains('flow-immersive') || window.innerWidth >= 768) return;
+      if (e.target?.matches?.(textInputSelector)) {
+        if (keyboardBlurTimer) clearTimeout(keyboardBlurTimer);
+        document.body.classList.add('flow-keyboard-open');
+      }
+    });
+
+    document.addEventListener('focusout', () => {
+      if (!document.body.classList.contains('flow-immersive')) return;
+      if (keyboardBlurTimer) clearTimeout(keyboardBlurTimer);
+      keyboardBlurTimer = setTimeout(syncFlowKeyboardState, 80);
+    });
+
+    window.visualViewport?.addEventListener('resize', syncFlowKeyboardState);
   }
 
 
@@ -1905,6 +1951,280 @@ class AppController {
       wasReady = false;
       touchEligible = false;
       hideIndicator();
+    }, { passive: true });
+  }
+
+  initTabSwipeGesture() {
+    if (this._tabSwipeBound || typeof window === 'undefined' || typeof document === 'undefined') return;
+    this._tabSwipeBound = true;
+
+    let startX = 0;
+    let startY = 0;
+    let eligible = false;
+    let dragging = false;
+    let bounceTimer = null;
+    let skelFadeTimer = null;
+    let skeletonEl = null;
+
+    const ensureSkeleton = () => {
+      if (skeletonEl && skeletonEl.isConnected) return skeletonEl;
+      const appMain = document.querySelector('.app-main');
+      if (!appMain) return null;
+      skeletonEl = document.createElement('div');
+      skeletonEl.className = 'swipe-skeleton';
+      skeletonEl.setAttribute('aria-hidden', 'true');
+      skeletonEl.innerHTML = `
+        <div class="swipe-skeleton-title"></div>
+        <div class="swipe-skeleton-line"></div>
+        <div class="swipe-skeleton-line short"></div>
+        <div class="swipe-skeleton-block"></div>
+        <div class="swipe-skeleton-block"></div>
+      `;
+      appMain.appendChild(skeletonEl);
+      return skeletonEl;
+    };
+
+    const hideSkeleton = () => {
+      if (!skeletonEl) return;
+      skeletonEl.classList.remove('active');
+      skeletonEl.style.transition = '';
+      skeletonEl.style.transform = '';
+      skeletonEl.style.opacity = '';
+    };
+
+    const getSwipeSequence = () => {
+      if (this.currentGroup !== 'yo' && this.currentGroup !== 'insight') return [];
+      return (this.navGroups?.[this.currentGroup]?.items || []).map(i => i.id);
+    };
+
+    const getGroupForView = (viewId) => {
+      if ((this.navGroups?.yo?.items || []).some(i => i.id === viewId)) return 'yo';
+      if ((this.navGroups?.insight?.items || []).some(i => i.id === viewId)) return 'insight';
+      if ((this.navGroups?.learn?.items || []).some(i => i.id === viewId)) return 'learn';
+      return 'ahora';
+    };
+
+    const clearTabSwipeStyles = () => {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('swipe-leaving', 'swipe-entering');
+        item.style.removeProperty('--swipe-p');
+      });
+      document.querySelectorAll('.subnav-pill').forEach(btn => {
+        btn.classList.remove('swipe-leaving', 'swipe-entering');
+        btn.style.removeProperty('--swipe-p');
+      });
+    };
+
+    const updateTabProgress = (targetView, progress) => {
+      const p = Math.max(0, Math.min(1, progress));
+      const curGroup = getGroupForView(this.currentView);
+      const nextGroup = getGroupForView(targetView);
+
+      document.querySelectorAll('.nav-item').forEach(item => {
+        const g = item.dataset.navGroup;
+        item.classList.remove('swipe-leaving', 'swipe-entering');
+        item.style.removeProperty('--swipe-p');
+        if (curGroup !== nextGroup) {
+          if (g === curGroup) {
+            item.classList.add('swipe-leaving');
+            item.style.setProperty('--swipe-p', String(p));
+          } else if (g === nextGroup) {
+            item.classList.add('swipe-entering');
+            item.style.setProperty('--swipe-p', String(p));
+          }
+        }
+      });
+
+      const subnavEl = document.getElementById('context-subnav');
+      if (subnavEl) {
+        subnavEl.querySelectorAll('.subnav-pill[data-subnav-view]').forEach(btn => {
+          const v = btn.dataset.subnavView;
+          btn.classList.remove('swipe-leaving', 'swipe-entering');
+          btn.style.removeProperty('--swipe-p');
+          if (v === this.currentView) {
+            btn.classList.add('swipe-leaving');
+            btn.style.setProperty('--swipe-p', String(p));
+          } else if (v === targetView) {
+            btn.classList.add('swipe-entering');
+            btn.style.setProperty('--swipe-p', String(p));
+          }
+        });
+      }
+    };
+
+    const resetDragFeedback = (animateBack = false, lastDir = 'next') => {
+      clearTabSwipeStyles();
+      const sec = document.querySelector('.subapp-section.active');
+      const vw = window.innerWidth || 375;
+      if (animateBack) {
+        if (sec) {
+          sec.style.transition = 'transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease-out';
+        }
+        if (skeletonEl && skeletonEl.classList.contains('active')) {
+          skeletonEl.style.transition = 'transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease-out';
+          skeletonEl.style.transform = `translateX(${lastDir === 'next' ? vw : -vw}px)`;
+          skeletonEl.style.opacity = '0';
+        }
+        bounceTimer = setTimeout(() => {
+          if (sec) sec.style.transition = '';
+          hideSkeleton();
+          bounceTimer = null;
+        }, 230);
+      } else {
+        if (sec) sec.style.transition = '';
+        hideSkeleton();
+      }
+      if (sec) {
+        sec.style.transform = '';
+        sec.style.opacity = '';
+      }
+    };
+
+    const hasHorizontalScroll = (target) => {
+      let el = target instanceof Element ? target : target?.parentElement;
+      while (el && el !== document.body && el !== document.documentElement) {
+        if (el.scrollWidth > el.clientWidth + 4) {
+          const ox = window.getComputedStyle(el).overflowX;
+          if (ox === 'auto' || ox === 'scroll') return true;
+        }
+        el = el.parentElement;
+      }
+      return false;
+    };
+
+    const isBlocked = (target, clientX) => {
+      if (window.innerWidth >= 768) return true;
+      if (window.stateManager?.isVaultLocked?.()) return true;
+      if (document.body.classList.contains('flow-immersive')) return true;
+      if (document.getElementById('app-modal')?.classList?.contains('active')) return true;
+      if (document.getElementById('feedback-modal-overlay')?.classList?.contains('active')) return true;
+      if (document.getElementById('help-drawer')?.classList?.contains('open')) return true;
+      if (clientX < 24 || clientX > window.innerWidth - 24) return true;
+      if (target?.closest?.('input, textarea, select, [contenteditable="true"], .context-subnav-inner, .act-typeform-steps-nav')) return true;
+      if (hasHorizontalScroll(target)) return true;
+      return false;
+    };
+
+    document.addEventListener('touchstart', (e) => {
+      if (bounceTimer) {
+        clearTimeout(bounceTimer);
+        bounceTimer = null;
+      }
+      if (skelFadeTimer) {
+        clearTimeout(skelFadeTimer);
+        skelFadeTimer = null;
+        hideSkeleton();
+      }
+      dragging = false;
+      if (!e.touches || e.touches.length !== 1) {
+        eligible = false;
+        return;
+      }
+      const t = e.touches[0];
+      if (isBlocked(e.target, t.clientX)) {
+        eligible = false;
+        return;
+      }
+      startX = t.clientX;
+      startY = t.clientY;
+      eligible = true;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+      if (!eligible || !e.touches || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      const deltaX = t.clientX - startX;
+      const deltaY = t.clientY - startY;
+
+      if (!dragging) {
+        if (Math.abs(deltaY) > 16 && Math.abs(deltaY) >= Math.abs(deltaX)) {
+          eligible = false;
+          return;
+        }
+        if (Math.abs(deltaX) < 12 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.4) return;
+        dragging = true;
+      }
+
+      const sequence = getSwipeSequence();
+      const curIdx = sequence.indexOf(this.currentView);
+      const dir = deltaX < 0 ? 'next' : 'prev';
+      const nextIdx = dir === 'next' ? curIdx + 1 : curIdx - 1;
+      const hasTarget = curIdx !== -1 && nextIdx >= 0 && nextIdx < sequence.length;
+
+      const sec = document.querySelector('.subapp-section.active');
+      const vw = window.innerWidth || 375;
+      if (sec) {
+        sec.style.transition = 'none';
+        if (hasTarget) {
+          sec.style.transform = `translateX(${deltaX}px)`;
+          sec.style.opacity = String(1 - Math.min(0.6, Math.abs(deltaX) / vw));
+        } else {
+          sec.style.transform = `translateX(${deltaX * 0.25}px)`;
+        }
+      }
+
+      if (hasTarget) {
+        const commitThreshold = vw * 0.3;
+        const skel = ensureSkeleton();
+        if (skel) {
+          skel.classList.add('active');
+          skel.style.transition = 'none';
+          skel.style.transform = `translateX(${deltaX + (dir === 'next' ? vw : -vw)}px)`;
+          skel.style.opacity = String(0.14 + Math.min(0.28, Math.abs(deltaX) / vw));
+        }
+        updateTabProgress(sequence[nextIdx], Math.abs(deltaX) / commitThreshold);
+      } else {
+        hideSkeleton();
+        clearTabSwipeStyles();
+      }
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      const wasDragging = dragging;
+      dragging = false;
+      if (!eligible || !e.changedTouches || e.changedTouches.length !== 1) {
+        if (wasDragging) resetDragFeedback(true);
+        return;
+      }
+      eligible = false;
+
+      const t = e.changedTouches[0];
+      const deltaX = t.clientX - startX;
+      const deltaY = t.clientY - startY;
+      const dir = deltaX < 0 ? 'next' : 'prev';
+      const vw = window.innerWidth || 375;
+      const isValidSwipe =
+        Math.abs(deltaX) >= vw * 0.3 &&
+        Math.abs(deltaX) > Math.abs(deltaY) * 1.2;
+
+      if (!isValidSwipe) {
+        if (wasDragging) resetDragFeedback(true, dir);
+        return;
+      }
+
+      const sequence = getSwipeSequence();
+      const curIdx = sequence.indexOf(this.currentView);
+      if (curIdx === -1) {
+        resetDragFeedback(true, dir);
+        return;
+      }
+
+      const nextIdx = dir === 'next' ? curIdx + 1 : curIdx - 1;
+      if (nextIdx >= 0 && nextIdx < sequence.length) {
+        clearTabSwipeStyles();
+        hideSkeleton();
+        this.triggerHaptic?.([8]);
+        this.navigate(sequence[nextIdx], { swipeDir: dir });
+      } else {
+        resetDragFeedback(true, dir);
+      }
+    }, { passive: true });
+
+    document.addEventListener('touchcancel', () => {
+      const wasDragging = dragging;
+      eligible = false;
+      dragging = false;
+      if (wasDragging) resetDragFeedback(true);
     }, { passive: true });
   }
 

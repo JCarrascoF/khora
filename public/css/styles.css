@@ -388,6 +388,8 @@ html, body {
 .app-main {
   flex: 1;
   padding: 20px;
+  position: relative;
+  overflow-x: hidden;
 }
 
 /* Section Shell */
@@ -400,9 +402,83 @@ html, body {
   display: block;
 }
 
+.swipe-skeleton {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: inherit;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.swipe-skeleton.active {
+  display: block;
+}
+
+.swipe-skeleton-title {
+  width: 52%;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  background-color: var(--sage-500);
+  opacity: 0.35;
+  margin-bottom: 14px;
+}
+
+.swipe-skeleton-line {
+  width: 100%;
+  height: 12px;
+  border-radius: var(--radius-sm);
+  background-color: var(--border-subtle);
+  opacity: 0.45;
+  margin-bottom: 10px;
+}
+
+.swipe-skeleton-line.short {
+  width: 68%;
+  margin-bottom: 24px;
+}
+
+.swipe-skeleton-block {
+  width: 100%;
+  height: 88px;
+  border-radius: var(--radius-md);
+  background-color: var(--border-subtle);
+  opacity: 0.32;
+  margin-bottom: 14px;
+}
+
+.subapp-section.active.swipe-from-right {
+  animation: swipeInFromRight 0.42s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
+.subapp-section.active.swipe-from-left {
+  animation: swipeInFromLeft 0.42s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes swipeInFromRight {
+  0% { opacity: 0; transform: translateX(24px); }
+  30% { opacity: 0.2; }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes swipeInFromLeft {
+  0% { opacity: 0; transform: translateX(-24px); }
+  30% { opacity: 0.2; }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .subapp-section.active.swipe-from-right,
+  .subapp-section.active.swipe-from-left {
+    animation: none;
+  }
 }
 
 /* Card Components */
