@@ -2492,10 +2492,64 @@ ${showAndroidUrlNote ? `
       this.updatePersistenceWarningBanner();
     });
 
+    const hasNoSwMeta = Boolean(document.querySelector?.('meta[name="khora-no-sw"][content="1"]'));
     const noSwRequested = Boolean(
-      document.querySelector?.('meta[name="khora-no-sw"][content="1"]') ||
+      hasNoSwMeta ||
       new URLSearchParams(window.location?.search || '').get('nocache') === '1'
     );
+
+    const forceDevReload = async ({ clearCaches = false } = {}) => {
+      try {
+        await window.state?.flushPendingWrites?.(2000);
+      } catch {
+        // Ignore flush errors before reload
+      }
+      if (clearCaches) {
+        try {
+          if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistrations) {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(regs.map((reg) => reg.unregister()));
+          }
+        } catch {
+          // Ignore SW unregister errors
+        }
+        try {
+          if (typeof caches !== 'undefined' && caches.keys) {
+            const keys = await caches.keys();
+            await Promise.all(keys.map((key) => caches.delete(key)));
+          }
+        } catch {
+          // Ignore cache cleanup errors
+        }
+      }
+      const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set('nocache', '1');
+      nextUrl.searchParams.set('_r', String(Date.now()));
+      window.location.replace(nextUrl.toString());
+    };
+
+    const devReloadBtn = document.getElementById('btn-dev-force-reload');
+    if (devReloadBtn) {
+      devReloadBtn.style.display = noSwRequested ? '' : 'none';
+      if (noSwRequested && !devReloadBtn.dataset.bound) {
+        devReloadBtn.dataset.bound = '1';
+        devReloadBtn.addEventListener('click', () => {
+          devReloadBtn.disabled = true;
+          forceDevReload({ clearCaches: true });
+        });
+      }
+    }
+
+    if (hasNoSwMeta && typeof EventSource !== 'undefined' && !this._devReloadSource) {
+      const es = new EventSource('./__dev/events');
+      this._devReloadSource = es;
+      es.onmessage = (event) => {
+        if (event.data === 'reload') {
+          es.close();
+          forceDevReload({ clearCaches: false });
+        }
+      };
+    }
 
     if (noSwRequested && 'serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations?.().then((regs) => {

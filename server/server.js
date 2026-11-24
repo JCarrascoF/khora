@@ -15,6 +15,7 @@ const PORT = Number(process.env.PORT) || 8080;
 const HOST = process.env.HOST || '0.0.0.0';
 const SQLITE_ENABLED = process.env.ENABLE_SQLITE_DB === 'true';
 const NO_CACHE = process.env.NO_CACHE === 'true' || process.argv.includes('--no-cache');
+const devReloadClients = NO_CACHE ? new Set() : null;
 const DB_PATH = process.env.DB_PATH || path.join(ROOT_DIR, 'data', 'act.db');
 const AUTH_USER = (process.env.AUTH_USER || 'admin').trim();
 const AUTH_PASSWORD = process.env.AUTH_PASSWORD || '';
@@ -596,6 +597,20 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    if (NO_CACHE && req.method === 'GET' && pathname === '/__dev/events') {
+      res.writeHead(200, {
+        'Content-Type': 'text/event-stream; charset=utf-8',
+        'Cache-Control': 'no-cache, no-transform',
+        'Connection': 'keep-alive'
+      });
+      res.write(': connected\n\n');
+      devReloadClients.add(res);
+      req.on('close', () => {
+        devReloadClients.delete(res);
+      });
+      return;
+    }
+
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       res.writeHead(405, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('Method Not Allowed');
@@ -614,13 +629,56 @@ const server = http.createServer(async (req, res) => {
 });
 
 if (require.main === module) {
+  let devWatcher = null;
+  let devReloadTimer = null;
+
+  if (NO_CACHE) {
+    try {
+      devWatcher = fs.watch(PUBLIC_DIR, { recursive: true }, (_eventType, filename) => {
+        if (!filename) return;
+        const ext = path.extname(String(filename)).toLowerCase();
+        if (!['.html', '.css', '.js', '.json', '.svg'].includes(ext)) return;
+        clearTimeout(devReloadTimer);
+        devReloadTimer = setTimeout(() => {
+          for (const client of devReloadClients) {
+            try {
+              client.write('data: reload\n\n');
+            } catch {
+              devReloadClients.delete(client);
+            }
+          }
+        }, 120);
+      });
+    } catch (err) {
+      console.warn('[Khora] No se pudo iniciar fs.watch para auto-reload:', err.message);
+    }
+  }
+
   server.listen(PORT, HOST, () => {
     const modeLabel = SQLITE_ENABLED ? `SQLite: ${DB_PATH}` : 'Modo estático / local en navegador';
-    const cacheLabel = NO_CACHE ? ', sin caché ni SW' : '';
+    const cacheLabel = NO_CACHE ? ', sin caché ni SW + auto-reload' : '';
     console.log(`[Khora] Servidor activo en http://${HOST}:${PORT} (${modeLabel}${cacheLabel})`);
   });
 
   const shutdown = () => {
+    clearTimeout(devReloadTimer);
+    if (devWatcher) {
+      try {
+        devWatcher.close();
+      } catch {
+        // Ignore watcher close error
+      }
+    }
+    if (devReloadClients) {
+      for (const client of devReloadClients) {
+        try {
+          client.end();
+        } catch {
+          // Ignore client close error
+        }
+      }
+      devReloadClients.clear();
+    }
     server.close(() => {
       try {
         if (db) db.close();
