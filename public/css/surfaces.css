@@ -136,6 +136,26 @@ blockquote {
   box-shadow: none;
 }
 
+@media (max-width: 767px) {
+  .app-nav {
+    --nav-dock-gap: max(12px, calc(env(safe-area-inset-bottom) - 18px));
+    left: var(--nav-dock-gap);
+    right: var(--nav-dock-gap);
+    bottom: var(--nav-dock-gap);
+    padding: 6px 10px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 22px;
+    background-color: color-mix(in srgb, var(--bg-primary) 92%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .app-nav .nav-item {
+    border-radius: 14px;
+  }
+}
+
 @media (min-width: 768px) {
   .app-nav {
     border-bottom: 1px solid var(--border-subtle);

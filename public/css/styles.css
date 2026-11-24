@@ -2379,10 +2379,6 @@ button:disabled {
 }
 
 @media (max-width: 767px) {
-  .app-nav {
-    padding-bottom: max(6px, calc(env(safe-area-inset-bottom) - 2px));
-  }
-
   .app-container {
     padding-bottom: calc(88px + env(safe-area-inset-bottom));
   }
