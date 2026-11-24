@@ -678,6 +678,14 @@ class AppController {
     const prevView = this.currentView;
     this.currentView = resolvedSubView;
     this.currentGroup = activeGroup;
+    if (document.body?.dataset) {
+      document.body.dataset.view = sectionId;
+    }
+    // Source of truth for footer visibility; surfaces.css mirrors it as a no-JS fallback.
+    const appFooter = document.getElementById('app-footer');
+    if (appFooter) {
+      appFooter.hidden = sectionId !== 'home';
+    }
     const immersiveViews = new Set(['act-space', 'false-peace', 'compass']);
     if (!immersiveViews.has(sectionId)) {
       this.setFlowImmersive(false);
@@ -2484,7 +2492,22 @@ ${showAndroidUrlNote ? `
       this.updatePersistenceWarningBanner();
     });
 
-    if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
+    const noSwRequested = Boolean(
+      document.querySelector?.('meta[name="khora-no-sw"][content="1"]') ||
+      new URLSearchParams(window.location?.search || '').get('nocache') === '1'
+    );
+
+    if (noSwRequested && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations?.().then((regs) => {
+        regs.forEach((reg) => reg.unregister());
+      }).catch(() => {});
+      if (typeof caches !== 'undefined' && caches.keys) {
+        caches.keys().then((keys) => {
+          keys.forEach((key) => caches.delete(key));
+        }).catch(() => {});
+      }
+      console.log('[PWA] Service Worker disabled in no-cache mode.');
+    } else if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
       this.swRefreshing = false;
       this.swUpdateRequested = false;
       const hadController = Boolean(navigator.serviceWorker.controller);

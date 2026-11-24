@@ -111,6 +111,14 @@ npm start
 ENABLE_SQLITE_DB=true DB_PATH=./data/act.db npm start
 ```
 
+#### Modo sin caché (desarrollo)
+
+`npm run dev` (o `node server/server.js --no-cache`, o `NO_CACHE=true`) sirve todos los assets con `Cache-Control: no-store`, `Pragma: no-cache` y `Expires: 0`, e inyecta `<meta name="khora-no-sw">` en `index.html`. Con esa meta (o `?nocache=1` en la URL), el cliente desregistra el service worker y limpia `caches`, útil para probar cambios sin purgar la caché PWA a mano.
+
+```bash
+npm run dev
+```
+
 ### 3. Servidor estático simple (desarrollo)
 
 ```bash

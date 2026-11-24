@@ -18,37 +18,34 @@ function invokeServer(server, { method = 'GET', url = '/', headers = {}, body = 
 
     const chunks = [];
     const resHeaders = {};
-    const res = {
-      statusCode: 200,
-      setHeader(name, value) {
-        resHeaders[name.toLowerCase()] = value;
-      },
-      getHeader(name) {
-        return resHeaders[name.toLowerCase()];
-      },
-      writeHead(code, hdrs = {}) {
-        this.statusCode = code;
-        for (const [k, v] of Object.entries(hdrs)) {
-          resHeaders[k.toLowerCase()] = v;
-        }
-      },
-      write(chunk) {
-        if (chunk) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-        return true;
-      },
-      end(chunk) {
-        if (chunk) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-        const raw = Buffer.concat(chunks).toString('utf8');
-        resolve({
-          status: this.statusCode,
-          headers: resHeaders,
-          body: raw,
-          json() {
-            return JSON.parse(raw);
-          }
-        });
+    const res = new PassThrough();
+    res.statusCode = 200;
+    res.setHeader = function (name, value) {
+      resHeaders[name.toLowerCase()] = value;
+    };
+    res.getHeader = function (name) {
+      return resHeaders[name.toLowerCase()];
+    };
+    res.writeHead = function (code, hdrs = {}) {
+      this.statusCode = code;
+      for (const [k, v] of Object.entries(hdrs)) {
+        resHeaders[k.toLowerCase()] = v;
       }
     };
+    res.on('data', (chunk) => {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    });
+    res.on('finish', () => {
+      const raw = Buffer.concat(chunks).toString('utf8');
+      resolve({
+        status: res.statusCode,
+        headers: resHeaders,
+        body: raw,
+        json() {
+          return JSON.parse(raw);
+        }
+      });
+    });
 
     server.emit('request', req, res);
 
@@ -175,4 +172,37 @@ test('server.js enforces auth, serves health, and persists state in SQLite', asy
   const htmlRes = await invokeServer(server, { method: 'GET', url: '/' });
   assert.equal(htmlRes.status, 200);
   assert.ok(htmlRes.body.includes('<meta name="khora-api" content="1">'), 'Expected khora-api meta tag in HTML');
+});
+
+test('server.js with NO_CACHE=true disables caching on all assets and injects khora-no-sw', async (t) => {
+  const prevNoCache = process.env.NO_CACHE;
+  const prevSqlite = process.env.ENABLE_SQLITE_DB;
+  const serverPath = require.resolve('../server/server.js');
+  delete require.cache[serverPath];
+
+  process.env.NO_CACHE = 'true';
+  process.env.ENABLE_SQLITE_DB = 'false';
+
+  const { server } = require('../server/server.js');
+
+  t.after(() => {
+    delete require.cache[serverPath];
+    if (prevNoCache === undefined) delete process.env.NO_CACHE;
+    else process.env.NO_CACHE = prevNoCache;
+    if (prevSqlite === undefined) delete process.env.ENABLE_SQLITE_DB;
+    else process.env.ENABLE_SQLITE_DB = prevSqlite;
+  });
+
+  const htmlRes = await invokeServer(server, { method: 'GET', url: '/' });
+  assert.equal(htmlRes.status, 200);
+  assert.ok(htmlRes.headers['cache-control'].includes('no-store'));
+  assert.equal(htmlRes.headers['pragma'], 'no-cache');
+  assert.equal(htmlRes.headers['expires'], '0');
+  assert.ok(htmlRes.body.includes('<meta name="khora-no-sw" content="1">'), 'Expected khora-no-sw meta tag in HTML');
+
+  const manifestRes = await invokeServer(server, { method: 'GET', url: '/manifest.json' });
+  assert.equal(manifestRes.status, 200);
+  assert.ok(manifestRes.headers['cache-control'].includes('no-store'));
+  assert.equal(manifestRes.headers['pragma'], 'no-cache');
+  assert.equal(manifestRes.headers['expires'], '0');
 });

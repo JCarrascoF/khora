@@ -18,6 +18,7 @@
   ],
   "scripts": {
     "start": "node --no-warnings server/server.js",
+    "dev": "node --no-warnings server/server.js --no-cache",
     "serve:static": "npx serve public",
     "sync:version": "node scripts/sync-version.mjs",
     "test": "node --test tests/*.test.mjs",
