@@ -901,7 +901,7 @@ ${currentPalette === 'custom' ? (() => {
               </div>
               ${(() => {
                 if (this._noSwRequested) {
-                  return `<button type="button" class="btn-secondary" id="btn-dev-force-reload" style="font-size: 0.75rem; padding: 5px 10px;">Recargar sin caché (Dev)</button>`;
+                  return `<button type="button" class="btn-secondary" id="btn-dev-force-reload" data-i18n-title="Recargar sin caché (Dev)" title="Recargar sin caché (Dev)" style="font-size: 0.75rem; padding: 5px 10px;">Recargar sin caché (Dev)</button>`;
                 }
                 const hasWaiting = Boolean(this.swRegistration?.waiting);
                 if (hasWaiting) {

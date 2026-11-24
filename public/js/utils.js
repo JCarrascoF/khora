@@ -24,7 +24,25 @@
    * Smoothly scrolls the window to the top of the page.
    */
   function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    try {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch {
+      // Ignore scroll errors (e.g. no window)
+    }
+  }
+
+  /**
+   * Binds click handlers for all [data-goto-step] buttons within scope.
+   * @param {Element|Document} scope
+   * @param {function(number): boolean|void} onGoto - called with the parsed step.
+   */
+  function bindGotoStep(scope, onGoto) {
+    (scope || document).querySelectorAll?.('[data-goto-step]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const targetStep = parseInt(e.currentTarget.dataset.gotoStep, 10);
+        if (targetStep) onGoto(targetStep);
+      });
+    });
   }
 
   /**
@@ -200,13 +218,22 @@
       pendingLeavingTitleHtml = '';
       if (stage && prevStep && nextStep && prevStep !== nextStep) {
         const isNext = nextStep > prevStep;
+        // Ghost lifetime: derive from the CSS motion token so removal never clips the animation.
+        let ghostMs = 440;
+        try {
+          const token = getComputedStyle(document.documentElement).getPropertyValue('--motion-nav-duration').trim();
+          const ms = token.endsWith('ms') ? Number.parseFloat(token) : Number.parseFloat(token) * 1000;
+          if (Number.isFinite(ms) && ms > 0) ghostMs = Math.round(ms) + 40;
+        } catch {
+          // Fall back to the default
+        }
         if (leavingHtml && !commitState && typeof document.createElement === 'function') {
           const ghost = document.createElement('div');
           ghost.className = `act-typeform-leaving ${isNext ? 'leave-to-left' : 'leave-to-right'}`;
           ghost.setAttribute('aria-hidden', 'true');
           ghost.innerHTML = leavingHtml;
           stage.appendChild(ghost);
-          setTimeout(() => ghost.remove?.(), 440);
+          setTimeout(() => ghost.remove?.(), ghostMs);
         }
         const cls = isNext ? 'swipe-from-right' : 'swipe-from-left';
         stage.classList?.remove('swipe-from-right', 'swipe-from-left');
@@ -247,7 +274,7 @@
           titleGhost.setAttribute('aria-hidden', 'true');
           titleGhost.innerHTML = leavingTitleHtml;
           titleParent.appendChild(titleGhost);
-          setTimeout(() => titleGhost.remove?.(), 440);
+          setTimeout(() => titleGhost.remove?.(), ghostMs);
         }
         const titleCls = isNext ? 'step-label-next' : 'step-label-prev';
         titleEl.classList?.remove('step-label-next', 'step-label-prev');
@@ -477,7 +504,7 @@
       EDGE_GUARD_PX: 24,
       START_ANGLE_RATIO: 1.4,
       COMMIT_ANGLE_RATIO: 1.2,
-      BOUNCE_MS: 340
+      BOUNCE_MS: 440
     }),
 
     /**
@@ -752,7 +779,8 @@
 
   global.KhoraUtils = Object.freeze({
     escapeHtml,
-    scrollToTop
+    scrollToTop,
+    bindGotoStep
   });
 
   global.KhoraSwipe = KhoraSwipe;

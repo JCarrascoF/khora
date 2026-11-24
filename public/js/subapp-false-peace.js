@@ -4,9 +4,18 @@
  */
 
 class PazFalsaApp {
+  /** Single source for step labels (consumed by totalSteps, render() and renderStepN). */
+  static STEPS = [
+    { step: 1, label: '1. Contexto' },
+    { step: 2, label: '2. Situación' },
+    { step: 3, label: '3. Miedo' },
+    { step: 4, label: '4. Coste' },
+    { step: 5, label: '5. Límite' }
+  ];
+
   constructor() {
     this.currentStep = 1;
-    this.totalSteps = 5;
+    this.totalSteps = PazFalsaApp.STEPS.length;
     this.entryData = {
       context: 'Trabajo',
       situation: '',
@@ -101,13 +110,7 @@ class PazFalsaApp {
     container.innerHTML = window.KhoraUI.renderTypeformShell({
       currentStep: this.currentStep,
       totalSteps: this.totalSteps,
-      steps: [
-        { step: 1, label: '1. Contexto' },
-        { step: 2, label: '2. Situación' },
-        { step: 3, label: '3. Miedo' },
-        { step: 4, label: '4. Coste' },
-        { step: 5, label: '5. Límite' }
-      ],
+      steps: PazFalsaApp.STEPS,
       navAriaLabel: 'Pasos de Paz Falsa',
       helpTopic: 'paz-falsa',
       bodyId: 'pf-step-body',
@@ -312,13 +315,10 @@ class PazFalsaApp {
 
   bindEvents() {
     const viewRoot = document.getElementById('false-peace-view') || document;
-    viewRoot.querySelectorAll('[data-goto-step]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const targetStep = parseInt(e.currentTarget.dataset.gotoStep, 10);
-        if (targetStep && targetStep !== this.currentStep) {
-          this.setStep(targetStep);
-        }
-      });
+    window.KhoraUtils?.bindGotoStep?.(viewRoot, (targetStep) => {
+      if (targetStep !== this.currentStep) {
+        this.setStep(targetStep);
+      }
     });
 
     // Step 1 Context Selectors

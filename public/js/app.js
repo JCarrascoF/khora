@@ -2117,15 +2117,32 @@ class AppController {
               : null;
           };
 
+          // Preferred: call the subapp's step API directly (same path the footer buttons use).
+          // Fallback: locate the footer button and synthesize the click.
+          const subappMap = {
+            'act-space': window.espacioActApp,
+            'false-peace': window.pazFalsaApp,
+            compass: window.brujulaValoresApp
+          };
+          const getSubapp = () => subappMap[this.currentView] || null;
+          const gotoStep = (targetStep) => {
+            if (targetStep < 1 || targetStep > totalSteps) return false;
+            const subapp = getSubapp();
+            if (subapp && typeof subapp.setStep === 'function') {
+              subapp.setStep(targetStep);
+              return true;
+            }
+            const dir = targetStep > currentStep ? 'next' : 'prev';
+            const btn = getBtn(dir);
+            if (!btn) return false;
+            btn.click();
+            return true;
+          };
+
           const getPreviewHtml = (dir) => {
             const targetStep = dir === 'next' ? currentStep + 1 : currentStep - 1;
             if (targetStep < 1 || targetStep > totalSteps) return '';
-            const subappMap = {
-              'act-space': window.espacioActApp,
-              'false-peace': window.pazFalsaApp,
-              compass: window.brujulaValoresApp
-            };
-            const subapp = subappMap[this.currentView];
+            const subapp = getSubapp();
             const fn = subapp?.[`renderStep${targetStep}`];
             if (typeof fn !== 'function') return '';
             return String(fn.call(subapp) || '').replace(/\sid="[^"]*"/g, '');
@@ -2150,10 +2167,9 @@ class AppController {
               if (titleEl) titleEl.style.opacity = '';
             },
             onCommit: (dir, commitState) => {
-              const btn = getBtn(dir);
-              if (!btn) return;
+              const targetStep = dir === 'next' ? currentStep + 1 : currentStep - 1;
               window.KhoraUI?.setPendingSwipeCommit?.(commitState || null);
-              btn.click();
+              gotoStep(targetStep);
             }
           };
         }
@@ -2817,7 +2833,7 @@ ${showAndroidUrlNote ? `
     };
 
     this._forceDevReload = forceDevReload;
-    this._noSwRequested = noSwRequested;
+    this._noSwRequested = hasNoSwMeta;
 
     if (hasNoSwMeta && typeof EventSource !== 'undefined' && !this._devReloadSource) {
       const es = new EventSource('./__dev/events');

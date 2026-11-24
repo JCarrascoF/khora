@@ -6,9 +6,20 @@
  */
 
 class EspacioActApp {
+  /** Single source for step labels (consumed by totalSteps, render() and renderStepN). */
+  static STEPS = [
+    { step: 1, label: '1. Emoción' },
+    { step: 2, label: '2. Intensidad' },
+    { step: 3, label: '3. Cuerpo' },
+    { step: 4, label: '4. Mente' },
+    { step: 5, label: '5. Distancia' },
+    { step: 6, label: '6. Elección' },
+    { step: 7, label: '7. Cierre' }
+  ];
+
   constructor() {
     this.currentStep = 1;
-    this.totalSteps = 7;
+    this.totalSteps = EspacioActApp.STEPS.length;
     this.emotionViewMode = 'wheel'; // 'wheel' (Rueda Circular Estándar) | 'chips' (Fichas / Lista)
     this.activeEmotionFamily = 'Ira';
     this.emotionSearchQuery = '';
@@ -247,20 +258,10 @@ class EspacioActApp {
         break;
     }
 
-    const stepLabels = [
-      { step: 1, label: '1. Emoción' },
-      { step: 2, label: '2. Intensidad' },
-      { step: 3, label: '3. Cuerpo' },
-      { step: 4, label: '4. Mente' },
-      { step: 5, label: '5. Distancia' },
-      { step: 6, label: '6. Elección' },
-      { step: 7, label: '7. Cierre' }
-    ];
-
     container.innerHTML = window.KhoraUI.renderTypeformShell({
       currentStep: this.currentStep,
       totalSteps: this.totalSteps,
-      steps: stepLabels,
+      steps: EspacioActApp.STEPS,
       navAriaLabel: 'Pasos de Espacio ACT',
       bodyId: 'act-step-body',
       stepHtml
@@ -1257,13 +1258,10 @@ class EspacioActApp {
     const viewRoot = document.getElementById('act-space-view') || document;
 
     // Top step pills navigation
-    viewRoot.querySelectorAll('[data-goto-step]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const targetStep = parseInt(e.currentTarget.dataset.gotoStep, 10);
-        if (targetStep && targetStep !== this.currentStep) {
-          this.setStep(targetStep);
-        }
-      });
+    window.KhoraUtils?.bindGotoStep?.(viewRoot, (targetStep) => {
+      if (targetStep !== this.currentStep) {
+        this.setStep(targetStep);
+      }
     });
 
     // Maximize Wheel modal trigger

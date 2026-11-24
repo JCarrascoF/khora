@@ -4,9 +4,17 @@
  */
 
 class BrujulaValoresApp {
+  /** Single source for step labels (consumed by totalSteps, render() and renderStepN). */
+  static STEPS = [
+    { step: 1, label: '1. Situación' },
+    { step: 2, label: '2. Valor' },
+    { step: 3, label: '3. Pasajero' },
+    { step: 4, label: '4. Acción' }
+  ];
+
   constructor() {
     this.currentStep = 1; // 1: Situación, 2: Bloqueo, 3: Valor, 4: Micro-acción
-    this.totalSteps = 4;
+    this.totalSteps = BrujulaValoresApp.STEPS.length;
     this.valuesCatalog = [
       { id:'Dignidad', icon:'', desc:'Autorrespeto sin ceder por miedo' },
       { id:'Autocuidado', icon:'', desc:'Proteger mi energía y descanso' },
@@ -145,12 +153,7 @@ class BrujulaValoresApp {
       ${window.KhoraUI.renderTypeformShell({
         currentStep: this.currentStep,
         totalSteps: this.totalSteps,
-        steps: [
-          { step: 1, label: '1. Situación' },
-          { step: 2, label: '2. Valor' },
-          { step: 3, label: '3. Pasajero' },
-          { step: 4, label: '4. Acción' }
-        ],
+        steps: BrujulaValoresApp.STEPS,
         navAriaLabel: 'Pasos de Brújula de Valores',
         helpTopic: 'brujula-valores',
         bodyId: 'compass-body',
@@ -352,13 +355,10 @@ class BrujulaValoresApp {
 
   bindEvents() {
     const viewRoot = document.getElementById('compass-view') || document;
-    viewRoot.querySelectorAll('[data-goto-step]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const targetStep = parseInt(e.currentTarget.dataset.gotoStep, 10);
-        if (targetStep && targetStep !== this.currentStep) {
-          this.setStep(targetStep);
-        }
-      });
+    window.KhoraUtils?.bindGotoStep?.(viewRoot, (targetStep) => {
+      if (targetStep !== this.currentStep) {
+        this.setStep(targetStep);
+      }
     });
 
     // Step 1 Events
