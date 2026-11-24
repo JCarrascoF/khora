@@ -681,6 +681,7 @@ class AppController {
     if (document.body?.dataset) {
       document.body.dataset.view = sectionId;
     }
+    // Source of truth for footer visibility; surfaces.css mirrors it as a no-JS fallback.
     const appFooter = document.getElementById('app-footer');
     if (appFooter) {
       appFooter.hidden = sectionId !== 'home';
@@ -2505,7 +2506,7 @@ ${showAndroidUrlNote ? `
           keys.forEach((key) => caches.delete(key));
         }).catch(() => {});
       }
-      console.log('[PWA] Service Worker desactivado en modo sin caché.');
+      console.log('[PWA] Service Worker disabled in no-cache mode.');
     } else if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
       this.swRefreshing = false;
       this.swUpdateRequested = false;
