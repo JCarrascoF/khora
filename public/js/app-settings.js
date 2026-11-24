@@ -900,6 +900,9 @@ ${currentPalette === 'custom' ? (() => {
                 <span>${matchMedia?.('(display-mode: standalone)')?.matches ? 'App instalada' : 'Pestaña del navegador'}</span>
               </div>
               ${(() => {
+                if (this._noSwRequested) {
+                  return `<button type="button" class="btn-secondary" id="btn-dev-force-reload" style="font-size: 0.75rem; padding: 5px 10px;">Recargar sin caché (Dev)</button>`;
+                }
                 const hasWaiting = Boolean(this.swRegistration?.waiting);
                 if (hasWaiting) {
                   return `<button type="button" class="btn-primary" id="btn-pwa-check-updates" style="font-size: 0.75rem; padding: 5px 10px;">Actualizar y recargar</button>`;
@@ -1285,6 +1288,11 @@ ${currentPalette === 'custom' ? (() => {
       document.getElementById('btn-settings-feedback')?.addEventListener('click', () => {
         this.hideSettingsSaveIndicator();
         this.openFeedbackModal();
+      });
+
+      document.getElementById('btn-dev-force-reload')?.addEventListener('click', (e) => {
+        e.currentTarget.disabled = true;
+        this._forceDevReload?.({ clearCaches: true });
       });
 
       document.getElementById('btn-pwa-check-updates')?.addEventListener('click', async (e) => {

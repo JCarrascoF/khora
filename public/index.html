@@ -99,7 +99,11 @@
   <!-- Brief Entry Splash -->
   <div id="app-splash" class="app-splash" aria-hidden="true">
     <div class="app-splash-inner">
-      <img src="./icons/icon-192.svg" alt="" width="56" height="56" class="app-splash-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="56" height="56" class="app-splash-icon" aria-hidden="true">
+        <rect width="192" height="192" rx="40" fill="#1B1613"/>
+        <path class="khora-logo-ring" d="M 134 58 A 54 54 0 1 1 96 42" fill="none" stroke="#F3EDE4" stroke-width="11" stroke-linecap="round"/>
+        <circle cx="96" cy="96" r="14" fill="#C47C61"/>
+      </svg>
       <span class="app-splash-title">Khōra</span>
     </div>
   </div>
@@ -163,15 +167,6 @@
       </div>
 
       <div class="nav-utilities">
-        <!-- Dev-only Force Reload Button (Visible only in no-cache dev mode) -->
-        <button type="button" class="btn-icon" id="btn-dev-force-reload" title="Forzar recarga sin caché (Dev)" aria-label="Forzar recarga sin caché" style="display: none;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="23 4 23 10 17 10"></polyline>
-            <polyline points="1 20 1 14 7 14"></polyline>
-            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-          </svg>
-        </button>
-
         <!-- Quick Lock Button (Visible only when Privacy Vault is enabled) -->
         <button type="button" class="btn-icon" id="btn-quick-lock" title="Bloquear pantalla ahora" aria-label="Bloquear aplicación" data-i18n-title="Bloquear pantalla ahora" data-i18n-aria-label="Bloquear aplicación" style="display: none;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
