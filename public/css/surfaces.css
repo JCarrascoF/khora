@@ -137,15 +137,37 @@ blockquote {
 }
 
 @media (max-width: 767px) {
+  body::after {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: calc(92px + max(14px, calc(env(safe-area-inset-bottom) - 12px)));
+    background: linear-gradient(
+      to top,
+      var(--bg-primary) 0%,
+      var(--bg-primary) 42%,
+      color-mix(in srgb, var(--bg-primary) 80%, transparent) 72%,
+      transparent 100%
+    );
+    z-index: 34;
+    pointer-events: none;
+  }
+
+  body.flow-immersive::after {
+    display: none;
+  }
+
   .app-nav {
-    --nav-dock-gap: max(12px, calc(env(safe-area-inset-bottom) - 18px));
+    --nav-dock-gap: max(14px, calc(env(safe-area-inset-bottom) - 12px));
     left: var(--nav-dock-gap);
     right: var(--nav-dock-gap);
     bottom: var(--nav-dock-gap);
     padding: 6px 10px;
     border: 1px solid var(--border-subtle);
     border-radius: 22px;
-    background-color: color-mix(in srgb, var(--bg-primary) 92%, transparent);
+    background-color: color-mix(in srgb, var(--bg-primary) 95%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
