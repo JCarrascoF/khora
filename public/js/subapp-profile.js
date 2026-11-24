@@ -911,9 +911,20 @@ class PerfilApp {
     const container = document.getElementById('profile-view');
     if (!container) return;
 
+    window.app?.setFlowImmersive?.(true, () => {
+      this.render();
+      this.bindEvents();
+    });
+
     container.innerHTML = window.KhoraUI.renderTypeformShell({
       currentStep: w.step,
       totalSteps: 3,
+      steps: [
+        { step: 1, label: '1. Área' },
+        { step: 2, label: '2. Dirección' },
+        { step: 3, label: '3. Acción' }
+      ],
+      navAriaLabel: 'Pasos de Valor',
       bodyId: 'wiz-step-body',
       stepHtml
     });
@@ -927,9 +938,20 @@ class PerfilApp {
     const w = this.wizardState;
 
     const closeModal = () => {
+      window.app?.setFlowImmersive?.(false);
       this.render();
       this.bindEvents();
     };
+
+    document.getElementById('profile-view')?.querySelectorAll('[data-goto-step]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const targetStep = parseInt(e.currentTarget.dataset.gotoStep, 10);
+        if (targetStep && targetStep !== w.step && targetStep >= 1 && targetStep <= 3) {
+          w.step = targetStep;
+          this.renderWizardModal({ resetScroll: true });
+        }
+      });
+    });
 
     document.getElementById('btn-wiz-cancel')?.addEventListener('click', closeModal);
 
@@ -1302,15 +1324,34 @@ class PerfilApp {
       const container = document.getElementById('profile-view');
       if (!container) return;
       const closeModal = () => {
+        window.app?.setFlowImmersive?.(false);
         this.render();
         this.bindEvents();
       };
 
+      window.app?.setFlowImmersive?.(true, closeModal);
+
       container.innerHTML = window.KhoraUI.renderTypeformShell({
         currentStep: pasStep,
         totalSteps: 3,
+        steps: [
+          { step: 1, label: '1. Pasajero' },
+          { step: 2, label: '2. Diálogo' },
+          { step: 3, label: '3. Respuesta' }
+        ],
+        navAriaLabel: 'Pasos de Pasajero',
         bodyId: 'pas-step-body',
         stepHtml
+      });
+
+      container.querySelectorAll('[data-goto-step]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const targetStep = parseInt(e.currentTarget.dataset.gotoStep, 10);
+          if (targetStep && targetStep !== pasStep && targetStep >= 1 && targetStep <= 3) {
+            pasStep = targetStep;
+            renderPassengerStep({ resetScroll: true });
+          }
+        });
       });
 
       if (resetScroll) {

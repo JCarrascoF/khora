@@ -144,3 +144,26 @@ test('KhoraUI.renderInternalTabs renders accessible tab buttons', () => {
   assert.match(html, /aria-selected="true" class="internal-tab-btn active" data-profile-tab="tab1">Valores<\/button>/);
   assert.match(html, /aria-selected="false" class="internal-tab-btn " data-profile-tab="tab2">Autobús<\/button>/);
 });
+
+test('KhoraUI.renderTypeformShell renders exit control, compact mobile step dropdown, and desktop pills', () => {
+  const KhoraUI = loadKhoraUI();
+
+  const html = KhoraUI.renderTypeformShell({
+    currentStep: 2,
+    totalSteps: 3,
+    steps: [
+      { step: 1, label: '1. Contexto' },
+      { step: 2, label: '2. Situación' },
+      { step: 3, label: '3. Límite' }
+    ],
+    stepHtml: '<p>Contenido</p>'
+  });
+
+  assert.match(html, /class="act-typeform-exit-btn" data-flow-exit/);
+  assert.match(html, /class="act-typeform-step-trigger"[^>]*><span>2 \/ 3 · <strong>Situación<\/strong><\/span>/);
+  assert.match(html, /class="act-typeform-step-dropdown hidden"/);
+  assert.match(html, /class="act-typeform-dropdown-item completed" data-goto-step="1"[^>]*><span>1\. Contexto<\/span><span class="act-typeform-dropdown-check" aria-hidden="true">✓<\/span>/);
+  assert.match(html, /class="act-typeform-dropdown-item active" data-goto-step="2" aria-current="step"><span>2\. Situación<\/span><\/button>/);
+  assert.doesNotMatch(html, /●/);
+  assert.match(html, /class="act-step-pill active" data-goto-step="2"/);
+});

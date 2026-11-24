@@ -66,8 +66,11 @@ class PazFalsaApp {
 
   setStep(step) {
     if (step < 1 || step > this.totalSteps) return;
+    const prevStep = this.currentStep;
     this.currentStep = step;
+    window.KhoraUI?.prepareTypeformTransition?.('false-peace-view');
     this.render();
+    window.KhoraUI?.animateTypeformTransition?.('false-peace-view', prevStep, step, this.totalSteps);
     this.bindEvents();
     window.KhoraUtils.scrollToTop();
   }
@@ -98,6 +101,14 @@ class PazFalsaApp {
     container.innerHTML = window.KhoraUI.renderTypeformShell({
       currentStep: this.currentStep,
       totalSteps: this.totalSteps,
+      steps: [
+        { step: 1, label: '1. Contexto' },
+        { step: 2, label: '2. Situación' },
+        { step: 3, label: '3. Miedo' },
+        { step: 4, label: '4. Coste' },
+        { step: 5, label: '5. Límite' }
+      ],
+      navAriaLabel: 'Pasos de Paz Falsa',
       helpTopic: 'paz-falsa',
       bodyId: 'pf-step-body',
       stepHtml
@@ -128,6 +139,7 @@ class PazFalsaApp {
       </div>
 
       <div class="act-typeform-footer">
+        <button type="button" class="btn-secondary" disabled>Atrás</button>
         <button type="button" class="btn-primary" id="btn-pf-next-1">
           Siguiente
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -299,6 +311,16 @@ class PazFalsaApp {
   }
 
   bindEvents() {
+    const viewRoot = document.getElementById('false-peace-view') || document;
+    viewRoot.querySelectorAll('[data-goto-step]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const targetStep = parseInt(e.currentTarget.dataset.gotoStep, 10);
+        if (targetStep && targetStep !== this.currentStep) {
+          this.setStep(targetStep);
+        }
+      });
+    });
+
     // Step 1 Context Selectors
     const contextChips = document.querySelectorAll('.chip-btn[data-context]');
     contextChips.forEach(chip => {

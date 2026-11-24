@@ -718,6 +718,8 @@ class AppController {
       sec.style.transform = '';
       sec.style.opacity = '';
       sec.style.animation = '';
+      sec.style.removeProperty('--swipe-start-x');
+      sec.style.removeProperty('--swipe-start-opacity');
     });
 
     const targetSec = document.getElementById(`${sectionId}-view`);
@@ -726,6 +728,12 @@ class AppController {
         targetSec.classList.add('active');
         targetSec.style.animation = 'none';
       } else if (options.swipeDir === 'next' || options.swipeDir === 'prev') {
+        if (typeof options.swipeStartX === 'number') {
+          targetSec.style.setProperty('--swipe-start-x', `${Math.round(options.swipeStartX)}px`);
+        }
+        if (typeof options.swipeStartOpacity === 'number') {
+          targetSec.style.setProperty('--swipe-start-opacity', String(options.swipeStartOpacity));
+        }
         void targetSec.offsetWidth;
         targetSec.classList.add('active', options.swipeDir === 'next' ? 'swipe-from-right' : 'swipe-from-left');
       } else {
@@ -780,11 +788,23 @@ class AppController {
     return'Buenas noches. Sin prisa, estás en un lugar seguro.';
   }
 
-  setFlowImmersive(active) {
+  setFlowImmersive(active, onExit = null) {
     if (active) {
+      this._flowImmersiveOnExit = typeof onExit === 'function' ? onExit : null;
       document.body.classList.add('flow-immersive');
     } else {
+      this._flowImmersiveOnExit = null;
       document.body.classList.remove('flow-immersive', 'flow-keyboard-open');
+    }
+  }
+
+  exitFlowImmersive() {
+    const customExit = this._flowImmersiveOnExit;
+    this.setFlowImmersive(false);
+    if (typeof customExit === 'function') {
+      customExit();
+    } else {
+      this.navigate('home');
     }
   }
 
@@ -1275,8 +1295,37 @@ class AppController {
 
     // Exit Immersive Crisis Mode bar
     document.getElementById('btn-exit-flow-immersive')?.addEventListener('click', () => {
-      this.setFlowImmersive(false);
-      this.navigate('home');
+      this.exitFlowImmersive();
+    });
+
+    // Global delegation for Typeform mobile exit button & step-jumper dropdown
+    document.addEventListener('click', (e) => {
+      const exitBtn = e.target?.closest?.('[data-flow-exit]');
+      if (exitBtn) {
+        this.exitFlowImmersive();
+        return;
+      }
+
+      const trigger = e.target?.closest?.('.act-typeform-step-trigger');
+      if (trigger) {
+        e.stopPropagation();
+        const topbar = trigger.closest('.act-typeform-topbar');
+        const dropdown = topbar?.querySelector('.act-typeform-step-dropdown');
+        if (!dropdown) return;
+        const willOpen = dropdown.classList.contains('hidden');
+        document.querySelectorAll('.act-typeform-step-dropdown').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.act-typeform-step-trigger').forEach(el => el.setAttribute('aria-expanded', 'false'));
+        if (willOpen) {
+          dropdown.classList.remove('hidden');
+          trigger.setAttribute('aria-expanded', 'true');
+        }
+        return;
+      }
+
+      if (!e.target?.closest?.('.act-typeform-step-dropdown')) {
+        document.querySelectorAll('.act-typeform-step-dropdown:not(.hidden)').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.act-typeform-step-trigger[aria-expanded="true"]').forEach(el => el.setAttribute('aria-expanded', 'false'));
+      }
     });
 
     // Un-fix immersive bottom bars while mobile virtual keyboard / text input is active
@@ -1789,7 +1838,11 @@ class AppController {
         overlayEl.setAttribute('aria-hidden', 'true');
         overlayEl.innerHTML = `
           <div class="feedback-pull-splash">
-            <img src="./icons/icon-192.svg" alt="" class="feedback-pull-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="56" height="56" class="feedback-pull-icon" aria-hidden="true">
+              <rect width="192" height="192" rx="40" fill="#1B1613"/>
+              <path class="khora-logo-ring" d="M 134 58 A 54 54 0 1 1 96 42" fill="none" stroke="#F3EDE4" stroke-width="11" stroke-linecap="round"/>
+              <circle cx="96" cy="96" r="14" fill="#C47C61"/>
+            </svg>
             <!-- brand name: intentionally not translated -->
             <span class="feedback-pull-brand">Khōra</span>
           </div>
@@ -1830,9 +1883,13 @@ class AppController {
 
       const icon = el.querySelector('.feedback-pull-icon');
       if (icon) {
-        const deg = Math.round(clamped * 360);
         const scale = (0.88 + 0.12 * clamped).toFixed(2);
-        icon.style.transform = `rotate(${deg}deg) scale(${scale})`;
+        icon.style.transform = `scale(${scale})`;
+      }
+      const ring = el.querySelector('.khora-logo-ring');
+      if (ring) {
+        const deg = Math.round(clamped * 360);
+        ring.style.transform = `rotate(${deg}deg)`;
       }
 
       const label = el.querySelector('.feedback-pull-label');
@@ -1955,42 +2012,8 @@ class AppController {
   }
 
   initTabSwipeGesture() {
-    if (this._tabSwipeBound || typeof window === 'undefined' || typeof document === 'undefined') return;
+    if (this._tabSwipeBound || !window.KhoraSwipe) return;
     this._tabSwipeBound = true;
-
-    let startX = 0;
-    let startY = 0;
-    let eligible = false;
-    let dragging = false;
-    let bounceTimer = null;
-    let skelFadeTimer = null;
-    let skeletonEl = null;
-
-    const ensureSkeleton = () => {
-      if (skeletonEl && skeletonEl.isConnected) return skeletonEl;
-      const appMain = document.querySelector('.app-main');
-      if (!appMain) return null;
-      skeletonEl = document.createElement('div');
-      skeletonEl.className = 'swipe-skeleton';
-      skeletonEl.setAttribute('aria-hidden', 'true');
-      skeletonEl.innerHTML = `
-        <div class="swipe-skeleton-title"></div>
-        <div class="swipe-skeleton-line"></div>
-        <div class="swipe-skeleton-line short"></div>
-        <div class="swipe-skeleton-block"></div>
-        <div class="swipe-skeleton-block"></div>
-      `;
-      appMain.appendChild(skeletonEl);
-      return skeletonEl;
-    };
-
-    const hideSkeleton = () => {
-      if (!skeletonEl) return;
-      skeletonEl.classList.remove('active');
-      skeletonEl.style.transition = '';
-      skeletonEl.style.transform = '';
-      skeletonEl.style.opacity = '';
-    };
 
     const getSwipeSequence = () => {
       if (this.currentGroup !== 'yo' && this.currentGroup !== 'insight') return [];
@@ -2052,34 +2075,6 @@ class AppController {
       }
     };
 
-    const resetDragFeedback = (animateBack = false, lastDir = 'next') => {
-      clearTabSwipeStyles();
-      const sec = document.querySelector('.subapp-section.active');
-      const vw = window.innerWidth || 375;
-      if (animateBack) {
-        if (sec) {
-          sec.style.transition = 'transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease-out';
-        }
-        if (skeletonEl && skeletonEl.classList.contains('active')) {
-          skeletonEl.style.transition = 'transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease-out';
-          skeletonEl.style.transform = `translateX(${lastDir === 'next' ? vw : -vw}px)`;
-          skeletonEl.style.opacity = '0';
-        }
-        bounceTimer = setTimeout(() => {
-          if (sec) sec.style.transition = '';
-          hideSkeleton();
-          bounceTimer = null;
-        }, 230);
-      } else {
-        if (sec) sec.style.transition = '';
-        hideSkeleton();
-      }
-      if (sec) {
-        sec.style.transform = '';
-        sec.style.opacity = '';
-      }
-    };
-
     const hasHorizontalScroll = (target) => {
       let el = target instanceof Element ? target : target?.parentElement;
       while (el && el !== document.body && el !== document.documentElement) {
@@ -2092,140 +2087,113 @@ class AppController {
       return false;
     };
 
-    const isBlocked = (target, clientX) => {
-      if (window.innerWidth >= 768) return true;
-      if (window.stateManager?.isVaultLocked?.()) return true;
-      if (document.body.classList.contains('flow-immersive')) return true;
-      if (document.getElementById('app-modal')?.classList?.contains('active')) return true;
-      if (document.getElementById('feedback-modal-overlay')?.classList?.contains('active')) return true;
-      if (document.getElementById('help-drawer')?.classList?.contains('open')) return true;
-      if (clientX < 24 || clientX > window.innerWidth - 24) return true;
-      if (target?.closest?.('input, textarea, select, [contenteditable="true"], .context-subnav-inner, .act-typeform-steps-nav')) return true;
-      if (hasHorizontalScroll(target)) return true;
-      return false;
-    };
+    window.KhoraSwipe.bind({
+      isBlocked: (target) => {
+        if (window.innerWidth >= 768) return true;
+        if (window.stateManager?.isVaultLocked?.()) return true;
+        if (document.getElementById('app-modal')?.classList?.contains('active')) return true;
+        if (document.getElementById('feedback-modal-overlay')?.classList?.contains('active')) return true;
+        if (document.getElementById('help-drawer')?.classList?.contains('open')) return true;
+        if (target?.closest?.('input, textarea, select, [contenteditable="true"], .context-subnav-inner, .act-typeform-steps-nav, .act-typeform-step-dropdown')) return true;
+        if (hasHorizontalScroll(target)) return true;
+        return false;
+      },
 
-    document.addEventListener('touchstart', (e) => {
-      if (bounceTimer) {
-        clearTimeout(bounceTimer);
-        bounceTimer = null;
-      }
-      if (skelFadeTimer) {
-        clearTimeout(skelFadeTimer);
-        skelFadeTimer = null;
-        hideSkeleton();
-      }
-      dragging = false;
-      if (!e.touches || e.touches.length !== 1) {
-        eligible = false;
-        return;
-      }
-      const t = e.touches[0];
-      if (isBlocked(e.target, t.clientX)) {
-        eligible = false;
-        return;
-      }
-      startX = t.clientX;
-      startY = t.clientY;
-      eligible = true;
-    }, { passive: true });
+      resolveContext: () => {
+        const typeformShell = document.querySelector('.subapp-section.active .act-typeform-shell');
+        if (typeformShell) {
+          const stage = typeformShell.querySelector('.act-typeform-stage');
+          const track = typeformShell.querySelector('.act-progress-track');
+          const currentStep = parseInt(track?.getAttribute('aria-valuenow') || '1', 10);
+          const totalSteps = parseInt(track?.getAttribute('aria-valuemax') || '1', 10);
+          const getBtn = (dir) => {
+            if (dir === 'prev') {
+              return currentStep > 1
+                ? typeformShell.querySelector('.act-typeform-footer .btn-secondary:not([disabled])')
+                : null;
+            }
+            return currentStep < totalSteps
+              ? typeformShell.querySelector('.act-typeform-footer .btn-primary:not([disabled])')
+              : null;
+          };
 
-    document.addEventListener('touchmove', (e) => {
-      if (!eligible || !e.touches || e.touches.length !== 1) return;
-      const t = e.touches[0];
-      const deltaX = t.clientX - startX;
-      const deltaY = t.clientY - startY;
+          const getPreviewHtml = (dir) => {
+            const targetStep = dir === 'next' ? currentStep + 1 : currentStep - 1;
+            if (targetStep < 1 || targetStep > totalSteps) return '';
+            const subappMap = {
+              'act-space': window.espacioActApp,
+              'false-peace': window.pazFalsaApp,
+              compass: window.brujulaValoresApp
+            };
+            const subapp = subappMap[this.currentView];
+            const fn = subapp?.[`renderStep${targetStep}`];
+            if (typeof fn !== 'function') return '';
+            return String(fn.call(subapp) || '').replace(/\sid="[^"]*"/g, '');
+          };
 
-      if (!dragging) {
-        if (Math.abs(deltaY) > 16 && Math.abs(deltaY) >= Math.abs(deltaX)) {
-          eligible = false;
-          return;
+          const titleEl = typeformShell.querySelector('.act-typeform-step-trigger, .act-typeform-step-counter-mobile');
+
+          return {
+            elements: stage
+              ? Array.from(stage.children).filter(c => !c.classList.contains('act-typeform-footer') && !c.classList.contains('swipe-skeleton') && !c.classList.contains('swipe-step-preview'))
+              : [],
+            previewHost: stage,
+            getPreviewHtml,
+            useSkeleton: false,
+            hasTarget: (dir) => Boolean(getBtn(dir)),
+            onProgress: (dir, progress) => {
+              if (!titleEl) return;
+              const clamped = Math.max(0, Math.min(1, progress));
+              titleEl.style.opacity = String((1 - clamped).toFixed(3));
+            },
+            onClearProgress: () => {
+              if (titleEl) titleEl.style.opacity = '';
+            },
+            onCommit: (dir, commitState) => {
+              const btn = getBtn(dir);
+              if (!btn) return;
+              window.KhoraUI?.setPendingSwipeCommit?.(commitState || null);
+              btn.click();
+            }
+          };
         }
-        if (Math.abs(deltaX) < 12 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.4) return;
-        dragging = true;
-      }
 
-      const sequence = getSwipeSequence();
-      const curIdx = sequence.indexOf(this.currentView);
-      const dir = deltaX < 0 ? 'next' : 'prev';
-      const nextIdx = dir === 'next' ? curIdx + 1 : curIdx - 1;
-      const hasTarget = curIdx !== -1 && nextIdx >= 0 && nextIdx < sequence.length;
+        if (document.body.classList.contains('flow-immersive')) return null;
 
-      const sec = document.querySelector('.subapp-section.active');
-      const vw = window.innerWidth || 375;
-      if (sec) {
-        sec.style.transition = 'none';
-        if (hasTarget) {
-          sec.style.transform = `translateX(${deltaX}px)`;
-          sec.style.opacity = String(1 - Math.min(0.6, Math.abs(deltaX) / vw));
-        } else {
-          sec.style.transform = `translateX(${deltaX * 0.25}px)`;
-        }
-      }
+        const sec = document.querySelector('.subapp-section.active');
+        const appMain = document.querySelector('.app-main');
+        const sequence = getSwipeSequence();
+        const curIdx = sequence.indexOf(this.currentView);
+        const getTargetView = (dir) => {
+          if (curIdx === -1) return null;
+          const nextIdx = dir === 'next' ? curIdx + 1 : curIdx - 1;
+          return nextIdx >= 0 && nextIdx < sequence.length ? sequence[nextIdx] : null;
+        };
 
-      if (hasTarget) {
-        const commitThreshold = vw * 0.3;
-        const skel = ensureSkeleton();
-        if (skel) {
-          skel.classList.add('active');
-          skel.style.transition = 'none';
-          skel.style.transform = `translateX(${deltaX + (dir === 'next' ? vw : -vw)}px)`;
-          skel.style.opacity = String(0.14 + Math.min(0.28, Math.abs(deltaX) / vw));
-        }
-        updateTabProgress(sequence[nextIdx], Math.abs(deltaX) / commitThreshold);
-      } else {
-        hideSkeleton();
-        clearTabSwipeStyles();
-      }
-    }, { passive: true });
+        return {
+          element: sec,
+          skeletonHost: appMain,
+          hasTarget: (dir) => Boolean(getTargetView(dir)),
+          onProgress: (dir, progress) => {
+            const targetView = getTargetView(dir);
+            if (targetView) updateTabProgress(targetView, progress);
+          },
+          onClearProgress: clearTabSwipeStyles,
+          onCommit: (dir, commitState) => {
+            const targetView = getTargetView(dir);
+            if (targetView) {
+              this.navigate(targetView, {
+                swipeDir: dir,
+                swipeStartX: commitState?.offset,
+                swipeStartOpacity: commitState?.opacity
+              });
+            }
+          }
+        };
+      },
 
-    document.addEventListener('touchend', (e) => {
-      const wasDragging = dragging;
-      dragging = false;
-      if (!eligible || !e.changedTouches || e.changedTouches.length !== 1) {
-        if (wasDragging) resetDragFeedback(true);
-        return;
-      }
-      eligible = false;
-
-      const t = e.changedTouches[0];
-      const deltaX = t.clientX - startX;
-      const deltaY = t.clientY - startY;
-      const dir = deltaX < 0 ? 'next' : 'prev';
-      const vw = window.innerWidth || 375;
-      const isValidSwipe =
-        Math.abs(deltaX) >= vw * 0.3 &&
-        Math.abs(deltaX) > Math.abs(deltaY) * 1.2;
-
-      if (!isValidSwipe) {
-        if (wasDragging) resetDragFeedback(true, dir);
-        return;
-      }
-
-      const sequence = getSwipeSequence();
-      const curIdx = sequence.indexOf(this.currentView);
-      if (curIdx === -1) {
-        resetDragFeedback(true, dir);
-        return;
-      }
-
-      const nextIdx = dir === 'next' ? curIdx + 1 : curIdx - 1;
-      if (nextIdx >= 0 && nextIdx < sequence.length) {
-        clearTabSwipeStyles();
-        hideSkeleton();
-        this.triggerHaptic?.([8]);
-        this.navigate(sequence[nextIdx], { swipeDir: dir });
-      } else {
-        resetDragFeedback(true, dir);
-      }
-    }, { passive: true });
-
-    document.addEventListener('touchcancel', () => {
-      const wasDragging = dragging;
-      eligible = false;
-      dragging = false;
-      if (wasDragging) resetDragFeedback(true);
-    }, { passive: true });
+      onHaptic: () => this.triggerHaptic?.([8])
+    });
   }
 
   closeFeedbackModal() {
@@ -2848,17 +2816,8 @@ ${showAndroidUrlNote ? `
       window.location.replace(nextUrl.toString());
     };
 
-    const devReloadBtn = document.getElementById('btn-dev-force-reload');
-    if (devReloadBtn) {
-      devReloadBtn.style.display = noSwRequested ? '' : 'none';
-      if (noSwRequested && !devReloadBtn.dataset.bound) {
-        devReloadBtn.dataset.bound = '1';
-        devReloadBtn.addEventListener('click', () => {
-          devReloadBtn.disabled = true;
-          forceDevReload({ clearCaches: true });
-        });
-      }
-    }
+    this._forceDevReload = forceDevReload;
+    this._noSwRequested = noSwRequested;
 
     if (hasNoSwMeta && typeof EventSource !== 'undefined' && !this._devReloadSource) {
       const es = new EventSource('./__dev/events');

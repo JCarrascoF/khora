@@ -110,8 +110,11 @@ class BrujulaValoresApp {
 
   setStep(step) {
     if (step < 1 || step > this.totalSteps) return;
+    const prevStep = this.currentStep;
     this.currentStep = step;
+    window.KhoraUI?.prepareTypeformTransition?.('compass-view');
     this.render();
+    window.KhoraUI?.animateTypeformTransition?.('compass-view', prevStep, step, this.totalSteps);
     this.bindEvents();
     window.KhoraUtils.scrollToTop();
   }
@@ -142,6 +145,13 @@ class BrujulaValoresApp {
       ${window.KhoraUI.renderTypeformShell({
         currentStep: this.currentStep,
         totalSteps: this.totalSteps,
+        steps: [
+          { step: 1, label: '1. Situación' },
+          { step: 2, label: '2. Valor' },
+          { step: 3, label: '3. Pasajero' },
+          { step: 4, label: '4. Acción' }
+        ],
+        navAriaLabel: 'Pasos de Brújula de Valores',
         helpTopic: 'brujula-valores',
         bodyId: 'compass-body',
         stepHtml
@@ -206,6 +216,7 @@ class BrujulaValoresApp {
       </div>
 
       <div class="act-typeform-footer">
+        <button type="button" class="btn-secondary" disabled>Atrás</button>
         <button type="button" class="btn-primary" id="btn-compass-next-1">
           Siguiente
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -340,6 +351,16 @@ class BrujulaValoresApp {
   }
 
   bindEvents() {
+    const viewRoot = document.getElementById('compass-view') || document;
+    viewRoot.querySelectorAll('[data-goto-step]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const targetStep = parseInt(e.currentTarget.dataset.gotoStep, 10);
+        if (targetStep && targetStep !== this.currentStep) {
+          this.setStep(targetStep);
+        }
+      });
+    });
+
     // Step 1 Events
     const sitInput = document.getElementById('compass-situation');
     if (sitInput) {

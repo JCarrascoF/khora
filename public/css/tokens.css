@@ -66,6 +66,13 @@
   --transition-fast: 0.16s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 0.24s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Global screen & step navigation motion (shared across main tabs and Typeform steps) */
+  --motion-nav-duration: 0.42s;
+  --motion-nav-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --motion-nav-distance: 24px;
+  --motion-fade-duration: 0.3s;
+  --motion-fade-ease: ease-out;
 }
 
 /* Dark Mode — Avena y Arcilla (Nogal / Cacao profundo) */

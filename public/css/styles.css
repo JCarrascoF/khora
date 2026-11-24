@@ -8,6 +8,7 @@
 
 html, body {
   min-height: 100vh;
+  min-height: 100dvh;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", "Helvetica Neue", Arial, sans-serif;
   background-color: var(--bg-primary);
   color: var(--text-primary);
@@ -15,6 +16,7 @@ html, body {
   letter-spacing: -0.01em;
   transition: background-color var(--transition-normal), color var(--transition-normal);
   overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Layout Container */
@@ -22,6 +24,7 @@ html, body {
   max-width: 960px;
   margin: 0 auto;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   padding-bottom: 90px; /* Space for sticky bottom mobile nav */
@@ -66,6 +69,15 @@ html, body {
 .app-splash-icon {
   border-radius: 14px;
   display: block;
+  animation: khoraSplashIn 0.72s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.khora-logo-ring {
+  transform-box: view-box;
+  transform-origin: 96px 96px;
+}
+
+.app-splash-icon .khora-logo-ring {
   animation: khoraSplashSpin 0.72s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
@@ -78,14 +90,23 @@ html, body {
   animation: khoraSplashText 0.65s ease 0.08s both;
 }
 
-@keyframes khoraSplashSpin {
+@keyframes khoraSplashIn {
   from {
-    transform: rotate(0deg) scale(0.9);
+    transform: scale(0.9);
     opacity: 0.4;
   }
   to {
-    transform: rotate(360deg) scale(1);
+    transform: scale(1);
     opacity: 1;
+  }
+}
+
+@keyframes khoraSplashSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -390,12 +411,13 @@ html, body {
   padding: 20px;
   position: relative;
   overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Section Shell */
 .subapp-section {
   display: none;
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn var(--motion-fade-duration) var(--motion-fade-ease);
 }
 
 .subapp-section.active {
@@ -415,6 +437,26 @@ html, body {
 
 .swipe-skeleton.active {
   display: block;
+}
+
+.swipe-step-preview {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+  will-change: transform, opacity;
+}
+
+.swipe-step-preview.active {
+  display: block;
+}
+
+.swipe-step-preview .act-typeform-footer {
+  display: none !important;
 }
 
 .swipe-skeleton-title {
@@ -449,12 +491,93 @@ html, body {
   margin-bottom: 14px;
 }
 
-.subapp-section.active.swipe-from-right {
-  animation: swipeInFromRight 0.42s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+.subapp-section.active.swipe-from-right,
+.act-typeform-stage.swipe-from-right > :not(.act-typeform-footer):not(.swipe-skeleton):not(.swipe-step-preview):not(.act-typeform-leaving) {
+  animation: swipeInFromRight var(--motion-nav-duration) var(--motion-nav-ease) backwards;
 }
 
-.subapp-section.active.swipe-from-left {
-  animation: swipeInFromLeft 0.42s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+.subapp-section.active.swipe-from-left,
+.act-typeform-stage.swipe-from-left > :not(.act-typeform-footer):not(.swipe-skeleton):not(.swipe-step-preview):not(.act-typeform-leaving) {
+  animation: swipeInFromLeft var(--motion-nav-duration) var(--motion-nav-ease) backwards;
+}
+
+.act-typeform-leaving {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
+.act-typeform-leaving.leave-to-left {
+  animation: actLeaveToLeft var(--motion-nav-duration) var(--motion-nav-ease) forwards;
+}
+
+.act-typeform-leaving.leave-to-right {
+  animation: actLeaveToRight var(--motion-nav-duration) var(--motion-nav-ease) forwards;
+}
+
+@keyframes actLeaveToLeft {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-18px); }
+}
+
+@keyframes actLeaveToRight {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(18px); }
+}
+
+.act-typeform-topbar-right {
+  position: relative;
+}
+
+.act-typeform-title-leaving {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.act-typeform-title-leaving.leave-to-left {
+  animation: actTitleLeaveToLeft var(--motion-nav-duration) var(--motion-nav-ease) forwards;
+}
+
+.act-typeform-title-leaving.leave-to-right {
+  animation: actTitleLeaveToRight var(--motion-nav-duration) var(--motion-nav-ease) forwards;
+}
+
+@keyframes actTitleLeaveToLeft {
+  from { opacity: 1; transform: translate(0, -50%); }
+  to { opacity: 0; transform: translate(-10px, -50%); }
+}
+
+@keyframes actTitleLeaveToRight {
+  from { opacity: 1; transform: translate(0, -50%); }
+  to { opacity: 0; transform: translate(10px, -50%); }
+}
+
+.act-typeform-step-trigger.step-label-next,
+.act-typeform-step-counter-mobile.step-label-next {
+  animation: actStepTitleFromRight var(--motion-nav-duration) var(--motion-nav-ease) backwards;
+}
+
+.act-typeform-step-trigger.step-label-prev,
+.act-typeform-step-counter-mobile.step-label-prev {
+  animation: actStepTitleFromLeft var(--motion-nav-duration) var(--motion-nav-ease) backwards;
+}
+
+@keyframes actStepTitleFromRight {
+  from { opacity: var(--swipe-title-start-opacity, 0); transform: translateX(10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes actStepTitleFromLeft {
+  from { opacity: var(--swipe-title-start-opacity, 0); transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fadeIn {
@@ -462,21 +585,39 @@ html, body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes calmFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @keyframes swipeInFromRight {
-  0% { opacity: 0; transform: translateX(24px); }
-  30% { opacity: 0.2; }
-  100% { opacity: 1; transform: translateX(0); }
+  0% {
+    opacity: var(--swipe-start-opacity, 0);
+    transform: translateX(var(--swipe-start-x, var(--motion-nav-distance)));
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes swipeInFromLeft {
-  0% { opacity: 0; transform: translateX(-24px); }
-  30% { opacity: 0.2; }
-  100% { opacity: 1; transform: translateX(0); }
+  0% {
+    opacity: var(--swipe-start-opacity, 0);
+    transform: translateX(var(--swipe-start-x, calc(var(--motion-nav-distance) * -1)));
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .subapp-section.active.swipe-from-right,
-  .subapp-section.active.swipe-from-left {
+  .subapp-section.active.swipe-from-left,
+  .act-typeform-stage.swipe-from-right > :not(.act-typeform-footer):not(.swipe-skeleton):not(.swipe-step-preview),
+  .act-typeform-stage.swipe-from-left > :not(.act-typeform-footer):not(.swipe-skeleton):not(.swipe-step-preview),
+  .act-typeform-stage > :not(.act-typeform-footer):not(.swipe-skeleton):not(.swipe-step-preview) {
     animation: none;
   }
 }
@@ -618,6 +759,9 @@ html, body {
 .act-typeform-shell {
   max-width: 660px;
   margin: 0 auto 28px;
+  position: relative;
+  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .act-typeform-topbar {
@@ -644,7 +788,7 @@ html, body {
   height: 100%;
   border-radius: var(--radius-full);
   background: linear-gradient(90deg, var(--sage-500), var(--sage-400));
-  transition: width 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: width var(--motion-nav-duration) var(--motion-nav-ease);
 }
 
 .act-typeform-steps-nav {
@@ -696,7 +840,11 @@ html, body {
 }
 
 .act-typeform-stage {
-  animation: actStepSlideIn 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+}
+
+.act-typeform-stage > :not(.act-typeform-footer):not(.swipe-skeleton):not(.swipe-step-preview):not(.act-typeform-leaving) {
+  animation: calmFadeIn var(--motion-fade-duration) var(--motion-fade-ease);
 }
 
 .act-step-header {
@@ -1658,6 +1806,16 @@ button.breathing-orb {
 }
 
 /* Unified Contextual Help & ACT Glossary Drawer */
+html:has(#app-modal.active),
+html:has(#help-drawer.visible),
+html:has(#feedback-modal-overlay.active),
+html:has(#app-modal.active) body,
+html:has(#help-drawer.visible) body,
+html:has(#feedback-modal-overlay.active) body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 .help-drawer-backdrop {
   position: fixed;
   inset: 0;
@@ -1665,6 +1823,8 @@ button.breathing-orb {
   background-color: rgba(20, 22, 20, 0.42);
   opacity: 0;
   transition: opacity 0.22s ease;
+  touch-action: none;
+  overscroll-behavior: contain;
 }
 
 .help-drawer-backdrop.visible {
@@ -1681,7 +1841,7 @@ button.breathing-orb {
   left: 0;
   right: 0;
   bottom: 0;
-  max-height: 82vh;
+  max-height: calc(100dvh - env(safe-area-inset-top) - 16px);
   background-color: var(--bg-surface);
   border-top: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
@@ -1729,7 +1889,7 @@ button.breathing-orb {
 }
 
 .help-drawer-body {
-  padding: 16px 20px 24px;
+  padding: 16px 20px max(24px, calc(16px + env(safe-area-inset-bottom)));
   overflow-y: auto;
   flex: 1;
 }
@@ -1744,6 +1904,19 @@ button.breathing-orb {
 .help-drawer-term-card.is-focused {
   border-color: var(--sage-400);
   background-color: rgba(87, 139, 116, 0.08);
+}
+
+.help-drawer-glossary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  animation: helpGlossaryReveal 0.28s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@keyframes helpGlossaryReveal {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .toast.toast-update {
@@ -2001,7 +2174,7 @@ button.breathing-orb {
   margin: 0 auto;
   display: block;
   user-select: none;
-  touch-action: none;
+  touch-action: pan-y;
   overflow: visible;
   filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.08));
 }
@@ -2035,16 +2208,30 @@ button.breathing-orb {
   transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), filter 0.2s ease;
 }
 
-.wheel-nuance-group:hover,
 .wheel-nuance-group.hovered {
   transform: scale(1.075);
   filter: brightness(1.14) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.42));
 }
 
-.wheel-nuance-group:hover .wheel-slice,
 .wheel-nuance-group.hovered .wheel-slice {
   stroke: #ffffff;
   stroke-width: 2.2;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wheel-nuance-group:hover {
+    transform: scale(1.075);
+    filter: brightness(1.14) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.42));
+  }
+
+  .wheel-nuance-group:hover .wheel-slice {
+    stroke: #ffffff;
+    stroke-width: 2.2;
+  }
+
+  .wheel-nuance-group:hover .wheel-slice-label {
+    font-size: 12.2px;
+  }
 }
 
 .wheel-nuance-group.selected .wheel-slice {
@@ -2059,14 +2246,13 @@ button.breathing-orb {
   fill: #ffffff;
   font-weight: 700;
   paint-order: stroke fill;
-  stroke: rgba(15, 23, 19, 0.72);
-  stroke-width: 2.5px;
+  stroke: rgba(12, 16, 14, 0.85);
+  stroke-width: 3px;
   stroke-linecap: round;
   stroke-linejoin: round;
   transition: font-size 0.18s ease;
 }
 
-.wheel-nuance-group:hover .wheel-slice-label,
 .wheel-nuance-group.hovered .wheel-slice-label {
   font-size: 12.2px;
 }

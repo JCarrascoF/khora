@@ -202,6 +202,7 @@ class EspacioActApp {
 
   setStep(step) {
     if (step < 1 || step > this.totalSteps) return;
+    const prevStep = this.currentStep;
     if (this.currentStep === 3 && step !== 3) {
       this.stopBreathing();
     }
@@ -209,7 +210,9 @@ class EspacioActApp {
       this.entryData.postIntensity = this.entryData.initialIntensity;
     }
     this.currentStep = step;
+    window.KhoraUI?.prepareTypeformTransition?.('act-space-view');
     this.render();
+    window.KhoraUI?.animateTypeformTransition?.('act-space-view', prevStep, step, this.totalSteps);
     this.bindEvents();
   }
 
@@ -345,48 +348,39 @@ class EspacioActApp {
     return `
       <div class="act-step-header">
         <h3 class="act-step-question">¿Qué estás sintiendo?</h3>
-        ${activeNuanceDesc ? `
-          <p class="act-step-lead" data-keep-explanation="true"><em>"${focusedEmotion}: ${activeNuanceDesc}"</em></p>
-        ` : ''}
       </div>
 
-      <div class="act-typeform-toolbar">
-        <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
-          ${this.emotionFamilies.map(fam => {
-            const isSel = selected.includes(fam.id);
-            return `
-              <button type="button" class="badge quick-family-chip ${isSel ? 'active' : ''}" data-quick-family="${fam.id}"
-                      style="cursor: pointer; padding: 5px 10px; font-size: 0.76rem; border: 1px solid ${isSel ? 'var(--sage-500)' : 'var(--border-subtle)'}; background: ${isSel ? 'var(--sage-500)' : 'var(--bg-surface)'}; color: ${isSel ? '#fff' : 'var(--text-secondary)'};">
-                ${fam.icon} ${fam.id}
-              </button>
-            `;
-          }).join('')}
-        </div>
+      ${this.emotionViewMode === 'wheel' ? this.renderCircularEmotionWheel(false) : this.renderChipsEmotionWheel()}
 
-        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-          <button type="button" class="btn-secondary" id="btn-maximize-wheel" style="font-size: 0.76rem; padding: 5px 12px; border-radius: var(--radius-full);">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 8px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          ${selected.length === 0 ? `
+            <button type="button" class="btn-inline-link" id="btn-act-skip-unnamed" style="font-size: 0.78rem; color: var(--text-muted);">
+              No sé nombrarla aún →
+            </button>
+          ` : ''}
+          <button type="button" class="btn-inline-link" id="btn-act-overload-skip" style="font-size: 0.78rem; color: var(--text-muted);">
+            Ir directo al cuerpo →
+          </button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; margin-left: auto;">
+          <button type="button" class="btn-inline-link" id="btn-maximize-wheel" style="font-size: 0.78rem; color: var(--text-muted);">
             Ampliar
           </button>
           ${this.emotionViewMode === 'wheel' ? `
-            <button type="button" class="btn-secondary mode-toggle-btn" data-emotion-mode="chips" style="font-size: 0.76rem; padding: 5px 12px; border-radius: var(--radius-full);">
+            <button type="button" class="btn-inline-link mode-toggle-btn" data-emotion-mode="chips" style="font-size: 0.78rem; color: var(--text-muted);">
               Ver lista
             </button>
           ` : `
-            <button type="button" class="btn-primary mode-toggle-btn" data-emotion-mode="wheel" style="font-size: 0.76rem; padding: 5px 12px; border-radius: var(--radius-full);">
+            <button type="button" class="btn-inline-link mode-toggle-btn" data-emotion-mode="wheel" style="font-size: 0.78rem; font-weight: 600;">
               Ver rueda
             </button>
           `}
         </div>
       </div>
 
-      ${this.renderSelectedEmotionsBar()}
-
-      ${this.emotionViewMode === 'wheel' ? this.renderCircularEmotionWheel(false) : this.renderChipsEmotionWheel()}
-
       <div class="act-typeform-footer">
-        <button type="button" class="btn-inline-link" id="btn-act-overload-skip" style="font-size: 0.82rem;">
-          Ir directo al cuerpo →
-        </button>
+        <button type="button" class="btn-secondary" disabled>Atrás</button>
         <button type="button" class="btn-primary" id="btn-act-next-1">
           Siguiente
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -432,8 +426,8 @@ class EspacioActApp {
       : null;
     const cx = 260;
     const cy = 260;
-    const rIn = 48;
-    const rMid = 86;
+    const rIn = 46;
+    const rMid = 112;
     const rOut = 244;
 
     // Helper polar to cartesian
@@ -493,7 +487,7 @@ class EspacioActApp {
       // Inner Family Slice (Nivel 1: No seleccionable, solo orientativo para concretar)
       const innerD = arcPath(rIn, rMid, famStart + 0.5, famEnd - 0.5);
       const isBottomHalf = i >= 2 && i <= 4;
-      const arcR = isBottomHalf ? 69 : 65;
+      const arcR = isBottomHalf ? 84 : 79;
       const arcStartPt = p2c(arcR, isBottomHalf ? famEnd - 3 : famStart + 3);
       const arcEndPt = p2c(arcR, isBottomHalf ? famStart + 3 : famEnd - 3);
       const arcSweep = isBottomHalf ? 0 : 1;
@@ -501,11 +495,11 @@ class EspacioActApp {
       innerDefsHtml += `<path id="${famArcId}" d="M ${arcStartPt.x} ${arcStartPt.y} A ${arcR} ${arcR} 0 0 ${arcSweep} ${arcEndPt.x} ${arcEndPt.y}" />`;
 
       const isDimmedFam = zoomedFam && zoomedFam.id !== fam.id;
-      const famFontSize = fam.id.length > 10 ? '7.8' : '8.8';
+      const famFontSize = fam.id.length > 10 ? '10.0' : '11.2';
 
       innerSlicesHtml += `
         <path d="${innerD}" fill="${innerFamilyColors[fam.id] || fam.color}" opacity="${isDimmedFam ? '0.28' : '0.94'}" class="wheel-family-sector ${isDimmedFam ? 'dimmed' : ''}" data-wheel-family="${fam.id}" />
-        <text font-size="${famFontSize}" class="wheel-family-label" style="opacity: ${isDimmedFam ? '0.28' : '1'};">
+        <text font-size="${famFontSize}" class="wheel-family-label" style="opacity: 1;">
           <textPath href="#${famArcId}" startOffset="50%" text-anchor="middle">${fam.id}</textPath>
         </text>
       `;
@@ -523,7 +517,7 @@ class EspacioActApp {
 
         // Label rotation & position: mathematically guaranteed upright text (rot in [-90, +90])
         const nMidA = nStart + delta / 2;
-        const textPos = p2c(173, nMidA);
+        const textPos = p2c(184, nMidA);
         let rot = (nMidA - 90) % 360;
         if (rot > 180) rot -= 360;
         if (rot < -180) rot += 360;
@@ -606,13 +600,6 @@ class EspacioActApp {
 
     return `
       <div class="emotion-wheel-container ${zoomedFam ? 'is-zoomed' : ''}">
-        <div class="wheel-zoom-banner ${zoomedFam ? '' : 'hidden'}" role="status">
-          <span class="wheel-zoom-banner-text">
-            ${zoomedFam ? `🔍 <strong>${zoomedFam.icon} ${zoomedFam.id}</strong> · Toca una emoción para elegir` : ''}
-          </span>
-          <button type="button" class="btn-secondary wheel-zoom-reset-btn">← Toda la rueda</button>
-        </div>
-
         <div class="emotion-wheel-viewport">
           <svg class="emotion-wheel-svg" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg">
             <defs>${innerDefsHtml}</defs>
@@ -755,14 +742,6 @@ class EspacioActApp {
           <path id="zone-Piernas" class="body-zone ${this.entryData.bodyZones.includes('Piernas/Pies') ? 'active' : ''}"
                 d="M 78 215 L 94 215 L 90 295 L 75 295 Z M 106 215 L 122 215 L 125 295 L 110 295 Z" />
         </svg>
-
-        <div class="selected-zones-list">
-          ${allZones.map(z => `
-            <span class="zone-tag" style="cursor: pointer; opacity: ${this.entryData.bodyZones.includes(z) ? '1' : '0.5'}" data-zone-chip="${z}">
-              ${this.entryData.bodyZones.includes(z) ? '✓ ' : '+ '} ${z}
-            </span>
-          `).join('')}
-        </div>
       </div>
 
       <div class="act-typeform-block" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
@@ -1674,17 +1653,16 @@ class EspacioActApp {
     if (!scopeEl) return;
 
     const isCompactWheel = (wheelSvg) => {
+      if (typeof window !== 'undefined' && window.innerWidth < 768) return true;
       if (!wheelSvg) return false;
       const rect = wheelSvg.getBoundingClientRect();
-      if (rect && rect.width > 0) return rect.width < 390;
-      return typeof window !== 'undefined' && window.innerWidth < 460;
+      if (rect && rect.width > 0) return rect.width < 460;
+      return false;
     };
 
     const applyWheelZoom = (wheelContainer, famId) => {
       const wheelSvg = wheelContainer?.querySelector('.emotion-wheel-svg');
       const zoomLayer = wheelContainer?.querySelector('.wheel-zoom-layer');
-      const zoomBanner = wheelContainer?.querySelector('.wheel-zoom-banner');
-      const zoomBannerText = wheelContainer?.querySelector('.wheel-zoom-banner-text');
       const hoverBox = wheelContainer?.querySelector('.wheel-hover-example');
       if (!wheelSvg || !zoomLayer) return;
 
@@ -1702,14 +1680,6 @@ class EspacioActApp {
         s.classList.toggle('dimmed', dim);
         s.style.opacity = dim ? '0.28' : '0.94';
       });
-
-      if (zoomBanner) {
-        zoomBanner.classList.toggle('hidden', !famId);
-        if (famId && zoomBannerText) {
-          const fam = this.emotionFamilies.find(f => f.id === famId);
-          zoomBannerText.innerHTML = `🔍 <strong>${fam?.icon || ''} ${famId}</strong> · Toca una emoción para elegir`;
-        }
-      }
 
       if (hoverBox) {
         hoverBox.innerHTML = this.getWheelDefaultHint(isCompactWheel(wheelSvg), famId);
@@ -1730,7 +1700,7 @@ class EspacioActApp {
             const wheelSvg = wheelContainer?.querySelector('.emotion-wheel-svg');
             if (wheelContainer && isCompactWheel(wheelSvg)) {
               e.stopPropagation();
-              if (this.zoomedWheelFamily && this.zoomedWheelFamily !== famId && btn.classList.contains('dimmed')) {
+              if (this.zoomedWheelFamily === famId) {
                 applyWheelZoom(wheelContainer, null);
               } else {
                 applyWheelZoom(wheelContainer, famId);
@@ -1835,12 +1805,23 @@ class EspacioActApp {
         applyWheelZoom(wheelContainer, null);
       });
 
+      let lastTouchTap = null;
+
       wheelSvg.addEventListener('pointerdown', (e) => {
         if (e.pointerType === 'touch' || e.pointerType === 'pen') {
-          pointerDown = { x: e.clientX, y: e.clientY, moved: false, pointerType: e.pointerType };
+          if (isCompactWheel(wheelSvg) && !this.zoomedWheelFamily) {
+            lastTouchTap = null;
+            return;
+          }
           const target = document.elementFromPoint(e.clientX, e.clientY);
           const group = target?.closest?.('.wheel-nuance-group[data-act-emotion]:not(.dimmed)');
+          const emotionId = group?.dataset?.actEmotion || '';
+          const wasPreviewed = Boolean(group && activeHoveredGroup === group);
+          pointerDown = { x: e.clientX, y: e.clientY, moved: false, pointerType: e.pointerType, emotionId, wasPreviewed };
+          lastTouchTap = { emotionId, wasPreviewed };
           if (group) highlightGroup(group);
+        } else {
+          lastTouchTap = null;
         }
       });
 
@@ -1852,6 +1833,7 @@ class EspacioActApp {
 
       wheelSvg.addEventListener('pointermove', (e) => {
         if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+          if (isCompactWheel(wheelSvg) && !this.zoomedWheelFamily) return;
           if (!pointerDown) return;
           if (!pointerDown.moved && Math.hypot(e.clientX - pointerDown.x, e.clientY - pointerDown.y) > 8) {
             pointerDown.moved = true;
@@ -1886,12 +1868,33 @@ class EspacioActApp {
 
         const group = e.target.closest('.wheel-nuance-group[data-act-emotion]');
         const compact = isCompactWheel(wheelSvg);
+        const isAlreadySelected = Boolean(group?.classList?.contains('selected'));
+        const touchPreviewOnly = Boolean(
+          lastTouchTap &&
+          group &&
+          !isAlreadySelected &&
+          lastTouchTap.emotionId === group.dataset.actEmotion &&
+          !lastTouchTap.wasPreviewed
+        );
 
         if (this.zoomedWheelFamily) {
-          if (!group || group.classList.contains('dimmed')) {
+          if (!group) {
+            lastTouchTap = null;
             applyWheelZoom(wheelContainer, null);
             return;
           }
+          if (group.classList.contains('dimmed')) {
+            const famId = group.dataset.emotionFamily;
+            lastTouchTap = null;
+            applyWheelZoom(wheelContainer, famId || null);
+            return;
+          }
+          if (touchPreviewOnly) {
+            highlightGroup(group);
+            lastTouchTap = null;
+            return;
+          }
+          lastTouchTap = null;
           this.toggleEmotion(group.dataset.actEmotion);
           if (onMutate) onMutate();
           return;
@@ -1902,11 +1905,18 @@ class EspacioActApp {
         if (compact) {
           const famId = group.dataset.emotionFamily;
           if (famId) {
+            lastTouchTap = null;
             applyWheelZoom(wheelContainer, famId);
-            return;
           }
+          return;
         }
 
+        if (touchPreviewOnly) {
+          highlightGroup(group);
+          lastTouchTap = null;
+          return;
+        }
+        lastTouchTap = null;
         this.toggleEmotion(group.dataset.actEmotion);
         if (onMutate) onMutate();
       });
