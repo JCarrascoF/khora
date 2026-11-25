@@ -242,10 +242,10 @@
       pendingSwipeCommit = null;
       pendingLeavingHtml = '';
       pendingLeavingTitleHtml = '';
+      // Ghost lifetime: derive from the CSS motion token so removal never clips the animation.
+      let ghostMs = 440;
       if (stage && prevStep && nextStep && prevStep !== nextStep) {
         const isNext = nextStep > prevStep;
-        // Ghost lifetime: derive from the CSS motion token so removal never clips the animation.
-        let ghostMs = 440;
         try {
           const token = getComputedStyle(document.documentElement).getPropertyValue('--motion-nav-duration').trim();
           const ms = token.endsWith('ms') ? Number.parseFloat(token) : Number.parseFloat(token) * 1000;
