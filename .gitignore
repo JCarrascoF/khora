@@ -11,3 +11,5 @@ data/
 .DS_Store
 PLAN.md
 .subagents/
+playwright-report/
+test-results/
