@@ -932,7 +932,7 @@ class PerfilApp {
 
     container.innerHTML = window.KhoraUI.renderTypeformShell({
       currentStep: w.step,
-      totalSteps: 3,
+      totalSteps: PerfilApp.WIZARD_STEPS.length,
       steps: PerfilApp.WIZARD_STEPS,
       navAriaLabel: 'Pasos de Valor',
       bodyId: 'wiz-step-body',
@@ -1340,7 +1340,7 @@ class PerfilApp {
 
       container.innerHTML = window.KhoraUI.renderTypeformShell({
         currentStep: pasStep,
-        totalSteps: 3,
+        totalSteps: PerfilApp.PASSENGER_STEPS.length,
         steps: PerfilApp.PASSENGER_STEPS,
         navAriaLabel: 'Pasos de Pasajero',
         bodyId: 'pas-step-body',

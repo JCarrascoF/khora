@@ -32,6 +32,22 @@
   }
 
   /**
+   * Returns true when the element itself has a scrollable horizontal overflow.
+   * Only inspects the element's own overflow — ancestors are handled by callers
+   * that walk up the DOM (e.g. the swipe blocker in app.js).
+   */
+  function hasHorizontalOverflow(el, win) {
+    if (el === null || el === undefined) return false;
+    if (typeof el !== 'object') return false;
+    if (typeof el.scrollWidth !== 'number' || typeof el.clientWidth !== 'number') return false;
+    if (el.scrollWidth <= el.clientWidth + 4) return false;
+    const w = win || (typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : null));
+    if (!w || typeof w.getComputedStyle !== 'function') return false;
+    const ox = w.getComputedStyle(el).overflowX;
+    return ox === 'auto' || ox === 'scroll';
+  }
+
+  /**
    * Binds click handlers for all [data-goto-step] buttons within scope.
    * @param {Element|Document} scope
    * @param {function(number): boolean|void} onGoto - called with the parsed step.
@@ -780,7 +796,8 @@
   global.KhoraUtils = Object.freeze({
     escapeHtml,
     scrollToTop,
-    bindGotoStep
+    bindGotoStep,
+    hasHorizontalOverflow
   });
 
   global.KhoraSwipe = KhoraSwipe;

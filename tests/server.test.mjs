@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import http from 'node:http';
 import { PassThrough } from 'node:stream';
 import { createRequire } from 'node:module';
 
@@ -205,4 +206,71 @@ test('server.js with NO_CACHE=true disables caching on all assets and injects kh
   assert.ok(manifestRes.headers['cache-control'].includes('no-store'));
   assert.equal(manifestRes.headers['pragma'], 'no-cache');
   assert.equal(manifestRes.headers['expires'], '0');
+});
+
+test('server.js with NO_CACHE=true streams SSE on /__dev/events', async (t) => {
+  const prevNoCache = process.env.NO_CACHE;
+  const prevSqlite = process.env.ENABLE_SQLITE_DB;
+  const serverPath = require.resolve('../server/server.js');
+  delete require.cache[serverPath];
+
+  process.env.NO_CACHE = 'true';
+  process.env.ENABLE_SQLITE_DB = 'false';
+
+  const { server } = require('../server/server.js');
+
+  t.after(() => {
+    delete require.cache[serverPath];
+    if (prevNoCache === undefined) delete process.env.NO_CACHE;
+    else process.env.NO_CACHE = prevNoCache;
+    if (prevSqlite === undefined) delete process.env.ENABLE_SQLITE_DB;
+    else process.env.ENABLE_SQLITE_DB = prevSqlite;
+  });
+
+  // Use a real HTTP server + socket to test the SSE streaming endpoint.
+  const port = 0;
+  const realServer = server.listen(port, '127.0.0.1');
+  await new Promise(resolve => realServer.once('listening', resolve));
+  const url = `http://127.0.0.1:${realServer.address().port}/__dev/events`;
+
+  const sseResult = await new Promise((resolve, reject) => {
+    const req = http.get(url, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: data }));
+      // Give the SSE stream a moment to send the handshake, then abort.
+      setTimeout(() => { res.destroy(); resolve({ status: res.statusCode, headers: res.headers, body: data }); }, 200);
+    });
+    req.on('error', (err) => { if (err.code === 'ECONNRESET') reject(new Error('SSE connection error: ' + err.message)); });
+  }).catch(err => { realServer.close(); throw err; });
+
+  realServer.close();
+
+  assert.equal(sseResult.status, 200);
+  assert.equal(sseResult.headers['content-type'], 'text/event-stream; charset=utf-8');
+  assert.equal(sseResult.headers['cache-control'], 'no-cache, no-transform');
+  assert.ok(sseResult.body.includes(': connected'), 'SSE handshake message should be sent on connect');
+});
+
+test('server.js without NO_CACHE returns 404 for /__dev/events', async (t) => {
+  const prevNoCache = process.env.NO_CACHE;
+  const prevSqlite = process.env.ENABLE_SQLITE_DB;
+  const serverPath = require.resolve('../server/server.js');
+  delete require.cache[serverPath];
+
+  delete process.env.NO_CACHE;
+  process.env.ENABLE_SQLITE_DB = 'false';
+
+  const { server } = require('../server/server.js');
+
+  t.after(() => {
+    delete require.cache[serverPath];
+    if (prevNoCache === undefined) delete process.env.NO_CACHE;
+    else process.env.NO_CACHE = prevNoCache;
+    if (prevSqlite === undefined) delete process.env.ENABLE_SQLITE_DB;
+    else process.env.ENABLE_SQLITE_DB = prevSqlite;
+  });
+
+  const sseRes = await invokeServer(server, { method: 'GET', url: '/__dev/events' });
+  assert.equal(sseRes.status, 404);
 });

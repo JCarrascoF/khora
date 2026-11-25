@@ -2078,10 +2078,7 @@ class AppController {
     const hasHorizontalScroll = (target) => {
       let el = target instanceof Element ? target : target?.parentElement;
       while (el && el !== document.body && el !== document.documentElement) {
-        if (el.scrollWidth > el.clientWidth + 4) {
-          const ox = window.getComputedStyle(el).overflowX;
-          if (ox === 'auto' || ox === 'scroll') return true;
-        }
+        if (window.KhoraUtils?.hasHorizontalOverflow?.(el)) return true;
         el = el.parentElement;
       }
       return false;
