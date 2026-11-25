@@ -292,6 +292,9 @@ class EspacioActApp {
       : (this.entryData.emotion || 'esta emoción');
   }
 
+  /**
+   * Emotions bar for the maximized emotion-wheel modal (step 1 no longer renders one).
+   */
   renderSelectedEmotionsBar() {
     const selected = Array.isArray(this.entryData.emotions) ? this.entryData.emotions : [];
     if (selected.length === 0) {

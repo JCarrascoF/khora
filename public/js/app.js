@@ -724,10 +724,7 @@ class AppController {
 
     const targetSec = document.getElementById(`${sectionId}-view`);
     if (targetSec) {
-      if (options.skipSectionAnim) {
-        targetSec.classList.add('active');
-        targetSec.style.animation = 'none';
-      } else if (options.swipeDir === 'next' || options.swipeDir === 'prev') {
+      if (options.swipeDir === 'next' || options.swipeDir === 'prev') {
         if (typeof options.swipeStartX === 'number') {
           targetSec.style.setProperty('--swipe-start-x', `${Math.round(options.swipeStartX)}px`);
         }
@@ -1838,11 +1835,7 @@ class AppController {
         overlayEl.setAttribute('aria-hidden', 'true');
         overlayEl.innerHTML = `
           <div class="feedback-pull-splash">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="56" height="56" class="feedback-pull-icon" aria-hidden="true">
-              <rect width="192" height="192" rx="40" fill="#1B1613"/>
-              <path class="khora-logo-ring" d="M 134 58 A 54 54 0 1 1 96 42" fill="none" stroke="#F3EDE4" stroke-width="11" stroke-linecap="round"/>
-              <circle cx="96" cy="96" r="14" fill="#C47C61"/>
-            </svg>
+            ${window.KhoraUtils?.splashSvg?.('feedback-pull-icon', 56) || ''}
             <!-- brand name: intentionally not translated -->
             <span class="feedback-pull-brand">Khōra</span>
           </div>
@@ -2830,6 +2823,9 @@ ${showAndroidUrlNote ? `
     };
 
     this._forceDevReload = forceDevReload;
+    // Note: `noSwRequested` (unregister path) also accepts `?nocache=1`, but the dev
+    // reload button + SSE watcher are intentionally meta-only, so they do not appear
+    // on plain static/`serve:static` setups where the endpoint does not exist.
     this._noSwRequested = hasNoSwMeta;
 
     if (hasNoSwMeta && typeof EventSource !== 'undefined' && !this._devReloadSource) {
@@ -2841,6 +2837,8 @@ ${showAndroidUrlNote ? `
           forceDevReload({ clearCaches: false });
         }
       };
+      // Static fallback (no SSE endpoint) → stop the 404 retry loop.
+      es.onerror = () => { es.close(); if (this._devReloadSource === es) this._devReloadSource = null; };
     }
 
     if (noSwRequested && 'serviceWorker' in navigator) {

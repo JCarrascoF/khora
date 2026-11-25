@@ -234,14 +234,23 @@ test('server.js with NO_CACHE=true streams SSE on /__dev/events', async (t) => {
   const url = `http://127.0.0.1:${realServer.address().port}/__dev/events`;
 
   const sseResult = await new Promise((resolve, reject) => {
+    let settled = false;
+    const respond = (res, body) => {
+      if (settled) return;
+      settled = true;
+      resolve({ status: res.statusCode, headers: res.headers, body });
+    };
     const req = http.get(url, (res) => {
       let data = '';
       res.on('data', (chunk) => { data += chunk; });
-      res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: data }));
+      res.on('end', () => { respond(res, data); req.destroy(); });
       // Give the SSE stream a moment to send the handshake, then abort.
-      setTimeout(() => { res.destroy(); resolve({ status: res.statusCode, headers: res.headers, body: data }); }, 200);
+      setTimeout(() => { respond(res, data); req.destroy(); }, 200);
     });
-    req.on('error', (err) => { if (err.code === 'ECONNRESET') reject(new Error('SSE connection error: ' + err.message)); });
+    req.on('error', (err) => {
+      if (err.code === 'ECONNRESET') return; // expected after req.destroy()
+      reject(new Error('SSE connection error: ' + err.message));
+    });
   }).catch(err => { realServer.close(); throw err; });
 
   realServer.close();

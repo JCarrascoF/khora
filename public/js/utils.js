@@ -62,6 +62,16 @@
   }
 
   /**
+   * Shared canonical Khōra brand mark SVG (splash / feedback overlays).
+   * @param {string} [className] CSS class for the <svg> element.
+   * @param {number} [size] width/height in px (default 56).
+   */
+  function splashSvg(className = '', size = 56) {
+    const cls = className ? ` class="${escapeHtml(className)}"` : '';
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="${size}" height="${size}"${cls} aria-hidden="true"><rect width="192" height="192" rx="40" fill="#1B1613"/><path class="khora-logo-ring" d="M 134 58 A 54 54 0 1 1 96 42" fill="none" stroke="#F3EDE4" stroke-width="11" stroke-linecap="round"/><circle cx="96" cy="96" r="14" fill="#C47C61"/></svg>`;
+  }
+
+  /**
    * Shared canonical UI primitives.
    * Use these helpers across subapps to ensure visual consistency and single-point iteration.
    */
@@ -797,7 +807,8 @@
     escapeHtml,
     scrollToTop,
     bindGotoStep,
-    hasHorizontalOverflow
+    hasHorizontalOverflow,
+    splashSvg
   });
 
   global.KhoraSwipe = KhoraSwipe;
