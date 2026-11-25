@@ -677,6 +677,8 @@ test('Feedback swipe gesture works inside active exercise modal (>50% viewport) 
   assert.equal(overlayEl.classList.contains('ready'), true);
   assert.equal(overlayEl.querySelector('.feedback-pull-label').textContent, 'Suelta si quieres enviar feedback');
   assert.equal(overlayEl.style.getPropertyValue('--pull-pct'), '100%', 'long swipe must set --pull-pct to 100%');
+  assert.equal(overlayEl.querySelector('.feedback-pull-icon').style.transform, 'scale(1.00)', 'outer square icon should only scale, not rotate');
+  assert.equal(overlayEl.querySelector('.khora-logo-ring').style.transform, 'rotate(360deg)', 'only the inner ring should rotate');
   emitTouch('touchend', 250);
 
   const feedbackModalOverlay = elementsById.get('feedback-modal-overlay');

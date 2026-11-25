@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="light" data-palette="arcilla" data-surface="editorial" data-buttons="ultraligero" data-explanations="hide">
-<!-- khora:version:1.3.1 -->
+<!-- khora:version:1.3.2 -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -67,7 +67,7 @@
         window.__KHORA_PALETTE_COLORS__ = colors;
         window.__KHORA_DEFAULT_CUSTOM_PALETTE__ = defaultCustom;
         window.__KHORA_GET_ON_ACCENT__ = getOnAccent;
-        window.__KHORA_APP_VERSION__ = '1.3.1';
+        window.__KHORA_APP_VERSION__ = '1.3.2';
         var themeCol = (colors[p] && colors[p][t]) ? colors[p][t] : '#F3EDE4';
         if (p === 'custom') {
           var rawCp = localStorage.getItem('act_custom_palette_pref');
@@ -90,16 +90,20 @@
   </script>
 
   <!-- Core Therapeutic Styling -->
-  <link rel="stylesheet" href="./css/tokens.css?v=1.3.1">
-  <link rel="stylesheet" href="./css/styles.css?v=1.3.1">
-  <link rel="stylesheet" href="./css/surfaces.css?v=1.3.1">
+  <link rel="stylesheet" href="./css/tokens.css?v=1.3.2">
+  <link rel="stylesheet" href="./css/styles.css?v=1.3.2">
+  <link rel="stylesheet" href="./css/surfaces.css?v=1.3.2">
 </head>
 <body>
 
   <!-- Brief Entry Splash -->
   <div id="app-splash" class="app-splash" aria-hidden="true">
     <div class="app-splash-inner">
-      <img src="./icons/icon-192.svg" alt="" width="56" height="56" class="app-splash-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="56" height="56" class="app-splash-icon" aria-hidden="true">
+        <rect width="192" height="192" rx="40" fill="#1B1613"/>
+        <path class="khora-logo-ring" d="M 134 58 A 54 54 0 1 1 96 42" fill="none" stroke="#F3EDE4" stroke-width="11" stroke-linecap="round"/>
+        <circle cx="96" cy="96" r="14" fill="#C47C61"/>
+      </svg>
       <span class="app-splash-title">Khōra</span>
     </div>
   </div>
@@ -261,20 +265,20 @@
   <div id="privacy-lock-overlay" class="privacy-lock-overlay hidden" role="dialog" aria-modal="true" aria-label="Bloqueo de Privacidad"></div>
 
   <!-- Scripts -->
-  <script src="./js/utils.js?v=1.3.1"></script>
-  <script src="./js/i18n-dict.js?v=1.3.1"></script>
-  <script src="./js/i18n.js?v=1.3.1"></script>
-  <script src="./js/state-vault.js?v=1.3.1"></script>
-  <script src="./js/state.js?v=1.3.1"></script>
-  <script src="./js/subapp-profile.js?v=1.3.1"></script>
-  <script src="./js/subapp-false-peace.js?v=1.3.1"></script>
-  <script src="./js/subapp-act-space.js?v=1.3.1"></script>
-  <script src="./js/subapp-pattern-radar.js?v=1.3.1"></script>
-  <script src="./js/subapp-values-compass.js?v=1.3.1"></script>
-  <script src="./js/subapp-pills-anchors.js?v=1.3.1"></script>
-  <script src="./js/subapp-insight.js?v=1.3.1"></script>
-  <script src="./js/app-settings.js?v=1.3.1"></script>
-  <script src="./js/app-help.js?v=1.3.1"></script>
-  <script src="./js/app.js?v=1.3.1"></script>
+  <script src="./js/utils.js?v=1.3.2"></script>
+  <script src="./js/i18n-dict.js?v=1.3.2"></script>
+  <script src="./js/i18n.js?v=1.3.2"></script>
+  <script src="./js/state-vault.js?v=1.3.2"></script>
+  <script src="./js/state.js?v=1.3.2"></script>
+  <script src="./js/subapp-profile.js?v=1.3.2"></script>
+  <script src="./js/subapp-false-peace.js?v=1.3.2"></script>
+  <script src="./js/subapp-act-space.js?v=1.3.2"></script>
+  <script src="./js/subapp-pattern-radar.js?v=1.3.2"></script>
+  <script src="./js/subapp-values-compass.js?v=1.3.2"></script>
+  <script src="./js/subapp-pills-anchors.js?v=1.3.2"></script>
+  <script src="./js/subapp-insight.js?v=1.3.2"></script>
+  <script src="./js/app-settings.js?v=1.3.2"></script>
+  <script src="./js/app-help.js?v=1.3.2"></script>
+  <script src="./js/app.js?v=1.3.2"></script>
 </body>
 </html>

@@ -260,6 +260,7 @@ class AppController {
     window.i18n?.init?.();
     this.bindGlobalNavigation();
     this.initFeedbackGesture();
+    this.initTabSwipeGesture();
     
     // Initialize sub-apps
     if (window.perfilApp) window.perfilApp.init();
@@ -712,12 +713,29 @@ class AppController {
 
     // Switch view containers
     document.querySelectorAll('.subapp-section').forEach(sec => {
-      sec.classList.remove('active');
+      sec.classList.remove('active', 'swipe-from-right', 'swipe-from-left', 'swipe-preview');
+      sec.style.transition = '';
+      sec.style.transform = '';
+      sec.style.opacity = '';
+      sec.style.animation = '';
+      sec.style.removeProperty('--swipe-start-x');
+      sec.style.removeProperty('--swipe-start-opacity');
     });
 
     const targetSec = document.getElementById(`${sectionId}-view`);
     if (targetSec) {
-      targetSec.classList.add('active');
+      if (options.swipeDir === 'next' || options.swipeDir === 'prev') {
+        if (typeof options.swipeStartX === 'number') {
+          targetSec.style.setProperty('--swipe-start-x', `${Math.round(options.swipeStartX)}px`);
+        }
+        if (typeof options.swipeStartOpacity === 'number') {
+          targetSec.style.setProperty('--swipe-start-opacity', String(options.swipeStartOpacity));
+        }
+        void targetSec.offsetWidth;
+        targetSec.classList.add('active', options.swipeDir === 'next' ? 'swipe-from-right' : 'swipe-from-left');
+      } else {
+        targetSec.classList.add('active');
+      }
     }
 
     // Render contextual sub-navigation bar
@@ -767,11 +785,23 @@ class AppController {
     return'Buenas noches. Sin prisa, estás en un lugar seguro.';
   }
 
-  setFlowImmersive(active) {
+  setFlowImmersive(active, onExit = null) {
     if (active) {
+      this._flowImmersiveOnExit = typeof onExit === 'function' ? onExit : null;
       document.body.classList.add('flow-immersive');
     } else {
-      document.body.classList.remove('flow-immersive');
+      this._flowImmersiveOnExit = null;
+      document.body.classList.remove('flow-immersive', 'flow-keyboard-open');
+    }
+  }
+
+  exitFlowImmersive() {
+    const customExit = this._flowImmersiveOnExit;
+    this.setFlowImmersive(false);
+    if (typeof customExit === 'function') {
+      customExit();
+    } else {
+      this.navigate('home');
     }
   }
 
@@ -1180,6 +1210,9 @@ class AppController {
         this.navigate(btn.dataset.subnavView);
       });
     });
+
+    const activePill = subnavEl.querySelector('.subnav-pill.active');
+    activePill?.scrollIntoView?.({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   }
 
   bindGlobalNavigation() {
@@ -1259,9 +1292,68 @@ class AppController {
 
     // Exit Immersive Crisis Mode bar
     document.getElementById('btn-exit-flow-immersive')?.addEventListener('click', () => {
-      this.setFlowImmersive(false);
-      this.navigate('home');
+      this.exitFlowImmersive();
     });
+
+    // Global delegation for Typeform mobile exit button & step-jumper dropdown
+    document.addEventListener('click', (e) => {
+      const exitBtn = e.target?.closest?.('[data-flow-exit]');
+      if (exitBtn) {
+        this.exitFlowImmersive();
+        return;
+      }
+
+      const trigger = e.target?.closest?.('.act-typeform-step-trigger');
+      if (trigger) {
+        e.stopPropagation();
+        const topbar = trigger.closest('.act-typeform-topbar');
+        const dropdown = topbar?.querySelector('.act-typeform-step-dropdown');
+        if (!dropdown) return;
+        const willOpen = dropdown.classList.contains('hidden');
+        document.querySelectorAll('.act-typeform-step-dropdown').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.act-typeform-step-trigger').forEach(el => el.setAttribute('aria-expanded', 'false'));
+        if (willOpen) {
+          dropdown.classList.remove('hidden');
+          trigger.setAttribute('aria-expanded', 'true');
+        }
+        return;
+      }
+
+      if (!e.target?.closest?.('.act-typeform-step-dropdown')) {
+        document.querySelectorAll('.act-typeform-step-dropdown:not(.hidden)').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.act-typeform-step-trigger[aria-expanded="true"]').forEach(el => el.setAttribute('aria-expanded', 'false'));
+      }
+    });
+
+    // Un-fix immersive bottom bars while mobile virtual keyboard / text input is active
+    const textInputSelector = 'input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]), textarea, select';
+    let keyboardBlurTimer = null;
+    const syncFlowKeyboardState = () => {
+      if (!document.body.classList.contains('flow-immersive') || window.innerWidth >= 768) {
+        document.body.classList.remove('flow-keyboard-open');
+        return;
+      }
+      const activeEl = document.activeElement;
+      const isTextFocused = Boolean(activeEl && activeEl.matches?.(textInputSelector));
+      const isViewportShrunk = Boolean(window.visualViewport && window.visualViewport.height < window.innerHeight * 0.78);
+      document.body.classList.toggle('flow-keyboard-open', isTextFocused || isViewportShrunk);
+    };
+
+    document.addEventListener('focusin', (e) => {
+      if (!document.body.classList.contains('flow-immersive') || window.innerWidth >= 768) return;
+      if (e.target?.matches?.(textInputSelector)) {
+        if (keyboardBlurTimer) clearTimeout(keyboardBlurTimer);
+        document.body.classList.add('flow-keyboard-open');
+      }
+    });
+
+    document.addEventListener('focusout', () => {
+      if (!document.body.classList.contains('flow-immersive')) return;
+      if (keyboardBlurTimer) clearTimeout(keyboardBlurTimer);
+      keyboardBlurTimer = setTimeout(syncFlowKeyboardState, 80);
+    });
+
+    window.visualViewport?.addEventListener('resize', syncFlowKeyboardState);
   }
 
 
@@ -1743,7 +1835,7 @@ class AppController {
         overlayEl.setAttribute('aria-hidden', 'true');
         overlayEl.innerHTML = `
           <div class="feedback-pull-splash">
-            <img src="./icons/icon-192.svg" alt="" class="feedback-pull-icon">
+            ${window.KhoraUtils?.splashSvg?.('feedback-pull-icon', 56) || ''}
             <!-- brand name: intentionally not translated -->
             <span class="feedback-pull-brand">Khōra</span>
           </div>
@@ -1784,9 +1876,13 @@ class AppController {
 
       const icon = el.querySelector('.feedback-pull-icon');
       if (icon) {
-        const deg = Math.round(clamped * 360);
         const scale = (0.88 + 0.12 * clamped).toFixed(2);
-        icon.style.transform = `rotate(${deg}deg) scale(${scale})`;
+        icon.style.transform = `scale(${scale})`;
+      }
+      const ring = el.querySelector('.khora-logo-ring');
+      if (ring) {
+        const deg = Math.round(clamped * 360);
+        ring.style.transform = `rotate(${deg}deg)`;
       }
 
       const label = el.querySelector('.feedback-pull-label');
@@ -1906,6 +2002,204 @@ class AppController {
       touchEligible = false;
       hideIndicator();
     }, { passive: true });
+  }
+
+  initTabSwipeGesture() {
+    if (this._tabSwipeBound || !window.KhoraSwipe) return;
+    this._tabSwipeBound = true;
+
+    const getSwipeSequence = () => {
+      if (this.currentGroup !== 'yo' && this.currentGroup !== 'insight') return [];
+      return (this.navGroups?.[this.currentGroup]?.items || []).map(i => i.id);
+    };
+
+    const getGroupForView = (viewId) => {
+      if ((this.navGroups?.yo?.items || []).some(i => i.id === viewId)) return 'yo';
+      if ((this.navGroups?.insight?.items || []).some(i => i.id === viewId)) return 'insight';
+      if ((this.navGroups?.learn?.items || []).some(i => i.id === viewId)) return 'learn';
+      return 'ahora';
+    };
+
+    const clearTabSwipeStyles = () => {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('swipe-leaving', 'swipe-entering');
+        item.style.removeProperty('--swipe-p');
+      });
+      document.querySelectorAll('.subnav-pill').forEach(btn => {
+        btn.classList.remove('swipe-leaving', 'swipe-entering');
+        btn.style.removeProperty('--swipe-p');
+      });
+    };
+
+    const updateTabProgress = (targetView, progress) => {
+      const p = Math.max(0, Math.min(1, progress));
+      const curGroup = getGroupForView(this.currentView);
+      const nextGroup = getGroupForView(targetView);
+
+      document.querySelectorAll('.nav-item').forEach(item => {
+        const g = item.dataset.navGroup;
+        item.classList.remove('swipe-leaving', 'swipe-entering');
+        item.style.removeProperty('--swipe-p');
+        if (curGroup !== nextGroup) {
+          if (g === curGroup) {
+            item.classList.add('swipe-leaving');
+            item.style.setProperty('--swipe-p', String(p));
+          } else if (g === nextGroup) {
+            item.classList.add('swipe-entering');
+            item.style.setProperty('--swipe-p', String(p));
+          }
+        }
+      });
+
+      const subnavEl = document.getElementById('context-subnav');
+      if (subnavEl) {
+        subnavEl.querySelectorAll('.subnav-pill[data-subnav-view]').forEach(btn => {
+          const v = btn.dataset.subnavView;
+          btn.classList.remove('swipe-leaving', 'swipe-entering');
+          btn.style.removeProperty('--swipe-p');
+          if (v === this.currentView) {
+            btn.classList.add('swipe-leaving');
+            btn.style.setProperty('--swipe-p', String(p));
+          } else if (v === targetView) {
+            btn.classList.add('swipe-entering');
+            btn.style.setProperty('--swipe-p', String(p));
+          }
+        });
+      }
+    };
+
+    const hasHorizontalScroll = (target) => {
+      let el = target instanceof Element ? target : target?.parentElement;
+      while (el && el !== document.body && el !== document.documentElement) {
+        if (window.KhoraUtils?.hasHorizontalOverflow?.(el)) return true;
+        el = el.parentElement;
+      }
+      return false;
+    };
+
+    window.KhoraSwipe.bind({
+      isBlocked: (target) => {
+        if (window.innerWidth >= 768) return true;
+        if (window.stateManager?.isVaultLocked?.()) return true;
+        if (document.getElementById('app-modal')?.classList?.contains('active')) return true;
+        if (document.getElementById('feedback-modal-overlay')?.classList?.contains('active')) return true;
+        if (document.getElementById('help-drawer')?.classList?.contains('open')) return true;
+        if (target?.closest?.('input, textarea, select, [contenteditable="true"], .context-subnav-inner, .act-typeform-steps-nav, .act-typeform-step-dropdown')) return true;
+        if (hasHorizontalScroll(target)) return true;
+        return false;
+      },
+
+      resolveContext: () => {
+        const typeformShell = document.querySelector('.subapp-section.active .act-typeform-shell');
+        if (typeformShell) {
+          const stage = typeformShell.querySelector('.act-typeform-stage');
+          const track = typeformShell.querySelector('.act-progress-track');
+          const currentStep = parseInt(track?.getAttribute('aria-valuenow') || '1', 10);
+          const totalSteps = parseInt(track?.getAttribute('aria-valuemax') || '1', 10);
+          const getBtn = (dir) => {
+            if (dir === 'prev') {
+              return currentStep > 1
+                ? typeformShell.querySelector('.act-typeform-footer .btn-secondary:not([disabled])')
+                : null;
+            }
+            return currentStep < totalSteps
+              ? typeformShell.querySelector('.act-typeform-footer .btn-primary:not([disabled])')
+              : null;
+          };
+
+          // Preferred: call the subapp's step API directly (same path the footer buttons use).
+          // Fallback: locate the footer button and synthesize the click.
+          const subappMap = {
+            'act-space': window.espacioActApp,
+            'false-peace': window.pazFalsaApp,
+            compass: window.brujulaValoresApp
+          };
+          const getSubapp = () => subappMap[this.currentView] || null;
+          const gotoStep = (targetStep) => {
+            if (targetStep < 1 || targetStep > totalSteps) return false;
+            const subapp = getSubapp();
+            if (subapp && typeof subapp.setStep === 'function') {
+              subapp.setStep(targetStep);
+              return true;
+            }
+            const dir = targetStep > currentStep ? 'next' : 'prev';
+            const btn = getBtn(dir);
+            if (!btn) return false;
+            btn.click();
+            return true;
+          };
+
+          const getPreviewHtml = (dir) => {
+            const targetStep = dir === 'next' ? currentStep + 1 : currentStep - 1;
+            if (targetStep < 1 || targetStep > totalSteps) return '';
+            const subapp = getSubapp();
+            const fn = subapp?.[`renderStep${targetStep}`];
+            if (typeof fn !== 'function') return '';
+            return String(fn.call(subapp) || '').replace(/\sid="[^"]*"/g, '');
+          };
+
+          const titleEl = typeformShell.querySelector('.act-typeform-step-trigger, .act-typeform-step-counter-mobile');
+
+          return {
+            elements: stage
+              ? Array.from(stage.children).filter(c => !c.classList.contains('act-typeform-footer') && !c.classList.contains('swipe-skeleton') && !c.classList.contains('swipe-step-preview'))
+              : [],
+            previewHost: stage,
+            getPreviewHtml,
+            useSkeleton: false,
+            hasTarget: (dir) => Boolean(getBtn(dir)),
+            onProgress: (dir, progress) => {
+              if (!titleEl) return;
+              const clamped = Math.max(0, Math.min(1, progress));
+              titleEl.style.opacity = String((1 - clamped).toFixed(3));
+            },
+            onClearProgress: () => {
+              if (titleEl) titleEl.style.opacity = '';
+            },
+            onCommit: (dir, commitState) => {
+              const targetStep = dir === 'next' ? currentStep + 1 : currentStep - 1;
+              window.KhoraUI?.setPendingSwipeCommit?.(commitState || null);
+              gotoStep(targetStep);
+            }
+          };
+        }
+
+        if (document.body.classList.contains('flow-immersive')) return null;
+
+        const sec = document.querySelector('.subapp-section.active');
+        const appMain = document.querySelector('.app-main');
+        const sequence = getSwipeSequence();
+        const curIdx = sequence.indexOf(this.currentView);
+        const getTargetView = (dir) => {
+          if (curIdx === -1) return null;
+          const nextIdx = dir === 'next' ? curIdx + 1 : curIdx - 1;
+          return nextIdx >= 0 && nextIdx < sequence.length ? sequence[nextIdx] : null;
+        };
+
+        return {
+          element: sec,
+          skeletonHost: appMain,
+          hasTarget: (dir) => Boolean(getTargetView(dir)),
+          onProgress: (dir, progress) => {
+            const targetView = getTargetView(dir);
+            if (targetView) updateTabProgress(targetView, progress);
+          },
+          onClearProgress: clearTabSwipeStyles,
+          onCommit: (dir, commitState) => {
+            const targetView = getTargetView(dir);
+            if (targetView) {
+              this.navigate(targetView, {
+                swipeDir: dir,
+                swipeStartX: commitState?.offset,
+                swipeStartOpacity: commitState?.opacity
+              });
+            }
+          }
+        };
+      },
+
+      onHaptic: () => this.triggerHaptic?.([8])
+    });
   }
 
   closeFeedbackModal() {
@@ -2492,10 +2786,60 @@ ${showAndroidUrlNote ? `
       this.updatePersistenceWarningBanner();
     });
 
+    const hasNoSwMeta = Boolean(document.querySelector?.('meta[name="khora-no-sw"][content="1"]'));
     const noSwRequested = Boolean(
-      document.querySelector?.('meta[name="khora-no-sw"][content="1"]') ||
+      hasNoSwMeta ||
       new URLSearchParams(window.location?.search || '').get('nocache') === '1'
     );
+
+    const forceDevReload = async ({ clearCaches = false } = {}) => {
+      try {
+        await window.state?.flushPendingWrites?.(2000);
+      } catch {
+        // Ignore flush errors before reload
+      }
+      if (clearCaches) {
+        try {
+          if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistrations) {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(regs.map((reg) => reg.unregister()));
+          }
+        } catch {
+          // Ignore SW unregister errors
+        }
+        try {
+          if (typeof caches !== 'undefined' && caches.keys) {
+            const keys = await caches.keys();
+            await Promise.all(keys.map((key) => caches.delete(key)));
+          }
+        } catch {
+          // Ignore cache cleanup errors
+        }
+      }
+      const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set('nocache', '1');
+      nextUrl.searchParams.set('_r', String(Date.now()));
+      window.location.replace(nextUrl.toString());
+    };
+
+    this._forceDevReload = forceDevReload;
+    // Note: `noSwRequested` (unregister path) also accepts `?nocache=1`, but the dev
+    // reload button + SSE watcher are intentionally meta-only, so they do not appear
+    // on plain static/`serve:static` setups where the endpoint does not exist.
+    this._noSwRequested = hasNoSwMeta;
+
+    if (hasNoSwMeta && typeof EventSource !== 'undefined' && !this._devReloadSource) {
+      const es = new EventSource('./__dev/events');
+      this._devReloadSource = es;
+      es.onmessage = (event) => {
+        if (event.data === 'reload') {
+          es.close();
+          forceDevReload({ clearCaches: false });
+        }
+      };
+      // Static fallback (no SSE endpoint) → stop the 404 retry loop.
+      es.onerror = () => { es.close(); if (this._devReloadSource === es) this._devReloadSource = null; };
+    }
 
     if (noSwRequested && 'serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations?.().then((regs) => {

@@ -8,6 +8,20 @@
  */
 
 class PerfilApp {
+  /** Single source for wizard step labels (consumed by totalSteps, render() and renderStepN). */
+  static WIZARD_STEPS = [
+    { step: 1, label: '1. Área' },
+    { step: 2, label: '2. Dirección' },
+    { step: 3, label: '3. Acción' }
+  ];
+
+  /** Single source for passenger wizard step labels. */
+  static PASSENGER_STEPS = [
+    { step: 1, label: '1. Pasajero' },
+    { step: 2, label: '2. Diálogo' },
+    { step: 3, label: '3. Respuesta' }
+  ];
+
   constructor() {
     this.activeProfileTab = 'valores'; // 'valores' | 'momento' | 'autobus'
 
@@ -911,9 +925,16 @@ class PerfilApp {
     const container = document.getElementById('profile-view');
     if (!container) return;
 
+    window.app?.setFlowImmersive?.(true, () => {
+      this.render();
+      this.bindEvents();
+    });
+
     container.innerHTML = window.KhoraUI.renderTypeformShell({
       currentStep: w.step,
-      totalSteps: 3,
+      totalSteps: PerfilApp.WIZARD_STEPS.length,
+      steps: PerfilApp.WIZARD_STEPS,
+      navAriaLabel: 'Pasos de Valor',
       bodyId: 'wiz-step-body',
       stepHtml
     });
@@ -927,9 +948,17 @@ class PerfilApp {
     const w = this.wizardState;
 
     const closeModal = () => {
+      window.app?.setFlowImmersive?.(false);
       this.render();
       this.bindEvents();
     };
+
+    window.KhoraUtils?.bindGotoStep?.(document.getElementById('profile-view'), (targetStep) => {
+      if (targetStep !== w.step && targetStep >= 1 && targetStep <= 3) {
+        w.step = targetStep;
+        this.renderWizardModal({ resetScroll: true });
+      }
+    });
 
     document.getElementById('btn-wiz-cancel')?.addEventListener('click', closeModal);
 
@@ -1302,15 +1331,27 @@ class PerfilApp {
       const container = document.getElementById('profile-view');
       if (!container) return;
       const closeModal = () => {
+        window.app?.setFlowImmersive?.(false);
         this.render();
         this.bindEvents();
       };
 
+      window.app?.setFlowImmersive?.(true, closeModal);
+
       container.innerHTML = window.KhoraUI.renderTypeformShell({
         currentStep: pasStep,
-        totalSteps: 3,
+        totalSteps: PerfilApp.PASSENGER_STEPS.length,
+        steps: PerfilApp.PASSENGER_STEPS,
+        navAriaLabel: 'Pasos de Pasajero',
         bodyId: 'pas-step-body',
         stepHtml
+      });
+
+      window.KhoraUtils?.bindGotoStep?.(container, (targetStep) => {
+        if (targetStep !== pasStep && targetStep >= 1 && targetStep <= 3) {
+          pasStep = targetStep;
+          renderPassengerStep({ resetScroll: true });
+        }
       });
 
       if (resetScroll) {

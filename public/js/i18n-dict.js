@@ -1208,6 +1208,8 @@
 
   // Exhaustive ES -> EN UI & Toast & Confirm & Placeholder Map
   const EXACT_MAP = {
+    'Volver al inicio': 'Back to home',
+    'Recargar sin caché (Dev)': 'Reload without cache (Dev)',
     ...DOMAIN_MAP_EN,
     ...EMOTION_MAP_EN,
     ...BODY_ZONES_EN,

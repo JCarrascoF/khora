@@ -618,7 +618,7 @@
               <summary style="cursor: pointer; font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); padding: 6px 0;">
                 Glosario ACT (${otherTerms.length} conceptos)
               </summary>
-              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+              <div class="help-drawer-glossary-list">
                 ${otherTerms.map(([k, entry]) => `
                   <div class="help-drawer-term-card" data-glossary-key="${esc(k)}">
                     <div style="font-weight: 700; font-size: 0.83rem; color: var(--text-primary);">${esc(entry.title)}</div>
@@ -649,6 +649,34 @@
 
     backdrop.onclick = closeHandler;
     document.getElementById('btn-help-drawer-close')?.addEventListener('click', closeHandler);
+
+    const glossaryDetails = drawer.querySelector('.help-drawer-glossary');
+    const glossarySummary = glossaryDetails?.querySelector('summary');
+    if (glossaryDetails && glossarySummary) {
+      let heightTimer = null;
+      glossarySummary.addEventListener('click', (e) => {
+        if (window.innerWidth >= 768) return;
+        e.preventDefault();
+        if (heightTimer) {
+          clearTimeout(heightTimer);
+          heightTimer = null;
+        }
+        const startH = drawer.getBoundingClientRect().height;
+        drawer.style.height = `${startH}px`;
+        glossaryDetails.open = !glossaryDetails.open;
+        drawer.style.height = '';
+        const endH = drawer.getBoundingClientRect().height;
+        drawer.style.height = `${startH}px`;
+        void drawer.offsetHeight;
+        drawer.style.transition = 'transform 0.22s ease, height 0.34s cubic-bezier(0.22, 1, 0.36, 1)';
+        drawer.style.height = `${endH}px`;
+        heightTimer = setTimeout(() => {
+          drawer.style.height = '';
+          drawer.style.transition = '';
+          heightTimer = null;
+        }, 350);
+      });
+    }
 
     if (!this._helpDrawerEscBound) {
       this._helpDrawerEscBound = true;

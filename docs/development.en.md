@@ -113,7 +113,7 @@ ENABLE_SQLITE_DB=true DB_PATH=./data/act.db npm start
 
 #### No-cache mode (development)
 
-`npm run dev` (or `node server/server.js --no-cache`, or `NO_CACHE=true`) serves all assets with `Cache-Control: no-store`, `Pragma: no-cache` and `Expires: 0`, and injects `<meta name="khora-no-sw">` into `index.html`. With that meta tag (or `?nocache=1` in the URL), the client unregisters the service worker and clears `caches` — handy for testing changes without manually purging the PWA cache.
+`npm run dev` (or `node server/server.js --no-cache`, or `NO_CACHE=true`) serves all assets with `Cache-Control: no-store`, `Pragma: no-cache` and `Expires: 0`, and injects `<meta name="khora-no-sw">` into `index.html`. With that meta tag, the client unregisters the service worker and clears `caches` — handy for testing changes without manually purging the PWA cache. In dev mode, a **«Reload without cache (Dev)»** button also appears in Settings → PWA; it performs the full reset (unregisters service workers, deletes `caches` and reloads the URL with `?nocache=1`) and only exists when the `khora-no-sw` meta is present.
 
 ```bash
 npm run dev
